@@ -3,7 +3,6 @@ import ReactDom from 'react-dom';
 import assign from 'object-assign';
 import easingTypes from 'tween-functions';
 import requestAnimationFrame from 'raf';
-import { DataToArray } from './util';
 import Css from './Css';
 
 const DEFAULT_EASING = 'easeInOutQuad';
@@ -12,6 +11,17 @@ const DEFAULT_DELAY = 0;
 
 function noop() {
 }
+
+function DataToArray(vars) {
+  if (!vars && vars !== 0) {
+    return []
+  }
+  if (Array.isArray(vars)) {
+    return vars;
+  }
+  return [vars];
+}
+
 
 function DefaultData(vars, now) {
   return {
