@@ -25,8 +25,8 @@ npm start
 | repeat     | number         | 0       | 重复,-1为无限重复 |
 | repeatDelay| number         | 0       | 重复开始时的延时 |
 | yoyo       | boolean        | false   | 重复时是否倒放  |
-| ease       | string         | 'easeInOutQuad' | 你懂的 |
-| bezier     | obj            | null    | 贝赛尔曲线动画   |
+| ease       | string         | 'easeInOutQuad' | 数动缓动参数 |
+| bezier     | object         | null    | 贝赛尔曲线动画   |
 | onStart    | func           | null    | 动画开始时调用  |
 | onUpdate   | func           | null    | 更新时调用  |
 | onComplete | func           | null    | 结束时调用  |
