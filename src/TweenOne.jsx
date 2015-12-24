@@ -100,13 +100,16 @@ class TweenOne extends Component {
         for (let p in item.tween) {
           if (p !== 'start') {
             const _value = item.tween[p];
+            p = p === 'x' ? 'translateX' : p;
+            p = p === 'y' ? 'translateY' : p;
+            p = p === 'r' ? 'rotate' : p;
             const cssName = Css.isTransform(p);
             this.tweenStart[i] = this.tweenStart[i] || {};
             this.tweenStart.end = this.tweenStart.end || {};
             this.tweenStart[i][p] = this.tweenStart[i][p] || this.computedStyle[p] || 0;
-
+            // 开始设置；
             if (cssName === 'transform' || cssName === 'filter') {
-              if (!this.tweenStart.end['Bool' + i]) {
+              if (!this.tweenStart.end[p + 'Bool' + i]) {
                 let array;
                 if (newStyle && newStyle[cssName]) {
                   const cssStyleArr = newStyle[cssName].split(' ');
@@ -120,13 +123,16 @@ class TweenOne extends Component {
                     this.tweenStart[i][p] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
                   }
                 }
-                this.tweenStart.end['Bool' + i] = true;
+                this.tweenStart.end[p + 'Bool' + i] = true;
               }
             }
 
-
+            // 设置start与end的值
             startData = this.tweenStart[i][p];
-            end = DataToArray(parseFloat(item.tween[p]));
+            end = DataToArray(parseFloat(_value));
+            if (typeof _value === 'string' && _value.charAt(1) === '=') {
+              end = DataToArray(parseFloat(this.tweenStart[i][p]) + parseFloat(_value.charAt(0) + 1) * parseFloat(_value.substr(2)));
+            }
             let easeValue = [];
             if (cssName.indexOf('color') >= 0 || cssName.indexOf('Color') >= 0) {
               start = Css.parseColor(startData);
@@ -145,7 +151,7 @@ class TweenOne extends Component {
             }
 
 
-            //转成Array可对多个操作；
+            // 转成Array可对多个操作；
             start.forEach((startItem, i)=> {
               const endItem = end [i];
               easeValue[i] = easingTypes[item.ease](progressTime, parseFloat(startItem), parseFloat(endItem), item.duration);
@@ -155,6 +161,8 @@ class TweenOne extends Component {
             });
             easeValue = item.duration === 0 ? end : easeValue;
             this.tweenStart.end[p] = easeValue;
+
+            // 生成样式
             if (cssName === 'transform') {
               const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(item=> {
                 return parseFloat(item)
@@ -177,9 +185,7 @@ class TweenOne extends Component {
               const bezier = this.tweenStart['bezier' + i] = this.tweenStart['bezier' + i] || new Bezier(this.computedStyle['transform'], _value);
               newStyle['transform'] = Css.mergeStyle(newStyle['transform'] || '', bezier.set(easeValue[0]));
             } else if (cssName === 'filter') {
-              //console.log(this.tweenStart[i][p], this.tweenStart.end[p])
               newStyle[cssName] = Css.mergeStyle(newStyle[cssName] || '', Css.getFilterParam(this.tweenStart[i][p], _value, easeValue[0]))
-              //console.log(Css.mergeStyle(newStyle[cssName] || '', Css.getFilterParam(this.tweenStart[i][p], _value, easeValue[0])))
             } else {
               newStyle[cssName] = Css.getParam(p, _value, easeValue);
             }

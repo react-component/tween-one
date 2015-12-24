@@ -14,7 +14,7 @@ class Demo extends React.Component {
   }
 
   render() {
-    return <Tween vars={{opacity:1,translateX:'100px',onUpdate:this.abc.bind(this,a)}} style={{opacity:1,height:100,transform:'translate(50px,30px)'}}>
+    return <Tween vars={{translateX:'500px',onUpdate:this.abc.bind(this,a)}} style={{opacity:1,height:100,transform:'translate(50px,30px)'}}>
       <div>执行动效</div>
     </Tween>
   }
