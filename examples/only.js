@@ -1,6 +1,7 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
+
 const a = '自定义参数';
 class Demo extends React.Component {
   constructor() {
@@ -9,11 +10,11 @@ class Demo extends React.Component {
 
   abc(a, e) {
     //update里传回出当前的百分比；
-    console.log('bind:' + a, 'update:' + e)
+   // console.log('bind:' + a, 'update:' + e)
   }
 
   render() {
-    return <Tween vars={{opacity:1,translateX:'100px',onUpdate:this.abc.bind(this,a)}} style={{opacity:0}}>
+    return <Tween vars={{opacity:1,translateX:'100px',onUpdate:this.abc.bind(this,a)}} style={{opacity:1,height:100,transform:'translate(50px,30px)'}}>
       <div>执行动效</div>
     </Tween>
   }

@@ -1,4 +1,3 @@
-
 const IE = (function () {
   if (document.documentMode) {
     return document.documentMode;
@@ -119,71 +118,132 @@ const CSS = {
     return color + arr.join(',') + ')';
   },
 
-  /*
-  getTransformData(matrix, p, value){
-    if (p.indexOf('translate') >= 0) {
-      switch (p) {
-        case 'translateX':
-          return matrix.translate(value, 0, 0);
-        case 'translateY':
-          return matrix.translate(0, value, 0);
-        default :
-          return matrix.translate(0, 0, value);
+  getTransformStart(name, obj){
+    if (name in obj) {
+      return obj[name];
+    }
+    if (name.indexOf('translate') >= 0) {
+      if ('translate' in obj || 'translate3d' in obj) {
+        switch (name) {
+          case 'translateX':
+            return obj['translate'].split(',')[0];
+          case 'translateY':
+            return obj['translate'].split(',')[1];
+          case 'translateZ':
+            return obj['translate'].split(',')[2];
+        }
       }
-    } else if (p.indexOf('scale') >= 0) {
-      switch (p) {
-        case 'scaleX':
-          return matrix.scale(value, 0, 0);
-        case 'scaleY':
-          return matrix.scale(0, value, 0);
-        default:
-          return matrix.scale(0, 0, value);
+    } else if (name.indexOf('rotate') >= 0) {
+      if ('rotate' in obj || 'rotate3d' in obj) {
+        switch (name) {
+          case 'rotateX':
+            return obj['rotate'].split(',')[0];
+          case 'rotateY':
+            return obj['rotate'].split(',')[1];
+          case 'rotateZ':
+            return obj['rotate'].split(',')[2];
+        }
       }
-    } else if (p.indexOf('rotate') >= 0) {
-      switch (p) {
-        case 'rotateX':
-          return matrix.rotate(value, 0, 0);
-        case 'rotateY':
-          return matrix.rotate(0, value, 0);
-        default:
-          return matrix.rotate(0, 0, value);
-      }
-    } else if (p.indexOf('skew') >= 0) {
-      switch (p) {
-        case 'skewX':
-          return matrix.skewX(value, 0, 0);
-        case 'skewY':
-          return matrix.rotate(value, 0, 0);
+    } else if (name.indexOf('scale') >= 0) {
+      if ('scale' in obj) {
+        switch (name) {
+          case 'scaleX':
+            return obj['scale'].split(',')[0];
+          case 'scaleY':
+            return obj['scale'].split(',')[1];
+        }
       }
     }
+    return;
   },
-
-  createMatrix(style){
-    return WebKitCSSMatrix && (new WebKitCSSMatrix(style)) ||
-      MozCSSMatrix && (new MozCSSMatrix(style)) ||
-      MsCSSMatrix && (new MsCSSMatrix(style)) ||
-      OCSSMatrix && (new OCSSMatrix(style)) ||
-      CSSMatrix && (new CSSMatrix(style));
-  },
-  */
 
   mergeTransform(current, change){
-    //console.log(a, 22, b, 11)
+    if (!current || current === '') {
+      return change;
+    }
+    if (!change || change === '') {
+      return current;
+    }
     const addArr = [];
-    let isCurrent = false;
-    //console.log(current);
-    current.trim().split(' ').forEach((currentOnly)=> {
-      const currentOnlyName = currentOnly.split('(')[0];
-      const changeName = change.split('(')[0];
-      if (currentOnlyName === changeName) {
-        addArr.push(change);
-        isCurrent = true;
+    const transformGroup = {translate: 1, translate3d: 1, scale: 1, scale3d: 1, rotate: 1, rotate3d: 1};
+
+    function findTransformByName(cssArray, name) {
+      let ret = null;
+      if (cssArray) {
+        cssArray.forEach(_cname=> {
+          if (ret) {
+            return;
+          }
+          const cName = _cname.split('(')[0];
+          const a = (cName in transformGroup && name.substring(0, name.length - 1).indexOf(cName) >= 0);
+          const b = (name in transformGroup && cName.substring(0, cName.length - 1).indexOf(name) >= 0);
+          const c = cName in transformGroup && name in transformGroup && (cName.substring(0, cName.length - 2) === name || name.substring(0, name.length - 2) === cName);
+          if (cName === name || a || b || c) {
+            ret = _cname;
+          }
+        })
+      }
+      return ret
+    }
+
+    const _current = current.trim().split(' ');
+    const _change = change.trim().split(' ');
+    _current.forEach(currentOnly=> {
+      const currentArr = currentOnly.split('(');
+      const currentOnlyName = currentArr[0];
+
+      const currentDataArr = currentArr[1].replace(')', '').split(',');
+      const changeSame = findTransformByName(_change, currentOnlyName);
+      // 三种情况，ＸＹＺ时分析，空时组合前面的分析，
+      if (changeSame) {
+        const changeArr = changeSame.split('(');
+        let changeOnlyName = changeArr[0];
+        const changeDataArr = changeArr[1].replace(')', '').split(',');
+        if (currentOnlyName === changeOnlyName) {
+          addArr.push(changeSame);
+        } else if (currentOnlyName in transformGroup && changeOnlyName.substring(0, changeOnlyName.length - 1).indexOf(currentOnlyName) >= 0) {
+          switch (changeOnlyName) {
+            case 'translateX' || 'scaleX' || 'rotateX':
+              currentDataArr[0] = changeDataArr.join();
+              break;
+            case 'translateY' || 'scaleY' || 'rotateY':
+              currentDataArr[1] = changeDataArr.join();
+              break;
+            case 'translateZ' || 'rotateZ':
+              currentDataArr[2] = changeDataArr.join();
+              break;
+          }
+          addArr.push(currentOnlyName + '(' + currentDataArr.join(',') + ')');
+        } else if (changeOnlyName in transformGroup && currentOnlyName in transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 2) === changeOnlyName) {
+          // 如果是3d时,且一个为2d时；
+          switch (changeOnlyName) {
+            case 'translateX' || 'scaleX' || 'rotateX':
+              currentDataArr[0] = changeDataArr[0];
+              break;
+            case 'translateY' || 'scaleY' || 'rotateY':
+              currentDataArr[1] = changeDataArr[1];
+              break;
+          }
+          addArr.push(currentOnlyName + '(' + currentDataArr.join(',') + ')');
+        }
       } else {
-        addArr.push(currentOnly);
+        addArr.push(currentOnlyName + '(' + currentDataArr.join(',') + ')');
       }
     });
-    if (!isCurrent) {
-      addArr.push(change);
+
+    // 如果变动的在旧的里没有，把变动的插回进去；
+    _change.forEach(changeOnly=> {
+      const changeArr = changeOnly.split('(');
+      const changeOnlyName = changeArr[0];
+      const changeDataArr = changeArr[1].replace(')', '').split(',');
+      const currentSame = findTransformByName(_current, changeOnlyName);
+      if (!currentSame) {
+        addArr.push(changeOnlyName + '(' + changeDataArr.join(',') + ')');
+      }
+    });
+
+    if (!addArr.length) {
+      addArr.push(current, change);
     }
     return addArr.join(' ').trim();
   },

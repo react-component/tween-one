@@ -4,6 +4,7 @@ import assign from 'object-assign';
 import easingTypes from 'tween-functions';
 import requestAnimationFrame from 'raf';
 import Css from './Css';
+import Bezier from './BezierPlugin';
 
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
@@ -66,7 +67,7 @@ class TweenOne extends Component {
   constructor() {
     super(...arguments);
     this.rafID = null;
-    this.style = {};
+    this.style = this.props.style || {};
     this.setDefaultData(this.props.vars || {});
     this.state = {
       style: {}
@@ -82,8 +83,7 @@ class TweenOne extends Component {
       return;
     }
     const newStyle = this.style;
-    let matrixObj = {};
-    let matrixBool = false;
+    let transformBool;
     this.defaultData.forEach((item, i)=> {
       if (!item) {
         return;
@@ -103,36 +103,18 @@ class TweenOne extends Component {
             const _value = item.tween[p];
             const cssName = Css.isTransform(p);
             this.tweenStart[i] = this.tweenStart[i] || {};
+            this.tweenStart.end = this.tweenStart.end || {};
             this.tweenStart[i][p] = this.tweenStart[i][p] || this.computedStyle[p] || 0;
             if (cssName === 'transform') {
-              if (!this.tweenStart.oneBool) {
-                // 第一次进入用style
-                const transform = {};
+              if (!this.tweenStart.end['Bool' + i]) {
                 let array;
-                if (this.props.style && this.props.style[cssName]) {
-                  this.props.style[cssName].split(' ').forEach(item=> {
-                    array = item.replace(/[(|)]/ig, ',').split(',');
-                    transform[array[0]] = array[1];
+                if (newStyle && newStyle[cssName]) {
+                  newStyle[cssName].split(' ').forEach(item=> {
+                    array = item.replace(/[(|)]/ig, '$').split('$');
+                    this.tweenStart[i][array[0]] = array[1];
                   });
-                  this.tweenStart[i][p] = transform[p] || 0;
-                } else if (this.style && this.style[cssName]) {
-                  this.style[cssName].split(' ').forEach(item=> {
-                    array = item.replace(/[(|)]/ig, ',').split(',');
-                    transform[array[0]] = array[1];
-                  });
-                  this.tweenStart[i][p] = transform[p] || this.tweenStart[i][p];
                 }
-                this.tweenStart.oneBool = true;
-              }
-
-              if (this.tweenStart.end && !this.tweenStart.end[p + 'Bool' + i]) {
-                this.tweenStart[i][p] = this.tweenStart.end[p] || 0;
-                if (typeof this.tweenStart[i][p] === 'string') {
-                  const startString = this.tweenStart[i][p];
-                  const startArr = startString.replace(/[(|)]/ig, ',').split(',');
-                  this.tweenStart[i][p] = startArr[1];
-                }
-                this.tweenStart.end[p + 'Bool' + i] = true;
+                this.tweenStart.end['Bool' + i] = true;
               }
             }
 
@@ -148,9 +130,13 @@ class TweenOne extends Component {
               startData = startData === 'none' ? '0 0 0 transparent' : startData;
               start = Css.parseShadow(startData);
               end = Css.parseShadow(_value);
+            } else if (cssName === 'bezier') {
+              start = [0];
+              end = [1]
             } else {
               start = DataToArray(parseFloat(this.tweenStart[i][p]));
             }
+
 
             //转成Array可对多个操作；
             start.forEach((startItem, i)=> {
@@ -161,43 +147,36 @@ class TweenOne extends Component {
               }
             });
             easeValue = item.duration === 0 ? end : easeValue;
-            this.tweenStart.end = this.tweenStart.end || {};
             this.tweenStart.end[p] = easeValue;
             if (cssName === 'transform') {
-              matrixBool = true;
+              transformBool = true;
               const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(item=> {
                 return parseFloat(item)
               });
               perspective = m[11] ? Math.round((m[10] < 0 ? -m[10] : m[10]) / (m[11] < 0 ? -m[11] : m[11])) : 0;
-              matrixObj[p] = Css.getParam(p, _value, easeValue);
               this.tweenStart.end[p] = Css.getParam(p, _value, easeValue);
-              //matrixObj[p] = easeValue;
-              //this.tweenStart[cssName + i] = this.tweenStart[cssName + i] || this.computedStyle[cssName];
+            } else if (cssName === 'bezier') {
+              const bezier = this.tweenStart['bezier' + i] = this.tweenStart['bezier' + i] || new Bezier(this.computedStyle['transform'], _value);
+              newStyle['transform'] = Css.mergeTransform(this.props.style['transform'] || '', bezier.set(easeValue[0]));
             } else {
               newStyle[cssName] = Css.getParam(p, _value, easeValue);
             }
           }
         }
-        if (matrixBool) {
+        if (transformBool) {
           let str = perspective ? 'perspective(' + perspective + 'px)' : '';
-          for (let p in this.tweenStart.end) {
+          for (let p in newStyle) {
             if (Css.isTransform(p) === 'transform') {
-              str += ' ' + this.tweenStart.end[p];
+              str = Css.mergeTransform(newStyle['transform'], str);
             }
           }
-          for (let p in matrixObj) {
-            str = Css.mergeTransform(str, matrixObj[p]);
+
+          for (let p in this.tweenStart.end) {
+            if (Css.isTransform(p) === 'transform') {
+              str = Css.mergeTransform(str, this.tweenStart.end[p]);
+            }
           }
           newStyle['transform'] = str;
-          /*let currentMatrix = Css.createMatrix(this.tweenStart['transform' + i]);
-           let newMatrix = Css.createMatrix();
-           for (let p in matrixObj) {
-           if (p !== 'start' && p.indexOf('Unit') == -1) {
-           newMatrix = Css.getTransformData(newMatrix, p, parseFloat(matrixObj[p].join()) - parseFloat(DataToArray(this.tweenStart[i][p]).join()), matrixObj[p + 'Unit']);
-           }
-           }
-           currentMatrix = currentMatrix.multiply(newMatrix);
-           newStyle['transform'] = currentMatrix.toString();*/
         }
       }
 
