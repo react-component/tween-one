@@ -40,8 +40,8 @@ npm start
 
 | props      | type           | default | description    |
 |------------|----------------|---------|----------------|
-| type       | string         | 'soft'  | `thru`, `thruBasic`, `soft`, `quadratic`, `cubic` |
-| autoRotate | boolean        | false   | 跟随位置旋转向  |
+| type       | string         | 'soft'  | `thru`, `soft`, `quadratic`, `cubic` |
+| autoRotate | boolean        | false   | 跟随位置旋转  |
 | vars       | array          | null    | 贝赛尔点的位置，如 `{x:100,y:100}` |
 
 >> 贝赛尔曲线API参照 [gsap BezierPlugin](http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/)
