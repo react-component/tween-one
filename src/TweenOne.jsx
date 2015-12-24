@@ -102,6 +102,7 @@ class TweenOne extends Component {
             const _value = item.tween[p];
             p = p === 'x' ? 'translateX' : p;
             p = p === 'y' ? 'translateY' : p;
+            p = p === 'z' ? 'translateZ' : p;
             p = p === 'r' ? 'rotate' : p;
             const cssName = Css.isTransform(p);
             this.tweenStart[i] = this.tweenStart[i] || {};
@@ -251,10 +252,9 @@ class TweenOne extends Component {
   componentDidMount() {
     const dom = ReactDom.findDOMNode(this);
     this.computedStyle = document.defaultView.getComputedStyle(dom);
-    if (this.computedStyle['transform'])
-      if (this.defaultData.length) {
-        this.rafID = requestAnimationFrame(this.raf);
-      }
+    if (this.defaultData.length && this.props.vars) {
+      this.rafID = requestAnimationFrame(this.raf);
+    }
   }
 
   componentWillUnmount() {
