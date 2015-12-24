@@ -41,6 +41,8 @@ const _hue = function (h, m1, m2) {
   return ((((h * 6 < 1) ? m1 + (m2 - m1) * h * 6 : (h < 0.5) ? m2 : (h * 3 < 2) ? m1 + (m2 - m1) * (2 / 3 - h) * 6 : m1) * 255) + 0.5) | 0;
 };
 
+const transformGroup = {translate: 1, translate3d: 1, scale: 1, scale3d: 1, rotate: 1, rotate3d: 1};
+
 
 const CSS = {
   _lists: {
@@ -156,8 +158,42 @@ const CSS = {
     }
     return;
   },
+  mergeTransformName(a, b){
+    const belongTransform = this.findStyleByName(a, b);
+    if (belongTransform) {
+      const bArr = belongTransform.split('(');
+      const dataArr = bArr[1].replace(')', '').split(',');
+      switch (b) {
+        case 'translateX' || 'scaleX' || 'rotateX':
+          return dataArr[0];
+        case 'translateY' || 'scaleY' || 'rotateY':
+          return dataArr[1];
+        case 'translateZ' || 'rotateZ':
+          return dataArr[2];
+      }
+    }
+    return;
+  },
+  findStyleByName(cssArray, name) {
+    let ret = null;
+    if (cssArray) {
+      cssArray.forEach(_cname=> {
+        if (ret) {
+          return;
+        }
+        const cName = _cname.split('(')[0];
+        const a = (cName in transformGroup && name.substring(0, name.length - 1).indexOf(cName) >= 0);
+        const b = (name in transformGroup && cName.substring(0, cName.length - 1).indexOf(name) >= 0);
+        const c = cName in transformGroup && name in transformGroup && (cName.substring(0, cName.length - 2) === name || name.substring(0, name.length - 2) === cName);
+        if (cName === name || a || b || c) {
+          ret = _cname;
+        }
+      })
+    }
+    return ret
+  },
 
-  mergeTransform(current, change){
+  mergeStyle(current, change){
     if (!current || current === '') {
       return change;
     }
@@ -165,35 +201,27 @@ const CSS = {
       return current;
     }
     const addArr = [];
-    const transformGroup = {translate: 1, translate3d: 1, scale: 1, scale3d: 1, rotate: 1, rotate3d: 1};
-
-    function findTransformByName(cssArray, name) {
-      let ret = null;
-      if (cssArray) {
-        cssArray.forEach(_cname=> {
-          if (ret) {
-            return;
-          }
-          const cName = _cname.split('(')[0];
-          const a = (cName in transformGroup && name.substring(0, name.length - 1).indexOf(cName) >= 0);
-          const b = (name in transformGroup && cName.substring(0, cName.length - 1).indexOf(name) >= 0);
-          const c = cName in transformGroup && name in transformGroup && (cName.substring(0, cName.length - 2) === name || name.substring(0, name.length - 2) === cName);
-          if (cName === name || a || b || c) {
-            ret = _cname;
-          }
-        })
-      }
-      return ret
-    }
 
     const _current = current.trim().split(' ');
     const _change = change.trim().split(' ');
+
+    // 如果变动的在旧的里没有，把变动的插回进去；
+    _change.forEach(changeOnly=> {
+      const changeArr = changeOnly.split('(');
+      const changeOnlyName = changeArr[0];
+      const changeDataArr = changeArr[1].replace(')', '').split(',');
+      const currentSame = this.findStyleByName(_current, changeOnlyName);
+      if (!currentSame) {
+        addArr.push(changeOnlyName + '(' + changeDataArr.join(',') + ')');
+      }
+    });
+
     _current.forEach(currentOnly=> {
       const currentArr = currentOnly.split('(');
       const currentOnlyName = currentArr[0];
 
       const currentDataArr = currentArr[1].replace(')', '').split(',');
-      const changeSame = findTransformByName(_change, currentOnlyName);
+      const changeSame = this.findStyleByName(_change, currentOnlyName);
       // 三种情况，ＸＹＺ时分析，空时组合前面的分析，
       if (changeSame) {
         const changeArr = changeSame.split('(');
@@ -231,16 +259,6 @@ const CSS = {
       }
     });
 
-    // 如果变动的在旧的里没有，把变动的插回进去；
-    _change.forEach(changeOnly=> {
-      const changeArr = changeOnly.split('(');
-      const changeOnlyName = changeArr[0];
-      const changeDataArr = changeArr[1].replace(')', '').split(',');
-      const currentSame = findTransformByName(_current, changeOnlyName);
-      if (!currentSame) {
-        addArr.push(changeOnlyName + '(' + changeDataArr.join(',') + ')');
-      }
-    });
 
     if (!addArr.length) {
       addArr.push(current, change);
@@ -285,11 +303,11 @@ const CSS = {
     let invalid = true;
     if (p.indexOf('translate') >= 0 || p.indexOf('perspective') >= 0) {
       invalid = !/(%|px|em|rem|vw|vh|\d)$/i.test(v);
-      unit = Number(v) !== 'NaN' ? 'px' : '';
+      unit = Number(v).toString() !== 'NaN' ? 'px' : '';
       unit = unit || v.toString().replace(/[^a-z|%]/ig, '');
     } else if (p.indexOf('skew') >= 0 || p.indexOf('rotate') >= 0) {
       invalid = !/(deg|\d)$/i.test(v);
-      unit = Number(v) !== 'NaN' ? 'deg' : '';
+      unit = Number(v).toString() !== 'NaN' ? 'deg' : '';
       unit = unit || v.toString().replace(/[^a-z|%]/ig, '');
     } else if (p.indexOf('scale') >= 0) {
       invalid = !/(\d)$/i.test(v);
@@ -299,10 +317,42 @@ const CSS = {
     if (!invalid) {
       param = this.getValues(p, d, unit);
     } else {
-      unit = Number(v) !== 'NaN' ? '' : v.toString().replace(/[^a-z|%]/ig, '');
+      //unit = Number(v) !== NaN ? '' : v.toString().replace(/[^a-z|%]/ig, '');
+      unit = Number(v).toString() !== 'NaN' ? '' : v.toString().replace(/[^a-z|%]/ig, '');
       param = d + unit;
     }
     return param
+  },
+  getFilterParam(current, change, data){
+    let unit;
+    let changeArr = change.split(' ');
+    const currentArr = current.split(' ');
+    changeArr = changeArr.map(changeOnly=> {
+      const changeOnlyArr = changeOnly.split('(');
+      const changeOnlyName = changeOnlyArr[0];
+      let changeDataArr = changeOnlyArr[1].replace(')', '').split(',');
+      const currentSame = this.findStyleByName(currentArr, changeOnlyName);
+      if (currentSame) {
+        const currentDataArr = currentSame.split('(')[1].replace(')', '').split(',');
+        changeDataArr = changeDataArr.map((dataOnly, i)=> {
+          unit = dataOnly.toString().replace(/[^a-z|%]/ig, '');
+          const currentDataOnly = currentDataArr[i];
+          const currentUnit = currentDataOnly.toString().replace(/[^a-z|%]/ig, '');
+          const dataOnlyNumber = parseFloat(dataOnly);
+          const currentDataOnlyNumber = parseFloat(currentDataOnly);
+          const differData = currentUnit !== unit ? dataOnlyNumber : dataOnlyNumber - currentDataOnlyNumber;
+          const _data = differData * data + currentDataOnlyNumber + unit;
+          return _data;
+        });
+      } else {
+        changeDataArr = changeDataArr.map(dataOnly=> {
+          unit = dataOnly.toString().replace(/[^a-z|%]/ig, '');
+          return parseFloat(dataOnly) * data + unit;
+        })
+      }
+      return changeOnlyName + '(' + changeDataArr.join(',') + ')';
+    });
+    return changeArr.join(' ');
   }
 
 };

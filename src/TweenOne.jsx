@@ -70,7 +70,7 @@ class TweenOne extends Component {
     this.style = this.props.style || {};
     this.setDefaultData(this.props.vars || {});
     this.state = {
-      style: {}
+      style: this.props.style || {}
     };
     [
       'raf'
@@ -83,7 +83,6 @@ class TweenOne extends Component {
       return;
     }
     const newStyle = this.style;
-    let transformBool;
     this.defaultData.forEach((item, i)=> {
       if (!item) {
         return;
@@ -105,18 +104,26 @@ class TweenOne extends Component {
             this.tweenStart[i] = this.tweenStart[i] || {};
             this.tweenStart.end = this.tweenStart.end || {};
             this.tweenStart[i][p] = this.tweenStart[i][p] || this.computedStyle[p] || 0;
-            if (cssName === 'transform') {
+
+            if (cssName === 'transform' || cssName === 'filter') {
               if (!this.tweenStart.end['Bool' + i]) {
                 let array;
                 if (newStyle && newStyle[cssName]) {
-                  newStyle[cssName].split(' ').forEach(item=> {
-                    array = item.replace(/[(|)]/ig, '$').split('$');
-                    this.tweenStart[i][array[0]] = array[1];
-                  });
+                  const cssStyleArr = newStyle[cssName].split(' ');
+                  if (cssName === 'transform') {
+                    cssStyleArr.forEach(item=> {
+                      array = item.replace(/[(|)]/ig, '$').split('$');
+                      this.tweenStart[i][array[0]] = array[1];
+                    });
+                    this.tweenStart[i][p] = Css.mergeTransformName(cssStyleArr, p) || this.tweenStart[i][p];
+                  } else {
+                    this.tweenStart[i][p] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
+                  }
                 }
                 this.tweenStart.end['Bool' + i] = true;
               }
             }
+
 
             startData = this.tweenStart[i][p];
             end = DataToArray(parseFloat(item.tween[p]));
@@ -130,7 +137,7 @@ class TweenOne extends Component {
               startData = startData === 'none' ? '0 0 0 transparent' : startData;
               start = Css.parseShadow(startData);
               end = Css.parseShadow(_value);
-            } else if (cssName === 'bezier') {
+            } else if (cssName === 'bezier' || cssName === 'filter') {
               start = [0];
               end = [1]
             } else {
@@ -149,34 +156,34 @@ class TweenOne extends Component {
             easeValue = item.duration === 0 ? end : easeValue;
             this.tweenStart.end[p] = easeValue;
             if (cssName === 'transform') {
-              transformBool = true;
               const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(item=> {
                 return parseFloat(item)
               });
               perspective = m[11] ? Math.round((m[10] < 0 ? -m[10] : m[10]) / (m[11] < 0 ? -m[11] : m[11])) : 0;
               this.tweenStart.end[p] = Css.getParam(p, _value, easeValue);
+              let str = perspective ? 'perspective(' + perspective + 'px)' : '';
+              for (let p in newStyle) {
+                if (Css.isTransform(p) === 'transform') {
+                  str = Css.mergeStyle(newStyle['transform'], str);
+                }
+              }
+              for (let p in this.tweenStart.end) {
+                if (Css.isTransform(p) === 'transform') {
+                  str = Css.mergeStyle(str, this.tweenStart.end[p]);
+                }
+              }
+              newStyle[cssName] = str;
             } else if (cssName === 'bezier') {
               const bezier = this.tweenStart['bezier' + i] = this.tweenStart['bezier' + i] || new Bezier(this.computedStyle['transform'], _value);
-              newStyle['transform'] = Css.mergeTransform(this.props.style['transform'] || '', bezier.set(easeValue[0]));
+              newStyle['transform'] = Css.mergeStyle(newStyle['transform'] || '', bezier.set(easeValue[0]));
+            } else if (cssName === 'filter') {
+              //console.log(this.tweenStart[i][p], this.tweenStart.end[p])
+              newStyle[cssName] = Css.mergeStyle(newStyle[cssName] || '', Css.getFilterParam(this.tweenStart[i][p], _value, easeValue[0]))
+              //console.log(Css.mergeStyle(newStyle[cssName] || '', Css.getFilterParam(this.tweenStart[i][p], _value, easeValue[0])))
             } else {
               newStyle[cssName] = Css.getParam(p, _value, easeValue);
             }
           }
-        }
-        if (transformBool) {
-          let str = perspective ? 'perspective(' + perspective + 'px)' : '';
-          for (let p in newStyle) {
-            if (Css.isTransform(p) === 'transform') {
-              str = Css.mergeTransform(newStyle['transform'], str);
-            }
-          }
-
-          for (let p in this.tweenStart.end) {
-            if (Css.isTransform(p) === 'transform') {
-              str = Css.mergeTransform(str, this.tweenStart.end[p]);
-            }
-          }
-          newStyle['transform'] = str;
         }
       }
 
@@ -250,8 +257,16 @@ class TweenOne extends Component {
   }
 
   render() {
-    const style = assign({}, this.props.style, this.state.style);
+    const style = assign({}, this.state.style);
+    for (let p in style) {
+      if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
+        ['Webkit', 'Moz', 'Ms', 'ms'].forEach((prefix)=> {
+          style[`${prefix}Filter`] = style[p];
+        });
+      }
+    }
     return React.createElement(this.props.component, {style: style}, this.props.children);
+
   }
 }
 

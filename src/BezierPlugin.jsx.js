@@ -241,7 +241,6 @@ const GsapBezier = {
         b = cur[jj + 1];
         c = cur[jj + 2];
         d = (inc === 2) ? 0 : cur[jj + 3];
-        console.log(inc)
         cur[cnt++] = tmp = (inc === 3) ? new this.Segment(a, b, c, d) : new this.Segment(a, (2 * b + a) / 3, (2 * b + c) / 3, c);
       }
       cur.length = cnt;
@@ -294,7 +293,7 @@ const GsapBezier = {
 const Bezier = function (transform, obj) {
   this.defaultData = this.getDefaultData(obj);
   const matrix = createMatrix(transform);
-  this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
+  // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
   this.defaultData.startPoint = {x: matrix.e, y: matrix.f};
   this.init();
 };
@@ -413,7 +412,7 @@ Bezier.prototype = {
           y1 += (y2 - y1) * t;
           y2 += ((b2.c + (b2.d - b2.c) * t) - y2) * t;
           const _r = Math.atan2(y2 - y1, x2 - x1) * conv;
-          rotate = this._li === 0 ? _r + add + (this.startRotate - _r) * (1 - t) : _r + add;
+          rotate = _r + add;
 
         }
       }
