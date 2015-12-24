@@ -34,7 +34,7 @@ npm start
 
 
 
-### vars =[] 时为timeline
+### vars =[ ] 时为timeline
 
 ### bezier = {}
 
@@ -44,7 +44,7 @@ npm start
 | autoRotate | boolean        | false   | 跟随位置旋转  |
 | vars       | array          | null    | 贝赛尔点的位置，如 `{x:100,y:100}` |
 
->> 贝赛尔曲线API参照 [gsap BezierPlugin](http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/)
+> 贝赛尔曲线API参照 [gsap BezierPlugin](http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/)
 
 ## Example
 
