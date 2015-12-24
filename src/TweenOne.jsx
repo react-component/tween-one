@@ -148,9 +148,8 @@ class TweenOne extends Component {
               start = [0];
               end = [1]
             } else {
-              start = DataToArray(parseFloat(this.tweenStart[i][p]));
+              start = DataToArray(parseFloat(this.tweenStart[i][p] === 'auto' || this.tweenStart[i][p] === 'none' ? 0 : this.tweenStart[i][p]));
             }
-
 
             // 转成Array可对多个操作；
             start.forEach((startItem, i)=> {
@@ -201,7 +200,6 @@ class TweenOne extends Component {
           item.onRepeat();
           this.componentWillUnmount();
         } else {
-
           this.defaultData[i] = null;
           if (!item.onComplete.only) {
             item.onComplete();
