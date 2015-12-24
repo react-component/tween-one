@@ -13,7 +13,9 @@ npm start
 | props      | type           | default | description    |
 | vars       | object / array | null    | 需要执行动画的参数 |
 
+
 ### vars = {}
+
 | props      | type           | default | description    |
 | style里的样式 | string / number| null  | 样式里能执行动画的，如 `translateX` `rotateX` `color` `marginTop` 或 `x` `y`等 |
 | duration   |  number        | 450     | 动画时间     |
@@ -33,12 +35,13 @@ npm start
 ### vars =[] 时为timeline
 
 ### bezier = {}
+
 | props      | type           | default | description    |
 | type       | string         | 'soft'  | `thru`, `thruBasic`, `soft`, `quadratic`, `cubic` |
 | autoRotate | boolean        | false   | 跟随位置旋转向  |
 | vars       | array          | null    | 贝赛尔点的位置，如 `{x:100,y:100}` |
 
->> 贝赛尔曲线API参照 (gsap BezierPlugin)[http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/]
+>> 贝赛尔曲线API参照 [gsap BezierPlugin](http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/)
 
 ## Example
 
