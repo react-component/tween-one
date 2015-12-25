@@ -12,14 +12,14 @@
     "assets/*.css"
   ],
   "main": "./lib/index",
-  "homepage": "https://github.com/ant-motion/rc-tween-one",
+  "homepage": "https://github.com/ant-motion/tween-one",
   "author": "155259966@qq.com",
   "repository": {
     "type": "git",
-    "url": "git@github.com:ant-motion/rc-tween-one.git"
+    "url": "git@github.com:ant-motion/tween-one.git"
   },
   "bugs": {
-    "url": "https://github.com/ant-motion/rc-tween-one/issues"
+    "url": "https://github.com/ant-motion/tween-one/issues"
   },
   "licenses": "MIT",
   "config": {
