@@ -5,22 +5,22 @@ class Demo extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      tweenData: { translateX: '100px', duration: 300}
-    }
+      tweenData: { translateX: '100px', duration: 300},
+    };
   }
 
   componentDidMount() {
     setTimeout(()=> {
       this.setState({
-        tweenData: {opacity: .5, marginTop: 100, duration: 1000}
-      })
-    }, 1000)
+        tweenData: {opacity: 0.5, marginTop: 100, duration: 1000},
+      });
+    }, 1000);
   }
 
   render() {
-    return <Tween vars={this.state.tweenData}>
+    return (<Tween vars={this.state.tweenData}>
       <div>执行动效</div>
-    </Tween>
+    </Tween>);
   }
 }
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

@@ -7,9 +7,9 @@ class Demo extends React.Component {
   }
 
   render() {
-    return <Tween vars={{opacity:1,translateX:'100px',repeat:8,duration:1000,yoyo:true}} style={{opacity:0}}>
+    return (<Tween vars={{opacity: 1, translateX: '100px', repeat: 8, duration: 1000, yoyo: true}} style={{opacity: 0}}>
       <div>执行动效</div>
-    </Tween>
+    </Tween>);
   }
 }
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

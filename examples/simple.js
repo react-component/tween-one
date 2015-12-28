@@ -8,15 +8,15 @@ class Demo extends React.Component {
     super(...arguments);
   }
 
-  abc(a, e) {
-    //update里传回出当前的百分比；
-   // console.log('bind:' + a, 'update:' + e)
+  abc(t, e) {
+    // update里传回出当前的百分比；
+    console.log('bind:' + t, 'update:' + e);
   }
 
   render() {
-    return <Tween vars={{translateX:'500px',onUpdate:this.abc.bind(this,a)}} style={{opacity:1,height:100,transform:'translate(50px,30px)'}}>
+    return (<Tween vars={{translateX: '500px', onUpdate: this.abc.bind(this, a)}} style={{opacity: 1, height: 100, transform: 'translate(50px,30px)'}}>
       <div>执行动效</div>
-    </Tween>
+    </Tween>);
   }
 }
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

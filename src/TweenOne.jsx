@@ -1,4 +1,4 @@
-import React, {PropTypes,Component} from 'react';
+import React, {PropTypes, Component} from 'react';
 import ReactDom from 'react-dom';
 import assign from 'object-assign';
 import easingTypes from 'tween-functions';
@@ -13,9 +13,9 @@ const DEFAULT_DELAY = 0;
 function noop() {
 }
 
-function DataToArray(vars) {
+function dataToArray(vars) {
   if (!vars && vars !== 0) {
-    return []
+    return [];
   }
   if (Array.isArray(vars)) {
     return vars;
@@ -24,7 +24,7 @@ function DataToArray(vars) {
 }
 
 
-function DefaultData(vars, now) {
+function defaultData(vars, now) {
   return {
     duration: vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION,
     delay: vars.delay || DEFAULT_DELAY,
@@ -38,32 +38,10 @@ function DefaultData(vars, now) {
     repeatAnnal: 1,
     yoyo: vars.yoyo || false,
     initTime: now,
-  }
+  };
 }
 
 class TweenOne extends Component {
-  setDefaultData(_vars) {
-    const vars = DataToArray(_vars);
-    this.defaultData = [];
-    this.tweenStart = {};
-    let now = Date.now();
-    vars.forEach((item)=> {
-      now += (item.delay || 0);//加上延时
-      const tweenData = DefaultData(item, now);
-      tweenData.tween = {};
-      for (let p in item) {
-        if (!(p in tweenData)) {
-          tweenData.tween[p] = item[p];
-        }
-      }
-      if (tweenData.yoyo && !tweenData.repeat) {
-        console.warn('Warning: yoyo must be used together with repeat;')
-      }
-      now += (item.duration || DEFAULT_DURATION );// 加上此时用的时间，遍历下个时要用
-      this.defaultData.push(tweenData);
-    });
-  }
-
   constructor() {
     super(...arguments);
     this.rafID = null;
@@ -73,15 +51,82 @@ class TweenOne extends Component {
       style: this.props.style || {},
     };
     [
-      'raf'
+      'raf',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
+  componentDidMount() {
+    const dom = ReactDom.findDOMNode(this);
+    this.computedStyle = document.defaultView.getComputedStyle(dom);
+    if (this.defaultData.length && this.props.vars) {
+      this.rafID = requestAnimationFrame(this.raf);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.vars !== nextProps.vars) {
+      // 数组情况不全等；
+      if (Array.isArray(this.props.vars) && Array.isArray(nextProps.vars)) {
+        let equalBool = true;
+        for (let i = 0; i < this.props.vars.length; i++) {
+          const currentObj = this.props.vars[i];
+          const nextObj = nextProps.vars[i];
+          for (const p in currentObj) {
+            if (currentObj[p] !== nextObj[p]) {
+              equalBool = false;
+              break;
+            }
+          }
+          if (!equalBool) {
+            this.setDefaultData(nextProps.vars || {});
+            this.componentWillUnmount();
+            this.rafID = requestAnimationFrame(this.raf);
+            break;
+          }
+        }
+      } else {
+        this.setDefaultData(nextProps.vars || {});
+        this.componentWillUnmount();
+        this.rafID = requestAnimationFrame(this.raf);
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    requestAnimationFrame.cancel(this._rafID);
+    this._rafID = -1;
+  }
+
+  setDefaultData(_vars) {
+    const vars = dataToArray(_vars);
+    this.defaultData = [];
+    this.tweenStart = {};
+    let now = Date.now();
+    vars.forEach((item)=> {
+      now += (item.delay || 0);// 加上延时
+      const tweenData = defaultData(item, now);
+      tweenData.tween = {};
+      for (const p in item) {
+        if (!(p in tweenData)) {
+          tweenData.tween[p] = item[p];
+        }
+      }
+      if (tweenData.yoyo && !tweenData.repeat) {
+        console.warn('Warning: yoyo must be used together with repeat;');
+      }
+      now += (item.duration || DEFAULT_DURATION );// 加上此时用的时间，遍历下个时要用
+      this.defaultData.push(tweenData);
+    });
+  }
 
   raf() {
     if (this.rafID === -1) {
       return;
     }
+    function childMap(_item) {
+      return parseFloat(_item);
+    }
+
     const newStyle = this.style;
     this.defaultData.forEach((item, i)=> {
       if (!item) {
@@ -89,7 +134,10 @@ class TweenOne extends Component {
       }
       const now = Date.now();
       const progressTime = now - item.initTime > item.duration ? item.duration : now - item.initTime;
-      let start, end, startData, perspective;
+      let start;
+      let end;
+      let startData;
+      let perspective;
       if (item.tween && progressTime >= 0) {
         if (!item.onStart.only) {
           item.onStart();
@@ -111,14 +159,13 @@ class TweenOne extends Component {
             // 开始设置；
             if (cssName === 'transform' || cssName === 'filter') {
               if (!this.tweenStart.end[p + 'Bool' + i]) {
-                let array;
                 if (newStyle && newStyle[cssName]) {
                   const cssStyleArr = newStyle[cssName].split(' ');
                   if (cssName === 'transform') {
-                    cssStyleArr.forEach(item=> {
-                      array = item.replace(/[(|)]/ig, '$').split('$');
-                      this.tweenStart[i][array[0]] = array[1];
-                    });
+                    for (let ii = 0; ii < cssStyleArr.length; ii++) {
+                      const _item = cssStyleArr[ii].replace(/[(|)]/ig, '$').split('$');
+                      this.tweenStart[i][_item[0]] = _item[1];
+                    }
                     this.tweenStart[i][p] = Css.mergeTransformName(cssStyleArr, p) || this.tweenStart[i][p];
                   } else {
                     this.tweenStart[i][p] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
@@ -130,9 +177,9 @@ class TweenOne extends Component {
 
             // 设置start与end的值
             startData = this.tweenStart[i][p];
-            end = DataToArray(parseFloat(_value));
+            end = dataToArray(parseFloat(_value));
             if (typeof _value === 'string' && _value.charAt(1) === '=') {
-              end = DataToArray(parseFloat(this.tweenStart[i][p]) + parseFloat(_value.charAt(0) + 1) * parseFloat(_value.substr(2)));
+              end = dataToArray(parseFloat(this.tweenStart[i][p]) + parseFloat(_value.charAt(0) + 1) * parseFloat(_value.substr(2)));
             }
             let easeValue = [];
             if (cssName.indexOf('color') >= 0 || cssName.indexOf('Color') >= 0) {
@@ -148,44 +195,43 @@ class TweenOne extends Component {
               start = [0];
               end = [1];
             } else {
-              start = DataToArray(parseFloat(this.tweenStart[i][p] === 'auto' || this.tweenStart[i][p] === 'none' ? 0 : this.tweenStart[i][p]));
+              start = dataToArray(parseFloat(this.tweenStart[i][p] === 'auto' || this.tweenStart[i][p] === 'none' ? 0 : this.tweenStart[i][p]));
             }
 
             // 转成Array可对多个操作；
-            start.forEach((startItem, i)=> {
-              const endItem = end [i];
-              easeValue[i] = easingTypes[item.ease](progressTime, parseFloat(startItem), parseFloat(endItem), item.duration);
+            for (let ii = 0; ii < start.length; ii++) {
+              const startItem = start[ii];
+              const endItem = end [ii];
+              easeValue[ii] = easingTypes[item.ease](progressTime, parseFloat(startItem), parseFloat(endItem), item.duration);
               if (item.yoyo && !(item.repeatAnnal % 2)) {
-                easeValue[i] = easingTypes[item.ease](progressTime, parseFloat(endItem), parseFloat(startItem), item.duration);
+                easeValue[ii] = easingTypes[item.ease](progressTime, parseFloat(endItem), parseFloat(startItem), item.duration);
               }
-            });
+            }
             easeValue = item.duration === 0 ? end : easeValue;
             this.tweenStart.end[p] = easeValue;
 
             // 生成样式
             if (cssName === 'transform') {
-              const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(item=> {
-                return parseFloat(item);
-              });
+              const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(childMap);
               perspective = m[11] ? Math.round((m[10] < 0 ? -m[10] : m[10]) / (m[11] < 0 ? -m[11] : m[11])) : 0;
               this.tweenStart.end[p] = Css.getParam(p, _value, easeValue);
               let str = perspective ? 'perspective(' + perspective + 'px)' : '';
-              for (let p in newStyle) {
-                if (Css.isTransform(p) === 'transform') {
-                  str = Css.mergeStyle(newStyle['transform'], str);
+              for (const _p in newStyle) {
+                if (Css.isTransform(_p) === 'transform') {
+                  str = Css.mergeStyle(newStyle.transform, str);
                 }
               }
-              for (let p in this.tweenStart.end) {
-                if (Css.isTransform(p) === 'transform') {
-                  str = Css.mergeStyle(str, this.tweenStart.end[p]);
+              for (const _p in this.tweenStart.end) {
+                if (Css.isTransform(_p) === 'transform') {
+                  str = Css.mergeStyle(str, this.tweenStart.end[_p]);
                 }
               }
               newStyle[cssName] = str;
             } else if (cssName === 'bezier') {
-              const bezier = this.tweenStart['bezier' + i] = this.tweenStart['bezier' + i] || new Bezier(this.computedStyle['transform'], _value);
-              newStyle['transform'] = Css.mergeStyle(newStyle['transform'] || '', bezier.set(easeValue[0]));
+              const bezier = this.tweenStart['bezier' + i] = this.tweenStart['bezier' + i] || new Bezier(this.computedStyle.transform, _value);
+              newStyle.transform = Css.mergeStyle(newStyle.transform || '', bezier.set(easeValue[0]));
             } else if (cssName === 'filter') {
-              newStyle[cssName] = Css.mergeStyle(newStyle[cssName] || '', Css.getFilterParam(this.tweenStart[i][p], _value, easeValue[0]))
+              newStyle[cssName] = Css.mergeStyle(newStyle[cssName] || '', Css.getFilterParam(this.tweenStart[i][p], _value, easeValue[0]));
             } else {
               newStyle[cssName] = Css.getParam(p, _value, easeValue);
             }
@@ -209,7 +255,7 @@ class TweenOne extends Component {
       }
     });
     this.setState({
-      style: newStyle
+      style: newStyle,
     });
     if (this.defaultData.every(c=>!c)) {
       this.componentWillUnmount();
@@ -218,55 +264,16 @@ class TweenOne extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.vars !== nextProps.vars) {
-      // 数组情况不全等；
-      if (Array.isArray(this.props.vars) && Array.isArray(nextProps.vars)) {
-        let equalBool = true;
-        for (let i = 0; i < this.props.vars.length; i++) {
-          const currentObj = this.props.vars[i];
-          const nextObj = nextProps.vars[i];
-          for (let p in currentObj) {
-            if (currentObj[p] !== nextObj[p]) {
-              equalBool = false;
-              break;
-            }
-          }
-          if (!equalBool) {
-            this.setDefaultData(nextProps.vars || {});
-            this.componentWillUnmount();
-            this.rafID = requestAnimationFrame(this.raf);
-            break;
-          }
-        }
-      } else {
-        this.setDefaultData(nextProps.vars || {});
-        this.componentWillUnmount();
-        this.rafID = requestAnimationFrame(this.raf);
-      }
-    }
-  }
-
-  componentDidMount() {
-    const dom = ReactDom.findDOMNode(this);
-    this.computedStyle = document.defaultView.getComputedStyle(dom);
-    if (this.defaultData.length && this.props.vars) {
-      this.rafID = requestAnimationFrame(this.raf);
-    }
-  }
-
-  componentWillUnmount() {
-    requestAnimationFrame.cancel(this._rafID);
-    this._rafID = -1;
-  }
-
   render() {
     const style = assign({}, this.state.style);
-    for (let p in style) {
+
+    for (const p in style) {
       if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
-        ['Webkit', 'Moz', 'Ms', 'ms'].forEach((prefix)=> {
-          style[`${prefix}Filter`] = style[p];
-        });
+        // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
+        const transformArr = ['Webkit', 'Moz', 'Ms', 'ms'];
+        for (let i = 0; i < transformArr.length; i++) {
+          style[`${transformArr[i]}Filter`] = style[p];
+        }
       }
     }
     return React.createElement(this.props.component, {style: style}, this.props.children);
@@ -278,10 +285,13 @@ const objectOrArray = React.PropTypes.oneOfType([PropTypes.object, PropTypes.arr
 TweenOne.propTypes = {
   component: PropTypes.string,
   vars: objectOrArray,
+  children: objectOrArray,
+  style: PropTypes.object,
 };
 
 TweenOne.defaultProps = {
   component: 'div',
   vars: null,
 };
+
 export default TweenOne;
