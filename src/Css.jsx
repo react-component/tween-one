@@ -53,6 +53,15 @@ const CSS = {
     transforms3D: ['translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective'],
   },
 
+  getGsapType(_p) {
+    let p = _p;
+    p = p === 'x' ? 'translateX' : p;
+    p = p === 'y' ? 'translateY' : p;
+    p = p === 'z' ? 'translateZ' : p;
+    p = p === 'r' ? 'rotate' : p;
+    return p;
+  },
+
   parseShadow(v) {
     let vArr = v.split(' ');
     const color = this.parseColor(vArr[3]);
@@ -323,11 +332,11 @@ const CSS = {
     let invalid = true;
     if (p.indexOf('translate') >= 0 || p.indexOf('perspective') >= 0) {
       invalid = !/(%|px|em|rem|vw|vh|\d)$/i.test(v);
-      unit = Number(v).toString() !== 'NaN' ? 'px' : '';
+      unit = Number(v.toString().replace('=', '')).toString() !== 'NaN' ? 'px' : '';
       unit = unit || v.toString().replace(/[^a-z|%]/ig, '');
     } else if (p.indexOf('skew') >= 0 || p.indexOf('rotate') >= 0) {
       invalid = !/(deg|\d)$/i.test(v);
-      unit = Number(v).toString() !== 'NaN' ? 'deg' : '';
+      unit = Number(v.toString().replace('=', '')).toString() !== 'NaN' ? 'deg' : '';
       unit = unit || v.toString().replace(/[^a-z|%]/ig, '');
     } else if (p.indexOf('scale') >= 0) {
       invalid = !/(\d)$/i.test(v);
@@ -338,7 +347,7 @@ const CSS = {
       param = this.getValues(p, d, unit);
     } else {
       // unit = Number(v) !== NaN ? '' : v.toString().replace(/[^a-z|%]/ig, '');
-      unit = Number(v).toString() !== 'NaN' ? '' : v.toString().replace(/[^a-z|%]/ig, '');
+      unit = Number(v.toString().replace('=', '')).toString() !== 'NaN' ? '' : v.toString().replace(/[^a-z|%]/ig, '');
       param = d + unit;
     }
     return param;

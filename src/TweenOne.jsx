@@ -3,26 +3,15 @@ import ReactDom from 'react-dom';
 import assign from 'object-assign';
 import easingTypes from 'tween-functions';
 import requestAnimationFrame from 'raf';
+import {dataToArray, objectEqual} from './util';
 import Css from './Css';
 import Bezier from './BezierPlugin';
 
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
 const DEFAULT_DELAY = 0;
-
 function noop() {
 }
-
-function dataToArray(vars) {
-  if (!vars && vars !== 0) {
-    return [];
-  }
-  if (Array.isArray(vars)) {
-    return vars;
-  }
-  return [vars];
-}
-
 
 function defaultData(vars, now) {
   return {
@@ -33,10 +22,11 @@ function defaultData(vars, now) {
     onComplete: vars.onComplete || noop,
     onStart: vars.onStart || noop,
     onRepeat: vars.onRepeat || noop,
-    repeat: vars.repeat || 0,
+    repeat: vars.repeat || 1,
     repeatDelay: vars.repeatDelay || 0,
     repeatAnnal: 1,
     yoyo: vars.yoyo || false,
+    type: vars.type || 'to',
     initTime: now,
   };
 }
@@ -48,7 +38,7 @@ class TweenOne extends Component {
     this.style = this.props.style || {};
     this.setDefaultData(this.props.vars || {});
     this.state = {
-      style: this.props.style || {},
+      style: this.style,
     };
     [
       'raf',
@@ -64,31 +54,18 @@ class TweenOne extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.vars !== nextProps.vars) {
-      // 数组情况不全等；
-      if (Array.isArray(this.props.vars) && Array.isArray(nextProps.vars)) {
-        let equalBool = true;
-        for (let i = 0; i < this.props.vars.length; i++) {
-          const currentObj = this.props.vars[i];
-          const nextObj = nextProps.vars[i];
-          for (const p in currentObj) {
-            if (currentObj[p] !== nextObj[p]) {
-              equalBool = false;
-              break;
-            }
-          }
-          if (!equalBool) {
-            this.setDefaultData(nextProps.vars || {});
-            this.componentWillUnmount();
-            this.rafID = requestAnimationFrame(this.raf);
-            break;
-          }
-        }
-      } else {
-        this.setDefaultData(nextProps.vars || {});
-        this.componentWillUnmount();
-        this.rafID = requestAnimationFrame(this.raf);
-      }
+    const equal = objectEqual(this.props.vars, nextProps.vars);
+    if (!equal) {
+      this.setDefaultData(nextProps.vars || {});
+      this.componentWillUnmount();
+      this.rafID = requestAnimationFrame(this.raf);
+    }
+    const styleEqual = objectEqual(this.props.style, nextProps.style);
+    if (!styleEqual) {
+      const style = assign({}, this.state.style, nextProps.style);
+      this.setState({
+        style,
+      });
     }
   }
 
@@ -102,7 +79,7 @@ class TweenOne extends Component {
     this.defaultData = [];
     this.tweenStart = {};
     let now = Date.now();
-    vars.forEach((item)=> {
+    vars.forEach(item=> {
       now += (item.delay || 0);// 加上延时
       const tweenData = defaultData(item, now);
       tweenData.tween = {};
@@ -111,10 +88,11 @@ class TweenOne extends Component {
           tweenData.tween[p] = item[p];
         }
       }
+
       if (tweenData.yoyo && !tweenData.repeat) {
         console.warn('Warning: yoyo must be used together with repeat;');
       }
-      now += (item.duration || DEFAULT_DURATION );// 加上此时用的时间，遍历下个时要用
+      now += tweenData.duration * tweenData.repeat + tweenData.repeatDelay * (tweenData.repeat - 1);// 加上此时用的时间，遍历下个时要用
       this.defaultData.push(tweenData);
     });
   }
@@ -148,17 +126,14 @@ class TweenOne extends Component {
         for (let p in item.tween) {
           if (p !== 'start') {
             const _value = item.tween[p];
-            p = p === 'x' ? 'translateX' : p;
-            p = p === 'y' ? 'translateY' : p;
-            p = p === 'z' ? 'translateZ' : p;
-            p = p === 'r' ? 'rotate' : p;
+            p = Css.getGsapType(p);
             const cssName = Css.isTransform(p);
             this.tweenStart[i] = this.tweenStart[i] || {};
             this.tweenStart.end = this.tweenStart.end || {};
             this.tweenStart[i][p] = this.tweenStart[i][p] || this.computedStyle[p] || 0;
             // 开始设置；
             if (cssName === 'transform' || cssName === 'filter') {
-              if (!this.tweenStart.end[p + 'Bool' + i]) {
+              if (!this.tweenStart.end['Bool' + i]) {
                 if (newStyle && newStyle[cssName]) {
                   const cssStyleArr = newStyle[cssName].split(' ');
                   if (cssName === 'transform') {
@@ -171,7 +146,7 @@ class TweenOne extends Component {
                     this.tweenStart[i][p] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
                   }
                 }
-                this.tweenStart.end[p + 'Bool' + i] = true;
+                this.tweenStart.end['Bool' + i] = true;
               }
             }
 
@@ -199,12 +174,17 @@ class TweenOne extends Component {
             }
 
             // 转成Array可对多个操作；
+            const reverse = item.type === 'from';// 倒放
             for (let ii = 0; ii < start.length; ii++) {
-              const startItem = start[ii];
-              const endItem = end [ii];
-              easeValue[ii] = easingTypes[item.ease](progressTime, parseFloat(startItem), parseFloat(endItem), item.duration);
+              let startItem = parseFloat(start[ii]);
+              let endItem = parseFloat(end[ii]);
+              if (reverse) {
+                startItem = parseFloat(end[ii]);
+                endItem = parseFloat(start[ii]);
+              }
+              easeValue[ii] = easingTypes[item.ease](progressTime, startItem, endItem, item.duration);
               if (item.yoyo && !(item.repeatAnnal % 2)) {
-                easeValue[ii] = easingTypes[item.ease](progressTime, parseFloat(endItem), parseFloat(startItem), item.duration);
+                easeValue[ii] = easingTypes[item.ease](progressTime, endItem, startItem, item.duration);
               }
             }
             easeValue = item.duration === 0 ? end : easeValue;
@@ -226,6 +206,7 @@ class TweenOne extends Component {
                   str = Css.mergeStyle(str, this.tweenStart.end[_p]);
                 }
               }
+
               newStyle[cssName] = str;
             } else if (cssName === 'bezier') {
               const bezier = this.tweenStart['bezier' + i] = this.tweenStart['bezier' + i] || new Bezier(this.computedStyle.transform, _value);
@@ -266,7 +247,6 @@ class TweenOne extends Component {
 
   render() {
     const style = assign({}, this.state.style);
-
     for (const p in style) {
       if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
         // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
@@ -281,17 +261,19 @@ class TweenOne extends Component {
 }
 
 const objectOrArray = React.PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
+const objectOrArrayOrString = React.PropTypes.oneOfType([PropTypes.string, objectOrArray]);
 
 TweenOne.propTypes = {
   component: PropTypes.string,
   vars: objectOrArray,
-  children: objectOrArray,
+  children: objectOrArrayOrString,
   style: PropTypes.object,
 };
 
 TweenOne.defaultProps = {
   component: 'div',
   vars: null,
+  children: [],
 };
 
 export default TweenOne;

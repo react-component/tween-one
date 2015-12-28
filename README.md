@@ -82,12 +82,14 @@ React.render(<TweenOne vars={{x:100}}/>, container);
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
 | vars       | object / array | null    | 需要执行动画的参数 |
+| component  | string         | `div`   | 标签   |
 
 
 ### vars = {}
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
+| type       | string         | `to`    | 播放类型，`to` `from`|
 | style里的样式 | string / number| null  | 样式里能执行动画的，如 `translateX` `rotateX` `color` `marginTop` 或 `x` `y`等 |
 | duration   |  number        | 450     | 动画时间     |
 | delay      | number         | 0       | 延时  |
