@@ -51,9 +51,6 @@ npm start
 http://localhost:8100/examples/
 
 
-online example: http://react-component.github.io/tween-one/
-
-
 ## Feature
 
 * support ie8,ie8+,chrome,firefox,safari
