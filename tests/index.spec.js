@@ -132,4 +132,23 @@ describe('rc-tween-one', function() {
       }, 40);
     }, 430);
   });
+
+  it('type is from tween-one', function(done) {
+    instance = createTweenInstance({
+      vars: {top: 100, type: 'from'},
+      style: {position: 'relative', top: 0},
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    console.log('default:' + child.style.top);
+    expect(getFloat(child.style.top)).to.be(0);
+    setTimeout(()=> {
+      expect(getFloat(child.style.top)).to.above(95);
+      console.log('start:' + child.style.top);
+      setTimeout(()=> {
+        expect(getFloat(child.style.top)).to.be(0);
+        console.log('end:' + child.style.top);
+        done();
+      }, 450);
+    }, 30);
+  });
 });
