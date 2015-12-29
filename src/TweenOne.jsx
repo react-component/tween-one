@@ -70,8 +70,8 @@ class TweenOne extends Component {
   }
 
   componentWillUnmount() {
-    requestAnimationFrame.cancel(this._rafID);
-    this._rafID = -1;
+    requestAnimationFrame.cancel(this.rafID);
+    this.rafID = -1;
   }
 
   setDefaultData(_vars) {
