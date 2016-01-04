@@ -35,29 +35,67 @@ class TweenOne extends Component {
   constructor() {
     super(...arguments);
     this.rafID = null;
+    this.type = this.props.type;
+    this.timeLineProgressData = {};
     this.style = this.props.style || {};
+    this.tweenStart = {};
+    this.defaultData = [];
     this.setDefaultData(this.props.vars || {});
     this.state = {
       style: this.style,
     };
     [
       'raf',
+      'rafa',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
-    const dom = ReactDom.findDOMNode(this);
-    this.computedStyle = document.defaultView.getComputedStyle(dom);
-    if (this.defaultData.length && this.props.vars) {
+    this.dom = ReactDom.findDOMNode(this);
+    this.computedStyle = assign({}, document.defaultView.getComputedStyle(this.dom));
+    if (this.defaultData.length && this.props.vars && (this.type === 'play' || this.type === 'restart')) {
       this.rafID = requestAnimationFrame(this.raf);
+      this.cancelRequestAnimationFram();
     }
+    // this.a = 0
+    // this.rafID2 = requestAnimationFrame(this.rafa);
   }
 
+  /*
+   * rafa() {
+   *  const style = {transform:'translateX(' + this.a + 'px)'};
+   * this.setState({style});
+   * this.a += 0.01;
+   * this.rafID2 = requestAnimationFrame(this.rafa);
+   * console.log(this.rafID2);
+   * }
+   */
+
   componentWillReceiveProps(nextProps) {
+    const newType = nextProps.type;
+
     const equal = objectEqual(this.props.vars, nextProps.vars);
     if (!equal) {
+      this.tweenStart = {};
+      this.defaultData = [];
+      this.timeLineProgressData = {};
+    }
+    const tweenKeysFunc = (style, key)=> {
+      const s = this.tweenStart[0][key].split(',').length > 1 ? key + '(' + this.tweenStart[0][key] + ')' : Css.getParam(key, this.tweenStart[0][key], parseFloat(this.tweenStart[0][key]));
+      style[Css.isTransform(key)] = Css.mergeStyle(style[Css.isTransform(key)], s);
+    };
+    if (newType === 'restart') {
+      const style = {};
+      Object.keys(this.tweenStart[0]).forEach(tweenKeysFunc.bind(this, style));
+      this.style = style;
+      this.tweenStart = {};
+      this.timeLineProgressData = {};
+      this.defaultData = [];
+    }
+    if (!equal || newType !== this.type || newType === 'restart') {
+      this.type = newType;
       this.setDefaultData(nextProps.vars || {});
-      this.componentWillUnmount();
+      this.cancelRequestAnimationFram();
       this.rafID = requestAnimationFrame(this.raf);
     }
     const styleEqual = objectEqual(this.props.style, nextProps.style);
@@ -69,18 +107,24 @@ class TweenOne extends Component {
     }
   }
 
+
   componentWillUnmount() {
-    requestAnimationFrame.cancel(this.rafID);
-    this.rafID = -1;
+    this.cancelRequestAnimationFram();
   }
+
 
   setDefaultData(_vars) {
     const vars = dataToArray(_vars);
-    this.defaultData = [];
-    this.tweenStart = {};
     let now = Date.now();
-    vars.forEach(item=> {
-      now += (item.delay || 0);// 加上延时
+    const varsForIn = (item, i)=> {
+      const progressTime = this.timeLineProgressData['progressTime' + i] < 0 || !this.timeLineProgressData['progressTime' + i] ? 0 : this.timeLineProgressData['progressTime' + i];
+      now += (!progressTime ? (item.delay || 0) : 0);// 加上延时，在没有播放过时；
+      if (this.type === 'reverse') {
+        // 如果反向播放时，now加上已播放了的时间；
+        now += (progressTime > 0 ? progressTime : 0);
+      } else {
+        now -= progressTime;// 如果在播放中停止重启时，加上已播放的时间；
+      }
       const tweenData = defaultData(item, now);
       tweenData.tween = {};
       for (const p in item) {
@@ -88,17 +132,37 @@ class TweenOne extends Component {
           tweenData.tween[p] = item[p];
         }
       }
-
       if (tweenData.yoyo && !tweenData.repeat) {
         console.warn('Warning: yoyo must be used together with repeat;');
       }
-      now += tweenData.duration * tweenData.repeat + tweenData.repeatDelay * (tweenData.repeat - 1);// 加上此时用的时间，遍历下个时要用
-      this.defaultData.push(tweenData);
-    });
+      if (this.type === 'reverse' && progressTime || this.type !== 'reverse') {
+        now += tweenData.duration * tweenData.repeat + tweenData.repeatDelay * (tweenData.repeat - 1);// 加上此时用的时间，遍历下个时要用
+        if (this.type === 'reverse') {
+          now -= progressTime + (this.defaultData[i] ? this.defaultData[i].repeatAnnal - 1 : 0) * tweenData.duration;// 如果已播放过了停止，再倒放时减掉已播放；
+        }
+      }
+      if (this.defaultData[i]) {
+        this.defaultData[i].initTime = tweenData.initTime;
+        if ((this.type === 'reverse' && progressTime) || (this.type !== 'reverse' && progressTime !== tweenData.duration)) {
+          this.defaultData[i].end = false;
+        } else {
+          this.defaultData[i].end = true;
+        }
+      } else {
+        this.defaultData[i] = tweenData;
+      }
+    };
+    if (this.type === 'reverse') {
+      for (let ii = vars.length - 1; ii >= 0; ii--) {
+        varsForIn(vars[ii], ii);
+      }
+    } else {
+      vars.forEach(varsForIn);
+    }
   }
 
   raf() {
-    if (this.rafID === -1) {
+    if (this.rafID === -1 || this.type === 'pause') {
       return;
     }
     function childMap(_item) {
@@ -111,12 +175,18 @@ class TweenOne extends Component {
         return;
       }
       const now = Date.now();
-      const progressTime = now - item.initTime > item.duration ? item.duration : now - item.initTime;
+      let progressTime = now - item.initTime > item.duration ? item.duration : now - item.initTime;
+      if (this.type === 'reverse') {
+        progressTime = item.initTime - now > 0 ? item.initTime - now : 0;
+      }
+      this.timeLineProgressData['progressTime' + i] = progressTime;
       let start;
       let end;
       let startData;
       let perspective;
-      if (item.tween && progressTime >= 0) {
+      const sBool = this.type === 'reverse' ? progressTime <= item.duration : progressTime >= 0;
+
+      if (item.tween && sBool && !this.defaultData[i].end) {
         if (!item.onStart.only) {
           item.onStart();
           item.onStart.only = true;
@@ -156,7 +226,6 @@ class TweenOne extends Component {
             if (typeof _value === 'string' && _value.charAt(1) === '=') {
               end = dataToArray(parseFloat(this.tweenStart[i][p]) + parseFloat(_value.charAt(0) + 1) * parseFloat(_value.substr(2)));
             }
-            let easeValue = [];
             if (cssName.indexOf('color') >= 0 || cssName.indexOf('Color') >= 0) {
               start = Css.parseColor(startData);
               end = Css.parseColor(_value);
@@ -174,6 +243,7 @@ class TweenOne extends Component {
             }
 
             // 转成Array可对多个操作；
+            let easeValue = [];
             const reverse = item.type === 'from';// 倒放
             for (let ii = 0; ii < start.length; ii++) {
               let startItem = parseFloat(start[ii]);
@@ -189,7 +259,7 @@ class TweenOne extends Component {
             }
             easeValue = item.duration === 0 ? end : easeValue;
             this.tweenStart.end[p] = easeValue;
-
+            // console.log(this.tweenStart)
             // 生成样式
             if (cssName === 'transform') {
               const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(childMap);
@@ -206,7 +276,6 @@ class TweenOne extends Component {
                   str = Css.mergeStyle(str, this.tweenStart.end[_p]);
                 }
               }
-
               newStyle[cssName] = str;
             } else if (cssName === 'bezier') {
               const bezier = this.tweenStart['bezier' + i] = this.tweenStart['bezier' + i] || new Bezier(this.computedStyle.transform, _value);
@@ -220,14 +289,27 @@ class TweenOne extends Component {
         }
       }
 
-      if (progressTime === item.duration) {
+      if (progressTime === item.duration && this.type !== 'reverse') {
         if (item.repeat && item.repeatAnnal !== item.repeat) {
           item.repeatAnnal++;
-          item.initTime = item.initTime + item.duration + item.repeatDelay;
+          item.initTime += item.duration + item.repeatDelay;
           item.onRepeat();
-          this.componentWillUnmount();
+          this.cancelRequestAnimationFram();
         } else {
-          this.defaultData[i] = null;
+          this.defaultData[i].end = true;
+          if (!item.onComplete.only) {
+            item.onComplete();
+            item.onComplete.only = true;
+          }
+        }
+      } else if (this.type === 'reverse' && progressTime === 0) {
+        if (item.repeat && item.repeatAnnal !== 1) {
+          item.repeatAnnal--;
+          item.initTime += item.duration + item.repeatDelay;
+          item.onRepeat();
+          this.cancelRequestAnimationFram();
+        } else {
+          this.defaultData[i].end = true;
           if (!item.onComplete.only) {
             item.onComplete();
             item.onComplete.only = true;
@@ -235,14 +317,30 @@ class TweenOne extends Component {
         }
       }
     });
-    this.setState({
-      style: newStyle,
-    });
-    if (this.defaultData.every(c=>!c)) {
-      this.componentWillUnmount();
+    const newStyleKeyFunc = (key)=> {
+      this.dom.style[key] = newStyle[key];
+    };
+    if (this.rafID !== -1) {
+      /*
+       * this.setState({
+       * style: newStyle,
+       * });
+       * */
+      console.log(newStyle);
+      Object.keys(newStyle).forEach(newStyleKeyFunc);
+    }
+    if (this.defaultData.every(c=>c.end)) {
+      this.cancelRequestAnimationFram();
     } else {
+      console.log('clear', this.rafID);
+      this.rafID = null;
       this.rafID = requestAnimationFrame(this.raf);
     }
+  }
+
+  cancelRequestAnimationFram() {
+    requestAnimationFrame.cancel(this.rafID);
+    this.rafID = -1;
   }
 
   render() {
@@ -266,6 +364,7 @@ const objectOrArrayOrString = React.PropTypes.oneOfType([PropTypes.string, objec
 TweenOne.propTypes = {
   component: PropTypes.string,
   vars: objectOrArray,
+  type: PropTypes.string,
   children: objectOrArrayOrString,
   style: PropTypes.object,
 };
@@ -273,6 +372,7 @@ TweenOne.propTypes = {
 TweenOne.defaultProps = {
   component: 'div',
   vars: null,
+  type: 'play',
   children: [],
 };
 

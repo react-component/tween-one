@@ -69,7 +69,9 @@ http://localhost:8100/examples/
 ```js
 var TweenOne = require('rc-tween-one');
 var React = require('react');
-React.render(<TweenOne vars={{x:100}}/>, container);
+React.render(<TweenOne vars={{x:100}}>
+               文案示例
+             </TweenOne>, container);
 ```
 
 ## API
@@ -78,6 +80,7 @@ React.render(<TweenOne vars={{x:100}}/>, container);
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
+| type       | string         | `play`  | 播放参数，为 `play` `pause` `reverse` `restart` |
 | vars       | object / array | null    | 需要执行动画的参数 |
 | component  | string         | `div`   | 标签   |
 

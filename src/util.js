@@ -35,8 +35,13 @@ export function objectEqual(obj1, obj2) {
       equalBool = false;
       return false;
     }
+
     if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
       equalBool = objectEqual(obj1[key], obj2[key]);
+    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
+      if (obj1[key].name !== obj2[key].name) {
+        equalBool = false;
+      }
     } else if (obj1[key] !== obj2[key]) {
       equalBool = false;
     }
@@ -49,6 +54,10 @@ export function objectEqual(obj1, obj2) {
     }
     if (typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
       equalBool = objectEqual(obj2[key], obj1[key]);
+    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
+      if (obj1[key].name !== obj2[key].name) {
+        equalBool = false;
+      }
     } else if (obj2[key] !== obj1[key]) {
       equalBool = false;
     }

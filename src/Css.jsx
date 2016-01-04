@@ -49,8 +49,8 @@ const transformGroup = {translate: 1, translate3d: 1, scale: 1, scale3d: 1, rota
 
 const CSS = {
   _lists: {
-    transformsBase: ['translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY', 'rotateZ', 'rotate'],
-    transforms3D: ['translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective'],
+    transformsBase: ['translate', 'translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY', 'rotateZ', 'rotate'],
+    transforms3D: ['translate3d', 'translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective'],
   },
 
   getGsapType(_p) {
@@ -269,6 +269,8 @@ const CSS = {
             return null;
           }
           addArr.push(currentOnlyName + '(' + currentDataArr.join(',') + ')');
+        } else if (changeOnlyName in transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 1).indexOf(changeOnlyName) >= 0) {
+          addArr.push(changeOnlyName + '(' + changeDataArr.join(',') + ')');
         } else if (changeOnlyName in transformGroup && currentOnlyName in transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 2) === changeOnlyName) {
           // 如果是3d时,且一个为2d时；
           switch (changeOnlyName) {
