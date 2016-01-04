@@ -302,7 +302,6 @@ const CSS = {
   },
 
   isTransform(p) {
-    this._lists.transformsBase = !(IE <= 9) ? this._lists.transformsBase.concat(this._lists.transforms3D) : this._lists.transformsBase;
     return this._lists.transformsBase.indexOf(p) >= 0 ? 'transform' : p;
   },
 
@@ -386,4 +385,5 @@ const CSS = {
     return changeArr.join(' ');
   },
 };
+CSS._lists.transformsBase = !(IE <= 9) ? CSS._lists.transformsBase.concat(CSS._lists.transforms3D) : CSS._lists.transformsBase;
 export default CSS;

@@ -13,6 +13,7 @@ const DEFAULT_DELAY = 0;
 function noop() {
 }
 
+// 设置默认数据
 function defaultData(vars, now) {
   return {
     duration: vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION,
@@ -44,32 +45,19 @@ class TweenOne extends Component {
     this.state = {
       style: this.style,
     };
+    this.a = 0;
     [
       'raf',
-      'rafa',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
-    this.dom = ReactDom.findDOMNode(this);
-    this.computedStyle = assign({}, document.defaultView.getComputedStyle(this.dom));
+    const dom = ReactDom.findDOMNode(this);
+    this.computedStyle = assign({}, document.defaultView.getComputedStyle(dom));
     if (this.defaultData.length && this.props.vars && (this.type === 'play' || this.type === 'restart')) {
       this.rafID = requestAnimationFrame(this.raf);
-      this.cancelRequestAnimationFram();
     }
-    // this.a = 0
-    // this.rafID2 = requestAnimationFrame(this.rafa);
   }
-
-  /*
-   * rafa() {
-   *  const style = {transform:'translateX(' + this.a + 'px)'};
-   * this.setState({style});
-   * this.a += 0.01;
-   * this.rafID2 = requestAnimationFrame(this.rafa);
-   * console.log(this.rafID2);
-   * }
-   */
 
   componentWillReceiveProps(nextProps) {
     const newType = nextProps.type;
@@ -107,11 +95,9 @@ class TweenOne extends Component {
     }
   }
 
-
   componentWillUnmount() {
     this.cancelRequestAnimationFram();
   }
-
 
   setDefaultData(_vars) {
     const vars = dataToArray(_vars);
@@ -317,23 +303,14 @@ class TweenOne extends Component {
         }
       }
     });
-    const newStyleKeyFunc = (key)=> {
-      this.dom.style[key] = newStyle[key];
-    };
     if (this.rafID !== -1) {
-      /*
-       * this.setState({
-       * style: newStyle,
-       * });
-       * */
-      console.log(newStyle);
-      Object.keys(newStyle).forEach(newStyleKeyFunc);
+      this.setState({
+        style: newStyle,
+      });
     }
     if (this.defaultData.every(c=>c.end)) {
       this.cancelRequestAnimationFram();
     } else {
-      console.log('clear', this.rafID);
-      this.rafID = null;
       this.rafID = requestAnimationFrame(this.raf);
     }
   }
