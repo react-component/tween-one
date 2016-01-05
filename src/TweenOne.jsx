@@ -107,7 +107,7 @@ class TweenOne extends Component {
       now += (!progressTime ? (item.delay || 0) : 0);// 加上延时，在没有播放过时；
       if (this.type === 'reverse') {
         // 如果反向播放时，now加上已播放了的时间；
-        now += (progressTime > 0 ? progressTime : 0);
+        now += progressTime > 0 ? progressTime : 0;
       } else {
         now -= progressTime;// 如果在播放中停止重启时，加上已播放的时间；
       }
@@ -122,18 +122,18 @@ class TweenOne extends Component {
         console.warn('Warning: yoyo must be used together with repeat;');
       }
       if (this.type === 'reverse' && progressTime || this.type !== 'reverse') {
-        now += tweenData.duration * tweenData.repeat + tweenData.repeatDelay * (tweenData.repeat - 1);// 加上此时用的时间，遍历下个时要用
         if (this.type === 'reverse') {
-          now -= progressTime + (this.defaultData[i] ? this.defaultData[i].repeatAnnal - 1 : 0) * tweenData.duration;// 如果已播放过了停止，再倒放时减掉已播放；
+          // 如果已播放过了停止，再倒放时减掉已播放；
+          const repeatAnnalNum = this.defaultData[i] ? this.defaultData[i].repeatAnnal - 1 : 0;
+          now += repeatAnnalNum * tweenData.duration + repeatAnnalNum * tweenData.repeatDelay;
+        } else {
+          // 加上此时用的时间，遍历下个时要用
+          now += tweenData.duration * tweenData.repeat + tweenData.repeatDelay * (tweenData.repeat - 1);
         }
       }
       if (this.defaultData[i]) {
         this.defaultData[i].initTime = tweenData.initTime;
-        if ((this.type === 'reverse' && progressTime) || (this.type !== 'reverse' && progressTime !== tweenData.duration)) {
-          this.defaultData[i].end = false;
-        } else {
-          this.defaultData[i].end = true;
-        }
+        this.defaultData[i].end = !((this.type === 'reverse' && progressTime) || (this.type !== 'reverse' && progressTime !== tweenData.duration));
       } else {
         this.defaultData[i] = tweenData;
       }
@@ -145,6 +145,33 @@ class TweenOne extends Component {
     } else {
       vars.forEach(varsForIn);
     }
+  }
+
+  getStartAndEnd(_value, i, p) {
+    let end;
+    let start;
+    const cssName = Css.isTransform(p);
+    let startData = this.tweenStart[i][p];
+    end = dataToArray(parseFloat(_value));
+    if (typeof _value === 'string' && _value.charAt(1) === '=') {
+      end = dataToArray(parseFloat(this.tweenStart[i][p]) + parseFloat(_value.charAt(0) + 1) * parseFloat(_value.substr(2)));
+    }
+    if (cssName.indexOf('color') >= 0 || cssName.indexOf('Color') >= 0) {
+      start = Css.parseColor(startData);
+      end = Css.parseColor(_value);
+      start[3] = start[3] || 1;
+      end[3] = end[3] || 1;
+    } else if (cssName.indexOf('shadow') >= 0 || cssName.indexOf('Shadow') >= 0) {
+      startData = startData === 'none' ? '0 0 0 transparent' : startData;
+      start = Css.parseShadow(startData);
+      end = Css.parseShadow(_value);
+    } else if (cssName === 'bezier' || cssName === 'filter') {
+      start = [0];
+      end = [1];
+    } else {
+      start = dataToArray(parseFloat(this.tweenStart[i][p] === 'auto' || this.tweenStart[i][p] === 'none' ? 0 : this.tweenStart[i][p]));
+    }
+    return {start, end};
   }
 
   raf() {
@@ -166,9 +193,6 @@ class TweenOne extends Component {
         progressTime = item.initTime - now > 0 ? item.initTime - now : 0;
       }
       this.timeLineProgressData['progressTime' + i] = progressTime;
-      let start;
-      let end;
-      let startData;
       let perspective;
       const sBool = this.type === 'reverse' ? progressTime <= item.duration : progressTime >= 0;
 
@@ -207,26 +231,9 @@ class TweenOne extends Component {
             }
 
             // 设置start与end的值
-            startData = this.tweenStart[i][p];
-            end = dataToArray(parseFloat(_value));
-            if (typeof _value === 'string' && _value.charAt(1) === '=') {
-              end = dataToArray(parseFloat(this.tweenStart[i][p]) + parseFloat(_value.charAt(0) + 1) * parseFloat(_value.substr(2)));
-            }
-            if (cssName.indexOf('color') >= 0 || cssName.indexOf('Color') >= 0) {
-              start = Css.parseColor(startData);
-              end = Css.parseColor(_value);
-              start[3] = start[3] || 1;
-              end[3] = end[3] || 1;
-            } else if (cssName.indexOf('shadow') >= 0 || cssName.indexOf('Shadow') >= 0) {
-              startData = startData === 'none' ? '0 0 0 transparent' : startData;
-              start = Css.parseShadow(startData);
-              end = Css.parseShadow(_value);
-            } else if (cssName === 'bezier' || cssName === 'filter') {
-              start = [0];
-              end = [1];
-            } else {
-              start = dataToArray(parseFloat(this.tweenStart[i][p] === 'auto' || this.tweenStart[i][p] === 'none' ? 0 : this.tweenStart[i][p]));
-            }
+            const setStartEnd = this.getStartAndEnd(_value, i, p);
+            const start = setStartEnd.start;
+            const end = setStartEnd.end;
 
             // 转成Array可对多个操作；
             let easeValue = [];
@@ -245,7 +252,7 @@ class TweenOne extends Component {
             }
             easeValue = item.duration === 0 ? end : easeValue;
             this.tweenStart.end[p] = easeValue;
-            // console.log(this.tweenStart)
+
             // 生成样式
             if (cssName === 'transform') {
               const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(childMap);
