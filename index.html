@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-tween-one@0.1.3 - tween-one anim component for react</title>
+  <title>rc-tween-one@0.1.4 - tween-one anim component for react</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-tween-one@0.1.3</h1>
+  <h1>rc-tween-one@0.1.4</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -753,6 +753,8 @@
       <li><a href="examples/childrenUpdate.html">childrenUpdate</a></li>
       
       <li><a href="examples/color.html">color</a></li>
+      
+      <li><a href="examples/control.html">control</a></li>
       
       <li><a href="examples/from.html">from</a></li>
       
@@ -815,7 +817,9 @@ npm start</code></pre></div><h2>Example<a id="user-content-example" name="exampl
 <h3>Keyboard<a id="user-content-keyboard" name="keyboard" class="anchor" aria-hidden="true" href="#keyboard"><span class="octicon octicon-link"></span></a></h3><h2>install<a id="user-content-install" name="install" class="anchor" aria-hidden="true" href="#install"><span class="octicon octicon-link"></span></a></h2><p><a href="https://npmjs.org/package/rc-tween-one" title="null"><img src="https://nodei.co/npm/rc-tween-one.png" alt="rc-tween-one"></a></p>
 <h2>Usage<a id="user-content-usage" name="usage" class="anchor" aria-hidden="true" href="#usage"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="js"><span class="hljs-keyword">var</span> TweenOne = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-tween-one'</span>);
 <span class="hljs-keyword">var</span> React = <span class="hljs-built_in">require</span>(<span class="hljs-string">'react'</span>);
-React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">vars</span>=<span class="hljs-value">{{x:100}}</span>/&gt;</span>, container);</span></code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><h3>props<a id="user-content-props" name="props" class="anchor" aria-hidden="true" href="#props"><span class="octicon octicon-link"></span></a></h3><table>
+React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">vars</span>=<span class="hljs-value">{{x:100}}</span>&gt;</span>
+               文案示例
+             <span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>, container);</span></code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><h3>props<a id="user-content-props" name="props" class="anchor" aria-hidden="true" href="#props"><span class="octicon octicon-link"></span></a></h3><table>
 <thead>
 <tr>
 <th>name</th>
@@ -825,6 +829,12 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>type</td>
+<td>string</td>
+<td><code>play</code></td>
+<td>播放参数，为 <code>play</code> <code>pause</code> <code>reverse</code> <code>restart</code></td>
+</tr>
 <tr>
 <td>vars</td>
 <td>object / array</td>
@@ -839,7 +849,7 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 </tr>
 </tbody>
 </table>
-<h3>vars = {}<a id="user-content-vars-=-{}" name="vars-=-{}" class="anchor" aria-hidden="true" href="#vars-=-{}"><span class="octicon octicon-link"></span></a></h3><table>
+<h3>vars = { }<a id="user-content-vars-=-{-}" name="vars-=-{-}" class="anchor" aria-hidden="true" href="#vars-=-{-}"><span class="octicon octicon-link"></span></a></h3><table>
 <thead>
 <tr>
 <th>name</th>
@@ -895,7 +905,7 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>ease</td>
 <td>string</td>
 <td>&#39;easeInOutQuad&#39;</td>
-<td>数动缓动参数</td>
+<td>缓动参数</td>
 </tr>
 <tr>
 <td>bezier</td>
@@ -929,7 +939,7 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 </tr>
 </tbody>
 </table>
-<h3>vars =[ ] 时为timeline<a id="user-content-vars-=[-]-时为timeline" name="vars-=[-]-时为timeline" class="anchor" aria-hidden="true" href="#vars-=[-]-时为timeline"><span class="octicon octicon-link"></span></a></h3><h3>bezier = {}<a id="user-content-bezier-=-{}" name="bezier-=-{}" class="anchor" aria-hidden="true" href="#bezier-=-{}"><span class="octicon octicon-link"></span></a></h3><table>
+<h3>vars =[ ] 时为timeline<a id="user-content-vars-=[-]-时为timeline" name="vars-=[-]-时为timeline" class="anchor" aria-hidden="true" href="#vars-=[-]-时为timeline"><span class="octicon octicon-link"></span></a></h3><h3>bezier = { }<a id="user-content-bezier-=-{-}" name="bezier-=-{-}" class="anchor" aria-hidden="true" href="#bezier-=-{-}"><span class="octicon octicon-link"></span></a></h3><table>
 <thead>
 <tr>
 <th>name</th>

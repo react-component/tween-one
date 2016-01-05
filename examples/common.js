@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		13:0
+/******/ 		14:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"from","6":"gsapWritten","7":"repeat","8":"shadow","9":"simple","10":"timeline","11":"update","12":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"from","7":"gsapWritten","8":"repeat","9":"shadow","10":"simple","11":"timeline","12":"update","13":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -176,6 +176,7 @@
 	var DEFAULT_DELAY = 0;
 	function noop() {}
 	
+	// 设置默认数据
 	function defaultData(vars, now) {
 	  return {
 	    duration: vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION,
@@ -204,11 +205,16 @@
 	
 	    _get(Object.getPrototypeOf(TweenOne.prototype), 'constructor', this).apply(this, arguments);
 	    this.rafID = null;
+	    this.type = this.props.type;
+	    this.timeLineProgressData = {};
 	    this.style = this.props.style || {};
+	    this.tweenStart = {};
+	    this.defaultData = [];
 	    this.setDefaultData(this.props.vars || {});
 	    this.state = {
 	      style: this.style
 	    };
+	    this.a = 0;
 	    ['raf'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
@@ -218,18 +224,40 @@
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      var dom = _reactDom2['default'].findDOMNode(this);
-	      this.computedStyle = document.defaultView.getComputedStyle(dom);
-	      if (this.defaultData.length && this.props.vars) {
+	      this.computedStyle = (0, _objectAssign2['default'])({}, document.defaultView.getComputedStyle(dom));
+	      if (this.defaultData.length && this.props.vars && (this.type === 'play' || this.type === 'restart')) {
 	        this.rafID = (0, _raf2['default'])(this.raf);
 	      }
 	    }
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
+	      var _this2 = this;
+	
+	      var newType = nextProps.type;
+	
 	      var equal = (0, _util.objectEqual)(this.props.vars, nextProps.vars);
 	      if (!equal) {
+	        this.tweenStart = {};
+	        this.defaultData = [];
+	        this.timeLineProgressData = {};
+	      }
+	      var tweenKeysFunc = function tweenKeysFunc(style, key) {
+	        var s = _this2.tweenStart[0][key].split(',').length > 1 ? key + '(' + _this2.tweenStart[0][key] + ')' : _Css2['default'].getParam(key, _this2.tweenStart[0][key], parseFloat(_this2.tweenStart[0][key]));
+	        style[_Css2['default'].isTransform(key)] = _Css2['default'].mergeStyle(style[_Css2['default'].isTransform(key)], s);
+	      };
+	      if (newType === 'restart') {
+	        var style = {};
+	        Object.keys(this.tweenStart[0]).forEach(tweenKeysFunc.bind(this, style));
+	        this.style = style;
+	        this.tweenStart = {};
+	        this.timeLineProgressData = {};
+	        this.defaultData = [];
+	      }
+	      if (!equal || newType !== this.type || newType === 'restart') {
+	        this.type = newType;
 	        this.setDefaultData(nextProps.vars || {});
-	        this.componentWillUnmount();
+	        this.cancelRequestAnimationFram();
 	        this.rafID = (0, _raf2['default'])(this.raf);
 	      }
 	      var styleEqual = (0, _util.objectEqual)(this.props.style, nextProps.style);
@@ -243,20 +271,24 @@
 	  }, {
 	    key: 'componentWillUnmount',
 	    value: function componentWillUnmount() {
-	      _raf2['default'].cancel(this.rafID);
-	      this.rafID = -1;
+	      this.cancelRequestAnimationFram();
 	    }
 	  }, {
 	    key: 'setDefaultData',
 	    value: function setDefaultData(_vars) {
-	      var _this2 = this;
+	      var _this3 = this;
 	
 	      var vars = (0, _util.dataToArray)(_vars);
-	      this.defaultData = [];
-	      this.tweenStart = {};
 	      var now = Date.now();
-	      vars.forEach(function (item) {
-	        now += item.delay || 0; // 加上延时
+	      var varsForIn = function varsForIn(item, i) {
+	        var progressTime = _this3.timeLineProgressData['progressTime' + i] < 0 || !_this3.timeLineProgressData['progressTime' + i] ? 0 : _this3.timeLineProgressData['progressTime' + i];
+	        now += !progressTime ? item.delay || 0 : 0; // 加上延时，在没有播放过时；
+	        if (_this3.type === 'reverse') {
+	          // 如果反向播放时，now加上已播放了的时间；
+	          now += progressTime > 0 ? progressTime : 0;
+	        } else {
+	          now -= progressTime; // 如果在播放中停止重启时，加上已播放的时间；
+	        }
 	        var tweenData = defaultData(item, now);
 	        tweenData.tween = {};
 	        for (var p in item) {
@@ -264,20 +296,68 @@
 	            tweenData.tween[p] = item[p];
 	          }
 	        }
-	
 	        if (tweenData.yoyo && !tweenData.repeat) {
 	          console.warn('Warning: yoyo must be used together with repeat;');
 	        }
-	        now += tweenData.duration * tweenData.repeat + tweenData.repeatDelay * (tweenData.repeat - 1); // 加上此时用的时间，遍历下个时要用
-	        _this2.defaultData.push(tweenData);
-	      });
+	        if (_this3.type === 'reverse' && progressTime || _this3.type !== 'reverse') {
+	          if (_this3.type === 'reverse') {
+	            // 如果已播放过了停止，再倒放时减掉已播放；
+	            var repeatAnnalNum = _this3.defaultData[i] ? _this3.defaultData[i].repeatAnnal - 1 : 0;
+	            now += repeatAnnalNum * tweenData.duration + repeatAnnalNum * tweenData.repeatDelay;
+	          } else {
+	            // 加上此时用的时间，遍历下个时要用
+	            now += tweenData.duration * tweenData.repeat + tweenData.repeatDelay * (tweenData.repeat - 1);
+	          }
+	        }
+	        if (_this3.defaultData[i]) {
+	          _this3.defaultData[i].initTime = tweenData.initTime;
+	          _this3.defaultData[i].end = !(_this3.type === 'reverse' && progressTime || _this3.type !== 'reverse' && progressTime !== tweenData.duration);
+	        } else {
+	          _this3.defaultData[i] = tweenData;
+	        }
+	      };
+	      if (this.type === 'reverse') {
+	        for (var ii = vars.length - 1; ii >= 0; ii--) {
+	          varsForIn(vars[ii], ii);
+	        }
+	      } else {
+	        vars.forEach(varsForIn);
+	      }
+	    }
+	  }, {
+	    key: 'getStartAndEnd',
+	    value: function getStartAndEnd(_value, i, p) {
+	      var end = undefined;
+	      var start = undefined;
+	      var cssName = _Css2['default'].isTransform(p);
+	      var startData = this.tweenStart[i][p];
+	      end = (0, _util.dataToArray)(parseFloat(_value));
+	      if (typeof _value === 'string' && _value.charAt(1) === '=') {
+	        end = (0, _util.dataToArray)(parseFloat(this.tweenStart[i][p]) + parseFloat(_value.charAt(0) + 1) * parseFloat(_value.substr(2)));
+	      }
+	      if (cssName.indexOf('color') >= 0 || cssName.indexOf('Color') >= 0) {
+	        start = _Css2['default'].parseColor(startData);
+	        end = _Css2['default'].parseColor(_value);
+	        start[3] = start[3] || 1;
+	        end[3] = end[3] || 1;
+	      } else if (cssName.indexOf('shadow') >= 0 || cssName.indexOf('Shadow') >= 0) {
+	        startData = startData === 'none' ? '0 0 0 transparent' : startData;
+	        start = _Css2['default'].parseShadow(startData);
+	        end = _Css2['default'].parseShadow(_value);
+	      } else if (cssName === 'bezier' || cssName === 'filter') {
+	        start = [0];
+	        end = [1];
+	      } else {
+	        start = (0, _util.dataToArray)(parseFloat(this.tweenStart[i][p] === 'auto' || this.tweenStart[i][p] === 'none' ? 0 : this.tweenStart[i][p]));
+	      }
+	      return { start: start, end: end };
 	    }
 	  }, {
 	    key: 'raf',
 	    value: function raf() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
-	      if (this.rafID === -1) {
+	      if (this.rafID === -1 || this.type === 'pause') {
 	        return;
 	      }
 	      function childMap(_item) {
@@ -291,11 +371,14 @@
 	        }
 	        var now = Date.now();
 	        var progressTime = now - item.initTime > item.duration ? item.duration : now - item.initTime;
-	        var start = undefined;
-	        var end = undefined;
-	        var startData = undefined;
+	        if (_this4.type === 'reverse') {
+	          progressTime = item.initTime - now > 0 ? item.initTime - now : 0;
+	        }
+	        _this4.timeLineProgressData['progressTime' + i] = progressTime;
 	        var perspective = undefined;
-	        if (item.tween && progressTime >= 0) {
+	        var sBool = _this4.type === 'reverse' ? progressTime <= item.duration : progressTime >= 0;
+	
+	        if (item.tween && sBool && !_this4.defaultData[i].end) {
 	          if (!item.onStart.only) {
 	            item.onStart();
 	            item.onStart.only = true;
@@ -307,52 +390,35 @@
 	              var _value = item.tween[p];
 	              p = _Css2['default'].getGsapType(p);
 	              var cssName = _Css2['default'].isTransform(p);
-	              _this3.tweenStart[i] = _this3.tweenStart[i] || {};
-	              _this3.tweenStart.end = _this3.tweenStart.end || {};
-	              _this3.tweenStart[i][p] = _this3.tweenStart[i][p] || _this3.computedStyle[p] || 0;
+	              _this4.tweenStart[i] = _this4.tweenStart[i] || {};
+	              _this4.tweenStart.end = _this4.tweenStart.end || {};
+	              _this4.tweenStart[i][p] = _this4.tweenStart[i][p] || _this4.computedStyle[p] || 0;
 	              // 开始设置；
 	              if (cssName === 'transform' || cssName === 'filter') {
-	                if (!_this3.tweenStart.end['Bool' + i]) {
+	                if (!_this4.tweenStart.end['Bool' + i]) {
 	                  if (newStyle && newStyle[cssName]) {
 	                    var cssStyleArr = newStyle[cssName].split(' ');
 	                    if (cssName === 'transform') {
 	                      for (var ii = 0; ii < cssStyleArr.length; ii++) {
 	                        var _item = cssStyleArr[ii].replace(/[(|)]/ig, '$').split('$');
-	                        _this3.tweenStart[i][_item[0]] = _item[1];
+	                        _this4.tweenStart[i][_item[0]] = _item[1];
 	                      }
-	                      _this3.tweenStart[i][p] = _Css2['default'].mergeTransformName(cssStyleArr, p) || _this3.tweenStart[i][p];
+	                      _this4.tweenStart[i][p] = _Css2['default'].mergeTransformName(cssStyleArr, p) || _this4.tweenStart[i][p];
 	                    } else {
-	                      _this3.tweenStart[i][p] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
+	                      _this4.tweenStart[i][p] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
 	                    }
 	                  }
-	                  _this3.tweenStart.end['Bool' + i] = true;
+	                  _this4.tweenStart.end['Bool' + i] = true;
 	                }
 	              }
 	
 	              // 设置start与end的值
-	              startData = _this3.tweenStart[i][p];
-	              end = (0, _util.dataToArray)(parseFloat(_value));
-	              if (typeof _value === 'string' && _value.charAt(1) === '=') {
-	                end = (0, _util.dataToArray)(parseFloat(_this3.tweenStart[i][p]) + parseFloat(_value.charAt(0) + 1) * parseFloat(_value.substr(2)));
-	              }
-	              var easeValue = [];
-	              if (cssName.indexOf('color') >= 0 || cssName.indexOf('Color') >= 0) {
-	                start = _Css2['default'].parseColor(startData);
-	                end = _Css2['default'].parseColor(_value);
-	                start[3] = start[3] || 1;
-	                end[3] = end[3] || 1;
-	              } else if (cssName.indexOf('shadow') >= 0 || cssName.indexOf('Shadow') >= 0) {
-	                startData = startData === 'none' ? '0 0 0 transparent' : startData;
-	                start = _Css2['default'].parseShadow(startData);
-	                end = _Css2['default'].parseShadow(_value);
-	              } else if (cssName === 'bezier' || cssName === 'filter') {
-	                start = [0];
-	                end = [1];
-	              } else {
-	                start = (0, _util.dataToArray)(parseFloat(_this3.tweenStart[i][p] === 'auto' || _this3.tweenStart[i][p] === 'none' ? 0 : _this3.tweenStart[i][p]));
-	              }
+	              var setStartEnd = _this4.getStartAndEnd(_value, i, p);
+	              var start = setStartEnd.start;
+	              var end = setStartEnd.end;
 	
 	              // 转成Array可对多个操作；
+	              var easeValue = [];
 	              var reverse = item.type === 'from'; // 倒放
 	              for (var ii = 0; ii < start.length; ii++) {
 	                var startItem = parseFloat(start[ii]);
@@ -367,31 +433,30 @@
 	                }
 	              }
 	              easeValue = item.duration === 0 ? end : easeValue;
-	              _this3.tweenStart.end[p] = easeValue;
+	              _this4.tweenStart.end[p] = easeValue;
 	
 	              // 生成样式
 	              if (cssName === 'transform') {
-	                var m = _this3.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(childMap);
+	                var m = _this4.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(childMap);
 	                perspective = m[11] ? Math.round((m[10] < 0 ? -m[10] : m[10]) / (m[11] < 0 ? -m[11] : m[11])) : 0;
-	                _this3.tweenStart.end[p] = _Css2['default'].getParam(p, _value, easeValue);
+	                _this4.tweenStart.end[p] = _Css2['default'].getParam(p, _value, easeValue);
 	                var str = perspective ? 'perspective(' + perspective + 'px)' : '';
 	                for (var _p in newStyle) {
 	                  if (_Css2['default'].isTransform(_p) === 'transform') {
 	                    str = _Css2['default'].mergeStyle(newStyle.transform, str);
 	                  }
 	                }
-	                for (var _p in _this3.tweenStart.end) {
+	                for (var _p in _this4.tweenStart.end) {
 	                  if (_Css2['default'].isTransform(_p) === 'transform') {
-	                    str = _Css2['default'].mergeStyle(str, _this3.tweenStart.end[_p]);
+	                    str = _Css2['default'].mergeStyle(str, _this4.tweenStart.end[_p]);
 	                  }
 	                }
-	
 	                newStyle[cssName] = str;
 	              } else if (cssName === 'bezier') {
-	                var bezier = _this3.tweenStart['bezier' + i] = _this3.tweenStart['bezier' + i] || new _BezierPlugin2['default'](_this3.computedStyle.transform, _value);
+	                var bezier = _this4.tweenStart['bezier' + i] = _this4.tweenStart['bezier' + i] || new _BezierPlugin2['default'](_this4.computedStyle.transform, _value);
 	                newStyle.transform = _Css2['default'].mergeStyle(newStyle.transform || '', bezier.set(easeValue[0]));
 	              } else if (cssName === 'filter') {
-	                newStyle[cssName] = _Css2['default'].mergeStyle(newStyle[cssName] || '', _Css2['default'].getFilterParam(_this3.tweenStart[i][p], _value, easeValue[0]));
+	                newStyle[cssName] = _Css2['default'].mergeStyle(newStyle[cssName] || '', _Css2['default'].getFilterParam(_this4.tweenStart[i][p], _value, easeValue[0]));
 	              } else {
 	                newStyle[cssName] = _Css2['default'].getParam(p, _value, easeValue);
 	              }
@@ -399,14 +464,27 @@
 	          }
 	        }
 	
-	        if (progressTime === item.duration) {
+	        if (progressTime === item.duration && _this4.type !== 'reverse') {
 	          if (item.repeat && item.repeatAnnal !== item.repeat) {
 	            item.repeatAnnal++;
-	            item.initTime = item.initTime + item.duration + item.repeatDelay;
+	            item.initTime += item.duration + item.repeatDelay;
 	            item.onRepeat();
-	            _this3.componentWillUnmount();
+	            _this4.cancelRequestAnimationFram();
 	          } else {
-	            _this3.defaultData[i] = null;
+	            _this4.defaultData[i].end = true;
+	            if (!item.onComplete.only) {
+	              item.onComplete();
+	              item.onComplete.only = true;
+	            }
+	          }
+	        } else if (_this4.type === 'reverse' && progressTime === 0) {
+	          if (item.repeat && item.repeatAnnal !== 1) {
+	            item.repeatAnnal--;
+	            item.initTime += item.duration + item.repeatDelay;
+	            item.onRepeat();
+	            _this4.cancelRequestAnimationFram();
+	          } else {
+	            _this4.defaultData[i].end = true;
 	            if (!item.onComplete.only) {
 	              item.onComplete();
 	              item.onComplete.only = true;
@@ -414,16 +492,24 @@
 	          }
 	        }
 	      });
-	      this.setState({
-	        style: newStyle
-	      });
+	      if (this.rafID !== -1) {
+	        this.setState({
+	          style: newStyle
+	        });
+	      }
 	      if (this.defaultData.every(function (c) {
-	        return !c;
+	        return c.end;
 	      })) {
-	        this.componentWillUnmount();
+	        this.cancelRequestAnimationFram();
 	      } else {
 	        this.rafID = (0, _raf2['default'])(this.raf);
 	      }
+	    }
+	  }, {
+	    key: 'cancelRequestAnimationFram',
+	    value: function cancelRequestAnimationFram() {
+	      _raf2['default'].cancel(this.rafID);
+	      this.rafID = -1;
 	    }
 	  }, {
 	    key: 'render',
@@ -451,6 +537,7 @@
 	TweenOne.propTypes = {
 	  component: _react.PropTypes.string,
 	  vars: objectOrArray,
+	  type: _react.PropTypes.string,
 	  children: objectOrArrayOrString,
 	  style: _react.PropTypes.object
 	};
@@ -458,6 +545,7 @@
 	TweenOne.defaultProps = {
 	  component: 'div',
 	  vars: null,
+	  type: 'play',
 	  children: []
 	};
 	
@@ -20418,7 +20506,8 @@
 	  // Wrap in a new function to prevent
 	  // `cancel` potentially being assigned
 	  // to the native rAF function
-	  return raf.call(global, fn)
+	  //console.log(333)
+	  return raf(fn)
 	}
 	module.exports.cancel = function() {
 	  caf.apply(global, arguments)
@@ -20513,8 +20602,13 @@
 	      equalBool = false;
 	      return false;
 	    }
+	
 	    if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
 	      equalBool = objectEqual(obj1[key], obj2[key]);
+	    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
+	      if (obj1[key].name !== obj2[key].name) {
+	        equalBool = false;
+	      }
 	    } else if (obj1[key] !== obj2[key]) {
 	      equalBool = false;
 	    }
@@ -20527,6 +20621,10 @@
 	    }
 	    if (typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
 	      equalBool = objectEqual(obj2[key], obj1[key]);
+	    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
+	      if (obj1[key].name !== obj2[key].name) {
+	        equalBool = false;
+	      }
 	    } else if (obj2[key] !== obj1[key]) {
 	      equalBool = false;
 	    }
@@ -20594,8 +20692,8 @@
 	
 	var CSS = {
 	  _lists: {
-	    transformsBase: ['translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY', 'rotateZ', 'rotate'],
-	    transforms3D: ['translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective']
+	    transformsBase: ['translate', 'translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY', 'rotateZ', 'rotate'],
+	    transforms3D: ['translate3d', 'translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective']
 	  },
 	
 	  getGsapType: function getGsapType(_p) {
@@ -20816,6 +20914,8 @@
 	              return null;
 	          }
 	          addArr.push(currentOnlyName + '(' + currentDataArr.join(',') + ')');
+	        } else if (changeOnlyName in transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 1).indexOf(changeOnlyName) >= 0) {
+	          addArr.push(changeOnlyName + '(' + changeDataArr.join(',') + ')');
 	        } else if (changeOnlyName in transformGroup && currentOnlyName in transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 2) === changeOnlyName) {
 	          // 如果是3d时,且一个为2d时；
 	          switch (changeOnlyName) {
@@ -20846,7 +20946,6 @@
 	  },
 	
 	  isTransform: function isTransform(p) {
-	    this._lists.transformsBase = !(IE <= 9) ? this._lists.transformsBase.concat(this._lists.transforms3D) : this._lists.transformsBase;
 	    return this._lists.transformsBase.indexOf(p) >= 0 ? 'transform' : p;
 	  },
 	
@@ -20934,6 +21033,7 @@
 	    return changeArr.join(' ');
 	  }
 	};
+	CSS._lists.transformsBase = !(IE <= 9) ? CSS._lists.transformsBase.concat(CSS._lists.transforms3D) : CSS._lists.transformsBase;
 	exports['default'] = CSS;
 	module.exports = exports['default'];
 

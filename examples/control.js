@@ -1,14 +1,14 @@
-webpackJsonp([13],{
+webpackJsonp([5],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(182);
+	module.exports = __webpack_require__(174);
 
 
 /***/ },
 
-/***/ 182:
+/***/ 174:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39,21 +39,87 @@ webpackJsonp([13],{
 	  _inherits(Demo, _React$Component);
 	
 	  function Demo() {
+	    var _this = this;
+	
 	    _classCallCheck(this, Demo);
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
+	    this.state = {
+	      tweenType: 'pause'
+	    };
+	    ['onPlay', 'onPause', 'onReverse', 'onRestart'].forEach(function (method) {
+	      return _this[method] = _this[method].bind(_this);
+	    });
 	  }
 	
 	  _createClass(Demo, [{
+	    key: 'onPlay',
+	    value: function onPlay() {
+	      this.setState({
+	        tweenType: 'play'
+	      });
+	    }
+	  }, {
+	    key: 'onPause',
+	    value: function onPause() {
+	      this.setState({
+	        tweenType: 'pause'
+	      });
+	    }
+	  }, {
+	    key: 'onReverse',
+	    value: function onReverse() {
+	      this.setState({
+	        tweenType: 'reverse'
+	      });
+	    }
+	  }, {
+	    key: 'onRestart',
+	    value: function onRestart() {
+	      this.setState({
+	        tweenType: 'restart'
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
-	        _rcTweenOne2['default'],
-	        { vars: { opacity: 1, translateX: '100px', repeat: -1, duration: 1000, yoyo: true }, style: { opacity: 0 } },
+	        'div',
+	        null,
 	        _react2['default'].createElement(
 	          'div',
-	          null,
-	          '执行动效'
+	          { style: { height: 200 } },
+	          _react2['default'].createElement(
+	            _rcTweenOne2['default'],
+	            { vars: [{ translateX: '500px', duration: 1000 }, { y: 100 }, { x: 100 }],
+	              type: this.state.tweenType,
+	              style: { opacity: 1, width: 100, transform: 'translate(50px,30px)' } },
+	            _react2['default'].createElement(
+	              'div',
+	              null,
+	              '执行动效'
+	            )
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { onClick: this.onPlay },
+	          'play'
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { onClick: this.onPause },
+	          'pause'
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { onClick: this.onReverse },
+	          'reverse'
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { onClick: this.onRestart },
+	          'restart'
 	        )
 	      );
 	    }
@@ -67,4 +133,4 @@ webpackJsonp([13],{
 /***/ }
 
 });
-//# sourceMappingURL=yoyo.js.map
+//# sourceMappingURL=control.js.map
