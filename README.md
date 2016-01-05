@@ -85,7 +85,7 @@ React.render(<TweenOne vars={{x:100}}>
 | component  | string         | `div`   | 标签   |
 
 
-### vars = {}
+### vars = { }
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
@@ -96,7 +96,7 @@ React.render(<TweenOne vars={{x:100}}>
 | repeat     | number         | 0       | 重复,-1为无限重复 |
 | repeatDelay| number         | 0       | 重复开始时的延时 |
 | yoyo       | boolean        | false   | 重复时是否倒放  |
-| ease       | string         | 'easeInOutQuad' | 数动缓动参数 |
+| ease       | string         | 'easeInOutQuad' | 缓动参数 |
 | bezier     | object         | null    | 贝赛尔曲线动画   |
 | onStart    | func           | null    | 动画开始时调用  |
 | onUpdate   | func           | null    | 更新时调用  |
@@ -107,7 +107,7 @@ React.render(<TweenOne vars={{x:100}}>
 
 ### vars =[ ] 时为timeline
 
-### bezier = {}
+### bezier = { }
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
