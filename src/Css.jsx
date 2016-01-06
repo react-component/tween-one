@@ -294,6 +294,12 @@ const CSS = {
     if (!addArr.length) {
       addArr.push(current, change);
     }
+    addArr.forEach((item, i)=> {
+      if (item.indexOf('perspective') >= 0 && i) {
+        addArr.splice(i, 1);
+        addArr.unshift(item);
+      }
+    });
     return addArr.join(' ').trim();
   },
 
@@ -324,7 +330,7 @@ const CSS = {
   },
 
   getParam(p, v, dd) {
-    const d = dd.length === 1 ? dd[0] : dd;
+    const d = Array.isArray(dd) && dd.length === 1 ? dd[0] : dd;
     if (p.indexOf('color') >= 0 || p.indexOf('Color') >= 0) {
       return this.getArrayToColor(d);
     }

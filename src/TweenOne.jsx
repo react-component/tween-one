@@ -178,9 +178,6 @@ class TweenOne extends Component {
     if (this.rafID === -1 || this.type === 'pause') {
       return;
     }
-    function childMap(_item) {
-      return parseFloat(_item);
-    }
 
     const newStyle = this.style;
     this.defaultData.forEach((item, i)=> {
@@ -193,7 +190,6 @@ class TweenOne extends Component {
         progressTime = item.initTime - now > 0 ? item.initTime - now : 0;
       }
       this.timeLineProgressData['progressTime' + i] = progressTime;
-      let perspective;
       const sBool = this.type === 'reverse' ? progressTime <= item.duration : progressTime >= 0;
 
       if (item.tween && sBool && !this.defaultData[i].end) {
@@ -253,12 +249,22 @@ class TweenOne extends Component {
             easeValue = item.duration === 0 ? end : easeValue;
             this.tweenStart.end[p] = easeValue;
 
+
             // 生成样式
             if (cssName === 'transform') {
-              const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(childMap);
-              perspective = m[11] ? Math.round((m[10] < 0 ? -m[10] : m[10]) / (m[11] < 0 ? -m[11] : m[11])) : 0;
+              // const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(parseFloat);
+              // perspective = m[11] ? Math.round((m[10] < 0 ? -m[10] : m[10]) / (m[11] < 0 ? -m[11] : m[11])) : 0;
               this.tweenStart.end[p] = Css.getParam(p, _value, easeValue);
-              let str = perspective ? 'perspective(' + perspective + 'px)' : '';
+              // let str = perspective ? 'perspective(' + perspective + 'px)' : '';
+              const cTransform = newStyle.transform;
+              let str = '';
+              if (cTransform) {
+                cTransform.split(' ').forEach((_str)=> {
+                  if (_str.indexOf('perspective') >= 0) {
+                    str = _str;
+                  }
+                });
+              }
               for (const _p in newStyle) {
                 if (Css.isTransform(_p) === 'transform') {
                   str = Css.mergeStyle(newStyle.transform, str);
@@ -338,7 +344,9 @@ class TweenOne extends Component {
         }
       }
     }
-    return React.createElement(this.props.component, {style: style}, this.props.children);
+    const props = assign({}, this.props);
+    props.style = style;
+    return React.createElement(this.props.component, props);
   }
 }
 
