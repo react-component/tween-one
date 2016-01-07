@@ -360,9 +360,6 @@
 	      if (this.rafID === -1 || this.type === 'pause') {
 	        return;
 	      }
-	      function childMap(_item) {
-	        return parseFloat(_item);
-	      }
 	
 	      var newStyle = this.style;
 	      this.defaultData.forEach(function (item, i) {
@@ -375,7 +372,6 @@
 	          progressTime = item.initTime - now > 0 ? item.initTime - now : 0;
 	        }
 	        _this4.timeLineProgressData['progressTime' + i] = progressTime;
-	        var perspective = undefined;
 	        var sBool = _this4.type === 'reverse' ? progressTime <= item.duration : progressTime >= 0;
 	
 	        if (item.tween && sBool && !_this4.defaultData[i].end) {
@@ -437,10 +433,19 @@
 	
 	              // 生成样式
 	              if (cssName === 'transform') {
-	                var m = _this4.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(childMap);
-	                perspective = m[11] ? Math.round((m[10] < 0 ? -m[10] : m[10]) / (m[11] < 0 ? -m[11] : m[11])) : 0;
+	                // const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(parseFloat);
+	                // perspective = m[11] ? Math.round((m[10] < 0 ? -m[10] : m[10]) / (m[11] < 0 ? -m[11] : m[11])) : 0;
 	                _this4.tweenStart.end[p] = _Css2['default'].getParam(p, _value, easeValue);
-	                var str = perspective ? 'perspective(' + perspective + 'px)' : '';
+	                // let str = perspective ? 'perspective(' + perspective + 'px)' : '';
+	                var cTransform = newStyle.transform;
+	                var str = '';
+	                if (cTransform) {
+	                  cTransform.split(' ').forEach(function (_str) {
+	                    if (_str.indexOf('perspective') >= 0) {
+	                      str = _str;
+	                    }
+	                  });
+	                }
 	                for (var _p in newStyle) {
 	                  if (_Css2['default'].isTransform(_p) === 'transform') {
 	                    str = _Css2['default'].mergeStyle(newStyle.transform, str);
@@ -524,7 +529,9 @@
 	          }
 	        }
 	      }
-	      return _react2['default'].createElement(this.props.component, { style: style }, this.props.children);
+	      var props = (0, _objectAssign2['default'])({}, this.props);
+	      props.style = style;
+	      return _react2['default'].createElement(this.props.component, props);
 	    }
 	  }]);
 	
@@ -20938,6 +20945,12 @@
 	    if (!addArr.length) {
 	      addArr.push(current, change);
 	    }
+	    addArr.forEach(function (item, i) {
+	      if (item.indexOf('perspective') >= 0 && i) {
+	        addArr.splice(i, 1);
+	        addArr.unshift(item);
+	      }
+	    });
 	    return addArr.join(' ').trim();
 	  },
 	
@@ -20968,7 +20981,7 @@
 	  },
 	
 	  getParam: function getParam(p, v, dd) {
-	    var d = dd.length === 1 ? dd[0] : dd;
+	    var d = Array.isArray(dd) && dd.length === 1 ? dd[0] : dd;
 	    if (p.indexOf('color') >= 0 || p.indexOf('Color') >= 0) {
 	      return this.getArrayToColor(d);
 	    }
