@@ -1,14 +1,14 @@
-webpackJsonp([14],{
+webpackJsonp([13],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(183);
+	module.exports = __webpack_require__(182);
 
 
 /***/ },
 
-/***/ 183:
+/***/ 182:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42,14 +42,34 @@ webpackJsonp([14],{
 	    _classCallCheck(this, Demo);
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
+	    this.state = {
+	      style: { opacity: 1, height: 100, transform: 'translate(50px,30px)' }
+	    };
 	  }
 	
 	  _createClass(Demo, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this = this;
+	
+	      setTimeout(function () {
+	        _this.setState({
+	          style: { opacity: 1, height: 200, transform: 'translate(250px,30px)' }
+	        });
+	      }, 1000);
+	      setTimeout(function () {
+	        _this.setState({
+	          style: { opacity: 1, height: 300, transform: 'translate(350px,30px)' }
+	        });
+	      }, 5500);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
-	        { vars: { opacity: 1, translateX: '100px', repeat: -1, duration: 1000, yoyo: true }, style: { opacity: 0 } },
+	        { vars: { translateX: '500px', duration: 5000 },
+	          style: this.state.style },
 	        _react2['default'].createElement(
 	          'div',
 	          null,
@@ -67,4 +87,4 @@ webpackJsonp([14],{
 /***/ }
 
 });
-//# sourceMappingURL=yoyo.js.map
+//# sourceMappingURL=updateStyle.js.map

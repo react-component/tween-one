@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		14:0
+/******/ 		15:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"from","7":"gsapWritten","8":"repeat","9":"shadow","10":"simple","11":"timeline","12":"update","13":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"from","7":"gsapWritten","8":"repeat","9":"shadow","10":"simple","11":"timeline","12":"update","13":"updateStyle","14":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -235,7 +235,6 @@
 	      var _this2 = this;
 	
 	      var newType = nextProps.type;
-	
 	      var equal = (0, _util.objectEqual)(this.props.vars, nextProps.vars);
 	      if (!equal) {
 	        this.tweenStart = {};
@@ -262,10 +261,18 @@
 	      }
 	      var styleEqual = (0, _util.objectEqual)(this.props.style, nextProps.style);
 	      if (!styleEqual) {
-	        var style = (0, _objectAssign2['default'])({}, this.state.style, nextProps.style);
-	        this.setState({
-	          style: style
-	        });
+	        if (this.rafID !== -1) {
+	          this.style = nextProps.style;
+	          Object.keys(this.tweenStart.end).forEach(function (key) {
+	            if (key.indexOf('Bool') >= 0) {
+	              _this2.tweenStart.end[key] = false;
+	            }
+	          });
+	        } else {
+	          this.setState({
+	            style: nextProps.style
+	          });
+	        }
 	      }
 	    }
 	  }, {
