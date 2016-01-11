@@ -6,26 +6,20 @@ class Demo extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      style: {opacity: 1, height: 100, transform: 'translate(50px,30px)'},
+      style: {opacity: 1, height: 100, marginLeft: 0, transform: 'translateY(0px)'},
     };
   }
 
   componentDidMount() {
     setTimeout(()=> {
       this.setState({
-        style: {opacity: 1, height: 200, transform: 'translate(250px,30px)'},
+        style: {opacity: 1, height: 200, transform: 'translateY(100px)', marginLeft: 100},
       });
     }, 1000);
-    setTimeout(()=> {
-      this.setState({
-        style: {opacity: 1, height: 300, transform: 'translate(350px,30px)'},
-      });
-    }, 5500);
   }
 
-
   render() {
-    return (<Tween vars={{translateX: '500px', duration: 5000}}
+    return (<Tween vars={{ translateY: 200, marginLeft: 500, duration: 5000}}
                    style={this.state.style}>
       <div>执行动效</div>
     </Tween>);

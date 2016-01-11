@@ -88,12 +88,14 @@ class TweenOne extends Component {
     const styleEqual = objectEqual(this.props.style, nextProps.style);
     if (!styleEqual) {
       if (this.rafID !== -1) {
-        this.style = nextProps.style;
-        Object.keys(this.tweenStart.end).forEach(key=> {
-          if (key.indexOf('Bool') >= 0) {
-            this.tweenStart.end[key] = false;
-          }
-        });
+        this.style = assign({}, this.style, nextProps.style);
+        if (this.tweenStart.end) {
+          Object.keys(this.tweenStart.end).forEach(key=> {
+            if (key.indexOf('Bool') >= 0) {
+              this.tweenStart.end[key] = false;
+            }
+          });
+        }
       } else {
         this.setState({
           style: nextProps.style,
@@ -104,6 +106,14 @@ class TweenOne extends Component {
 
   componentWillUnmount() {
     this.cancelRequestAnimationFram();
+  }
+
+  onEndComplete(item, i) {
+    this.defaultData[i].end = true;
+    if (!item.onComplete.only) {
+      item.onComplete();
+      item.onComplete.only = true;
+    }
   }
 
   setDefaultData(_vars) {
@@ -154,6 +164,43 @@ class TweenOne extends Component {
     }
   }
 
+  getTweenStart(item, i) {
+    const start = this.tweenStart || {};
+    const newStyle = this.style;
+    start[i] = start[i] || {};
+    start.end = start.end || {};
+    if (!start.end['Bool' + i]) {
+      Object.keys(item.tween).forEach((_key)=> {
+        const key = Css.getGsapType(_key);
+        const cssName = Css.isTransform(key);
+        if (cssName === 'transform' || cssName === 'filter') {
+          if (newStyle && newStyle[cssName]) {
+            const cssStyleArr = newStyle[cssName].split(' ');
+            if (cssName === 'transform') {
+              for (let ii = 0; ii < cssStyleArr.length; ii++) {
+                const _item = cssStyleArr[ii].replace(/[(|)]/ig, '$').split('$');
+                start[i][_item[0]] = _item[1];
+              }
+              start[i][key] = Css.mergeTransformName(cssStyleArr, key) || start[i][key] || 0;
+            } else {
+              start[i][key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
+            }
+          } else {
+            if (cssName === 'transform') {
+              start[i][key] = 0;
+            } else {
+              start[i][key] = Css.getFilterParam('', item.tween[key], 0);
+            }
+          }
+        } else {
+          start[i][key] = newStyle[cssName] || this.computedStyle[key] || 0;
+        }
+      });
+      start.end['Bool' + i] = true;
+    }
+    return start;
+  }
+
   getStartAndEnd(_value, i, p) {
     let end;
     let start;
@@ -181,12 +228,45 @@ class TweenOne extends Component {
     return {start, end};
   }
 
+  setNewStyle(newStyle, easeValue, i, p, _value) {
+    const cssName = Css.isTransform(p);
+    if (cssName === 'transform') {
+      this.tweenStart.end[p] = Css.getParam(p, _value, easeValue);
+      const cTransform = newStyle.transform;
+      let str = '';
+      if (cTransform) {
+        cTransform.split(' ').forEach((_str)=> {
+          if (_str.indexOf('perspective') >= 0) {
+            str = _str;
+          }
+        });
+      }
+      for (const _p in newStyle) {
+        if (Css.isTransform(_p) === 'transform') {
+          str = Css.mergeStyle(newStyle.transform, str);
+        }
+      }
+      for (const _p in this.tweenStart.end) {
+        if (Css.isTransform(_p) === 'transform') {
+          str = Css.mergeStyle(str, this.tweenStart.end[_p]);
+        }
+      }
+      newStyle[cssName] = str;
+    } else if (cssName === 'bezier') {
+      const bezier = this.tweenStart['bezier' + i] = this.tweenStart['bezier' + i] || new Bezier(this.computedStyle.transform, _value);
+      newStyle.transform = Css.mergeStyle(newStyle.transform || '', bezier.set(easeValue[0]));
+    } else if (cssName === 'filter') {
+      newStyle[cssName] = Css.mergeStyle(newStyle[cssName] || '', Css.getFilterParam(this.tweenStart[i][p], _value, easeValue[0]));
+    } else {
+      newStyle[cssName] = Css.getParam(p, _value, easeValue);
+    }
+  }
+
   raf() {
     if (this.rafID === -1 || this.type === 'pause') {
       return;
     }
 
-    const newStyle = this.style;
     this.defaultData.forEach((item, i)=> {
       if (!item) {
         return;
@@ -205,33 +285,13 @@ class TweenOne extends Component {
           item.onStart.only = true;
         }
         item.onUpdate(easingTypes[item.ease](progressTime, 0, 1, item.duration));
+        // 开始设置；与下面分开；
+        this.tweenStart = this.getTweenStart(item, i);
         // 生成start
-        for (let p in item.tween) {
-          if (p !== 'start') {
-            const _value = item.tween[p];
-            p = Css.getGsapType(p);
-            const cssName = Css.isTransform(p);
-            this.tweenStart[i] = this.tweenStart[i] || {};
-            this.tweenStart.end = this.tweenStart.end || {};
-            this.tweenStart[i][p] = this.tweenStart[i][p] || this.computedStyle[p] || 0;
-            // 开始设置；
-            if (cssName === 'transform' || cssName === 'filter') {
-              if (!this.tweenStart.end['Bool' + i]) {
-                if (newStyle && newStyle[cssName]) {
-                  const cssStyleArr = newStyle[cssName].split(' ');
-                  if (cssName === 'transform') {
-                    for (let ii = 0; ii < cssStyleArr.length; ii++) {
-                      const _item = cssStyleArr[ii].replace(/[(|)]/ig, '$').split('$');
-                      this.tweenStart[i][_item[0]] = _item[1];
-                    }
-                    this.tweenStart[i][p] = Css.mergeTransformName(cssStyleArr, p) || this.tweenStart[i][p];
-                  } else {
-                    this.tweenStart[i][p] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
-                  }
-                }
-                this.tweenStart.end['Bool' + i] = true;
-              }
-            }
+        Object.keys(item.tween).forEach(_p=> {
+          if (_p !== 'start') {
+            const _value = item.tween[_p];
+            const p = Css.getGsapType(_p);
 
             // 设置start与end的值
             const setStartEnd = this.getStartAndEnd(_value, i, p);
@@ -256,43 +316,10 @@ class TweenOne extends Component {
             easeValue = item.duration === 0 ? end : easeValue;
             this.tweenStart.end[p] = easeValue;
 
-
             // 生成样式
-            if (cssName === 'transform') {
-              // const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(parseFloat);
-              // perspective = m[11] ? Math.round((m[10] < 0 ? -m[10] : m[10]) / (m[11] < 0 ? -m[11] : m[11])) : 0;
-              this.tweenStart.end[p] = Css.getParam(p, _value, easeValue);
-              // let str = perspective ? 'perspective(' + perspective + 'px)' : '';
-              const cTransform = newStyle.transform;
-              let str = '';
-              if (cTransform) {
-                cTransform.split(' ').forEach((_str)=> {
-                  if (_str.indexOf('perspective') >= 0) {
-                    str = _str;
-                  }
-                });
-              }
-              for (const _p in newStyle) {
-                if (Css.isTransform(_p) === 'transform') {
-                  str = Css.mergeStyle(newStyle.transform, str);
-                }
-              }
-              for (const _p in this.tweenStart.end) {
-                if (Css.isTransform(_p) === 'transform') {
-                  str = Css.mergeStyle(str, this.tweenStart.end[_p]);
-                }
-              }
-              newStyle[cssName] = str;
-            } else if (cssName === 'bezier') {
-              const bezier = this.tweenStart['bezier' + i] = this.tweenStart['bezier' + i] || new Bezier(this.computedStyle.transform, _value);
-              newStyle.transform = Css.mergeStyle(newStyle.transform || '', bezier.set(easeValue[0]));
-            } else if (cssName === 'filter') {
-              newStyle[cssName] = Css.mergeStyle(newStyle[cssName] || '', Css.getFilterParam(this.tweenStart[i][p], _value, easeValue[0]));
-            } else {
-              newStyle[cssName] = Css.getParam(p, _value, easeValue);
-            }
+            this.setNewStyle(this.style, easeValue, i, p, _value);
           }
-        }
+        });
       }
 
       if (progressTime === item.duration && this.type !== 'reverse') {
@@ -302,11 +329,7 @@ class TweenOne extends Component {
           item.onRepeat();
           this.cancelRequestAnimationFram();
         } else {
-          this.defaultData[i].end = true;
-          if (!item.onComplete.only) {
-            item.onComplete();
-            item.onComplete.only = true;
-          }
+          this.onEndComplete(item, i);
         }
       } else if (this.type === 'reverse' && progressTime === 0) {
         if (item.repeat && item.repeatAnnal !== 1) {
@@ -315,17 +338,13 @@ class TweenOne extends Component {
           item.onRepeat();
           this.cancelRequestAnimationFram();
         } else {
-          this.defaultData[i].end = true;
-          if (!item.onComplete.only) {
-            item.onComplete();
-            item.onComplete.only = true;
-          }
+          this.onEndComplete(item, i);
         }
       }
     });
     if (this.rafID !== -1) {
       this.setState({
-        style: newStyle,
+        style: this.style,
       });
     }
     if (this.defaultData.every(c=>c.end)) {
