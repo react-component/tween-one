@@ -61,7 +61,6 @@ class TweenOne extends Component {
 
   componentWillReceiveProps(nextProps) {
     const newType = nextProps.type;
-
     const equal = objectEqual(this.props.vars, nextProps.vars);
     if (!equal) {
       this.tweenStart = {};
@@ -88,10 +87,18 @@ class TweenOne extends Component {
     }
     const styleEqual = objectEqual(this.props.style, nextProps.style);
     if (!styleEqual) {
-      const style = assign({}, this.state.style, nextProps.style);
-      this.setState({
-        style,
-      });
+      if (this.rafID !== -1) {
+        this.style = nextProps.style;
+        Object.keys(this.tweenStart.end).forEach(key=> {
+          if (key.indexOf('Bool') >= 0) {
+            this.tweenStart.end[key] = false;
+          }
+        });
+      } else {
+        this.setState({
+          style: nextProps.style,
+        });
+      }
     }
   }
 
