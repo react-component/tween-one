@@ -87,8 +87,9 @@ class TweenOne extends Component {
     }
     const styleEqual = objectEqual(this.props.style, nextProps.style || {});
     if (!styleEqual) {
+      // 为保留动画的样式。。。
+      this.style = assign({}, this.style, nextProps.style);
       if (this.rafID !== -1) {
-        this.style = assign({}, this.style, nextProps.style);
         if (this.tweenStart.end) {
           Object.keys(this.tweenStart.end).forEach(key=> {
             if (key.indexOf('Bool') >= 0) {
@@ -98,7 +99,7 @@ class TweenOne extends Component {
         }
       } else {
         this.setState({
-          style: nextProps.style,
+          style: this.style,
         });
       }
     }
