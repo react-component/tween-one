@@ -19,7 +19,7 @@ export function objectEqual(obj1, obj2) {
       const nextObj = obj2[i];
       for (const p in currentObj) {
         if (currentObj[p] !== nextObj[p]) {
-          if (typeof currentObj[p] === 'object' && nextObj[p] === 'object') {
+          if (typeof currentObj[p] === 'object' && typeof nextObj[p] === 'object') {
             equalBool = objectEqual(currentObj[p], nextObj[p]);
           } else {
             equalBool = false;

@@ -39,6 +39,7 @@ class TweenOne extends Component {
     this.type = this.props.type;
     this.timeLineProgressData = {};
     this.style = this.props.style || {};
+    this.currentStyle = assign({}, this.props.style);
     this.tweenStart = {};
     this.defaultData = [];
     this.setDefaultData(this.props.vars || {});
@@ -85,8 +86,9 @@ class TweenOne extends Component {
       this.cancelRequestAnimationFram();
       this.rafID = requestAnimationFrame(this.raf);
     }
-    const styleEqual = objectEqual(this.props.style, nextProps.style);
+    const styleEqual = objectEqual(this.currentStyle, nextProps.style);
     if (!styleEqual) {
+      this.currentStyle = assign({}, nextProps);
       if (this.rafID !== -1) {
         this.style = assign({}, this.style, nextProps.style);
         if (this.tweenStart.end) {
@@ -279,7 +281,7 @@ class TweenOne extends Component {
       this.timeLineProgressData['progressTime' + i] = progressTime;
       const sBool = this.type === 'reverse' ? progressTime <= item.duration : progressTime >= 0;
 
-      if (item.tween && sBool && !this.defaultData[i].end) {
+      if (item.tween && sBool && !item.end) {
         if (!item.onStart.only) {
           item.onStart();
           item.onStart.only = true;
