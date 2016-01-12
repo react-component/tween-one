@@ -39,7 +39,6 @@ class TweenOne extends Component {
     this.type = this.props.type;
     this.timeLineProgressData = {};
     this.style = this.props.style || {};
-    this.currentStyle = assign({}, this.props.style);
     this.tweenStart = {};
     this.defaultData = [];
     this.setDefaultData(this.props.vars || {});
@@ -62,7 +61,7 @@ class TweenOne extends Component {
 
   componentWillReceiveProps(nextProps) {
     const newType = nextProps.type;
-    const equal = objectEqual(this.props.vars, nextProps.vars);
+    const equal = objectEqual(this.props.vars, nextProps.vars || {});
     if (!equal) {
       this.tweenStart = {};
       this.defaultData = [];
@@ -86,9 +85,8 @@ class TweenOne extends Component {
       this.cancelRequestAnimationFram();
       this.rafID = requestAnimationFrame(this.raf);
     }
-    const styleEqual = objectEqual(this.currentStyle, nextProps.style);
+    const styleEqual = objectEqual(this.props.style, nextProps.style || {});
     if (!styleEqual) {
-      this.currentStyle = assign({}, nextProps);
       if (this.rafID !== -1) {
         this.style = assign({}, this.style, nextProps.style);
         if (this.tweenStart.end) {
