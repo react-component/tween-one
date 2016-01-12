@@ -208,6 +208,7 @@
 	    this.type = this.props.type;
 	    this.timeLineProgressData = {};
 	    this.style = this.props.style || {};
+	    this.currentStyle = (0, _objectAssign2['default'])({}, this.props.style);
 	    this.tweenStart = {};
 	    this.defaultData = [];
 	    this.setDefaultData(this.props.vars || {});
@@ -259,15 +260,18 @@
 	        this.cancelRequestAnimationFram();
 	        this.rafID = (0, _raf2['default'])(this.raf);
 	      }
-	      var styleEqual = (0, _util.objectEqual)(this.props.style, nextProps.style);
+	      var styleEqual = (0, _util.objectEqual)(this.currentStyle, nextProps.style);
 	      if (!styleEqual) {
+	        this.currentStyle = (0, _objectAssign2['default'])({}, nextProps);
 	        if (this.rafID !== -1) {
-	          this.style = nextProps.style;
-	          Object.keys(this.tweenStart.end).forEach(function (key) {
-	            if (key.indexOf('Bool') >= 0) {
-	              _this2.tweenStart.end[key] = false;
-	            }
-	          });
+	          this.style = (0, _objectAssign2['default'])({}, this.style, nextProps.style);
+	          if (this.tweenStart.end) {
+	            Object.keys(this.tweenStart.end).forEach(function (key) {
+	              if (key.indexOf('Bool') >= 0) {
+	                _this2.tweenStart.end[key] = false;
+	              }
+	            });
+	          }
 	        } else {
 	          this.setState({
 	            style: nextProps.style
@@ -279,6 +283,15 @@
 	    key: 'componentWillUnmount',
 	    value: function componentWillUnmount() {
 	      this.cancelRequestAnimationFram();
+	    }
+	  }, {
+	    key: 'onEndComplete',
+	    value: function onEndComplete(item, i) {
+	      this.defaultData[i].end = true;
+	      if (!item.onComplete.only) {
+	        item.onComplete();
+	        item.onComplete.only = true;
+	      }
 	    }
 	  }, {
 	    key: 'setDefaultData',
@@ -332,6 +345,46 @@
 	      }
 	    }
 	  }, {
+	    key: 'getTweenStart',
+	    value: function getTweenStart(item, i) {
+	      var _this4 = this;
+	
+	      var start = this.tweenStart || {};
+	      var newStyle = this.style;
+	      start[i] = start[i] || {};
+	      start.end = start.end || {};
+	      if (!start.end['Bool' + i]) {
+	        Object.keys(item.tween).forEach(function (_key) {
+	          var key = _Css2['default'].getGsapType(_key);
+	          var cssName = _Css2['default'].isTransform(key);
+	          if (cssName === 'transform' || cssName === 'filter') {
+	            if (newStyle && newStyle[cssName]) {
+	              var cssStyleArr = newStyle[cssName].split(' ');
+	              if (cssName === 'transform') {
+	                for (var ii = 0; ii < cssStyleArr.length; ii++) {
+	                  var _item = cssStyleArr[ii].replace(/[(|)]/ig, '$').split('$');
+	                  start[i][_item[0]] = _item[1];
+	                }
+	                start[i][key] = _Css2['default'].mergeTransformName(cssStyleArr, key) || start[i][key] || 0;
+	              } else {
+	                start[i][key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
+	              }
+	            } else {
+	              if (cssName === 'transform') {
+	                start[i][key] = 0;
+	              } else {
+	                start[i][key] = _Css2['default'].getFilterParam('', item.tween[key], 0);
+	              }
+	            }
+	          } else {
+	            start[i][key] = newStyle[cssName] || _this4.computedStyle[key] || 0;
+	          }
+	        });
+	        start.end['Bool' + i] = true;
+	      }
+	      return start;
+	    }
+	  }, {
 	    key: 'getStartAndEnd',
 	    value: function getStartAndEnd(_value, i, p) {
 	      var end = undefined;
@@ -360,63 +413,77 @@
 	      return { start: start, end: end };
 	    }
 	  }, {
+	    key: 'setNewStyle',
+	    value: function setNewStyle(newStyle, easeValue, i, p, _value) {
+	      var cssName = _Css2['default'].isTransform(p);
+	      if (cssName === 'transform') {
+	        this.tweenStart.end[p] = _Css2['default'].getParam(p, _value, easeValue);
+	        var cTransform = newStyle.transform;
+	        var str = '';
+	        if (cTransform) {
+	          cTransform.split(' ').forEach(function (_str) {
+	            if (_str.indexOf('perspective') >= 0) {
+	              str = _str;
+	            }
+	          });
+	        }
+	        for (var _p in newStyle) {
+	          if (_Css2['default'].isTransform(_p) === 'transform') {
+	            str = _Css2['default'].mergeStyle(newStyle.transform, str);
+	          }
+	        }
+	        for (var _p in this.tweenStart.end) {
+	          if (_Css2['default'].isTransform(_p) === 'transform') {
+	            str = _Css2['default'].mergeStyle(str, this.tweenStart.end[_p]);
+	          }
+	        }
+	        newStyle[cssName] = str;
+	      } else if (cssName === 'bezier') {
+	        var bezier = this.tweenStart['bezier' + i] = this.tweenStart['bezier' + i] || new _BezierPlugin2['default'](this.computedStyle.transform, _value);
+	        newStyle.transform = _Css2['default'].mergeStyle(newStyle.transform || '', bezier.set(easeValue[0]));
+	      } else if (cssName === 'filter') {
+	        newStyle[cssName] = _Css2['default'].mergeStyle(newStyle[cssName] || '', _Css2['default'].getFilterParam(this.tweenStart[i][p], _value, easeValue[0]));
+	      } else {
+	        newStyle[cssName] = _Css2['default'].getParam(p, _value, easeValue);
+	      }
+	    }
+	  }, {
 	    key: 'raf',
 	    value: function raf() {
-	      var _this4 = this;
+	      var _this5 = this;
 	
 	      if (this.rafID === -1 || this.type === 'pause') {
 	        return;
 	      }
 	
-	      var newStyle = this.style;
 	      this.defaultData.forEach(function (item, i) {
 	        if (!item) {
 	          return;
 	        }
 	        var now = Date.now();
 	        var progressTime = now - item.initTime > item.duration ? item.duration : now - item.initTime;
-	        if (_this4.type === 'reverse') {
+	        if (_this5.type === 'reverse') {
 	          progressTime = item.initTime - now > 0 ? item.initTime - now : 0;
 	        }
-	        _this4.timeLineProgressData['progressTime' + i] = progressTime;
-	        var sBool = _this4.type === 'reverse' ? progressTime <= item.duration : progressTime >= 0;
+	        _this5.timeLineProgressData['progressTime' + i] = progressTime;
+	        var sBool = _this5.type === 'reverse' ? progressTime <= item.duration : progressTime >= 0;
 	
-	        if (item.tween && sBool && !_this4.defaultData[i].end) {
+	        if (item.tween && sBool && !item.end) {
 	          if (!item.onStart.only) {
 	            item.onStart();
 	            item.onStart.only = true;
 	          }
 	          item.onUpdate(_tweenFunctions2['default'][item.ease](progressTime, 0, 1, item.duration));
+	          // 开始设置；与下面分开；
+	          _this5.tweenStart = _this5.getTweenStart(item, i);
 	          // 生成start
-	          for (var p in item.tween) {
-	            if (p !== 'start') {
-	              var _value = item.tween[p];
-	              p = _Css2['default'].getGsapType(p);
-	              var cssName = _Css2['default'].isTransform(p);
-	              _this4.tweenStart[i] = _this4.tweenStart[i] || {};
-	              _this4.tweenStart.end = _this4.tweenStart.end || {};
-	              _this4.tweenStart[i][p] = _this4.tweenStart[i][p] || _this4.computedStyle[p] || 0;
-	              // 开始设置；
-	              if (cssName === 'transform' || cssName === 'filter') {
-	                if (!_this4.tweenStart.end['Bool' + i]) {
-	                  if (newStyle && newStyle[cssName]) {
-	                    var cssStyleArr = newStyle[cssName].split(' ');
-	                    if (cssName === 'transform') {
-	                      for (var ii = 0; ii < cssStyleArr.length; ii++) {
-	                        var _item = cssStyleArr[ii].replace(/[(|)]/ig, '$').split('$');
-	                        _this4.tweenStart[i][_item[0]] = _item[1];
-	                      }
-	                      _this4.tweenStart[i][p] = _Css2['default'].mergeTransformName(cssStyleArr, p) || _this4.tweenStart[i][p];
-	                    } else {
-	                      _this4.tweenStart[i][p] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
-	                    }
-	                  }
-	                  _this4.tweenStart.end['Bool' + i] = true;
-	                }
-	              }
+	          Object.keys(item.tween).forEach(function (_p) {
+	            if (_p !== 'start') {
+	              var _value = item.tween[_p];
+	              var p = _Css2['default'].getGsapType(_p);
 	
 	              // 设置start与end的值
-	              var setStartEnd = _this4.getStartAndEnd(_value, i, p);
+	              var setStartEnd = _this5.getStartAndEnd(_value, i, p);
 	              var start = setStartEnd.start;
 	              var end = setStartEnd.end;
 	
@@ -436,77 +503,37 @@
 	                }
 	              }
 	              easeValue = item.duration === 0 ? end : easeValue;
-	              _this4.tweenStart.end[p] = easeValue;
+	              _this5.tweenStart.end[p] = easeValue;
 	
 	              // 生成样式
-	              if (cssName === 'transform') {
-	                // const m = this.computedStyle[cssName].replace(/matrix|3d|[(|)]/ig, '').split(',').map(parseFloat);
-	                // perspective = m[11] ? Math.round((m[10] < 0 ? -m[10] : m[10]) / (m[11] < 0 ? -m[11] : m[11])) : 0;
-	                _this4.tweenStart.end[p] = _Css2['default'].getParam(p, _value, easeValue);
-	                // let str = perspective ? 'perspective(' + perspective + 'px)' : '';
-	                var cTransform = newStyle.transform;
-	                var str = '';
-	                if (cTransform) {
-	                  cTransform.split(' ').forEach(function (_str) {
-	                    if (_str.indexOf('perspective') >= 0) {
-	                      str = _str;
-	                    }
-	                  });
-	                }
-	                for (var _p in newStyle) {
-	                  if (_Css2['default'].isTransform(_p) === 'transform') {
-	                    str = _Css2['default'].mergeStyle(newStyle.transform, str);
-	                  }
-	                }
-	                for (var _p in _this4.tweenStart.end) {
-	                  if (_Css2['default'].isTransform(_p) === 'transform') {
-	                    str = _Css2['default'].mergeStyle(str, _this4.tweenStart.end[_p]);
-	                  }
-	                }
-	                newStyle[cssName] = str;
-	              } else if (cssName === 'bezier') {
-	                var bezier = _this4.tweenStart['bezier' + i] = _this4.tweenStart['bezier' + i] || new _BezierPlugin2['default'](_this4.computedStyle.transform, _value);
-	                newStyle.transform = _Css2['default'].mergeStyle(newStyle.transform || '', bezier.set(easeValue[0]));
-	              } else if (cssName === 'filter') {
-	                newStyle[cssName] = _Css2['default'].mergeStyle(newStyle[cssName] || '', _Css2['default'].getFilterParam(_this4.tweenStart[i][p], _value, easeValue[0]));
-	              } else {
-	                newStyle[cssName] = _Css2['default'].getParam(p, _value, easeValue);
-	              }
+	              _this5.setNewStyle(_this5.style, easeValue, i, p, _value);
 	            }
-	          }
+	          });
 	        }
 	
-	        if (progressTime === item.duration && _this4.type !== 'reverse') {
+	        if (progressTime === item.duration && _this5.type !== 'reverse') {
 	          if (item.repeat && item.repeatAnnal !== item.repeat) {
 	            item.repeatAnnal++;
 	            item.initTime += item.duration + item.repeatDelay;
 	            item.onRepeat();
-	            _this4.cancelRequestAnimationFram();
+	            _this5.cancelRequestAnimationFram();
 	          } else {
-	            _this4.defaultData[i].end = true;
-	            if (!item.onComplete.only) {
-	              item.onComplete();
-	              item.onComplete.only = true;
-	            }
+	            _this5.onEndComplete(item, i);
 	          }
-	        } else if (_this4.type === 'reverse' && progressTime === 0) {
+	        } else if (_this5.type === 'reverse' && progressTime === 0) {
 	          if (item.repeat && item.repeatAnnal !== 1) {
 	            item.repeatAnnal--;
 	            item.initTime += item.duration + item.repeatDelay;
 	            item.onRepeat();
-	            _this4.cancelRequestAnimationFram();
+	            _this5.cancelRequestAnimationFram();
 	          } else {
-	            _this4.defaultData[i].end = true;
-	            if (!item.onComplete.only) {
-	              item.onComplete();
-	              item.onComplete.only = true;
-	            }
+	            _this5.onEndComplete(item, i);
 	          }
 	        }
 	      });
 	      if (this.rafID !== -1) {
 	        this.setState({
-	          style: newStyle
+	          style: this.style
 	        });
 	      }
 	      if (this.defaultData.every(function (c) {
@@ -20600,7 +20627,7 @@
 	      var nextObj = obj2[i];
 	      for (var p in currentObj) {
 	        if (currentObj[p] !== nextObj[p]) {
-	          if (typeof currentObj[p] === 'object' && nextObj[p] === 'object') {
+	          if (typeof currentObj[p] === 'object' && typeof nextObj[p] === 'object') {
 	            equalBool = objectEqual(currentObj[p], nextObj[p]);
 	          } else {
 	            equalBool = false;

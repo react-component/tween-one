@@ -43,7 +43,7 @@ webpackJsonp([13],{
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
 	    this.state = {
-	      style: { opacity: 1, height: 100, transform: 'translate(50px,30px)' }
+	      style: { opacity: 1, height: 100, marginLeft: 0, transform: 'translateY(0px)' }
 	    };
 	  }
 	
@@ -54,21 +54,16 @@ webpackJsonp([13],{
 	
 	      setTimeout(function () {
 	        _this.setState({
-	          style: { opacity: 1, height: 200, transform: 'translate(250px,30px)' }
+	          style: { opacity: 1, height: 200, transform: 'translateY(100px)', marginLeft: 100 }
 	        });
 	      }, 1000);
-	      setTimeout(function () {
-	        _this.setState({
-	          style: { opacity: 1, height: 300, transform: 'translate(350px,30px)' }
-	        });
-	      }, 5500);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
-	        { vars: { translateX: '500px', duration: 5000 },
+	        { vars: { translateY: 200, marginLeft: 500, duration: 5000 },
 	          style: this.state.style },
 	        _react2['default'].createElement(
 	          'div',
