@@ -208,7 +208,6 @@
 	    this.type = this.props.type;
 	    this.timeLineProgressData = {};
 	    this.style = this.props.style || {};
-	    this.currentStyle = (0, _objectAssign2['default'])({}, this.props.style);
 	    this.tweenStart = {};
 	    this.defaultData = [];
 	    this.setDefaultData(this.props.vars || {});
@@ -235,6 +234,25 @@
 	    value: function componentWillReceiveProps(nextProps) {
 	      var _this2 = this;
 	
+	      var styleEqual = (0, _util.objectEqual)(this.props.style, nextProps.style);
+	      if (!styleEqual) {
+	        // 为保留动画的样式。。。
+	        this.style = (0, _objectAssign2['default'])({}, this.style, nextProps.style);
+	        if (this.rafID !== -1) {
+	          if (this.tweenStart.end) {
+	            Object.keys(this.tweenStart.end).forEach(function (key) {
+	              if (key.indexOf('Bool') >= 0) {
+	                _this2.tweenStart.end[key] = false;
+	              }
+	            });
+	          }
+	        } else {
+	          this.setState({
+	            style: this.style
+	          });
+	        }
+	      }
+	
 	      var newType = nextProps.type;
 	      var equal = (0, _util.objectEqual)(this.props.vars, nextProps.vars);
 	      if (!equal) {
@@ -259,24 +277,6 @@
 	        this.setDefaultData(nextProps.vars || {});
 	        this.cancelRequestAnimationFram();
 	        this.rafID = (0, _raf2['default'])(this.raf);
-	      }
-	      var styleEqual = (0, _util.objectEqual)(this.currentStyle, nextProps.style);
-	      if (!styleEqual) {
-	        this.currentStyle = (0, _objectAssign2['default'])({}, nextProps);
-	        if (this.rafID !== -1) {
-	          this.style = (0, _objectAssign2['default'])({}, this.style, nextProps.style);
-	          if (this.tweenStart.end) {
-	            Object.keys(this.tweenStart.end).forEach(function (key) {
-	              if (key.indexOf('Bool') >= 0) {
-	                _this2.tweenStart.end[key] = false;
-	              }
-	            });
-	          }
-	        } else {
-	          this.setState({
-	            style: nextProps.style
-	          });
-	        }
 	      }
 	    }
 	  }, {
@@ -20617,6 +20617,9 @@
 	}
 	
 	function objectEqual(obj1, obj2) {
+	  if (!obj1 || !obj2) {
+	    return false;
+	  }
 	  if (obj1 === obj2) {
 	    return true;
 	  }
