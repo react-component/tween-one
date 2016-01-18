@@ -9,6 +9,9 @@ export function dataToArray(vars) {
 }
 
 export function objectEqual(obj1, obj2) {
+  if (!obj1 || !obj2) {
+    return false;
+  }
   if (obj1 === obj2) {
     return true;
   }

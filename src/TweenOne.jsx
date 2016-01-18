@@ -60,8 +60,27 @@ class TweenOne extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const styleEqual = objectEqual(this.props.style, nextProps.style);
+    if (!styleEqual) {
+      // 为保留动画的样式。。。
+      this.style = assign({}, this.style, nextProps.style);
+      if (this.rafID !== -1) {
+        if (this.tweenStart.end) {
+          Object.keys(this.tweenStart.end).forEach(key=> {
+            if (key.indexOf('Bool') >= 0) {
+              this.tweenStart.end[key] = false;
+            }
+          });
+        }
+      } else {
+        this.setState({
+          style: this.style,
+        });
+      }
+    }
+
     const newType = nextProps.type;
-    const equal = objectEqual(this.props.vars, nextProps.vars || {});
+    const equal = objectEqual(this.props.vars, nextProps.vars);
     if (!equal) {
       this.tweenStart = {};
       this.defaultData = [];
@@ -84,24 +103,6 @@ class TweenOne extends Component {
       this.setDefaultData(nextProps.vars || {});
       this.cancelRequestAnimationFram();
       this.rafID = requestAnimationFrame(this.raf);
-    }
-    const styleEqual = objectEqual(this.props.style, nextProps.style || {});
-    if (!styleEqual) {
-      // 为保留动画的样式。。。
-      this.style = assign({}, this.style, nextProps.style);
-      if (this.rafID !== -1) {
-        if (this.tweenStart.end) {
-          Object.keys(this.tweenStart.end).forEach(key=> {
-            if (key.indexOf('Bool') >= 0) {
-              this.tweenStart.end[key] = false;
-            }
-          });
-        }
-      } else {
-        this.setState({
-          style: this.style,
-        });
-      }
     }
   }
 
