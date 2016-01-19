@@ -13,6 +13,22 @@ const DEFAULT_DELAY = 0;
 function noop() {
 }
 
+let hidden;
+let visibilityChange;
+if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
+  hidden = 'hidden';
+  visibilityChange = 'visibilitychange';
+} else if (typeof document.mozHidden !== 'undefined') {
+  hidden = 'mozHidden';
+  visibilityChange = 'mozvisibilitychange';
+} else if (typeof document.msHidden !== 'undefined') {
+  hidden = 'msHidden';
+  visibilityChange = 'msvisibilitychange';
+} else if (typeof document.webkitHidden !== 'undefined') {
+  hidden = 'webkitHidden';
+  visibilityChange = 'webkitvisibilitychange';
+}
+
 // 设置默认数据
 function defaultData(vars, now) {
   return {
@@ -48,6 +64,7 @@ class TweenOne extends Component {
     this.a = 0;
     [
       'raf',
+      'handleVisibilityChange',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
@@ -57,6 +74,7 @@ class TweenOne extends Component {
     if (this.defaultData.length && this.props.vars && (this.type === 'play' || this.type === 'restart')) {
       this.rafID = requestAnimationFrame(this.raf);
     }
+    document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -261,6 +279,18 @@ class TweenOne extends Component {
       newStyle[cssName] = Css.mergeStyle(newStyle[cssName] || '', Css.getFilterParam(this.tweenStart[i][p], _value, easeValue[0]));
     } else {
       newStyle[cssName] = Css.getParam(p, _value, easeValue);
+    }
+  }
+
+  handleVisibilityChange() {
+    // 不在当前窗口时pause
+    if (document[hidden] && this.rafID !== -1) {
+      this.cancelRequestAnimationFram();
+      this.rafHide = true;
+    } else if (this.rafID === -1 && this.rafHide) {
+      this.setDefaultData(this.props.vars || {});
+      this.rafID = requestAnimationFrame(this.raf);
+      this.rafHide = false;
     }
   }
 
