@@ -172,6 +172,10 @@ class TweenOne extends Component {
         this.defaultData[i].initTime = tweenData.initTime;
         this.defaultData[i].end = !((this.type === 'reverse' && progressTime) || (this.type !== 'reverse' && progressTime !== tweenData.duration));
       } else {
+        tweenData.onComplete.only = false;
+        if (this.type !== 'reverse') {
+          tweenData.onStart.only = false;
+        }
         this.defaultData[i] = tweenData;
       }
     };
@@ -283,7 +287,7 @@ class TweenOne extends Component {
   }
 
   handleVisibilityChange() {
-    // 不在当前窗口时pause
+    // 不在当前窗口时
     if (document[hidden] && this.rafID !== -1) {
       this.cancelRequestAnimationFram();
       this.rafHide = true;
