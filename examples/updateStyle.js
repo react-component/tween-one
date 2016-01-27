@@ -13,7 +13,7 @@ class Demo extends React.Component {
   componentDidMount() {
     setTimeout(()=> {
       this.setState({
-        style: {opacity: 1, height: 200, transform: 'translateY(100px)', marginLeft: 100},
+        style: {opacity: 1, height: 250, transform: 'translateY(100px)', marginLeft: 100},
       });
     }, 1000);
   }
@@ -21,7 +21,7 @@ class Demo extends React.Component {
   render() {
     return (<Tween vars={{ translateY: 200, marginLeft: 500, duration: 5000}}
                    style={this.state.style}>
-      <div>执行动效</div>
+      <div>变化的样式不做改变</div>
     </Tween>);
   }
 }
