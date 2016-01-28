@@ -10,9 +10,6 @@ React TweenOne Component
 [![gemnasium deps][gemnasium-image]][gemnasium-url]
 [![node version][node-image]][node-url]
 [![npm download][download-image]][download-url]
-[![Sauce Test Status](https://saucelabs.com/buildstatus/rc-tween-one)](https://saucelabs.com/u/rc-tween-one)
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/rc-tween-one.svg)](https://saucelabs.com/u/rc-tween-one)
 
 [npm-image]: http://img.shields.io/npm/v/rc-tween-one.svg?style=flat-square
 [npm-url]: http://npmjs.org/package/rc-tween-one
@@ -50,14 +47,6 @@ npm start
 
 http://localhost:8100/examples/
 
-
-## Feature
-
-* support ie8,ie8+,chrome,firefox,safari
-
-### Keyboard
-
-
 ## install
 
 
@@ -69,7 +58,7 @@ http://localhost:8100/examples/
 ```js
 var TweenOne = require('rc-tween-one');
 var React = require('react');
-React.render(<TweenOne vars={{x:100}}>
+React.render(<TweenOne animation={{x:100}}>
                文案示例
              </TweenOne>, container);
 ```
@@ -81,11 +70,11 @@ React.render(<TweenOne vars={{x:100}}>
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
 | type       | string         | `play`  | 播放参数，为 `play` `pause` `reverse` `restart` |
-| vars       | object / array | null    | 需要执行动画的参数 |
+| animation  | object / array | null    | 需要执行动画的参数 |
 | component  | string         | `div`   | 标签   |
 
 
-### vars = { }
+### animation = { }
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
@@ -117,14 +106,3 @@ React.render(<TweenOne vars={{x:100}}>
 
 > 贝赛尔曲线API参照 [gsap BezierPlugin](http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/)
 
-## Test Case
-
-http://localhost:8100/tests/runner.html?coverage
-
-## Coverage
-
-http://localhost:8100/node_modules/rc-server/node_modules/node-jscover/lib/front-end/jscoverage.html?w=http://localhost:8100/tests/runner.html?coverage
-
-## License
-
-rc-tween-one is released under the MIT license.

@@ -43,7 +43,7 @@ describe('rc-tween-one', function() {
 
   it('single tween-one', function(done) {
     instance = createTweenInstance({
-      vars: {top: 100},
+      animation: {top: 100},
       style: {top: 0},
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
@@ -59,11 +59,10 @@ describe('rc-tween-one', function() {
 
   it('timeline tween-one', function(done) {
     instance = createTweenInstance({
-      vars: [{top: 100}, {left: 100}, {top: 0}, {left: 0}],
+      animation: [{top: 100}, {left: 100}, {top: 0}, {left: 0}],
       style: {position: 'relative'},
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-
     setTimeout(function() {
       console.log('top===100,data:', child.style.top, '########', 'left>0,data:', child.style.left);
       expect(getFloat(child.style.top)).to.be(100);
@@ -87,9 +86,9 @@ describe('rc-tween-one', function() {
     }, 500);
   });
 
-  it('repeat tween-one', function(done) {
+  it.only('repeat tween-one', function(done) {
     instance = createTweenInstance({
-      vars: {top: 100, repeat: 2},
+      animation: {top: 100, repeat: 1},
       style: {position: 'relative', top: 0},
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
@@ -112,7 +111,7 @@ describe('rc-tween-one', function() {
 
   it('repeat yoyo tween-one', function(done) {
     instance = createTweenInstance({
-      vars: {top: 100, repeat: 2, yoyo: true},
+      animation: {top: 100, repeat: 1, yoyo: true},
       style: {position: 'relative', top: 0},
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
@@ -135,7 +134,7 @@ describe('rc-tween-one', function() {
 
   it('type is from tween-one', function(done) {
     instance = createTweenInstance({
-      vars: {top: 100, type: 'from'},
+      animation: {top: 100, type: 'from'},
       style: {position: 'relative', top: 0},
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');

@@ -8,7 +8,7 @@ class Demo extends React.Component {
 
   render() {
     return (
-      <Tween vars={{x: '+=500px', y: '-=40px'}} style={{opacity: 1, height: 100, transform: 'translate(50px,30px)'}}>
+      <Tween animation={{x: '+=500px', y: '-=40px'}} style={{opacity: 1, height: 100, transform: 'translate(50px,30px)'}}>
         <div>执行动效</div>
       </Tween>);
   }
