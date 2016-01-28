@@ -86,7 +86,7 @@ describe('rc-tween-one', function() {
     }, 500);
   });
 
-  it.only('repeat tween-one', function(done) {
+  it('repeat tween-one', function(done) {
     instance = createTweenInstance({
       animation: {top: 100, repeat: 1},
       style: {position: 'relative', top: 0},
