@@ -187,7 +187,6 @@ TweenOne.propTypes = {
   style: PropTypes.object,
   paused: PropTypes.bool,
   reverse: PropTypes.bool,
-  restart: PropTypes.bool,
   moment: PropTypes.number,
   onChange: PropTypes.func,
 };
