@@ -31,11 +31,6 @@ React TweenOne Component
 | --- | --- | --- | --- | --- |
 | IE 8+ ✔ | Chrome 31.0+ ✔ | Firefox 31.0+ ✔ | Opera 30.0+ ✔ | Safari 7.0+ ✔ |
 
-## Screenshots
-
-<img src="" width="288"/>
-
-
 ## Development
 
 ```
@@ -69,8 +64,11 @@ React.render(<TweenOne animation={{x:100}}>
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
-| type       | string         | `play`  | 播放参数，为 `play` `pause` `reverse` `restart` |
 | animation  | object / array | null    | 需要执行动画的参数 |
+| pause      | boolean        | false   | 暂停 |
+| reverse    | boolean        | false   | 倒放 |
+| onChange   | func           | null    | 全局变动回调 |
+| moment     | number         | null    | 设置当前时间轴上的时间  |
 | component  | string         | `div`   | 标签   |
 
 
@@ -94,7 +92,7 @@ React.render(<TweenOne animation={{x:100}}>
 
 
 
-### vars =[ ] 时为timeline
+### animation =[ ] 时为timeline
 
 ### bezier = { }
 
