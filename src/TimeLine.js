@@ -35,7 +35,7 @@ const timeLine = function(startData, toData) {
   // 记录时间轴数据;
   this.defaultData = [];
   // 默认状态数据;
-  this.startData = startData || {};
+  this.startData = {};
   // 动画样式;
   this.animData = {
     start: {},
@@ -44,19 +44,23 @@ const timeLine = function(startData, toData) {
   // 1秒时间;
   this.oneSecond = 1000 / 60;
   // 设置默认动画数据;
-  this.setDefaultData(toData);
+  this.setDefaultData(startData, toData);
 };
 const p = timeLine.prototype;
-p.setDefaultData = function(vars) {
+
+p.setDefaultData = function(start, vars) {
   let now = 0;
   let repeatMax = false;
   const data = vars.map(item=> {
     now += item.delay || 0;// 加上延时，在没有播放过时；
     const tweenData = defaultData(item, now);
     tweenData.data = {};
-    for (const pp in item) {
-      if (!(pp in tweenData)) {
-        tweenData.data[pp] = item[pp];
+    for (const _key in item) {
+      if (!(_key in tweenData)) {
+        const key = Css.getGsapType(_key);
+        const cssName = Css.isTransform(key);
+        this.startData[cssName] = start[cssName];
+        tweenData.data[_key] = item[_key];
       }
     }
     if (tweenData.yoyo && !tweenData.repeat) {
@@ -81,7 +85,7 @@ p.setAnimStartData = function(endData) {
   const obj = {};
 
   function setStyle(_obj, data, key) {
-    const cssStyleArr = data.split(' ');
+    const cssStyleArr = data.toString().split(' ');
     cssStyleArr.forEach(__item=> {
       const _item = __item.replace(/[(|)]/ig, '$').split('$');
       _obj[_item[0]] = _item[1];
@@ -161,10 +165,10 @@ p.setNewStyle = function(easeValue, endData, i) {
       const bezier = this.animData['bezier' + i] = this.animData['bezier' + i] || new Bezier(this.startData.transform, endData[_key]);
       this.startData.transform = this.startData.transform === 'none' ? '' : this.startData.transform;
       this.animData.tween.transform = Css.mergeStyle(this.startData.transform, this.animData.tween.transform || '');
-      this.animData.tween.transform = Css.mergeStyle(this.startData.transform, bezier.set(easeValue));
+      this.animData.tween.transform = Css.mergeStyle(this.animData.tween.transform, bezier.set(easeValue));
     } else if (cssName === 'filter') {
       this.animData.tween[cssName] = Css.mergeStyle(this.startData[cssName] || '', this.animData.tween[cssName] || '');
-      this.animData.tween[cssName] = Css.mergeStyle(this.startData[cssName] || '', Css.getFilterParam(start[_key], endData[_key], easeValue));
+      this.animData.tween[cssName] = Css.mergeStyle(this.animData.tween[cssName], Css.getFilterParam(start[_key], endData[_key], easeValue));
     } else if (cssName === 'transform') {
       this.animData.tween[cssName] = Css.mergeStyle(this.startData[cssName] || '', this.animData.tween[cssName] || '');
       this.animData.tween[cssName] = Css.mergeStyle(this.animData.tween[cssName], Css.getParam(key, endData[_key], differ));

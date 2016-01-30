@@ -30,6 +30,7 @@ class TweenOne extends Component {
     super(...arguments);
     this.rafID = null;
     this.style = this.props.style || {};
+    this.currentStyle = assign({}, this.props.style);
     this.currentMoment = this.props.moment || 0;
     this.moment = this.props.moment || 0;
     this.state = {
@@ -58,12 +59,14 @@ class TweenOne extends Component {
     if (!styleEqual) {
       if (this.rafID === -1) {
         this.style = assign({}, this.style, nextProps.style);
+        this.currentStyle = assign({}, this.style);
         this.setState({
           style: this.style,
         });
         this.timeLine.animData.tween = assign({}, this.timeLine.animData.tween, nextProps.style);
       } else {
         // 如果在动画时, 不可改变做动效的参数
+        this.currentStyle = assign({}, nextProps.style, this.timeLine.animData.tween);
         this.timeLine.animData.tween = assign({}, nextProps.style, this.timeLine.animData.tween);
       }
     }
@@ -75,7 +78,6 @@ class TweenOne extends Component {
     // 暂停倒放
     if (this.props.reverse !== nextProps.reverse || this.props.paused !== nextProps.reverse) {
       this.currentMoment = this.timeLine.progressTime;
-      this.timeLine.resetAnimData();
       this.setCurrentDate();
       this.play();
     }
@@ -83,6 +85,7 @@ class TweenOne extends Component {
     if (typeof nextProps.moment === 'number') {
       this.currentMoment = nextProps.moment;
       if (!nextProps.paused) {
+        // 跳帧需要把 animData 清掉;从新定位;
         this.timeLine.resetAnimData();
         this.setCurrentDate();
         this.play();
@@ -144,7 +147,7 @@ class TweenOne extends Component {
     moment = moment <= 0 ? 0 : moment;
     this.moment = moment;
     this.timeLine.onChange = this.props.onChange.bind(this);
-    this.style = assign({}, this.style, this.timeLine.frame(moment));
+    this.style = assign({}, this.currentStyle, this.timeLine.frame(moment));
     this.setState({
       style: this.style,
     });
