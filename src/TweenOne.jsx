@@ -78,6 +78,8 @@ class TweenOne extends Component {
 
     // 暂停倒放
     if (this.props.reverse !== nextProps.reverse || this.props.paused !== nextProps.reverse) {
+      // 如果 animation 发生改变或没改变, 都重置默认数据,
+      this.timeLine.setDefaultData(assign({}, this.computedStyle, this.style), dataToArray(nextProps.animation));
       this.currentMoment = this.timeLine.progressTime;
       this.setCurrentDate();
       this.play();
