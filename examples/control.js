@@ -7,7 +7,9 @@ class Demo extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      tweenType: 'pause',
+      paused: true,
+      reverse: false,
+      restart: false,
     };
     [
       'onPlay',
@@ -19,25 +21,32 @@ class Demo extends React.Component {
 
   onPlay() {
     this.setState({
-      tweenType: 'play',
+      paused: false,
+      reverse: false,
+      moment: null,
     });
   }
 
   onPause() {
     this.setState({
-      tweenType: 'pause',
+      paused: true,
+      moment: null,
     });
   }
 
   onReverse() {
     this.setState({
-      tweenType: 'reverse',
+      reverse: true,
+      paused: false,
+      moment: null,
     });
   }
 
   onRestart() {
     this.setState({
-      tweenType: 'restart',
+      moment: 0,
+      paused: false,
+      reverse: false,
     });
   }
 
@@ -45,8 +54,10 @@ class Demo extends React.Component {
     return (
       <div>
         <div style={{height: 200}}>
-          <Tween vars={[{translateX: '500px', duration: 1000}, {y: 100}, {x: 100}]}
-                 type={this.state.tweenType}
+          <Tween animation={[{translateX: '500px', duration: 1000}, {y: 100}, {x: 100}]}
+                 paused={this.state.paused}
+                 reverse={this.state.reverse}
+                 moment={this.state.moment}
                  style={{opacity: 1, width: 100, transform: 'translate(50px,30px)'}}>
             <div>执行动效</div>
           </Tween>

@@ -19,7 +19,7 @@ class Demo extends React.Component {
 
   render() {
     return (<Tween
-      vars={[{translateX: 100, rotate: 10}, {translateY: 100, translateX: 500, rotate: 0}, {translateX: 0, marginTop: 100}, {translateY: 0, marginLeft: 100}, {marginLeft: 0, marginTop: 0}]}
+      animation={[{translateX: 100, rotate: 10}, {translateY: 100, translateX: 500, rotate: 0}, {translateX: 0, marginTop: 100}, {translateY: 0, marginLeft: 100}, {marginLeft: 0, marginTop: 0}]}
       style={{height: 400}}>
       {this.state.children}
     </Tween>);

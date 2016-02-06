@@ -44,14 +44,13 @@ const _hue = (hh, m1, m2)=> {
   return (c * 255 + 0.5) | 0;
 };
 
-const transformGroup = {translate: 1, translate3d: 1, scale: 1, scale3d: 1, rotate: 1, rotate3d: 1};
-
 
 const CSS = {
   _lists: {
     transformsBase: ['translate', 'translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY', 'rotateZ', 'rotate'],
     transforms3D: ['translate3d', 'translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective'],
   },
+  transformGroup: {translate: 1, translate3d: 1, scale: 1, scale3d: 1, rotate: 1, rotate3d: 1},
 
   getGsapType(_p) {
     let p = _p;
@@ -145,38 +144,38 @@ const CSS = {
     if (name.indexOf('translate') >= 0) {
       if ('translate' in obj || 'translate3d' in obj) {
         switch (name) {
-        case 'translateX':
-          return obj.translate.split(',')[0];
-        case 'translateY':
-          return obj.translate.split(',')[1];
-        case 'translateZ':
-          return obj.translate.split(',')[2];
-        default :
-          return null;
+          case 'translateX':
+            return obj.translate.split(',')[0];
+          case 'translateY':
+            return obj.translate.split(',')[1];
+          case 'translateZ':
+            return obj.translate.split(',')[2];
+          default :
+            return null;
         }
       }
     } else if (name.indexOf('rotate') >= 0) {
       if ('rotate' in obj || 'rotate3d' in obj) {
         switch (name) {
-        case 'rotateX':
-          return obj.rotate.split(',')[0];
-        case 'rotateY':
-          return obj.rotate.split(',')[1];
-        case 'rotateZ':
-          return obj.rotate.split(',')[2];
-        default :
-          return null;
+          case 'rotateX':
+            return obj.rotate.split(',')[0];
+          case 'rotateY':
+            return obj.rotate.split(',')[1];
+          case 'rotateZ':
+            return obj.rotate.split(',')[2];
+          default :
+            return null;
         }
       }
     } else if (name.indexOf('scale') >= 0) {
       if ('scale' in obj) {
         switch (name) {
-        case 'scaleX':
-          return obj.scale.split(',')[0];
-        case 'scaleY':
-          return obj.scale.split(',')[1];
-        default :
-          return null;
+          case 'scaleX':
+            return obj.scale.split(',')[0];
+          case 'scaleY':
+            return obj.scale.split(',')[1];
+          default :
+            return null;
         }
       }
     }
@@ -188,14 +187,14 @@ const CSS = {
       const bArr = belongTransform.split('(');
       const dataArr = bArr[1].replace(')', '').split(',');
       switch (b) {
-      case 'translateX' || 'scaleX' || 'rotateX':
-        return dataArr[0];
-      case 'translateY' || 'scaleY' || 'rotateY':
-        return dataArr[1];
-      case 'translateZ' || 'rotateZ':
-        return dataArr[2];
-      default :
-        return null;
+        case 'translateX' || 'scaleX' || 'rotateX':
+          return dataArr[0];
+        case 'translateY' || 'scaleY' || 'rotateY':
+          return dataArr[1];
+        case 'translateZ' || 'rotateZ':
+          return dataArr[2];
+        default :
+          return null;
       }
     }
     return false;
@@ -208,9 +207,9 @@ const CSS = {
           return;
         }
         const cName = _cname.split('(')[0];
-        const a = (cName in transformGroup && name.substring(0, name.length - 1).indexOf(cName) >= 0);
-        const b = (name in transformGroup && cName.substring(0, cName.length - 1).indexOf(name) >= 0);
-        const c = cName in transformGroup && name in transformGroup && (cName.substring(0, cName.length - 2) === name || name.substring(0, name.length - 2) === cName);
+        const a = (cName in this.transformGroup && name.substring(0, name.length - 1).indexOf(cName) >= 0);
+        const b = (name in this.transformGroup && cName.substring(0, cName.length - 1).indexOf(name) >= 0);
+        const c = cName in this.transformGroup && name in this.transformGroup && (cName.substring(0, cName.length - 2) === name || name.substring(0, name.length - 2) === cName);
         if (cName === name || a || b || c) {
           ret = _cname;
         }
@@ -254,34 +253,34 @@ const CSS = {
         const changeDataArr = changeArr[1].replace(')', '').split(',');
         if (currentOnlyName === changeOnlyName) {
           addArr.push(changeSame);
-        } else if (currentOnlyName in transformGroup && changeOnlyName.substring(0, changeOnlyName.length - 1).indexOf(currentOnlyName) >= 0) {
+        } else if (currentOnlyName in this.transformGroup && changeOnlyName.substring(0, changeOnlyName.length - 1).indexOf(currentOnlyName) >= 0) {
           switch (changeOnlyName) {
-          case 'translateX' || 'scaleX' || 'rotateX':
-            currentDataArr[0] = changeDataArr.join();
-            break;
-          case 'translateY' || 'scaleY' || 'rotateY':
-            currentDataArr[1] = changeDataArr.join();
-            break;
-          case 'translateZ' || 'rotateZ':
-            currentDataArr[2] = changeDataArr.join();
-            break;
-          default :
-            return null;
+            case 'translateX' || 'scaleX' || 'rotateX':
+              currentDataArr[0] = changeDataArr.join();
+              break;
+            case 'translateY' || 'scaleY' || 'rotateY':
+              currentDataArr[1] = changeDataArr.join();
+              break;
+            case 'translateZ' || 'rotateZ':
+              currentDataArr[2] = changeDataArr.join();
+              break;
+            default :
+              return null;
           }
           addArr.push(currentOnlyName + '(' + currentDataArr.join(',') + ')');
-        } else if (changeOnlyName in transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 1).indexOf(changeOnlyName) >= 0) {
+        } else if (changeOnlyName in this.transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 1).indexOf(changeOnlyName) >= 0) {
           addArr.push(changeOnlyName + '(' + changeDataArr.join(',') + ')');
-        } else if (changeOnlyName in transformGroup && currentOnlyName in transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 2) === changeOnlyName) {
+        } else if (changeOnlyName in this.transformGroup && currentOnlyName in this.transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 2) === changeOnlyName) {
           // 如果是3d时,且一个为2d时；
           switch (changeOnlyName) {
-          case 'translateX' || 'scaleX' || 'rotateX':
-            currentDataArr[0] = changeDataArr[0];
-            break;
-          case 'translateY' || 'scaleY' || 'rotateY':
-            currentDataArr[1] = changeDataArr[1];
-            break;
-          default :
-            return null;
+            case 'translateX' || 'scaleX' || 'rotateX':
+              currentDataArr[0] = changeDataArr[0];
+              break;
+            case 'translateY' || 'scaleY' || 'rotateY':
+              currentDataArr[1] = changeDataArr[1];
+              break;
+            default :
+              return null;
           }
           addArr.push(currentOnlyName + '(' + currentDataArr.join(',') + ')');
         }
@@ -347,7 +346,7 @@ const CSS = {
       unit = unit || v.toString().replace(/[^a-z|%]/ig, '');
     } else if (p.indexOf('scale') >= 0) {
       invalid = !/(\d)$/i.test(v);
-    } else if (p.indexOf('Shadow') >= 0) {
+    } else if (p.indexOf('Shadow') >= 0 || p.indexOf('shadow') >= 0) {
       return this.getShadowParam(v, d);
     }
     if (!invalid) {

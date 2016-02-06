@@ -24,9 +24,9 @@ class Demo extends React.Component {
   }
 
   render() {
-    return (<Tween vars={this.state.tweenData} style={{height: 300, width: 60, textAlign: 'center'}}>
+    return (<Tween animation={this.state.tweenData} style={{height: 300, width: 60, textAlign: 'center'}}>
       <div>大面包</div>
-      <Tween vars={this.state.childTweenData} key="tween">小馒头</Tween>
+      <Tween animation={this.state.childTweenData} key="tween">小馒头</Tween>
     </Tween>);
   }
 }

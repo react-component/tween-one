@@ -1,13 +1,15 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
+
 class Demo extends React.Component {
   constructor() {
     super(...arguments);
   }
 
   render() {
-    return (<Tween animation={[{height: 300, backgroundColor: 'hsla(360,50%,50%,0.5)'}, {color: 'white'}, {borderColor: 'red'}]} style={{border: '1px solid #000'}}>
+    return (<Tween animation={[{translateX: '500px', delay: 1000}, {delay: -350, y: 150}]}
+                   style={{opacity: 1, height: 300, transform: 'translate(50px,30px)'}}>
       <div>执行动效</div>
     </Tween>);
   }
