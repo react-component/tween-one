@@ -20390,8 +20390,8 @@
 	        return (parseFloat(data) - parseFloat(startVars[ii])) * easeValue + parseFloat(startVars[ii]);
 	      });
 	    } else {
-	      endVars = parseFloat(endVars.toString().replace(/[^0-9|.]/ig, ''));
-	      startVars = parseFloat((startVars || 0).toString().replace(/[^0-9|.]/ig, ''));
+	      endVars = parseFloat(endVars.toString().replace(/[^0-9|.|-]/ig, ''));
+	      startVars = parseFloat((startVars || 0).toString().replace(/[^0-9|.|-]/ig, ''));
 	      differ = (endVars - startVars) * easeValue + startVars;
 	      if (typeof endData[_key] === 'string' && endData[_key].charAt(1) === '=') {
 	        differ = startVars + parseFloat(endData[_key].charAt(0) + 1) * endVars * easeValue;
