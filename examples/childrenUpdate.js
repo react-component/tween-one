@@ -3,12 +3,12 @@ webpackJsonp([3],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(172);
+	module.exports = __webpack_require__(173);
 
 
 /***/ },
 
-/***/ 172:
+/***/ 173:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -69,7 +69,7 @@ webpackJsonp([3],{
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
-	        { vars: this.state.tweenData, style: { height: 300, width: 60, textAlign: 'center' } },
+	        { animation: this.state.tweenData, style: { height: 300, width: 60, textAlign: 'center' } },
 	        _react2['default'].createElement(
 	          'div',
 	          null,
@@ -77,7 +77,7 @@ webpackJsonp([3],{
 	        ),
 	        _react2['default'].createElement(
 	          _rcTweenOne2['default'],
-	          { vars: this.state.childTweenData, key: 'tween' },
+	          { animation: this.state.childTweenData, key: 'tween' },
 	          '小馒头'
 	        )
 	      );

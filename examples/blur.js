@@ -3,12 +3,12 @@ webpackJsonp([2],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(171);
+	module.exports = __webpack_require__(172);
 
 
 /***/ },
 
-/***/ 171:
+/***/ 172:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52,22 +52,12 @@ webpackJsonp([2],{
 	        null,
 	        _react2['default'].createElement(
 	          'div',
-	          { style: { height: 200 } },
+	          null,
 	          '模糊与其它filter里滤镜，只支持xxx(10),可以多个'
 	        ),
 	        _react2['default'].createElement(
 	          _rcTweenOne2['default'],
-	          { vars: { filter: 'blur(10px)', translateX: 1000, duration: 1000 },
-	            style: { height: 100, transform: 'translateX(100px)' } },
-	          _react2['default'].createElement(
-	            'div',
-	            null,
-	            '执行动效'
-	          )
-	        ),
-	        _react2['default'].createElement(
-	          _rcTweenOne2['default'],
-	          { vars: { filter: 'sepia(100%)', duration: 2000 } },
+	          { animation: { filter: 'sepia(100%) blur(10px)', duration: 2000 } },
 	          _react2['default'].createElement('img', { width: '500', src: 'https://t.alipayobjects.com/images/T1CFtgXb0jXXXXXXXX.jpg' })
 	        )
 	      );

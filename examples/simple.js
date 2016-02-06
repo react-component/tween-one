@@ -1,14 +1,14 @@
-webpackJsonp([10],{
+webpackJsonp([12],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(179);
+	module.exports = __webpack_require__(182);
 
 
 /***/ },
 
-/***/ 179:
+/***/ 182:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35,8 +35,6 @@ webpackJsonp([10],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var a = '自定义参数';
-	
 	var Demo = (function (_React$Component) {
 	  _inherits(Demo, _React$Component);
 	
@@ -47,17 +45,18 @@ webpackJsonp([10],{
 	  }
 	
 	  _createClass(Demo, [{
-	    key: 'abc',
-	    value: function abc(t, e) {
-	      // update里传回出当前的百分比；
-	      console.log('bind:' + t, 'update:' + e);
+	    key: 'bbb',
+	    value: function bbb(e) {
+	      console.log(e);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
-	        { vars: { translateX: '500px', onUpdate: this.abc.bind(this, a) }, style: { opacity: 1, height: 100, transform: 'translate(50px,30px)' } },
+	        { animation: { translateX: '500px' },
+	          onChange: this.bbb.bind(this),
+	          style: { opacity: 1, height: 100, transform: 'translate(50px,30px)' } },
 	        _react2['default'].createElement(
 	          'div',
 	          null,

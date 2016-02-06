@@ -1,14 +1,14 @@
-webpackJsonp([13],{
+webpackJsonp([15],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(182);
+	module.exports = __webpack_require__(185);
 
 
 /***/ },
 
-/***/ 182:
+/***/ 185:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54,7 +54,7 @@ webpackJsonp([13],{
 	
 	      setTimeout(function () {
 	        _this.setState({
-	          style: { opacity: 1, height: 200, transform: 'translateY(100px)', marginLeft: 100 }
+	          style: { opacity: 1, height: 250, transform: 'translateY(100px)', marginLeft: 100 }
 	        });
 	      }, 1000);
 	    }
@@ -63,12 +63,12 @@ webpackJsonp([13],{
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
-	        { vars: { translateY: 200, marginLeft: 500, duration: 5000 },
+	        { animation: { translateY: 200, marginLeft: 500, duration: 5000 },
 	          style: this.state.style },
 	        _react2['default'].createElement(
 	          'div',
 	          null,
-	          '执行动效'
+	          '变化的样式不做改变'
 	        )
 	      );
 	    }

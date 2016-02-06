@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>update.js - example - rc-tween-one@0.1.8</title>
+  <title>update.js - example - rc-tween-one@0.2.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -257,7 +257,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
 <div class="container">
   <div class="header">
-    <h1>rc-tween-one@0.1.8</h1>
+    <h1>rc-tween-one@0.2.0</h1>
 
     <p>tween-one anim component for react</p>
   </div>
@@ -271,7 +271,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
   constructor() {
     <span class="hljs-keyword">super</span>(...arguments);
     <span class="hljs-keyword">this</span>.state = {
-      tweenData: { translateX: <span class="hljs-string">'100px'</span>, duration: <span class="hljs-number">300</span>},
+      tweenData: { translateX: <span class="hljs-string">'100px'</span>, duration: <span class="hljs-number">3000</span>},
     };
   }
 
@@ -280,11 +280,11 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
       <span class="hljs-keyword">this</span>.setState({
         tweenData: {opacity: <span class="hljs-number">0.5</span>, marginTop: <span class="hljs-number">100</span>, duration: <span class="hljs-number">1000</span>},
       });
-    }, <span class="hljs-number">1000</span>);
+    }, <span class="hljs-number">2000</span>);
   }
 
   render() {
-    <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">vars</span>=<span class="hljs-value">{this.state.tweenData}</span>&gt;</span>
+    <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{this.state.tweenData}</span>&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>)</span>;
   }

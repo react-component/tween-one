@@ -3,12 +3,12 @@ webpackJsonp([5],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(174);
+	module.exports = __webpack_require__(175);
 
 
 /***/ },
 
-/***/ 174:
+/***/ 175:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45,7 +45,9 @@ webpackJsonp([5],{
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
 	    this.state = {
-	      tweenType: 'pause'
+	      paused: true,
+	      reverse: false,
+	      restart: false
 	    };
 	    ['onPlay', 'onPause', 'onReverse', 'onRestart'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
@@ -56,28 +58,35 @@ webpackJsonp([5],{
 	    key: 'onPlay',
 	    value: function onPlay() {
 	      this.setState({
-	        tweenType: 'play'
+	        paused: false,
+	        reverse: false,
+	        moment: null
 	      });
 	    }
 	  }, {
 	    key: 'onPause',
 	    value: function onPause() {
 	      this.setState({
-	        tweenType: 'pause'
+	        paused: true,
+	        moment: null
 	      });
 	    }
 	  }, {
 	    key: 'onReverse',
 	    value: function onReverse() {
 	      this.setState({
-	        tweenType: 'reverse'
+	        reverse: true,
+	        paused: false,
+	        moment: null
 	      });
 	    }
 	  }, {
 	    key: 'onRestart',
 	    value: function onRestart() {
 	      this.setState({
-	        tweenType: 'restart'
+	        moment: 0,
+	        paused: false,
+	        reverse: false
 	      });
 	    }
 	  }, {
@@ -91,8 +100,10 @@ webpackJsonp([5],{
 	          { style: { height: 200 } },
 	          _react2['default'].createElement(
 	            _rcTweenOne2['default'],
-	            { vars: [{ translateX: '500px', duration: 1000 }, { y: 100 }, { x: 100 }],
-	              type: this.state.tweenType,
+	            { animation: [{ translateX: '500px', duration: 1000 }, { y: 100 }, { x: 100 }],
+	              paused: this.state.paused,
+	              reverse: this.state.reverse,
+	              moment: this.state.moment,
 	              style: { opacity: 1, width: 100, transform: 'translate(50px,30px)' } },
 	            _react2['default'].createElement(
 	              'div',

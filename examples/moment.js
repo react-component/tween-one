@@ -1,14 +1,14 @@
-webpackJsonp([14],{
+webpackJsonp([9],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(184);
+	module.exports = __webpack_require__(179);
 
 
 /***/ },
 
-/***/ 184:
+/***/ 179:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43,31 +43,42 @@ webpackJsonp([14],{
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
 	    this.state = {
-	      tweenData: { translateX: '100px', duration: 3000 }
-	    };
+	      moment: 2500 };
 	  }
 	
 	  _createClass(Demo, [{
 	    key: 'componentDidMount',
+	    // 初始值
 	    value: function componentDidMount() {
 	      var _this = this;
 	
 	      setTimeout(function () {
 	        _this.setState({
-	          tweenData: { opacity: 0.5, marginTop: 100, duration: 1000 }
+	          moment: 200
 	        });
-	      }, 2000);
+	      }, 1000);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
-	        _rcTweenOne2['default'],
-	        { animation: this.state.tweenData },
+	        'div',
+	        null,
 	        _react2['default'].createElement(
 	          'div',
 	          null,
-	          '执行动效'
+	          'moment初始为2500,所以第一个时间已过,而且第二个已播了2000'
+	        ),
+	        _react2['default'].createElement(
+	          _rcTweenOne2['default'],
+	          { animation: [{ marginLeft: '500px', duration: 1500 }, { y: 300, duration: 5000 }],
+	            moment: this.state.moment,
+	            style: { opacity: 1, height: 500, transform: 'translate(50px,30px)' } },
+	          _react2['default'].createElement(
+	            'div',
+	            null,
+	            '执行动效'
+	          )
 	        )
 	      );
 	    }
@@ -81,4 +92,4 @@ webpackJsonp([14],{
 /***/ }
 
 });
-//# sourceMappingURL=update.js.map
+//# sourceMappingURL=moment.js.map

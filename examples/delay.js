@@ -1,14 +1,14 @@
-webpackJsonp([14],{
+webpackJsonp([6],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(184);
+	module.exports = __webpack_require__(176);
 
 
 /***/ },
 
-/***/ 184:
+/***/ 176:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42,28 +42,15 @@ webpackJsonp([14],{
 	    _classCallCheck(this, Demo);
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
-	    this.state = {
-	      tweenData: { translateX: '100px', duration: 3000 }
-	    };
 	  }
 	
 	  _createClass(Demo, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      var _this = this;
-	
-	      setTimeout(function () {
-	        _this.setState({
-	          tweenData: { opacity: 0.5, marginTop: 100, duration: 1000 }
-	        });
-	      }, 2000);
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
-	        { animation: this.state.tweenData },
+	        { animation: [{ translateX: '500px', delay: 1000 }, { delay: -350, y: 150 }],
+	          style: { opacity: 1, height: 300, transform: 'translate(50px,30px)' } },
 	        _react2['default'].createElement(
 	          'div',
 	          null,
@@ -81,4 +68,4 @@ webpackJsonp([14],{
 /***/ }
 
 });
-//# sourceMappingURL=update.js.map
+//# sourceMappingURL=delay.js.map

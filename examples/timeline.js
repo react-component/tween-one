@@ -1,14 +1,14 @@
-webpackJsonp([11],{
+webpackJsonp([13],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(180);
+	module.exports = __webpack_require__(183);
 
 
 /***/ },
 
-/***/ 180:
+/***/ 183:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -80,7 +80,7 @@ webpackJsonp([11],{
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
 	        {
-	          vars: [{ translateX: 100, rotate: 10 }, { translateY: 100, translateX: 500, rotate: 0 }, { translateX: 0, marginTop: 100 }, { translateY: 0, marginLeft: 100 }, { marginLeft: 0, marginTop: 0 }],
+	          animation: [{ translateX: 100, rotate: 10 }, { translateY: 100, translateX: 500, rotate: 0 }, { translateX: 0, marginTop: 100 }, { translateY: 0, marginLeft: 100 }, { marginLeft: 0, marginTop: 0 }],
 	          style: { height: 400 } },
 	        this.state.children
 	      );

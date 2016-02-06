@@ -47,7 +47,7 @@ webpackJsonp([0],[
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
-	        { vars: [{ rotateY: 180, duration: 1300 }, { delay: -900, translateX: 100, duration: 1000 }],
+	        { animation: [{ rotateY: 180, duration: 1300 }, { delay: -900, translateX: 100, duration: 1000 }],
 	          style: { margin: 200, width: 100, transform: 'perspective(100px) rotateY(10deg)', backgroundColor: '#fff000' } },
 	        _react2['default'].createElement(
 	          'div',
