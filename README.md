@@ -73,6 +73,7 @@ React.render(<TweenOne animation={{x:100}}>
 
 
 ### animation = { }
+> transform 需要设定初始值, 必需在 style 里设定;
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
