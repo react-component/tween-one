@@ -65,9 +65,14 @@ class TweenOne extends Component {
         });
         this.timeLine.animData.tween = assign({}, this.timeLine.animData.tween, nextProps.style);
       } else {
-        // 如果在动画时, 不可改变做动效的参数
-        this.currentStyle = assign({}, nextProps.style, this.timeLine.animData.tween);
-        this.timeLine.animData.tween = assign({}, nextProps.style, this.timeLine.animData.tween);
+        // 如果在动画时, 改变做动效的参数
+        // 合并当前没有做动画的样式;
+        this.currentStyle = assign({}, this.timeLine.animData.tween, nextProps.style);
+        // 保存当前时刻;
+        this.currentMoment = this.timeLine.progressTime;
+        // 合并当前在做动画的样式
+        this.timeLine.setDefaultData(assign({}, this.timeLine.animData.tween, nextProps.style), dataToArray(nextProps.animation));
+        // this.timeLine.animData.tween = assign({}, this.timeLine.animData.tween, nextProps.style);
       }
     }
     const equal = objectEqual(this.props.animation, nextProps.animation);
@@ -90,6 +95,7 @@ class TweenOne extends Component {
       if (!nextProps.paused) {
         // 跳帧需要把 animData 清掉;从新定位;
         this.timeLine.resetAnimData();
+        this.timeLine.setDefaultData(this.currentStyle, dataToArray(nextProps.animation));
         this.setCurrentDate();
         this.play();
       } else {

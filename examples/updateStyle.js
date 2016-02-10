@@ -21,7 +21,7 @@ class Demo extends React.Component {
   render() {
     return (<Tween animation={{ translateY: 200, marginLeft: 500, duration: 5000}}
                    style={this.state.style}>
-      <div>变化的样式不做改变</div>
+      <div>变化的样式也做改变</div>
     </Tween>);
   }
 }
