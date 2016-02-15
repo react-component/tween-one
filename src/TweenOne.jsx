@@ -68,11 +68,10 @@ class TweenOne extends Component {
         // 如果在动画时, 改变做动效的参数
         // 合并当前没有做动画的样式;
         this.currentStyle = assign({}, this.timeLine.animData.tween, nextProps.style);
-        // 保存当前时刻;
-        this.currentMoment = this.timeLine.progressTime;
+        // 重置数据;
+        this.timeLine.resetAnimData();
         // 合并当前在做动画的样式
         this.timeLine.setDefaultData(assign({}, this.timeLine.animData.tween, nextProps.style), dataToArray(nextProps.animation));
-        // this.timeLine.animData.tween = assign({}, this.timeLine.animData.tween, nextProps.style);
       }
     }
     const equal = objectEqual(this.props.animation, nextProps.animation);

@@ -79,7 +79,6 @@ p.setDefaultData = function(start, vars) {
   });
   this.totalTime = repeatMax ? Number.MAX_VALUE : now;
   this.defaultData = data;
-  // console.log(this)
 };
 p.setAnimStartData = function(endData) {
   const obj = {};
@@ -250,5 +249,6 @@ p.resetAnimData = function() {
     tween: {},
   };
 };
+
 p.onChange = noop;
 export default timeLine;
