@@ -227,9 +227,13 @@
 	          });
 	          this.timeLine.animData.tween = (0, _objectAssign2['default'])({}, this.timeLine.animData.tween, nextProps.style);
 	        } else {
-	          // 如果在动画时, 不可改变做动效的参数
-	          this.currentStyle = (0, _objectAssign2['default'])({}, nextProps.style, this.timeLine.animData.tween);
-	          this.timeLine.animData.tween = (0, _objectAssign2['default'])({}, nextProps.style, this.timeLine.animData.tween);
+	          // 如果在动画时, 改变做动效的参数
+	          // 合并当前没有做动画的样式;
+	          this.currentStyle = (0, _objectAssign2['default'])({}, this.timeLine.animData.tween, nextProps.style);
+	          // 重置数据;
+	          this.timeLine.resetAnimData();
+	          // 合并当前在做动画的样式
+	          this.timeLine.setDefaultData((0, _objectAssign2['default'])({}, this.timeLine.animData.tween, nextProps.style), (0, _util.dataToArray)(nextProps.animation));
 	        }
 	      }
 	      var equal = (0, _util.objectEqual)(this.props.animation, nextProps.animation);
@@ -240,6 +244,8 @@
 	
 	      // 暂停倒放
 	      if (this.props.reverse !== nextProps.reverse || this.props.paused !== nextProps.reverse) {
+	        // 如果 animation 发生改变或没改变, 都重置默认数据,
+	        this.timeLine.setDefaultData((0, _objectAssign2['default'])({}, this.currentStyle, this.style), (0, _util.dataToArray)(nextProps.animation));
 	        this.currentMoment = this.timeLine.progressTime;
 	        this.setCurrentDate();
 	        this.play();
@@ -250,6 +256,7 @@
 	        if (!nextProps.paused) {
 	          // 跳帧需要把 animData 清掉;从新定位;
 	          this.timeLine.resetAnimData();
+	          this.timeLine.setDefaultData(this.currentStyle, (0, _util.dataToArray)(nextProps.animation));
 	          this.setCurrentDate();
 	          this.play();
 	        } else {
@@ -20313,7 +20320,6 @@
 	  });
 	  this.totalTime = repeatMax ? Number.MAX_VALUE : now;
 	  this.defaultData = data;
-	  // console.log(this)
 	};
 	p.setAnimStartData = function (endData) {
 	  var _this2 = this;
@@ -20394,7 +20400,7 @@
 	      startVars = parseFloat((startVars || 0).toString().replace(/[^0-9|.|-]/ig, ''));
 	      differ = (endVars - startVars) * easeValue + startVars;
 	      if (typeof endData[_key] === 'string' && endData[_key].charAt(1) === '=') {
-	        differ = startVars + parseFloat(endData[_key].charAt(0) + 1) * endVars * easeValue;
+	        differ = startVars + endVars * easeValue;
 	      }
 	    }
 	    var cssName = _Css2['default'].isTransform(key);
@@ -20490,6 +20496,7 @@
 	    tween: {}
 	  };
 	};
+	
 	p.onChange = noop;
 	exports['default'] = timeLine;
 	module.exports = exports['default'];

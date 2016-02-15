@@ -42,8 +42,10 @@ webpackJsonp([15],{
 	    _classCallCheck(this, Demo);
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
+	    this.testText = '刚开始的样式:';
 	    this.state = {
-	      style: { opacity: 1, height: 100, marginLeft: 0, transform: 'translateY(0px)' }
+	      style: { opacity: 1, height: 100, marginLeft: 0, transform: 'translateY(0px)' },
+	      test: ''
 	    };
 	  }
 	
@@ -56,19 +58,71 @@ webpackJsonp([15],{
 	        _this.setState({
 	          style: { opacity: 1, height: 250, transform: 'translateY(100px)', marginLeft: 100 }
 	        });
+	        _this.testText = '变更后的样式:';
+	        _this.bool = false;
 	      }, 1000);
+	    }
+	  }, {
+	    key: 'onChange',
+	    value: function onChange(e) {
+	      if (!this.bool) {
+	        var text = _react2['default'].createElement(
+	          'span',
+	          null,
+	          this.testText + JSON.stringify(e.tween),
+	          ', 当前时间 moment: ',
+	          e.moment
+	        );
+	        if (this.state.test) {
+	          text = _react2['default'].createElement(
+	            'span',
+	            null,
+	            _react2['default'].createElement(
+	              'p',
+	              null,
+	              this.state.test
+	            ),
+	            _react2['default'].createElement(
+	              'p',
+	              null,
+	              this.testText + JSON.stringify(e.tween),
+	              ', 当前时间 moment: ',
+	              e.moment
+	            )
+	          );
+	        }
+	        this.setState({
+	          test: text
+	        });
+	        this.bool = true;
+	      }
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
-	        _rcTweenOne2['default'],
-	        { animation: { translateY: 200, marginLeft: 500, duration: 5000 },
-	          style: this.state.style },
+	        'div',
+	        null,
+	        _react2['default'].createElement(
+	          'p',
+	          null,
+	          '在动画时, 变化 style, 将重新计算为 start '
+	        ),
+	        _react2['default'].createElement(
+	          _rcTweenOne2['default'],
+	          { animation: { translateY: 200, marginLeft: 500, duration: 5000 },
+	            style: this.state.style,
+	            onChange: this.onChange.bind(this) },
+	          _react2['default'].createElement(
+	            'div',
+	            null,
+	            '变化的样式'
+	          )
+	        ),
 	        _react2['default'].createElement(
 	          'div',
 	          null,
-	          '变化的样式不做改变'
+	          this.state.test
 	        )
 	      );
 	    }
