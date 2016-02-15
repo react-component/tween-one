@@ -9,7 +9,7 @@ class Demo extends React.Component {
     this.state = {
       style: {opacity: 1, height: 200, marginLeft: 0, transform: 'translateY(0px)'},
       test: '',
-      animation: {translateY: 200, marginLeft: 500, duration: 2000},
+      animation: {translateY: 200, marginLeft: 500, duration: 5000},
     };
   }
 

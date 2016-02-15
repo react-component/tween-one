@@ -76,7 +76,7 @@ class TweenOne extends Component {
     }
     const equal = objectEqual(this.props.animation, nextProps.animation);
     if (!equal) {
-      this.currentStyle = assign({}, nextProps.style, this.timeLine.animData.tween);
+      this.currentStyle = assign({}, this.timeLine.animData.tween, nextProps.style);
       this.start(nextProps);
     }
 
@@ -115,7 +115,7 @@ class TweenOne extends Component {
   }
 
   start(props) {
-    this.timeLine = new TimeLine(assign({}, this.computedStyle, this.style), dataToArray(props.animation));
+    this.timeLine = new TimeLine(assign({}, this.computedStyle, this.style, this.currentStyle), dataToArray(props.animation));
     if (this.timeLine.defaultData.length && props.animation) {
       // 开始动画
       this.setCurrentDate();
