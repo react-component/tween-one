@@ -211,7 +211,7 @@ describe('rc-tween-one', function() {
 
   it('is update and filter', function(done) {
     instance = createTweenInstance({
-      animation: { top: 100, filter: 'sepia(100%) blur(10px)', duration: 1000 },
+      animation: { top: 100, x: 100, color: '#fff', filter: 'sepia(100%) blur(2px)', duration: 1000 },
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
@@ -219,7 +219,7 @@ describe('rc-tween-one', function() {
       expect(getFloat(child.style.top)).to.be(100);
       console.log('child top:' + child.style.top);
       instance.setState({
-        animation: { left: 100 },
+        animation: { left: 100, y: 100 },
       });
       setTimeout(()=> {
         expect(getFloat(child.style.left)).to.be(100);
