@@ -14,11 +14,12 @@ describe('rc-tween-one', function() {
         super(...arguments);
         this.state = {
           animation: this.props.animation,
+          style: this.props.style,
         };
       }
 
       render() {
-        return (<Tween {...this.props} animation={this.state.animation}>
+        return (<Tween {...this.props} animation={this.state.animation} style={this.state.style}>
           <span>demo</span>
         </Tween>);
       }
@@ -27,6 +28,7 @@ describe('rc-tween-one', function() {
 
     TweenDemo.propTypes = {
       animation: objectOrArray,
+      style: React.PropTypes.object,
     };
 
     return ReactDom.render(<TweenDemo {...props} />, div);
@@ -97,7 +99,7 @@ describe('rc-tween-one', function() {
 
   it('repeat tween-one', function(done) {
     instance = createTweenInstance({
-      animation: { top: 100, repeat: 1 },
+      animation: { top: 100, repeat: 1, repeatDelay: 300 },
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
@@ -114,7 +116,7 @@ describe('rc-tween-one', function() {
           console.log('repeat end,top:', child.style.top);
           done();
         }, 450);
-      }, 40);
+      }, 340);
     }, 430);
   });
 
@@ -209,13 +211,13 @@ describe('rc-tween-one', function() {
     }, 30);
   });
 
-  it('is update and filter', function(done) {
+  it('is update Animation and filter', function(done) {
     instance = createTweenInstance({
       animation: { top: 100, x: 100, color: '#fff', filter: 'sepia(100%) blur(2px)', duration: 1000 },
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(()=> {
+    setTimeout(() => {
       expect(getFloat(child.style.top)).to.be(100);
       console.log('child top:' + child.style.top);
       instance.setState({
@@ -227,5 +229,34 @@ describe('rc-tween-one', function() {
         done();
       }, 530);
     }, 1030);
+  });
+
+  it('is update style', function(done) {
+    instance = createTweenInstance({
+      animation: {
+        top: 100,
+        textShadow: '0 1em 5px rgba(0,0,0,1)',
+        boxShadow: '0 0 30px rgba(255,125,0,0.5)',
+        duration: 1000,
+      },
+      style: { position: 'relative', top: 0 },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    setTimeout(() => {
+      expect(getFloat(child.style.top)).to.above(50);
+      instance.setState({
+        style: {
+          top: 40,
+          left: 100,
+        },
+      });
+      setTimeout(()=> {
+        expect(getFloat(child.style.left)).to.be(100);
+        console.log('child left:', child.style.left);
+        setTimeout(()=> {
+          done();
+        }, 400);
+      }, 30);
+    }, 600);
   });
 });
