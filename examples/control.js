@@ -49,7 +49,7 @@ webpackJsonp([5],{
 	      reverse: false,
 	      restart: false
 	    };
-	    ['onPlay', 'onPause', 'onReverse', 'onRestart'].forEach(function (method) {
+	    ['onPlay', 'onPause', 'onReverse', 'onRestart', 'onMoment'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
 	  }
@@ -87,6 +87,13 @@ webpackJsonp([5],{
 	        moment: 0,
 	        paused: false,
 	        reverse: false
+	      });
+	    }
+	  }, {
+	    key: 'onMoment',
+	    value: function onMoment() {
+	      this.setState({
+	        moment: 500
 	      });
 	    }
 	  }, {
@@ -131,6 +138,11 @@ webpackJsonp([5],{
 	          'button',
 	          { onClick: this.onRestart },
 	          'restart'
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { onClick: this.onMoment },
+	          'moment to 500'
 	        )
 	      );
 	    }

@@ -43,7 +43,7 @@ webpackJsonp([14],{
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
 	    this.state = {
-	      tweenData: { translateX: '100px', duration: 3000 }
+	      tweenData: { translateX: '100px', duration: 2000 }
 	    };
 	  }
 	
@@ -54,16 +54,16 @@ webpackJsonp([14],{
 	
 	      setTimeout(function () {
 	        _this.setState({
-	          tweenData: { opacity: 0.5, marginTop: 100, duration: 1000 }
+	          style: { transform: 'translateX(500px)', marginTop: 300 }
 	        });
-	      }, 2000);
+	      }, 1100);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
-	        { animation: this.state.tweenData },
+	        { animation: this.state.tweenData, style: this.state.style },
 	        _react2['default'].createElement(
 	          'div',
 	          null,

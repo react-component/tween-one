@@ -54,7 +54,7 @@ webpackJsonp([12],{
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
-	        { animation: { translateX: '-500px' },
+	        { animation: { translateX: '500px' },
 	          onChange: this.bbb.bind(this),
 	          style: { opacity: 1, height: 100, transform: 'translate(50px,30px)' } },
 	        _react2['default'].createElement(

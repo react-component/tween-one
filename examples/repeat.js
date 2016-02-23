@@ -49,7 +49,7 @@ webpackJsonp([10],{
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        _rcTweenOne2['default'],
-	        { animation: { opacity: 1, translateX: '100px', repeat: 3, duration: 1000 }, style: { opacity: 0 } },
+	        { animation: { opacity: 1, translateX: '100px', repeat: 3, repeatDelay: 1000, duration: 1000 }, style: { opacity: 0 } },
 	        _react2['default'].createElement(
 	          'div',
 	          null,

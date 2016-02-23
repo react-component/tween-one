@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>updateStyle.js - example - rc-tween-one@0.2.2</title>
+  <title>updateStyle.js - example - rc-tween-one@0.2.3</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -257,7 +257,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
 <div class="container">
   <div class="header">
-    <h1>rc-tween-one@0.2.2</h1>
+    <h1>rc-tween-one@0.2.3</h1>
 
     <p>tween-one anim component for react</p>
   </div>
@@ -273,8 +273,9 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     <span class="hljs-keyword">super</span>(...arguments);
     <span class="hljs-keyword">this</span>.testText = <span class="hljs-string">'刚开始的样式:'</span>;
     <span class="hljs-keyword">this</span>.state = {
-      style: {opacity: <span class="hljs-number">1</span>, height: <span class="hljs-number">100</span>, marginLeft: <span class="hljs-number">0</span>, transform: <span class="hljs-string">'translateY(0px)'</span>},
+      style: {opacity: <span class="hljs-number">1</span>, height: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">0</span>, transform: <span class="hljs-string">'translateY(0px)'</span>},
       test: <span class="hljs-string">''</span>,
+      animation: {translateY: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">500</span>, duration: <span class="hljs-number">5000</span>},
     };
   }
 
@@ -290,9 +291,9 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 
   onChange(e) {
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.bool) {
-      <span class="hljs-keyword">let</span> text = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>;</span>
+      <span class="hljs-keyword">let</span> text = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>;</span>
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.test) {
-        text = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>{this.state.test}<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>;</span>
+        text = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.state.test}<span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>;</span>
       }
       <span class="hljs-keyword">this</span>.setState({
         test: text,
@@ -301,10 +302,30 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     }
   }
 
+  onClick() {
+    <span class="hljs-keyword">this</span>.setState({
+      style: {transform: <span class="hljs-string">'translateY(10px)'</span>, marginLeft: <span class="hljs-number">30</span>, height: <span class="hljs-number">300</span>},
+      animation: {translateY: <span class="hljs-number">100</span>, marginLeft: <span class="hljs-number">100</span>, duration: <span class="hljs-number">1000</span>},
+    });
+    <span class="hljs-keyword">this</span>.bool = <span class="hljs-literal">false</span>;
+  }
+
+  onClick2() {
+    <span class="hljs-keyword">this</span>.setState({
+      style: {transform: <span class="hljs-string">'translateY(0px)'</span>, marginLeft: <span class="hljs-number">130</span>, height: <span class="hljs-number">300</span>},
+      animation: {translateY: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">500</span>, duration: <span class="hljs-number">1000</span>},
+    });
+    <span class="hljs-keyword">this</span>.bool = <span class="hljs-literal">false</span>;
+  }
+
   render() {
     <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>在动画时, 变化 style, 将重新计算为 start <span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">translateY:</span> <span class="hljs-attribute">200</span>, <span class="hljs-attribute">marginLeft:</span> <span class="hljs-attribute">500</span>, <span class="hljs-attribute">duration:</span> <span class="hljs-attribute">5000</span>}}
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.onClick.bind(this)}</span>&gt;</span>点击改变样式<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.onClick2.bind(this)}</span>&gt;</span>点击改变样式2<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{this.state.animation}</span>
              <span class="hljs-attribute">style</span>=<span class="hljs-value">{this.state.style}</span>
              <span class="hljs-attribute">onChange</span>=<span class="hljs-value">{this.onChange.bind(this)}</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>变化的样式<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>

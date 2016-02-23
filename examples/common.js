@@ -191,15 +191,17 @@
 	    _classCallCheck(this, TweenOne);
 	
 	    _get(Object.getPrototypeOf(TweenOne.prototype), 'constructor', this).apply(this, arguments);
-	    this.rafID = null;
-	    this.style = this.props.style || {};
-	    this.currentStyle = (0, _objectAssign2['default'])({}, this.props.style);
-	    this.currentMoment = this.props.moment || 0;
+	    this.rafID = -1;
+	    // 加这个是防 setState 后 this.props.style 和 nextProps.style 是全等的情况, 走马灯里或滚动组件 React.cloneElement(item, showProps) 情况;
+	    this.propsStyle = this.props.style ? (0, _objectAssign2['default'])({}, this.props.style) : this.props.style;
+	    this.startStyle = this.props.style || {};
+	    this.startAnimation = this.props.animation ? (0, _objectAssign2['default'])({}, this.props.animation) : this.props.animation;
+	    this.startMoment = this.props.moment;
 	    this.moment = this.props.moment || 0;
 	    this.state = {
-	      style: this.style
+	      style: this.props.style || {}
 	    };
-	    ['raf', 'handleVisibilityChange', 'setCurrentDate', 'start', 'play'].forEach(function (method) {
+	    ['raf', 'handleVisibilityChange', 'setCurrentDate', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
 	  }
@@ -208,63 +210,60 @@
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      var dom = _reactDom2['default'].findDOMNode(this);
-	      this.computedStyle = document.defaultView.getComputedStyle(dom);
+	      this.computedStyle = (0, _objectAssign2['default'])({}, document.defaultView.getComputedStyle(dom));
 	      this.start(this.props);
 	      document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
 	    }
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
-	      // nextProps 变化
-	      // style 变化;
-	      var styleEqual = (0, _util.objectEqual)(this.props.style, nextProps.style);
+	      var newStyle = nextProps.style;
+	      var styleEqual = (0, _util.objectEqual)(this.propsStyle, newStyle);
+	      // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
 	      if (!styleEqual) {
-	        if (this.rafID === -1) {
-	          this.style = (0, _objectAssign2['default'])({}, this.style, nextProps.style);
-	          this.currentStyle = (0, _objectAssign2['default'])({}, this.style);
-	          this.setState({
-	            style: this.style
-	          });
-	          this.timeLine.animData.tween = (0, _objectAssign2['default'])({}, this.timeLine.animData.tween, nextProps.style);
-	        } else {
-	          // 如果在动画时, 改变做动效的参数
-	          // 合并当前没有做动画的样式;
-	          this.currentStyle = (0, _objectAssign2['default'])({}, this.timeLine.animData.tween, nextProps.style);
+	        // 重置开始的样式;
+	        this.startStyle = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.animData.tween, newStyle);
+	        this.propsStyle = newStyle;
+	        if (this.rafID !== -1) {
 	          // 重置数据;
 	          this.timeLine.resetAnimData();
 	          // 合并当前在做动画的样式
-	          this.timeLine.setDefaultData((0, _objectAssign2['default'])({}, this.timeLine.animData.tween, nextProps.style), (0, _util.dataToArray)(nextProps.animation));
+	          this.timeLine.setDefaultData(this.startStyle, (0, _util.dataToArray)(nextProps.animation));
+	        } else {
+	          this.state.style = (0, _objectAssign2['default'])({}, this.state.style, this.startStyle);
 	        }
-	      }
-	      var equal = (0, _util.objectEqual)(this.props.animation, nextProps.animation);
-	      if (!equal) {
-	        this.currentStyle = (0, _objectAssign2['default'])({}, nextProps.style, this.timeLine.animData.tween);
-	        this.start(nextProps);
 	      }
 	
-	      // 暂停倒放
-	      if (this.props.reverse !== nextProps.reverse || this.props.paused !== nextProps.reverse) {
-	        // 如果 animation 发生改变或没改变, 都重置默认数据,
-	        this.timeLine.setDefaultData((0, _objectAssign2['default'])({}, this.currentStyle, this.style), (0, _util.dataToArray)(nextProps.animation));
-	        this.currentMoment = this.timeLine.progressTime;
-	        this.setCurrentDate();
-	        this.play();
-	      }
-	      // moment 事件;
-	      if (typeof nextProps.moment === 'number') {
-	        this.currentMoment = nextProps.moment;
-	        if (!nextProps.paused) {
-	          // 跳帧需要把 animData 清掉;从新定位;
-	          this.timeLine.resetAnimData();
-	          this.timeLine.setDefaultData(this.currentStyle, (0, _util.dataToArray)(nextProps.animation));
-	          this.setCurrentDate();
-	          this.play();
+	      // 跳帧事件 moment;
+	      var newMoment = nextProps.moment;
+	      if (typeof newMoment === 'number') {
+	        this.startMoment = newMoment;
+	        if (nextProps.paused) {
+	          this.oneMoment = true;
+	          this.timeLine = new _TimeLine2['default']((0, _objectAssign2['default'])({}, this.computedStyle, this.startStyle), (0, _util.dataToArray)(nextProps.animation));
+	          var style = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.frame(nextProps.moment));
+	          this.setState({ style: style });
 	        } else {
-	          this.style = (0, _objectAssign2['default'])({}, this.style, this.timeLine.frame(nextProps.moment));
-	          this.setState({
-	            style: this.style
-	          });
+	          this.state.style = {};
+	          this.start(nextProps);
 	        }
+	      }
+	      // 动画处理
+	      var newAnimation = nextProps.animation;
+	      var equal = (0, _util.objectEqual)(this.startAnimation, newAnimation);
+	      if (!equal) {
+	        // 如果样式不相等, 那么用新样式做为开始样式;
+	        if (!styleEqual) {
+	          this.startStyle = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.animData.tween, newStyle);
+	        } else {
+	          this.startStyle = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.animData.tween);
+	        }
+	        this.startAnimation = newAnimation;
+	        this.start(nextProps);
+	      }
+	      // 暂停倒放
+	      if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
+	        this.restart(nextProps);
 	      }
 	    }
 	  }, {
@@ -278,9 +277,15 @@
 	      this.currentNow = Date.now();
 	    }
 	  }, {
+	    key: 'restart',
+	    value: function restart(props) {
+	      this.startMoment = this.timeLine.progressTime;
+	      this.start(props);
+	    }
+	  }, {
 	    key: 'start',
 	    value: function start(props) {
-	      this.timeLine = new _TimeLine2['default']((0, _objectAssign2['default'])({}, this.computedStyle, this.style), (0, _util.dataToArray)(props.animation));
+	      this.timeLine = new _TimeLine2['default']((0, _objectAssign2['default'])({}, this.computedStyle, this.startStyle), (0, _util.dataToArray)(props.animation));
 	      if (this.timeLine.defaultData.length && props.animation) {
 	        // 开始动画
 	        this.setCurrentDate();
@@ -298,7 +303,7 @@
 	    value: function handleVisibilityChange() {
 	      // 不在当前窗口时
 	      if (document[hidden] && this.rafID !== -1) {
-	        this.currentMoment = this.timeLine.progressTime;
+	        this.startMoment = this.timeLine.progressTime;
 	        this.cancelRequestAnimationFram();
 	        this.rafHide = true;
 	      } else if (this.rafID === -1 && this.rafHide) {
@@ -308,25 +313,31 @@
 	      }
 	    }
 	  }, {
-	    key: 'raf',
-	    value: function raf() {
-	      if (this.rafID === -1 || this.props.paused) {
-	        return;
-	      }
-	      var now = Date.now() + this.currentMoment;
+	    key: 'frame',
+	    value: function frame() {
+	      var now = Date.now() + (this.startMoment || 0);
 	      var moment = now - this.currentNow;
 	      if (this.props.reverse) {
-	        moment = this.currentMoment - Date.now() + this.currentNow;
+	        moment = (this.startMoment || 0) - Date.now() + this.currentNow;
 	      }
 	      moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
 	      moment = moment <= 0 ? 0 : moment;
 	      this.moment = moment;
 	      this.timeLine.onChange = this.props.onChange.bind(this);
-	      this.style = (0, _objectAssign2['default'])({}, this.currentStyle, this.timeLine.frame(moment));
+	      var style = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.frame(moment));
 	      this.setState({
-	        style: this.style
+	        style: style
 	      });
-	      if (moment >= this.timeLine.totalTime && !this.props.reverse || this.props.paused || this.props.reverse && moment === 0) {
+	    }
+	  }, {
+	    key: 'raf',
+	    value: function raf() {
+	      if (this.rafID === -1 || this.props.paused) {
+	        this.rafID = -1;
+	        return;
+	      }
+	      this.frame();
+	      if (this.moment >= this.timeLine.totalTime && !this.props.reverse || this.props.paused || this.props.reverse && this.moment === 0) {
 	        this.cancelRequestAnimationFram();
 	      } else {
 	        this.rafID = (0, _raf2['default'])(this.raf);
@@ -341,18 +352,20 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var style = (0, _objectAssign2['default'])({}, this.state.style);
-	      for (var p in style) {
+	      var props = (0, _objectAssign2['default'])({}, this.props);
+	      props.style = (0, _objectAssign2['default'])({}, this.state.style);
+	      if (this.oneMoment) {
+	        this.oneMoment = false;
+	      }
+	      for (var p in props.style) {
 	        if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
 	          // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
 	          var transformArr = ['Webkit', 'Moz', 'Ms', 'ms'];
 	          for (var i = 0; i < transformArr.length; i++) {
-	            style[transformArr[i] + 'Filter'] = style[p];
+	            props.style[transformArr[i] + 'Filter'] = props.style[p];
 	          }
 	        }
 	      }
-	      var props = (0, _objectAssign2['default'])({}, this.props);
-	      props.style = style;
 	      return _react2['default'].createElement(this.props.component, props);
 	    }
 	  }]);
@@ -360,8 +373,8 @@
 	  return TweenOne;
 	})(_react.Component);
 	
-	var objectOrArray = _react2['default'].PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
-	var objectOrArrayOrString = _react2['default'].PropTypes.oneOfType([_react.PropTypes.string, objectOrArray]);
+	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
+	var objectOrArrayOrString = _react.PropTypes.oneOfType([_react.PropTypes.string, objectOrArray]);
 	
 	TweenOne.propTypes = {
 	  component: _react.PropTypes.string,
@@ -9639,6 +9652,7 @@
 	 */
 	var EventInterface = {
 	  type: null,
+	  target: null,
 	  // currentTarget is set when dispatching; no use in copying it here
 	  currentTarget: emptyFunction.thatReturnsNull,
 	  eventPhase: null,
@@ -9672,8 +9686,6 @@
 	  this.dispatchConfig = dispatchConfig;
 	  this.dispatchMarker = dispatchMarker;
 	  this.nativeEvent = nativeEvent;
-	  this.target = nativeEventTarget;
-	  this.currentTarget = nativeEventTarget;
 	
 	  var Interface = this.constructor.Interface;
 	  for (var propName in Interface) {
@@ -9684,7 +9696,11 @@
 	    if (normalize) {
 	      this[propName] = normalize(nativeEvent);
 	    } else {
-	      this[propName] = nativeEvent[propName];
+	      if (propName === 'target') {
+	        this.target = nativeEventTarget;
+	      } else {
+	        this[propName] = nativeEvent[propName];
+	      }
 	    }
 	  }
 	
@@ -13533,7 +13549,10 @@
 	      }
 	    });
 	
-	    nativeProps.children = content;
+	    if (content) {
+	      nativeProps.children = content;
+	    }
+	
 	    return nativeProps;
 	  }
 	
@@ -19006,7 +19025,7 @@
 	
 	'use strict';
 	
-	module.exports = '0.14.6';
+	module.exports = '0.14.7';
 
 /***/ },
 /* 151 */
@@ -20026,17 +20045,17 @@
 /* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var now = __webpack_require__(165)
-	  , global = typeof window === 'undefined' ? {} : window
+	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(165)
+	  , root = typeof window === 'undefined' ? global : window
 	  , vendors = ['moz', 'webkit']
 	  , suffix = 'AnimationFrame'
-	  , raf = global['request' + suffix]
-	  , caf = global['cancel' + suffix] || global['cancelRequest' + suffix]
+	  , raf = root['request' + suffix]
+	  , caf = root['cancel' + suffix] || root['cancelRequest' + suffix]
 	
-	for(var i = 0; i < vendors.length && !raf; i++) {
-	  raf = global[vendors[i] + 'Request' + suffix]
-	  caf = global[vendors[i] + 'Cancel' + suffix]
-	      || global[vendors[i] + 'CancelRequest' + suffix]
+	for(var i = 0; !raf && i < vendors.length; i++) {
+	  raf = root[vendors[i] + 'Request' + suffix]
+	  caf = root[vendors[i] + 'Cancel' + suffix]
+	      || root[vendors[i] + 'CancelRequest' + suffix]
 	}
 	
 	// Some versions of FF have rAF but not cAF
@@ -20089,12 +20108,17 @@
 	  // Wrap in a new function to prevent
 	  // `cancel` potentially being assigned
 	  // to the native rAF function
-	  return raf.call(global, fn)
+	  return raf.call(root, fn)
 	}
 	module.exports.cancel = function() {
-	  caf.apply(global, arguments)
+	  caf.apply(root, arguments)
 	}
-
+	module.exports.polyfill = function() {
+	  root.requestAnimationFrame = raf
+	  root.cancelAnimationFrame = caf
+	}
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 165 */
@@ -20345,18 +20369,18 @@
 	      if (cssName === 'transform') {
 	        // 设置了style
 	        if (_this2.animData.tween && _this2.animData.tween[cssName]) {
-	          setStyle(obj, _this2.animData.tween[cssName], key);
+	          setStyle(obj, _this2.animData.tween[cssName] || 0, key);
 	        } else {
-	          setStyle(obj, _this2.startData[cssName], key);
+	          setStyle(obj, _this2.startData[cssName] || 0, key);
 	        }
 	      } else {
 	        // 是filter时
 	        var cssStyleArr = undefined;
 	        if (_this2.animData.tween && _this2.animData.tween[cssName]) {
-	          cssStyleArr = _this2.animData.tween[cssName].split(' ');
+	          cssStyleArr = (_this2.animData.tween[cssName] || '').split(' ');
 	          obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
 	        } else {
-	          cssStyleArr = _this2.startData[cssName].split(' ');
+	          cssStyleArr = (_this2.startData[cssName] || '').split(' ');
 	          obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
 	        }
 	      }
@@ -20427,11 +20451,11 @@
 	  this.defaultData.forEach(function (item, i) {
 	    var initTime = item.initTime;
 	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-	    var repeatNum = Math.ceil(_this4.progressTime / item.duration) - 1;
+	    var repeatNum = Math.ceil(_this4.progressTime / (item.duration + item.repeatDelay)) - 1;
 	    repeatNum = _this4.progressTime === 0 ? repeatNum + 1 : repeatNum;
 	    if (item.repeat) {
-	      if (item.repeat !== -1 || item.repeat <= repeatNum) {
-	        initTime = initTime + repeatNum * item.duration;
+	      if (item.repeat || item.repeat <= repeatNum) {
+	        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
 	      }
 	    }
 	    var progressTime = _this4.progressTime - initTime;
@@ -21187,7 +21211,7 @@
 	var _corProps = {};
 	// const _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
 	function createMatrix(style) {
-	  return window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style) || window.MozCSSMatrix && new window.MozCSSMatrix(style) || window.MsCSSMatrix && new window.MsCSSMatrix(style) || window.OCSSMatrix && new window.OCSSMatrix(style) || window.CSSMatrix && new window.CSSMatrix(style);
+	  return window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style) || window.MozCSSMatrix && new window.MozCSSMatrix(style) || window.MsCSSMatrix && new window.MsCSSMatrix(style) || window.OCSSMatrix && new window.OCSSMatrix(style) || window.CSSMatrix && new window.CSSMatrix(style) || {};
 	}
 	
 	var GsapBezier = {
@@ -21531,13 +21555,13 @@
 	  }
 	};
 	
-	var Bezier = function Bezier(transform, obj) {
+	function Bezier(transform, obj) {
 	  this.defaultData = this.getDefaultData(obj);
-	  var matrix = createMatrix(transform);
+	  var matrix = createMatrix(transform || '');
 	  // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
 	  this.defaultData.startPoint = { x: matrix.e, y: matrix.f };
 	  this.init();
-	};
+	}
 	Bezier.prototype = {
 	  getDefaultData: function getDefaultData(obj) {
 	    return {

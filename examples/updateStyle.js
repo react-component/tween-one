@@ -44,8 +44,9 @@ webpackJsonp([15],{
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
 	    this.testText = '刚开始的样式:';
 	    this.state = {
-	      style: { opacity: 1, height: 100, marginLeft: 0, transform: 'translateY(0px)' },
-	      test: ''
+	      style: { opacity: 1, height: 200, marginLeft: 0, transform: 'translateY(0px)' },
+	      test: '',
+	      animation: { translateY: 200, marginLeft: 500, duration: 5000 }
 	    };
 	  }
 	
@@ -67,7 +68,7 @@ webpackJsonp([15],{
 	    value: function onChange(e) {
 	      if (!this.bool) {
 	        var text = _react2['default'].createElement(
-	          'span',
+	          'div',
 	          null,
 	          this.testText + JSON.stringify(e.tween),
 	          ', 当前时间 moment: ',
@@ -75,13 +76,9 @@ webpackJsonp([15],{
 	        );
 	        if (this.state.test) {
 	          text = _react2['default'].createElement(
-	            'span',
+	            'div',
 	            null,
-	            _react2['default'].createElement(
-	              'p',
-	              null,
-	              this.state.test
-	            ),
+	            this.state.test,
 	            _react2['default'].createElement(
 	              'p',
 	              null,
@@ -98,6 +95,24 @@ webpackJsonp([15],{
 	      }
 	    }
 	  }, {
+	    key: 'onClick',
+	    value: function onClick() {
+	      this.setState({
+	        style: { transform: 'translateY(10px)', marginLeft: 30, height: 300 },
+	        animation: { translateY: 100, marginLeft: 100, duration: 1000 }
+	      });
+	      this.bool = false;
+	    }
+	  }, {
+	    key: 'onClick2',
+	    value: function onClick2() {
+	      this.setState({
+	        style: { transform: 'translateY(0px)', marginLeft: 130, height: 300 },
+	        animation: { translateY: 200, marginLeft: 500, duration: 1000 }
+	      });
+	      this.bool = false;
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
@@ -109,8 +124,22 @@ webpackJsonp([15],{
 	          '在动画时, 变化 style, 将重新计算为 start '
 	        ),
 	        _react2['default'].createElement(
+	          'div',
+	          null,
+	          _react2['default'].createElement(
+	            'button',
+	            { onClick: this.onClick.bind(this) },
+	            '点击改变样式'
+	          ),
+	          _react2['default'].createElement(
+	            'button',
+	            { onClick: this.onClick2.bind(this) },
+	            '点击改变样式2'
+	          )
+	        ),
+	        _react2['default'].createElement(
 	          _rcTweenOne2['default'],
-	          { animation: { translateY: 200, marginLeft: 500, duration: 5000 },
+	          { animation: this.state.animation,
 	            style: this.state.style,
 	            onChange: this.onChange.bind(this) },
 	          _react2['default'].createElement(
