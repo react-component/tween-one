@@ -192,7 +192,7 @@ describe('rc-tween-one', function() {
           y = xy[1];
           expect(getFloat(x)).to.be(200);
           expect(getFloat(y)).to.be(0);
-          expect(getFloat(rotate)).to.above(-45.0001).below(-45);
+          expect(getFloat(rotate)).to.above(-45.0001).below(-44.999);
           console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
           done();
         }, 530);
