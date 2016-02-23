@@ -9,11 +9,11 @@ const _r3 = [];
 const _corProps = {};
 // const _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
 function createMatrix(style) {
-  return window.WebKitCSSMatrix && (new window.WebKitCSSMatrix(style)) ||
-    window.MozCSSMatrix && (new window.MozCSSMatrix(style)) ||
-    window.MsCSSMatrix && (new window.MsCSSMatrix(style)) ||
-    window.OCSSMatrix && (new window.OCSSMatrix(style)) ||
-    window.CSSMatrix && (new window.CSSMatrix(style));
+  return (window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style)) ||
+    (window.MozCSSMatrix && new window.MozCSSMatrix(style)) ||
+    (window.MsCSSMatrix && new window.MsCSSMatrix(style)) ||
+    (window.OCSSMatrix && new window.OCSSMatrix(style)) ||
+    (window.CSSMatrix && new window.CSSMatrix(style)) || {};
 }
 
 const GsapBezier = {
@@ -27,10 +27,10 @@ const GsapBezier = {
     this.ba = b - a;
   },
   cubicToQuadratic(a, b, c, d) {
-    const q1 = {a: a};
+    const q1 = { a: a };
     const q2 = {};
     const q3 = {};
-    const q4 = {c: d};
+    const q4 = { c: d };
     const mab = (a + b) / 2;
     const mbc = (b + c) / 2;
     const mcd = (c + d) / 2;
@@ -351,17 +351,17 @@ const GsapBezier = {
         curLS = [];
       }
     });
-    return {length: total, lengths: lengths, segments: segments};
+    return { length: total, lengths: lengths, segments: segments };
   },
 };
 
-const Bezier = function(transform, obj) {
+function Bezier(transform, obj) {
   this.defaultData = this.getDefaultData(obj);
-  const matrix = createMatrix(transform);
+  const matrix = createMatrix(transform || '');
   // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
-  this.defaultData.startPoint = {x: matrix.e, y: matrix.f};
+  this.defaultData.startPoint = { x: matrix.e, y: matrix.f };
   this.init();
-};
+}
 Bezier.prototype = {
   getDefaultData(obj) {
     return {

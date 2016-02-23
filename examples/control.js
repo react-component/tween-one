@@ -16,6 +16,7 @@ class Demo extends React.Component {
       'onPause',
       'onReverse',
       'onRestart',
+      'onMoment',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
@@ -50,15 +51,21 @@ class Demo extends React.Component {
     });
   }
 
+  onMoment() {
+    this.setState({
+      moment: 500,
+    });
+  }
+
   render() {
     return (
       <div>
         <div style={{height: 200}}>
           <Tween animation={[{translateX: '500px', duration: 1000}, {y: 100}, {x: 100}]}
-                 paused={this.state.paused}
-                 reverse={this.state.reverse}
-                 moment={this.state.moment}
-                 style={{opacity: 1, width: 100, transform: 'translate(50px,30px)'}}>
+            paused={this.state.paused}
+            reverse={this.state.reverse}
+            moment={this.state.moment}
+            style={{opacity: 1, width: 100, transform: 'translate(50px,30px)'}}>
             <div>执行动效</div>
           </Tween>
         </div>
@@ -66,6 +73,7 @@ class Demo extends React.Component {
         <button onClick={this.onPause}>pause</button>
         <button onClick={this.onReverse}>reverse</button>
         <button onClick={this.onRestart}>restart</button>
+        <button onClick={this.onMoment}>moment to 500</button>
       </div>);
   }
 }

@@ -5,20 +5,20 @@ class Demo extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      tweenData: { translateX: '100px', duration: 3000},
+      tweenData: { translateX: '100px', duration: 2000},
     };
   }
 
   componentDidMount() {
     setTimeout(()=> {
       this.setState({
-        tweenData: {opacity: 0.5, marginTop: 100, duration: 1000},
+        style: {transform: 'translateX(500px)', marginTop: 300},
       });
-    }, 2000);
+    }, 1100);
   }
 
   render() {
-    return (<Tween animation={this.state.tweenData}>
+    return (<Tween animation={this.state.tweenData} style={this.state.style}>
       <div>执行动效</div>
     </Tween>);
   }

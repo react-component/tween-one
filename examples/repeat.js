@@ -7,7 +7,7 @@ class Demo extends React.Component {
   }
 
   render() {
-    return (<Tween animation={{opacity: 1, translateX: '100px', repeat: 3, duration: 1000}} style={{opacity: 0}}>
+    return (<Tween animation={{ opacity: 1, translateX: '100px', repeat: 3, repeatDelay: 1000, duration: 1000 }} style={{ opacity: 0 }}>
       <div>执行动效</div>
     </Tween>);
   }

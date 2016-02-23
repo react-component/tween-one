@@ -102,18 +102,18 @@ p.setAnimStartData = function(endData) {
       if (cssName === 'transform') {
         // 设置了style
         if (this.animData.tween && this.animData.tween[cssName]) {
-          setStyle(obj, this.animData.tween[cssName], key);
+          setStyle(obj, this.animData.tween[cssName] || 0, key);
         } else {
-          setStyle(obj, this.startData[cssName], key);
+          setStyle(obj, this.startData[cssName] || 0, key);
         }
       } else {
         // 是filter时
         let cssStyleArr;
         if (this.animData.tween && this.animData.tween[cssName]) {
-          cssStyleArr = this.animData.tween [cssName].split(' ');
+          cssStyleArr = (this.animData.tween[cssName] || '').split(' ');
           obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
         } else {
-          cssStyleArr = this.startData[cssName].split(' ');
+          cssStyleArr = (this.startData[cssName] || '').split(' ');
           obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
         }
       }
@@ -180,11 +180,11 @@ p.getStyle = function() {
   this.defaultData.forEach((item, i)=> {
     let initTime = item.initTime;
     // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-    let repeatNum = Math.ceil(this.progressTime / item.duration) - 1;
+    let repeatNum = Math.ceil(this.progressTime / (item.duration + item.repeatDelay)) - 1;
     repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
     if (item.repeat) {
-      if (item.repeat !== -1 || item.repeat <= repeatNum) {
-        initTime = initTime + repeatNum * item.duration;
+      if (item.repeat || item.repeat <= repeatNum) {
+        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
       }
     }
     let progressTime = this.progressTime - initTime;

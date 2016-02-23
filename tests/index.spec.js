@@ -20,7 +20,7 @@ describe('rc-tween-one', function() {
         </Tween>);
       }
     }
-    return ReactDom.render(<TweenDemo {...props}/>, div);
+    return ReactDom.render(<TweenDemo {...props} />, div);
   }
 
   beforeEach(function() {
@@ -43,8 +43,8 @@ describe('rc-tween-one', function() {
 
   it('single tween-one', function(done) {
     instance = createTweenInstance({
-      animation: {top: 100},
-      style: {top: 0},
+      animation: { top: 100 },
+      style: { top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('start:' + child.style.top);
@@ -59,8 +59,8 @@ describe('rc-tween-one', function() {
 
   it('timeline tween-one', function(done) {
     instance = createTweenInstance({
-      animation: [{top: 100}, {left: 100}, {top: 0}, {left: 0}],
-      style: {position: 'relative'},
+      animation: [{ top: 100 }, { left: 100 }, { top: 0 }, { left: 0 }],
+      style: { position: 'relative' },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(function() {
@@ -88,8 +88,8 @@ describe('rc-tween-one', function() {
 
   it('repeat tween-one', function(done) {
     instance = createTweenInstance({
-      animation: {top: 100, repeat: 1},
-      style: {position: 'relative', top: 0},
+      animation: { top: 100, repeat: 1 },
+      style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('start:' + child.style.top);
@@ -111,8 +111,8 @@ describe('rc-tween-one', function() {
 
   it('repeat yoyo tween-one', function(done) {
     instance = createTweenInstance({
-      animation: {top: 100, repeat: 1, yoyo: true},
-      style: {position: 'relative', top: 0},
+      animation: { top: 100, repeat: 1, yoyo: true },
+      style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('start:' + child.style.top);
@@ -134,8 +134,8 @@ describe('rc-tween-one', function() {
 
   it('type is from tween-one', function(done) {
     instance = createTweenInstance({
-      animation: {top: 100, type: 'from'},
-      style: {position: 'relative', top: 0},
+      animation: { top: 100, type: 'from' },
+      style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('default:' + child.style.top);
@@ -148,6 +148,55 @@ describe('rc-tween-one', function() {
         console.log('end:' + child.style.top);
         done();
       }, 450);
+    }, 30);
+  });
+
+  it('is Bezier', function(done) {
+    instance = createTweenInstance({
+      animation: {
+        bezier: {
+          type: 'soft',
+          autoRotate: true,
+          vars: [{ x: 100, y: 100 }, { x: 200, y: 0 }],
+        },
+        duration: 1000,
+      },
+      style: { position: 'absolute' },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    setTimeout(() => {
+      let transform = child.style.transform;
+      let rotate = transform.split(')')[1].replace(/[a-z|(|)]/g, '');
+      let xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+      let x = xy[0];
+      let y = xy[1];
+      expect(getFloat(x)).to.above(0).below(5);
+      expect(getFloat(y)).to.above(0).below(5);
+      expect(getFloat(rotate)).to.above(44).below(45);
+      console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
+      setTimeout(()=> {
+        transform = child.style.transform;
+        rotate = transform.split(')')[1].replace(/[a-z|(|)]/g, '');
+        xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+        x = xy[0];
+        y = xy[1];
+        expect(getFloat(x)).to.above(95).below(105);
+        expect(getFloat(y)).to.above(45).below(55);
+        expect(getFloat(rotate)).to.above(-5).below(5);
+        console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
+        setTimeout(() => {
+          transform = child.style.transform;
+          rotate = transform.split(')')[1].replace(/[a-z|(|)]/g, '');
+          xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+          x = xy[0];
+          y = xy[1];
+          expect(getFloat(x)).to.be(200);
+          expect(getFloat(y)).to.be(0);
+          expect(getFloat(rotate)).to.above(-45.0001).below(-45);
+          console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
+          done();
+        }, 530);
+      }, 470);
     }, 30);
   });
 });

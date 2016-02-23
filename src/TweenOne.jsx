@@ -28,81 +28,75 @@ if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and 
 class TweenOne extends Component {
   constructor() {
     super(...arguments);
-    this.rafID = null;
-    this.style = this.props.style || {};
-    this.currentStyle = assign({}, this.props.style);
-    this.currentMoment = this.props.moment || 0;
+    this.rafID = -1;
+    const style = this.props.style || {};
+    this.startStyle = this.props.style ? assign({}, this.props.style) : this.props.style;
+    this.startAnimation = this.props.animation ? assign({}, this.props.animation) : this.props.animation;
+    this.startMoment = this.props.moment;
     this.moment = this.props.moment || 0;
     this.state = {
-      style: this.style,
+      style,
     };
     [
       'raf',
       'handleVisibilityChange',
       'setCurrentDate',
+      'frame',
       'start',
       'play',
+      'restart',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
     const dom = ReactDom.findDOMNode(this);
-    this.computedStyle = document.defaultView.getComputedStyle(dom);
+    this.computedStyle = assign({}, document.defaultView.getComputedStyle(dom));
     this.start(this.props);
     document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
   }
 
   componentWillReceiveProps(nextProps) {
-    // nextProps 变化
-    // style 变化;
-    const styleEqual = objectEqual(this.props.style, nextProps.style);
+    const newStyle = nextProps.style;
+    const styleEqual = objectEqual(this.startStyle, newStyle);
+    // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
     if (!styleEqual) {
-      if (this.rafID === -1) {
-        this.style = assign({}, this.style, nextProps.style);
-        this.currentStyle = assign({}, this.style);
-        this.setState({
-          style: this.style,
-        });
-        this.timeLine.animData.tween = assign({}, this.timeLine.animData.tween, nextProps.style);
-      } else {
-        // 如果在动画时, 改变做动效的参数
-        // 合并当前没有做动画的样式;
-        this.currentStyle = assign({}, this.timeLine.animData.tween, nextProps.style);
+      // 重置开始的样式;
+      this.startStyle = assign({}, this.startStyle, this.timeLine.animData.tween, newStyle);
+      if (this.rafID !== -1) {
         // 重置数据;
         this.timeLine.resetAnimData();
         // 合并当前在做动画的样式
-        this.timeLine.setDefaultData(assign({}, this.timeLine.animData.tween, nextProps.style), dataToArray(nextProps.animation));
+        this.timeLine.setDefaultData(this.startStyle, dataToArray(nextProps.animation));
+      } else {
+        this.state.style = assign({}, this.state.style, this.startStyle);
       }
-    }
-    const equal = objectEqual(this.props.animation, nextProps.animation);
-    if (!equal) {
-      this.currentStyle = assign({}, this.timeLine.animData.tween, nextProps.style);
-      this.start(nextProps);
     }
 
-    // 暂停倒放
-    if (this.props.reverse !== nextProps.reverse || this.props.paused !== nextProps.reverse) {
-      // 如果 animation 发生改变或没改变, 都重置默认数据,
-      this.timeLine.setDefaultData(assign({}, this.currentStyle, this.style), dataToArray(nextProps.animation));
-      this.currentMoment = this.timeLine.progressTime;
-      this.setCurrentDate();
-      this.play();
-    }
-    // moment 事件;
-    if (typeof nextProps.moment === 'number') {
-      this.currentMoment = nextProps.moment;
-      if (!nextProps.paused) {
-        // 跳帧需要把 animData 清掉;从新定位;
-        this.timeLine.resetAnimData();
-        this.timeLine.setDefaultData(this.currentStyle, dataToArray(nextProps.animation));
-        this.setCurrentDate();
-        this.play();
+    // 跳帧事件 moment;
+    const newMoment = nextProps.moment;
+    if (typeof newMoment === 'number') {
+      this.startMoment = newMoment;
+      if (nextProps.paused) {
+        this.oneMoment = true;
+        this.timeLine = new TimeLine(assign({}, this.computedStyle, this.startStyle), dataToArray(nextProps.animation));
+        const style = assign({}, this.startStyle, this.timeLine.frame(nextProps.moment));
+        this.setState({ style });
       } else {
-        this.style = assign({}, this.style, this.timeLine.frame(nextProps.moment));
-        this.setState({
-          style: this.style,
-        });
+        this.state.style = {};
+        this.start(nextProps);
       }
+    }
+    // 动画处理
+    const newAnimation = nextProps.animation;
+    const equal = objectEqual(this.startAnimation, newAnimation);
+    if (!equal) {
+      this.startStyle = assign({}, this.startStyle, this.timeLine.animData.tween, newStyle);
+      this.startAnimation = newAnimation;
+      this.start(nextProps);
+    }
+    // 暂停倒放
+    if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
+      this.restart(nextProps);
     }
   }
 
@@ -114,8 +108,13 @@ class TweenOne extends Component {
     this.currentNow = Date.now();
   }
 
+  restart(props) {
+    this.startMoment = this.timeLine.progressTime;
+    this.start(props);
+  }
+
   start(props) {
-    this.timeLine = new TimeLine(assign({}, this.computedStyle, this.style, this.currentStyle), dataToArray(props.animation));
+    this.timeLine = new TimeLine(assign({}, this.computedStyle, this.startStyle), dataToArray(props.animation));
     if (this.timeLine.defaultData.length && props.animation) {
       // 开始动画
       this.setCurrentDate();
@@ -132,7 +131,7 @@ class TweenOne extends Component {
   handleVisibilityChange() {
     // 不在当前窗口时
     if (document[hidden] && this.rafID !== -1) {
-      this.currentMoment = this.timeLine.progressTime;
+      this.startMoment = this.timeLine.progressTime;
       this.cancelRequestAnimationFram();
       this.rafHide = true;
     } else if (this.rafID === -1 && this.rafHide) {
@@ -142,24 +141,29 @@ class TweenOne extends Component {
     }
   }
 
-  raf() {
-    if (this.rafID === -1 || this.props.paused) {
-      return;
-    }
-    const now = Date.now() + this.currentMoment;
+  frame() {
+    const now = Date.now() + (this.startMoment || 0);
     let moment = now - this.currentNow;
     if (this.props.reverse) {
-      moment = this.currentMoment - Date.now() + this.currentNow;
+      moment = (this.startMoment || 0) - Date.now() + this.currentNow;
     }
     moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
     this.moment = moment;
     this.timeLine.onChange = this.props.onChange.bind(this);
-    this.style = assign({}, this.currentStyle, this.timeLine.frame(moment));
+    const style = assign({}, this.startStyle, this.timeLine.frame(moment));
     this.setState({
-      style: this.style,
+      style,
     });
-    if ((moment >= this.timeLine.totalTime && !this.props.reverse) || this.props.paused || (this.props.reverse && moment === 0)) {
+  }
+
+  raf() {
+    if (this.rafID === -1 || this.props.paused) {
+      this.rafID = -1;
+      return;
+    }
+    this.frame();
+    if ((this.moment >= this.timeLine.totalTime && !this.props.reverse) || this.props.paused || (this.props.reverse && this.moment === 0)) {
       this.cancelRequestAnimationFram();
     } else {
       this.rafID = requestAnimationFrame(this.raf);
@@ -172,18 +176,21 @@ class TweenOne extends Component {
   }
 
   render() {
-    const style = assign({}, this.state.style);
-    for (const p in style) {
+    const props = assign({}, this.props);
+    props.style = assign({}, this.state.style);
+    if (this.oneMoment) {
+      this.oneMoment = false;
+    }
+
+    for (const p in props.style) {
       if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
         // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
         const transformArr = ['Webkit', 'Moz', 'Ms', 'ms'];
         for (let i = 0; i < transformArr.length; i++) {
-          style[`${transformArr[i]}Filter`] = style[p];
+          props.style[`${transformArr[i]}Filter`] = props.style[p];
         }
       }
     }
-    const props = assign({}, this.props);
-    props.style = style;
     return React.createElement(this.props.component, props);
   }
 }
