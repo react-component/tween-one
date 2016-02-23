@@ -12,14 +12,23 @@ describe('rc-tween-one', function() {
     class TweenDemo extends React.Component {
       constructor() {
         super(...arguments);
+        this.state = {
+          animation: this.props.animation,
+        };
       }
 
       render() {
-        return (<Tween {...this.props}>
+        return (<Tween {...this.props} animation={this.state.animation}>
           <span>demo</span>
         </Tween>);
       }
     }
+    const objectOrArray = React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]);
+
+    TweenDemo.propTypes = {
+      animation: objectOrArray,
+    };
+
     return ReactDom.render(<TweenDemo {...props} />, div);
   }
 
@@ -198,5 +207,25 @@ describe('rc-tween-one', function() {
         }, 530);
       }, 470);
     }, 30);
+  });
+
+  it('is update and filter', function(done) {
+    instance = createTweenInstance({
+      animation: { top: 100, filter: 'sepia(100%) blur(10px)', duration: 1000 },
+      style: { position: 'relative', top: 0 },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    setTimeout(()=> {
+      expect(getFloat(child.style.top)).to.be(100);
+      console.log('child top:' + child.style.top);
+      instance.setState({
+        animation: { left: 100 },
+      });
+      setTimeout(()=> {
+        expect(getFloat(child.style.left)).to.be(100);
+        console.log('child left:' + child.style.left);
+        done();
+      }, 530);
+    }, 1030);
   });
 });

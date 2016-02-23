@@ -29,13 +29,14 @@ class TweenOne extends Component {
   constructor() {
     super(...arguments);
     this.rafID = -1;
-    const style = this.props.style || {};
-    this.startStyle = this.props.style ? assign({}, this.props.style) : this.props.style;
+    // 加这个是防 setState 后 this.props.style 和 nextProps.style 是全等的情况, 走马灯里或滚动组件 React.cloneElement(item, showProps) 情况;
+    this.propsStyle = this.props.style ? assign({}, this.props.style) : this.props.style;
+    this.startStyle = this.props.style || {};
     this.startAnimation = this.props.animation ? assign({}, this.props.animation) : this.props.animation;
     this.startMoment = this.props.moment;
     this.moment = this.props.moment || 0;
     this.state = {
-      style,
+      style: this.props.style || {},
     };
     [
       'raf',
@@ -57,11 +58,12 @@ class TweenOne extends Component {
 
   componentWillReceiveProps(nextProps) {
     const newStyle = nextProps.style;
-    const styleEqual = objectEqual(this.startStyle, newStyle);
+    const styleEqual = objectEqual(this.propsStyle, newStyle);
     // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
     if (!styleEqual) {
       // 重置开始的样式;
       this.startStyle = assign({}, this.startStyle, this.timeLine.animData.tween, newStyle);
+      this.propsStyle = newStyle;
       if (this.rafID !== -1) {
         // 重置数据;
         this.timeLine.resetAnimData();
@@ -90,7 +92,12 @@ class TweenOne extends Component {
     const newAnimation = nextProps.animation;
     const equal = objectEqual(this.startAnimation, newAnimation);
     if (!equal) {
-      this.startStyle = assign({}, this.startStyle, this.timeLine.animData.tween, newStyle);
+      // 如果样式不相等, 那么用新样式做为开始样式;
+      if (!styleEqual) {
+        this.startStyle = assign({}, this.startStyle, this.timeLine.animData.tween, newStyle);
+      } else {
+        this.startStyle = assign({}, this.startStyle, this.timeLine.animData.tween);
+      }
       this.startAnimation = newAnimation;
       this.start(nextProps);
     }
@@ -181,7 +188,6 @@ class TweenOne extends Component {
     if (this.oneMoment) {
       this.oneMoment = false;
     }
-
     for (const p in props.style) {
       if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
         // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
@@ -195,8 +201,8 @@ class TweenOne extends Component {
   }
 }
 
-const objectOrArray = React.PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
-const objectOrArrayOrString = React.PropTypes.oneOfType([PropTypes.string, objectOrArray]);
+const objectOrArray = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
+const objectOrArrayOrString = PropTypes.oneOfType([PropTypes.string, objectOrArray]);
 
 TweenOne.propTypes = {
   component: PropTypes.string,
