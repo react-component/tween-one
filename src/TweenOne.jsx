@@ -103,7 +103,7 @@ class TweenOne extends Component {
     }
     // 暂停倒放
     if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
-      this.restart(nextProps);
+      this.restart();
     }
   }
 
@@ -115,9 +115,10 @@ class TweenOne extends Component {
     this.currentNow = Date.now();
   }
 
-  restart(props) {
+  restart() {
     this.startMoment = this.timeLine.progressTime;
-    this.start(props);
+    this.setCurrentDate();
+    this.play();
   }
 
   start(props) {

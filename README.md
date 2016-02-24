@@ -65,7 +65,7 @@ React.render(<TweenOne animation={{x:100}}>
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
 | animation  | object / array | null    | 需要执行动画的参数 |
-| pause      | boolean        | false   | 暂停 |
+| paused      | boolean        | false   | 暂停 |
 | reverse    | boolean        | false   | 倒放 |
 | onChange   | func           | null    | 全局变动回调 |
 | moment     | number         | null    | 设置当前时间轴上的时间  |
