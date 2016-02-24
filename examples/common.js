@@ -263,7 +263,7 @@
 	      }
 	      // 暂停倒放
 	      if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
-	        this.restart(nextProps);
+	        this.restart();
 	      }
 	    }
 	  }, {
@@ -278,9 +278,10 @@
 	    }
 	  }, {
 	    key: 'restart',
-	    value: function restart(props) {
+	    value: function restart() {
 	      this.startMoment = this.timeLine.progressTime;
-	      this.start(props);
+	      this.setCurrentDate();
+	      this.play();
 	    }
 	  }, {
 	    key: 'start',
