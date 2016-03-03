@@ -8,14 +8,14 @@
     "react-tween-one",
     "tween-one"
   ],
-  "homepage": "https://github.com/ant-motion/tween-one",
+  "homepage": "https://github.com/react-component/tween-one",
   "author": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ant-motion/tween-one.git"
+    "url": "https://github.com/react-component/tween-one.git"
   },
   "bugs": {
-    "url": "https://github.com/ant-motion/tween-one/issues"
+    "url": "https://github.com/react-component/tween-one/issues"
   },
   "files":["lib", "assets/*.css"],
   "licenses": "MIT",

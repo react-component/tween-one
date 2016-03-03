@@ -13,12 +13,12 @@ React TweenOne Component
 
 [npm-image]: http://img.shields.io/npm/v/rc-tween-one.svg?style=flat-square
 [npm-url]: http://npmjs.org/package/rc-tween-one
-[travis-image]: https://img.shields.io/travis/ant-motion/tween-one.svg?style=flat-square
-[travis-url]: https://travis-ci.org/ant-motion/tween-one
-[coveralls-image]: https://img.shields.io/coveralls/ant-motion/tween-one.svg?style=flat-square
-[coveralls-url]: https://coveralls.io/r/ant-motion/tween-one?branch=master
-[gemnasium-image]: http://img.shields.io/gemnasium/ant-motion/tween-one.svg?style=flat-square
-[gemnasium-url]: https://gemnasium.com/ant-motion/tween-one
+[travis-image]: https://img.shields.io/travis/react-component/tween-one.svg?style=flat-square
+[travis-url]: https://travis-ci.org/react-component/tween-one
+[coveralls-image]: https://img.shields.io/coveralls/react-component/tween-one.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/react-component/tween-one?branch=master
+[gemnasium-image]: http://img.shields.io/gemnasium/react-component/tween-one.svg?style=flat-square
+[gemnasium-url]: https://gemnasium.com/react-component/tween-one
 [node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
 [download-image]: https://img.shields.io/npm/dm/rc-tween-one.svg?style=flat-square
