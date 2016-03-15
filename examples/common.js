@@ -21039,6 +21039,7 @@
 	    _current.forEach(function (currentOnly) {
 	      var currentArr = currentOnly.split('(');
 	      var currentOnlyName = currentArr[0];
+	
 	      var currentDataArr = currentArr[1].replace(')', '').split(',');
 	      var changeSame = _this2.findStyleByName(_change, currentOnlyName);
 	      // 三种情况，ＸＹＺ时分析，空时组合前面的分析，
