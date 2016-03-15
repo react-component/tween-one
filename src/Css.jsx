@@ -244,6 +244,7 @@ const CSS = {
     _current.forEach(currentOnly=> {
       const currentArr = currentOnly.split('(');
       const currentOnlyName = currentArr[0];
+
       const currentDataArr = currentArr[1].replace(')', '').split(',');
       const changeSame = this.findStyleByName(_change, currentOnlyName);
       // 三种情况，ＸＹＺ时分析，空时组合前面的分析，
