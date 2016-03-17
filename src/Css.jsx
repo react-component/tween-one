@@ -225,14 +225,14 @@ const CSS = {
     }
     const addArr = [];
 
-    const _current = current.trim().split(') ');
-    const _change = change.trim().split(') ');
+    const _current = current.replace(/\s/g, '').split(')').filter(item=>item !== '' && item);
+    const _change = change.replace(/\s/g, '').split(')').filter(item=>item !== '' && item);
 
     // 如果变动的在旧的里没有，把变动的插回进去；
     _change.forEach(changeOnly=> {
       const changeArr = changeOnly.split('(');
       const changeOnlyName = changeArr[0];
-      const changeDataArr = changeArr[1].replace(')', '').split(',');
+      const changeDataArr = changeArr[1].split(',');
       const currentSame = this.findStyleByName(_current, changeOnlyName);
       if (!currentSame) {
         addArr.push(changeOnlyName + '(' + changeDataArr.join(',') + ')');
@@ -243,15 +243,15 @@ const CSS = {
       const currentArr = currentOnly.split('(');
       const currentOnlyName = currentArr[0];
 
-      const currentDataArr = currentArr[1].replace(')', '').split(',');
+      const currentDataArr = currentArr[1].split(',');
       const changeSame = this.findStyleByName(_change, currentOnlyName);
       // 三种情况，ＸＹＺ时分析，空时组合前面的分析，
       if (changeSame) {
         const changeArr = changeSame.split('(');
         const changeOnlyName = changeArr[0];
-        const changeDataArr = changeArr[1].replace(')', '').split(',');
+        const changeDataArr = changeArr[1].split(',');
         if (currentOnlyName === changeOnlyName) {
-          addArr.push(changeSame);
+          addArr.push(changeSame + ')');
         } else if (currentOnlyName in this.transformGroup && changeOnlyName.substring(0, changeOnlyName.length - 1).indexOf(currentOnlyName) >= 0) {
           switch (changeOnlyName) {
             case 'translateX' || 'scaleX' || 'rotateX':
@@ -359,8 +359,8 @@ const CSS = {
   },
   getFilterParam(current, change, data) {
     let unit;
-    let changeArr = change.split(' ');
-    const currentArr = current.split(' ');
+    let changeArr = change.replace(/\s/g, '').split(')').filter(item=>item !== '' && item);
+    const currentArr = current.replace(/\s/g, '').split(')').filter(item=>item !== '' && item);
     changeArr = changeArr.map(changeOnly=> {
       const changeOnlyArr = changeOnly.split('(');
       const changeOnlyName = changeOnlyArr[0];
