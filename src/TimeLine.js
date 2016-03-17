@@ -1,6 +1,7 @@
 /**
  * Created by jljsj on 16/1/27.
  */
+import assign from 'object-assign';
 import easingTypes from 'tween-functions';
 import Css from './Css';
 import Bezier from './BezierPlugin';
@@ -79,57 +80,66 @@ p.setDefaultData = function(start, vars) {
   });
   this.totalTime = repeatMax ? Number.MAX_VALUE : now;
   this.defaultData = data;
+  // 初始 animData.tween, 功能: 解决当 type: 'from' 时出场延时会不归位;
+  this.setAnimDataTween();
 };
-p.setAnimStartData = function(endData) {
+p.setAnimDataTween = function() {
+  this.defaultData.forEach((item, i)=> {
+    const _item = this.setAnimStartData(item, i);
+    if (i === 0) {
+      // 第一个先设置, 延时时归位...
+      this.animData.start[0] = _item;
+    }
+    const easeVars = item.type === 'from' ? 1 : 0;
+    this.setNewStyle(easeVars, _item, item.data, i);
+  });
+};
+p.setAnimStartData = function(endData, i) {
+  const _endData = endData.data;
   const obj = {};
 
   function setStyle(_obj, data, key) {
     const cssStyleArr = data.toString().split(' ');
-    cssStyleArr.forEach(__item=> {
-      const _item = __item.replace(/[(|)]/ig, '$').split('$');
-      _obj[_item[0]] = _item[1];
-    });
+    if (data) {
+      cssStyleArr.forEach(__item=> {
+        const _item = __item.replace(/[(|)]/ig, '$').split('$');
+        _obj[_item[0]] = _item[1];
+      });
+    }
     _obj[key] = Css.mergeTransformName(cssStyleArr, key) || _obj[key] || 0;
   }
 
-  Object.keys(endData).forEach(_key=> {
+  Object.keys(_endData).forEach(_key=> {
     const key = Css.getGsapType(_key);
     const cssName = Css.isTransform(key);
-    if (this.startData[cssName] === 'none' || this.startData[cssName] === 'auto') {
-      this.startData[cssName] = '';
+    const startData = this.animData.tween && this.animData.tween[cssName] ? this.animData.tween : this.startData;
+    if (startData[cssName] === 'none' || startData[cssName] === 'auto') {
+      startData[cssName] = '';
     }
     if (cssName === 'transform' || cssName === 'filter') {
       if (cssName === 'transform') {
         // 设置了style
-        if (this.animData.tween && this.animData.tween[cssName]) {
-          setStyle(obj, this.animData.tween[cssName] || 0, key);
-        } else {
-          setStyle(obj, this.startData[cssName] || 0, key);
-        }
+        setStyle(obj, startData[cssName], key);
       } else {
         // 是filter时
-        let cssStyleArr;
-        if (this.animData.tween && this.animData.tween[cssName]) {
-          cssStyleArr = (this.animData.tween[cssName] || '').split(' ');
-          obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
-        } else {
-          cssStyleArr = (this.startData[cssName] || '').split(' ');
-          obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
-        }
+        const cssStyleArr = (startData[cssName] || '').split(' ');
+        obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
+      }
+    } else if (cssName === 'bezier') {
+      const bezier = this.animData['bezier' + i] = new Bezier(startData.transform, _endData[_key]);
+      obj.transform = bezier.set(0);
+      if (endData.type === 'from') {
+        obj.transform = bezier.set(1);
       }
     } else {
       // 不是以上两种情况时
-      if (this.animData.tween && this.animData.tween[cssName]) {
-        obj[key] = this.animData.tween[cssName];
-      } else {
-        obj[key] = this.startData[cssName] || 0;
-      }
+      obj[key] = startData[cssName] || 0;
     }
   });
   return obj;
 };
-p.setNewStyle = function(easeValue, endData, i) {
-  const start = this.animData.start[i];
+p.setNewStyle = function(easeValue, startData, endData, i) {
+  const start = startData;
   Object.keys(endData).forEach(_key=> {
     const key = Css.getGsapType(_key);
     let endVars = endData[_key];
@@ -161,8 +171,7 @@ p.setNewStyle = function(easeValue, endData, i) {
     const cssName = Css.isTransform(key);
     this.startData[cssName] = this.startData[cssName] === 'none' ? '' : this.startData[cssName];
     if (cssName === 'bezier') {
-      const bezier = this.animData['bezier' + i] = this.animData['bezier' + i] || new Bezier(this.startData.transform, endData[_key]);
-      this.startData.transform = this.startData.transform === 'none' ? '' : this.startData.transform;
+      const bezier = this.animData['bezier' + i];
       this.animData.tween.transform = Css.mergeStyle(this.startData.transform, this.animData.tween.transform || '');
       this.animData.tween.transform = Css.mergeStyle(this.animData.tween.transform, bezier.set(easeValue));
     } else if (cssName === 'filter') {
@@ -199,13 +208,14 @@ p.getStyle = function() {
     if (i === 0 && progressTime < 5 || i !== 0 && progressTime > 0 && progressTime < this.oneSecond) {
       item.onStart();
       mode = 'onStart';
+      this.animData.start = assign({}, this.animData.start, this.animData.tween);
     }
     if (progressTime > -this.oneSecond) {
       // 设置 animData
-      this.animData.start[i] = this.animData.start[i] || this.setAnimStartData(item.data);
+      this.animData.start[i] = this.animData.start[i] || this.setAnimStartData(item);
     }
     if (progressTime > item.duration && !this.animData.start['bool' + i]) {
-      this.setNewStyle(1, item.data, i);
+      this.setNewStyle(0, this.animData.start[i], item.data, i);
       this.animData.start['bool' + i] = this.animData.start['bool' + i] || 1;
     }
     if (progressTime > -this.oneSecond && progressTime < item.duration + this.oneSecond) {
@@ -220,7 +230,7 @@ p.getStyle = function() {
       item.onUpdate(easeVars);
 
       // 当前点生成样式;
-      this.setNewStyle(easeVars, item.data, i);
+      this.setNewStyle(easeVars, this.animData.start[i], item.data, i);
       // complete 事件
       if (progressTime === item.duration) {
         item.onComplete();

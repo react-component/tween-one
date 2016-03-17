@@ -50,7 +50,7 @@ const CSS = {
     transformsBase: ['translate', 'translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY', 'rotateZ', 'rotate'],
     transforms3D: ['translate3d', 'translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective'],
   },
-  transformGroup: {translate: 1, translate3d: 1, scale: 1, scale3d: 1, rotate: 1, rotate3d: 1},
+  transformGroup: { translate: 1, translate3d: 1, scale: 1, scale3d: 1, rotate: 1, rotate3d: 1 },
 
   getGsapType(_p) {
     let p = _p;
@@ -187,14 +187,12 @@ const CSS = {
       const bArr = belongTransform.split('(');
       const dataArr = bArr[1].replace(')', '').split(',');
       switch (b) {
-        case 'translateX' || 'scaleX' || 'rotateX':
-          return dataArr[0];
         case 'translateY' || 'scaleY' || 'rotateY':
           return dataArr[1];
         case 'translateZ' || 'rotateZ':
           return dataArr[2];
         default :
-          return null;
+          return dataArr[0];
       }
     }
     return false;
@@ -227,8 +225,8 @@ const CSS = {
     }
     const addArr = [];
 
-    const _current = current.trim().split(' ');
-    const _change = change.trim().split(' ');
+    const _current = current.trim().split(') ');
+    const _change = change.trim().split(') ');
 
     // 如果变动的在旧的里没有，把变动的插回进去；
     _change.forEach(changeOnly=> {
@@ -304,7 +302,7 @@ const CSS = {
   },
 
   getValues(p, d, u) {
-    return p + '(' + d + u + ')';
+    return `${p}(${d}${u || ''})`;
   },
 
   isTransform(p) {
@@ -366,6 +364,9 @@ const CSS = {
     changeArr = changeArr.map(changeOnly=> {
       const changeOnlyArr = changeOnly.split('(');
       const changeOnlyName = changeOnlyArr[0];
+      if (!changeOnlyArr[1]) {
+        return '';
+      }
       let changeDataArr = changeOnlyArr[1].replace(')', '').split(',');
       const currentSame = this.findStyleByName(currentArr, changeOnlyName);
       if (currentSame) {
