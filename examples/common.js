@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		17:0
+/******/ 		18:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"gsapWritten","9":"moment","10":"repeat","11":"shadow","12":"simple","13":"timeline","14":"update","15":"updateStyle","16":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"fromDelay","9":"gsapWritten","10":"moment","11":"repeat","12":"shadow","13":"simple","14":"timeline","15":"update","16":"updateStyle","17":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -20258,6 +20258,10 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
+	var _objectAssign = __webpack_require__(163);
+	
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+	
 	var _tweenFunctions = __webpack_require__(168);
 	
 	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
@@ -20345,61 +20349,72 @@
 	  });
 	  this.totalTime = repeatMax ? Number.MAX_VALUE : now;
 	  this.defaultData = data;
+	  // 初始 animData.tween, 功能: 解决当 type: 'from' 时出场延时会不归位;
+	  this.setAnimDataTween();
 	};
-	p.setAnimStartData = function (endData) {
+	p.setAnimDataTween = function () {
 	  var _this2 = this;
 	
+	  this.defaultData.forEach(function (item, i) {
+	    var _item = _this2.setAnimStartData(item, i);
+	    if (i === 0) {
+	      // 第一个先设置, 延时时归位...
+	      _this2.animData.start[0] = _item;
+	    }
+	    var easeVars = item.type === 'from' ? 1 : 0;
+	    _this2.setNewStyle(easeVars, _item, item.data, i);
+	  });
+	};
+	p.setAnimStartData = function (endData, i) {
+	  var _this3 = this;
+	
+	  var _endData = endData.data;
 	  var obj = {};
 	
 	  function setStyle(_obj, data, key) {
 	    var cssStyleArr = data.toString().split(' ');
-	    cssStyleArr.forEach(function (__item) {
-	      var _item = __item.replace(/[(|)]/ig, '$').split('$');
-	      _obj[_item[0]] = _item[1];
-	    });
+	    if (data) {
+	      cssStyleArr.forEach(function (__item) {
+	        var _item = __item.replace(/[(|)]/ig, '$').split('$');
+	        _obj[_item[0]] = _item[1];
+	      });
+	    }
 	    _obj[key] = _Css2['default'].mergeTransformName(cssStyleArr, key) || _obj[key] || 0;
 	  }
 	
-	  Object.keys(endData).forEach(function (_key) {
+	  Object.keys(_endData).forEach(function (_key) {
 	    var key = _Css2['default'].getGsapType(_key);
 	    var cssName = _Css2['default'].isTransform(key);
-	    if (_this2.startData[cssName] === 'none' || _this2.startData[cssName] === 'auto') {
-	      _this2.startData[cssName] = '';
+	    var startData = _this3.animData.tween && _this3.animData.tween[cssName] ? _this3.animData.tween : _this3.startData;
+	    if (!startData[cssName] || startData[cssName] === 'none' || startData[cssName] === 'auto') {
+	      startData[cssName] = '';
 	    }
 	    if (cssName === 'transform' || cssName === 'filter') {
 	      if (cssName === 'transform') {
 	        // 设置了style
-	        if (_this2.animData.tween && _this2.animData.tween[cssName]) {
-	          setStyle(obj, _this2.animData.tween[cssName] || 0, key);
-	        } else {
-	          setStyle(obj, _this2.startData[cssName] || 0, key);
-	        }
+	        setStyle(obj, startData[cssName], key);
 	      } else {
 	        // 是filter时
-	        var cssStyleArr = undefined;
-	        if (_this2.animData.tween && _this2.animData.tween[cssName]) {
-	          cssStyleArr = (_this2.animData.tween[cssName] || '').split(' ');
-	          obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
-	        } else {
-	          cssStyleArr = (_this2.startData[cssName] || '').split(' ');
-	          obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
-	        }
+	        var cssStyleArr = (startData[cssName] || '').split(' ');
+	        obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
+	      }
+	    } else if (cssName === 'bezier') {
+	      var bezier = _this3.animData['bezier' + i] = new _BezierPlugin2['default'](startData.transform, _endData[_key]);
+	      obj.transform = bezier.set(0);
+	      if (endData.type === 'from') {
+	        obj.transform = bezier.set(1);
 	      }
 	    } else {
 	      // 不是以上两种情况时
-	      if (_this2.animData.tween && _this2.animData.tween[cssName]) {
-	        obj[key] = _this2.animData.tween[cssName];
-	      } else {
-	        obj[key] = _this2.startData[cssName] || 0;
-	      }
+	      obj[key] = startData[cssName] || 0;
 	    }
 	  });
 	  return obj;
 	};
-	p.setNewStyle = function (easeValue, endData, i) {
-	  var _this3 = this;
+	p.setNewStyle = function (easeValue, startData, endData, i) {
+	  var _this4 = this;
 	
-	  var start = this.animData.start[i];
+	  var start = startData;
 	  Object.keys(endData).forEach(function (_key) {
 	    var key = _Css2['default'].getGsapType(_key);
 	    var endVars = endData[_key];
@@ -20429,59 +20444,59 @@
 	      }
 	    }
 	    var cssName = _Css2['default'].isTransform(key);
-	    _this3.startData[cssName] = _this3.startData[cssName] === 'none' ? '' : _this3.startData[cssName];
+	    _this4.startData[cssName] = _this4.startData[cssName] === 'none' || !_this4.startData[cssName] ? '' : _this4.startData[cssName];
 	    if (cssName === 'bezier') {
-	      var bezier = _this3.animData['bezier' + i] = _this3.animData['bezier' + i] || new _BezierPlugin2['default'](_this3.startData.transform, endData[_key]);
-	      _this3.startData.transform = _this3.startData.transform === 'none' ? '' : _this3.startData.transform;
-	      _this3.animData.tween.transform = _Css2['default'].mergeStyle(_this3.startData.transform, _this3.animData.tween.transform || '');
-	      _this3.animData.tween.transform = _Css2['default'].mergeStyle(_this3.animData.tween.transform, bezier.set(easeValue));
+	      var bezier = _this4.animData['bezier' + i];
+	      _this4.animData.tween.transform = _Css2['default'].mergeStyle(_this4.startData.transform, _this4.animData.tween.transform || '');
+	      _this4.animData.tween.transform = _Css2['default'].mergeStyle(_this4.animData.tween.transform, bezier.set(easeValue));
 	    } else if (cssName === 'filter') {
-	      _this3.animData.tween[cssName] = _Css2['default'].mergeStyle(_this3.startData[cssName] || '', _this3.animData.tween[cssName] || '');
-	      _this3.animData.tween[cssName] = _Css2['default'].mergeStyle(_this3.animData.tween[cssName], _Css2['default'].getFilterParam(start[_key], endData[_key], easeValue));
+	      _this4.animData.tween[cssName] = _Css2['default'].mergeStyle(_this4.startData[cssName] || '', _this4.animData.tween[cssName] || '');
+	      _this4.animData.tween[cssName] = _Css2['default'].mergeStyle(_this4.animData.tween[cssName], _Css2['default'].getFilterParam(start[_key], endData[_key], easeValue));
 	    } else if (cssName === 'transform') {
-	      _this3.animData.tween[cssName] = _Css2['default'].mergeStyle(_this3.startData[cssName] || '', _this3.animData.tween[cssName] || '');
-	      _this3.animData.tween[cssName] = _Css2['default'].mergeStyle(_this3.animData.tween[cssName], _Css2['default'].getParam(key, endData[_key], differ));
+	      _this4.animData.tween[cssName] = _Css2['default'].mergeStyle(_this4.startData[cssName] || '', _this4.animData.tween[cssName] || '');
+	      _this4.animData.tween[cssName] = _Css2['default'].mergeStyle(_this4.animData.tween[cssName], _Css2['default'].getParam(key, endData[_key], differ));
 	    } else {
-	      _this3.animData.tween[cssName] = _Css2['default'].getParam(key, endData[_key], differ);
+	      _this4.animData.tween[cssName] = _Css2['default'].getParam(key, endData[_key], differ);
 	    }
 	  });
 	};
 	p.getStyle = function () {
-	  var _this4 = this;
+	  var _this5 = this;
 	
 	  this.defaultData.forEach(function (item, i) {
 	    var initTime = item.initTime;
 	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-	    var repeatNum = Math.ceil(_this4.progressTime / (item.duration + item.repeatDelay)) - 1;
-	    repeatNum = _this4.progressTime === 0 ? repeatNum + 1 : repeatNum;
+	    var repeatNum = Math.ceil(_this5.progressTime / (item.duration + item.repeatDelay)) - 1;
+	    repeatNum = _this5.progressTime === 0 ? repeatNum + 1 : repeatNum;
 	    if (item.repeat) {
 	      if (item.repeat || item.repeat <= repeatNum) {
 	        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
 	      }
 	    }
-	    var progressTime = _this4.progressTime - initTime;
+	    var progressTime = _this5.progressTime - initTime;
 	    // onRepeat 处理
-	    if (item.repeat && repeatNum > 0 && progressTime < _this4.oneSecond) {
+	    if (item.repeat && repeatNum > 0 && progressTime < _this5.oneSecond) {
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
 	    // 状态
 	    var mode = 'onUpdate';
 	    // 开始 onStart
-	    if (i === 0 && progressTime < 5 || i !== 0 && progressTime > 0 && progressTime < _this4.oneSecond) {
+	    if (i === 0 && progressTime < 5 || i !== 0 && progressTime > 0 && progressTime < _this5.oneSecond) {
 	      item.onStart();
 	      mode = 'onStart';
+	      _this5.animData.start = (0, _objectAssign2['default'])({}, _this5.animData.start, _this5.animData.tween);
 	    }
-	    if (progressTime > -_this4.oneSecond) {
+	    if (progressTime > -_this5.oneSecond) {
 	      // 设置 animData
-	      _this4.animData.start[i] = _this4.animData.start[i] || _this4.setAnimStartData(item.data);
+	      _this5.animData.start[i] = _this5.animData.start[i] || _this5.setAnimStartData(item);
 	    }
-	    if (progressTime > item.duration && !_this4.animData.start['bool' + i]) {
-	      _this4.setNewStyle(1, item.data, i);
-	      _this4.animData.start['bool' + i] = _this4.animData.start['bool' + i] || 1;
+	    if (progressTime > item.duration && !_this5.animData.start['bool' + i]) {
+	      _this5.setNewStyle(0, _this5.animData.start[i], item.data, i);
+	      _this5.animData.start['bool' + i] = _this5.animData.start['bool' + i] || 1;
 	    }
-	    if (progressTime > -_this4.oneSecond && progressTime < item.duration + _this4.oneSecond) {
-	      _this4.animData.start['bool' + i] = _this4.animData.start['bool' + i] || 1;
+	    if (progressTime > -_this5.oneSecond && progressTime < item.duration + _this5.oneSecond) {
+	      _this5.animData.start['bool' + i] = _this5.animData.start['bool' + i] || 1;
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > item.duration ? item.duration : progressTime;
 	      var easeVars = _tweenFunctions2['default'][item.ease](progressTime, 0, 1, item.duration);
@@ -20492,17 +20507,17 @@
 	      item.onUpdate(easeVars);
 	
 	      // 当前点生成样式;
-	      _this4.setNewStyle(easeVars, item.data, i);
+	      _this5.setNewStyle(easeVars, _this5.animData.start[i], item.data, i);
 	      // complete 事件
 	      if (progressTime === item.duration) {
 	        item.onComplete();
 	        mode = 'onComplete';
 	      }
 	      // onChange
-	      _this4.onChange({
-	        moment: _this4.progressTime,
+	      _this5.onChange({
+	        moment: _this5.progressTime,
 	        item: item,
-	        tween: _this4.animData.tween,
+	        tween: _this5.animData.tween,
 	        index: i,
 	        mode: mode
 	      });
@@ -20978,14 +20993,12 @@
 	      var bArr = belongTransform.split('(');
 	      var dataArr = bArr[1].replace(')', '').split(',');
 	      switch (b) {
-	        case 'translateX' || 'scaleX' || 'rotateX':
-	          return dataArr[0];
 	        case 'translateY' || 'scaleY' || 'rotateY':
 	          return dataArr[1];
 	        case 'translateZ' || 'rotateZ':
 	          return dataArr[2];
 	        default:
-	          return null;
+	          return dataArr[0];
 	      }
 	    }
 	    return false;
@@ -21022,14 +21035,18 @@
 	    }
 	    var addArr = [];
 	
-	    var _current = current.trim().split(' ');
-	    var _change = change.trim().split(' ');
+	    var _current = current.replace(/\s/g, '').split(')').filter(function (item) {
+	      return item !== '' && item;
+	    });
+	    var _change = change.replace(/\s/g, '').split(')').filter(function (item) {
+	      return item !== '' && item;
+	    });
 	
 	    // 如果变动的在旧的里没有，把变动的插回进去；
 	    _change.forEach(function (changeOnly) {
 	      var changeArr = changeOnly.split('(');
 	      var changeOnlyName = changeArr[0];
-	      var changeDataArr = changeArr[1].replace(')', '').split(',');
+	      var changeDataArr = changeArr[1].split(',');
 	      var currentSame = _this2.findStyleByName(_current, changeOnlyName);
 	      if (!currentSame) {
 	        addArr.push(changeOnlyName + '(' + changeDataArr.join(',') + ')');
@@ -21040,15 +21057,15 @@
 	      var currentArr = currentOnly.split('(');
 	      var currentOnlyName = currentArr[0];
 	
-	      var currentDataArr = currentArr[1].replace(')', '').split(',');
+	      var currentDataArr = currentArr[1].split(',');
 	      var changeSame = _this2.findStyleByName(_change, currentOnlyName);
 	      // 三种情况，ＸＹＺ时分析，空时组合前面的分析，
 	      if (changeSame) {
 	        var changeArr = changeSame.split('(');
 	        var changeOnlyName = changeArr[0];
-	        var changeDataArr = changeArr[1].replace(')', '').split(',');
+	        var changeDataArr = changeArr[1].split(',');
 	        if (currentOnlyName === changeOnlyName) {
-	          addArr.push(changeSame);
+	          addArr.push(changeSame + ')');
 	        } else if (currentOnlyName in _this2.transformGroup && changeOnlyName.substring(0, changeOnlyName.length - 1).indexOf(currentOnlyName) >= 0) {
 	          switch (changeOnlyName) {
 	            case 'translateX' || 'scaleX' || 'rotateX':
@@ -21098,7 +21115,7 @@
 	  },
 	
 	  getValues: function getValues(p, d, u) {
-	    return p + '(' + d + u + ')';
+	    return p + '(' + d + (u || '') + ')';
 	  },
 	
 	  isTransform: function isTransform(p) {
@@ -21157,11 +21174,18 @@
 	    var _this3 = this;
 	
 	    var unit = undefined;
-	    var changeArr = change.split(' ');
-	    var currentArr = current.split(' ');
+	    var changeArr = change.replace(/\s/g, '').split(')').filter(function (item) {
+	      return item !== '' && item;
+	    });
+	    var currentArr = current.replace(/\s/g, '').split(')').filter(function (item) {
+	      return item !== '' && item;
+	    });
 	    changeArr = changeArr.map(function (changeOnly) {
 	      var changeOnlyArr = changeOnly.split('(');
 	      var changeOnlyName = changeOnlyArr[0];
+	      if (!changeOnlyArr[1]) {
+	        return '';
+	      }
 	      var changeDataArr = changeOnlyArr[1].replace(')', '').split(',');
 	      var currentSame = _this3.findStyleByName(currentArr, changeOnlyName);
 	      if (currentSame) {

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>childrenUpdate.js - example - rc-tween-one@0.2.6</title>
+  <title>fromDelay.js - example - rc-tween-one@0.2.6</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,37 +263,23 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
   </div>
   <div class="example" id="__react-content"></div>
   <script src="common.js?nowrap"></script>
-  <script src="childrenUpdate.js?nowrap"></script>
+  <script src="fromDelay.js?nowrap"></script>
   <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
   constructor() {
     <span class="hljs-keyword">super</span>(...arguments);
-    <span class="hljs-keyword">this</span>.state = {
-      tweenData: {translateX: <span class="hljs-string">'100px'</span>, duration: <span class="hljs-number">3000</span>},
-      childTweenData: {translateY: <span class="hljs-number">200</span>, duration: <span class="hljs-number">1000</span>},
-    };
-  }
-
-  componentDidMount() {
-    setTimeout(()=&gt; {
-      <span class="hljs-keyword">this</span>.setState({
-        tweenData: {opacity: <span class="hljs-number">0.5</span>, marginTop: <span class="hljs-number">100</span>, duration: <span class="hljs-number">1000</span>},
-      });
-    }, <span class="hljs-number">1000</span>);
-    setTimeout(()=&gt; {
-      <span class="hljs-keyword">this</span>.setState({
-        childTweenData: [{translateY: <span class="hljs-number">100</span>}, {rotateY: <span class="hljs-number">180</span>, duration: <span class="hljs-number">1000</span>}, {rotateY: <span class="hljs-number">0</span>, duration: <span class="hljs-number">1000</span>}, {delay: -<span class="hljs-number">800</span>, translateY: <span class="hljs-number">0</span>}],
-      });
-    }, <span class="hljs-number">2000</span>);
   }
 
   render() {
-    <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{this.state.tweenData}</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{height:</span> <span class="hljs-attribute">300</span>, <span class="hljs-attribute">width:</span> <span class="hljs-attribute">60</span>, <span class="hljs-attribute">textAlign:</span> '<span class="hljs-attribute">center</span>'}}&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>大面包<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{this.state.childTweenData}</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"tween"</span>&gt;</span>小馒头<span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>)</span>;
+    <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{position:</span> '<span class="hljs-attribute">relative</span>', <span class="hljs-attribute">height:</span> <span class="hljs-attribute">500</span>}}&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
+        <span class="hljs-attribute">animation</span>=<span class="hljs-value">{[{x:</span> <span class="hljs-attribute">200</span>, <span class="hljs-attribute">delay:</span> <span class="hljs-attribute">1000</span>, <span class="hljs-attribute">y:</span> '+=<span class="hljs-value">300',</span> <span class="hljs-attribute">filter:</span> '<span class="hljs-attribute">blur</span>(<span class="hljs-attribute">10px</span>)', <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">from</span>', <span class="hljs-attribute">duration:</span> <span class="hljs-attribute">500</span>}, {<span class="hljs-attribute">x:</span> <span class="hljs-attribute">400</span>, <span class="hljs-attribute">y:</span> <span class="hljs-attribute">0</span>}]}
+        <span class="hljs-attribute">style</span>=<span class="hljs-value">{{opacity:</span> <span class="hljs-attribute">1</span>, <span class="hljs-attribute">width:</span> <span class="hljs-attribute">100</span>, <span class="hljs-attribute">transform:</span> '<span class="hljs-attribute">translateY</span>(<span class="hljs-attribute">100px</span>)'}}&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
   }
 }
 ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Demo</span> /&gt;</span>, document.getElementById('__react-content'));
