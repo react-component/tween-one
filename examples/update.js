@@ -15,7 +15,7 @@ class Demo extends React.Component {
         style: {transform: 'translateX(500px)', marginTop: 300},
       });
     }, 1100);
-  }git
+  }
 
   render() {
     return (<Tween animation={this.state.tweenData} style={this.state.style}>
