@@ -113,7 +113,7 @@ p.setAnimStartData = function(endData, i) {
     const key = Css.getGsapType(_key);
     const cssName = Css.isTransform(key);
     const startData = this.animData.tween && this.animData.tween[cssName] ? this.animData.tween : this.startData;
-    if (startData[cssName] === 'none' || startData[cssName] === 'auto') {
+    if (!startData[cssName] || startData[cssName] === 'none' || startData[cssName] === 'auto') {
       startData[cssName] = '';
     }
     if (cssName === 'transform' || cssName === 'filter') {
@@ -169,7 +169,7 @@ p.setNewStyle = function(easeValue, startData, endData, i) {
       }
     }
     const cssName = Css.isTransform(key);
-    this.startData[cssName] = this.startData[cssName] === 'none' ? '' : this.startData[cssName];
+    this.startData[cssName] = this.startData[cssName] === 'none' || !this.startData[cssName] ? '' : this.startData[cssName];
     if (cssName === 'bezier') {
       const bezier = this.animData['bezier' + i];
       this.animData.tween.transform = Css.mergeStyle(this.startData.transform, this.animData.tween.transform || '');
