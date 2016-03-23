@@ -57,7 +57,7 @@ http://react-component.github.io/tween-one/
 var TweenOne = require('rc-tween-one');
 var React = require('react');
 React.render(<TweenOne animation={{x:100}}>
-               文案示例
+               demo
              </TweenOne>, container);
 ```
 
@@ -67,32 +67,32 @@ React.render(<TweenOne animation={{x:100}}>
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
-| animation  | object / array | null    | 需要执行动画的参数 |
-| paused      | boolean        | false   | 暂停 |
-| reverse    | boolean        | false   | 倒放 |
-| onChange   | func           | null    | 全局变动回调 |
-| moment     | number         | null    | 设置当前时间轴上的时间  |
-| component  | string         | `div`   | 标签   |
+| animation  | object / array | null    | animate configure parameters |
+| paused      | boolean        | false   | animate pause |
+| reverse    | boolean        | false   | animate revers |
+| onChange   | func           | null    | when the animation change called, callback({ moment, item, tween, index, mode}) |
+| moment     | number         | null    | set the current frame    |
+| component  | string         | `div`   | component tag  |
 
 
 ### animation = { }
-> transform 需要设定初始值, 必需在 style 里设定;
+> transform need to set the initial value, must be set in the style;
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
-| type       | string         | `to`    | 播放类型，`to` `from`|
-| style里的样式 | string / number| null  | 样式里能执行动画的，如 `translateX` `rotateX` `color` `marginTop` 或 `x` `y`等 |
-| duration   |  number        | 450     | 动画时间     |
-| delay      | number         | 0       | 延时  |
-| repeat     | number         | 0       | 重复, -1 为无限重复 |
-| repeatDelay| number         | 0       | 重复开始时的延时 |
-| yoyo       | boolean        | false   | 重复时是否倒放  |
-| ease       | string         | `easeInOutQuad` | 缓动参数 |
-| bezier     | object         | null    | 贝赛尔曲线动画   |
-| onStart    | func           | null    | 动画开始时调用  |
-| onUpdate   | func           | null    | 更新时调用  |
-| onComplete | func           | null    | 结束时调用  |
-| onRepeat   | func           | null    | 重复时调用  |
+| type       | string         | `to`    | play type: `to` `from`|
+| in style   | string / number| null  | CSS style value: `translateX` `rotateX` `color` `marginTop` or gsap: `x` `y`... |
+| duration   |  number        | 450     | animate duration     |
+| delay      | number         | 0       | animate delay  |
+| repeat     | number         | 0       | animate repeat, To repeat indefinitely, use  -1 |
+| repeatDelay| number         | 0       | repeat start delay |
+| yoyo       | boolean        | false   | if `true`, every other repeat cycle will run in the opposite direction so that the tween appears to go back and forth (forward then backward).  |
+| ease       | string         | `easeInOutQuad` | animate ease |
+| bezier     | object         | null    | bezier curve animate |
+| onStart    | func           | null    | A function that should be called when the tween begins  |
+| onUpdate   | func           | null    | A function that should be called every time the animate updates  |
+| onComplete | func           | null    | A function that should be called when the animate has completed  |
+| onRepeat   | func           | null    | A function that should be called each time the animate repeats  |
 
 
 
@@ -103,8 +103,8 @@ React.render(<TweenOne animation={{x:100}}>
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
 | type       | string         | `soft`  | `thru`, `soft`, `quadratic`, `cubic` |
-| autoRotate | boolean        | false   | 跟随位置旋转  |
-| vars       | array          | null    | 贝赛尔点的位置，如 `{x:100,y:100}` |
+| autoRotate | boolean        | false   | to automatically rotate the target according to its position on the Bezier path  |
+| vars       | array          | null    | bezier point data，as: `{x:100,y:100}` |
 
-> 贝赛尔曲线API参照 [gsap BezierPlugin](http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/)
+> bezier API refer to [gsap BezierPlugin](http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/)
 
