@@ -96,7 +96,7 @@ React.render(<TweenOne animation={{x:100}}>
 
 
 
-### animation =[ ] 时为timeline
+### animation =[ ] is timeline
 
 ### bezier = { }
 
