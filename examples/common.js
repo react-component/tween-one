@@ -20047,17 +20047,17 @@
 /* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(165)
-	  , root = typeof window === 'undefined' ? global : window
+	var now = __webpack_require__(165)
+	  , global = typeof window === 'undefined' ? {} : window
 	  , vendors = ['moz', 'webkit']
 	  , suffix = 'AnimationFrame'
-	  , raf = root['request' + suffix]
-	  , caf = root['cancel' + suffix] || root['cancelRequest' + suffix]
+	  , raf = global['request' + suffix]
+	  , caf = global['cancel' + suffix] || global['cancelRequest' + suffix]
 	
-	for(var i = 0; !raf && i < vendors.length; i++) {
-	  raf = root[vendors[i] + 'Request' + suffix]
-	  caf = root[vendors[i] + 'Cancel' + suffix]
-	      || root[vendors[i] + 'CancelRequest' + suffix]
+	for(var i = 0; i < vendors.length && !raf; i++) {
+	  raf = global[vendors[i] + 'Request' + suffix]
+	  caf = global[vendors[i] + 'Cancel' + suffix]
+	      || global[vendors[i] + 'CancelRequest' + suffix]
 	}
 	
 	// Some versions of FF have rAF but not cAF
@@ -20110,17 +20110,12 @@
 	  // Wrap in a new function to prevent
 	  // `cancel` potentially being assigned
 	  // to the native rAF function
-	  return raf.call(root, fn)
+	  return raf.call(global, fn)
 	}
 	module.exports.cancel = function() {
-	  caf.apply(root, arguments)
+	  caf.apply(global, arguments)
 	}
-	module.exports.polyfill = function() {
-	  root.requestAnimationFrame = raf
-	  root.cancelAnimationFrame = caf
-	}
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
 
 /***/ },
 /* 165 */
@@ -20267,9 +20262,9 @@
 	
 	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
 	
-	var _Css = __webpack_require__(169);
+	var _styleUtils = __webpack_require__(169);
 	
-	var _Css2 = _interopRequireDefault(_Css);
+	var _styleUtils2 = _interopRequireDefault(_styleUtils);
 	
 	var _BezierPlugin = __webpack_require__(170);
 	
@@ -20328,8 +20323,8 @@
 	    tweenData.data = {};
 	    for (var _key in item) {
 	      if (!(_key in tweenData)) {
-	        var key = _Css2['default'].getGsapType(_key);
-	        var cssName = _Css2['default'].isTransform(key);
+	        var key = _styleUtils2['default'].getGsapType(_key);
+	        var cssName = _styleUtils2['default'].isTransform(key);
 	        _this.startData[cssName] = start[cssName];
 	        tweenData.data[_key] = item[_key];
 	      }
@@ -20380,12 +20375,13 @@
 	        _obj[_item[0]] = _item[1];
 	      });
 	    }
-	    _obj[key] = _Css2['default'].mergeTransformName(cssStyleArr, key) || _obj[key] || 0;
+	    var num = key.indexOf('scale') >= 0 ? 1 : 0;
+	    _obj[key] = _styleUtils2['default'].mergeTransformName(cssStyleArr, key) || _obj[key] || num;
 	  }
 	
 	  Object.keys(_endData).forEach(function (_key) {
-	    var key = _Css2['default'].getGsapType(_key);
-	    var cssName = _Css2['default'].isTransform(key);
+	    var key = _styleUtils2['default'].getGsapType(_key);
+	    var cssName = _styleUtils2['default'].isTransform(key);
 	    var startData = _this3.animData.tween && _this3.animData.tween[cssName] ? _this3.animData.tween : _this3.startData;
 	    if (!startData[cssName] || startData[cssName] === 'none' || startData[cssName] === 'auto') {
 	      startData[cssName] = '';
@@ -20417,13 +20413,13 @@
 	
 	  var start = startData;
 	  Object.keys(endData).forEach(function (_key) {
-	    var key = _Css2['default'].getGsapType(_key);
+	    var key = _styleUtils2['default'].getGsapType(_key);
 	    var endVars = endData[_key];
 	    var startVars = start[key];
 	    var differ = undefined;
 	    if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
-	      startVars = _Css2['default'].parseColor(startVars);
-	      endVars = _Css2['default'].parseColor(endVars);
+	      startVars = _styleUtils2['default'].parseColor(startVars);
+	      endVars = _styleUtils2['default'].parseColor(endVars);
 	      startVars[3] = typeof startVars[3] !== 'number' ? 1 : startVars[3];
 	      endVars[3] = typeof endVars[3] !== 'number' ? 1 : endVars[3];
 	      differ = endVars.map(function (data, ii) {
@@ -20431,8 +20427,8 @@
 	      });
 	    } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
 	      startVars = startVars === 'none' || !startVars ? '0 0 0 transparent' : startVars;
-	      startVars = _Css2['default'].parseShadow(startVars);
-	      endVars = _Css2['default'].parseShadow(endVars);
+	      startVars = _styleUtils2['default'].parseShadow(startVars);
+	      endVars = _styleUtils2['default'].parseShadow(endVars);
 	      differ = endVars.map(function (data, ii) {
 	        return (parseFloat(data) - parseFloat(startVars[ii])) * easeValue + parseFloat(startVars[ii]);
 	      });
@@ -20444,20 +20440,20 @@
 	        differ = startVars + endVars * easeValue;
 	      }
 	    }
-	    var cssName = _Css2['default'].isTransform(key);
+	    var cssName = _styleUtils2['default'].isTransform(key);
 	    _this4.startData[cssName] = _this4.startData[cssName] === 'none' || !_this4.startData[cssName] ? '' : _this4.startData[cssName];
 	    if (cssName === 'bezier') {
 	      var bezier = _this4.animData['bezier' + i];
-	      _this4.animData.tween.transform = _Css2['default'].mergeStyle(_this4.startData.transform, _this4.animData.tween.transform || '');
-	      _this4.animData.tween.transform = _Css2['default'].mergeStyle(_this4.animData.tween.transform, bezier.set(easeValue));
+	      _this4.animData.tween.transform = _styleUtils2['default'].mergeStyle(_this4.startData.transform, _this4.animData.tween.transform || '');
+	      _this4.animData.tween.transform = _styleUtils2['default'].mergeStyle(_this4.animData.tween.transform, bezier.set(easeValue));
 	    } else if (cssName === 'filter') {
-	      _this4.animData.tween[cssName] = _Css2['default'].mergeStyle(_this4.startData[cssName] || '', _this4.animData.tween[cssName] || '');
-	      _this4.animData.tween[cssName] = _Css2['default'].mergeStyle(_this4.animData.tween[cssName], _Css2['default'].getFilterParam(start[_key], endData[_key], easeValue));
+	      _this4.animData.tween[cssName] = _styleUtils2['default'].mergeStyle(_this4.startData[cssName] || '', _this4.animData.tween[cssName] || '');
+	      _this4.animData.tween[cssName] = _styleUtils2['default'].mergeStyle(_this4.animData.tween[cssName], _styleUtils2['default'].getFilterParam(start[_key], endData[_key], easeValue));
 	    } else if (cssName === 'transform') {
-	      _this4.animData.tween[cssName] = _Css2['default'].mergeStyle(_this4.startData[cssName] || '', _this4.animData.tween[cssName] || '');
-	      _this4.animData.tween[cssName] = _Css2['default'].mergeStyle(_this4.animData.tween[cssName], _Css2['default'].getParam(key, endData[_key], differ));
+	      _this4.animData.tween[cssName] = _styleUtils2['default'].mergeStyle(_this4.startData[cssName] || '', _this4.animData.tween[cssName] || '');
+	      _this4.animData.tween[cssName] = _styleUtils2['default'].mergeStyle(_this4.animData.tween[cssName], _styleUtils2['default'].getParam(key, endData[_key], differ));
 	    } else {
-	      _this4.animData.tween[cssName] = _Css2['default'].getParam(key, endData[_key], differ);
+	      _this4.animData.tween[cssName] = _styleUtils2['default'].getParam(key, endData[_key], differ);
 	    }
 	  });
 	};
@@ -20640,19 +20636,25 @@
 	  },
 	  easeInExpo: function(t, b, _c, d) {
 	    var c = _c - b;
-	    return (t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b;
+	    var _ref;
+	    return (_ref = t === 0) !== null ? _ref : {
+	      b: c * Math.pow(2, 10 * (t / d - 1)) + b
+	    };
 	  },
 	  easeOutExpo: function(t, b, _c, d) {
 	    var c = _c - b;
-	    return (t==d) ? b+c : c * (-Math.pow(2, -10 * t/d) + 1) + b;
+	    var _ref;
+	    return (_ref = t === d) !== null ? _ref : b + {
+	      c: c * (-Math.pow(2, -10 * t / d) + 1) + b
+	    };
 	  },
 	  easeInOutExpo: function(t, b, _c, d) {
 	    var c = _c - b;
 	    if (t === 0) {
-	      return b;
+	      b;
 	    }
 	    if (t === d) {
-	      return b + c;
+	      b + c;
 	    }
 	    if ((t /= d / 2) < 1) {
 	      return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
@@ -20683,9 +20685,9 @@
 	    p = 0;
 	    a = c;
 	    if (t === 0) {
-	      return b;
+	      b;
 	    } else if ((t /= d) === 1) {
-	      return b + c;
+	      b + c;
 	    }
 	    if (!p) {
 	      p = d * 0.3;
@@ -20705,9 +20707,9 @@
 	    p = 0;
 	    a = c;
 	    if (t === 0) {
-	      return b;
+	      b;
 	    } else if ((t /= d) === 1) {
-	      return b + c;
+	      b + c;
 	    }
 	    if (!p) {
 	      p = d * 0.3;
@@ -20727,9 +20729,9 @@
 	    p = 0;
 	    a = c;
 	    if (t === 0) {
-	      return b;
+	      b;
 	    } else if ((t /= d / 2) === 2) {
-	      return b + c;
+	      b + c;
 	    }
 	    if (!p) {
 	      p = d * (0.3 * 1.5);
@@ -20811,10 +20813,10 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var IE = (function () {
+	var IE = function () {
 	  if (document.documentMode) {
 	    return document.documentMode;
 	  }
@@ -20827,7 +20829,7 @@
 	    }
 	  }
 	  return undefined;
-	})();
+	}();
 	
 	var colorLookup = {
 	  aqua: [0, 255, 255],
@@ -20875,7 +20877,6 @@
 	    p = p === 'r' ? 'rotate' : p;
 	    return p;
 	  },
-	
 	  parseShadow: function parseShadow(v) {
 	    var vArr = v.split(' ');
 	    var color = this.parseColor(vArr[3]);
@@ -20883,15 +20884,14 @@
 	    vArr = vArr.splice(0, 3);
 	    return vArr.concat(color);
 	  },
-	
 	  parseColor: function parseColor(_v) {
-	    var a = undefined;
-	    var r = undefined;
-	    var g = undefined;
-	    var b = undefined;
-	    var h = undefined;
-	    var s = undefined;
-	    var l = undefined;
+	    var a = void 0;
+	    var r = void 0;
+	    var g = void 0;
+	    var b = void 0;
+	    var h = void 0;
+	    var s = void 0;
+	    var l = void 0;
 	    var v = _v;
 	    var _numExp = /(?:\d|\-\d|\.\d|\-\.\d)+/g;
 	    if (!v) {
@@ -20940,7 +20940,6 @@
 	    }
 	    return a;
 	  },
-	
 	  getArrayToColor: function getArrayToColor(arr) {
 	    var color = 'rgba(';
 	    var _arr = arr.map(function (item, i) {
@@ -20951,7 +20950,6 @@
 	    });
 	    return color + _arr.join(',') + ')';
 	  },
-	
 	  getTransformStart: function getTransformStart(name, obj) {
 	    if (name in obj) {
 	      return obj[name];
@@ -21032,7 +21030,6 @@
 	    }
 	    return ret;
 	  },
-	
 	  mergeStyle: function mergeStyle(current, change) {
 	    var _this2 = this;
 	
@@ -21122,15 +21119,12 @@
 	    });
 	    return addArr.join(' ').trim();
 	  },
-	
 	  getValues: function getValues(p, d, u) {
 	    return p + '(' + d + (u || '') + ')';
 	  },
-	
 	  isTransform: function isTransform(p) {
 	    return this._lists.transformsBase.indexOf(p) >= 0 ? 'transform' : p;
 	  },
-	
 	  getShadowParam: function getShadowParam(v, d) {
 	    var color = [];
 	    for (var i = 3; i < d.length; i++) {
@@ -21148,7 +21142,6 @@
 	    });
 	    return blur.join(' ') + ' ' + color;
 	  },
-	
 	  getParam: function getParam(p, v, dd) {
 	    var d = Array.isArray(dd) && dd.length === 1 ? dd[0] : dd;
 	    if (p.indexOf('color') >= 0 || p.indexOf('Color') >= 0) {
@@ -21182,7 +21175,7 @@
 	  getFilterParam: function getFilterParam(current, change, data) {
 	    var _this3 = this;
 	
-	    var unit = undefined;
+	    var unit = void 0;
 	    var changeArr = change.replace(/\s/g, '').split(')').filter(function (item) {
 	      return item !== '' && item;
 	    });
@@ -21223,8 +21216,8 @@
 	  }
 	};
 	CSS._lists.transformsBase = !(IE <= 9) ? CSS._lists.transformsBase.concat(CSS._lists.transforms3D) : CSS._lists.transformsBase;
-	exports['default'] = CSS;
-	module.exports = exports['default'];
+	exports.default = CSS;
+
 
 /***/ },
 /* 170 */
