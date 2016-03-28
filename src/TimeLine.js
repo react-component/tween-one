@@ -206,7 +206,7 @@ p.getStyle = function() {
     let mode = 'onUpdate';
     // 开始 onStart
     if (i === 0 && progressTime < 5 || i !== 0 && progressTime > 0 && progressTime < this.oneSecond) {
-      this.callback = item.onStart;
+      item.onStart();
       mode = 'onStart';
       this.animData.start = assign({}, this.animData.start, this.animData.tween);
     }
@@ -229,22 +229,26 @@ p.getStyle = function() {
 
       // 当前点生成样式;
       this.setNewStyle(easeVars, this.animData.start[i], item.data, i);
-      // complete 事件
-      if (progressTime === item.duration) {
-        this.callback = item.onComplete;
-        mode = 'onComplete';
-      }
-      if (mode === 'onUpdate') {
-        // update 事件
-        this.callback = item.onUpdate.bind(this, easeVars);
-      }
-      // onChange
-      this.onChange({
-        moment: this.progressTime,
-        item: item,
-        tween: this.animData.tween,
-        index: i,
-        mode,
+
+      setTimeout(()=> {
+        // 加 setTimeout 是为了在 this.setState 之后调用;
+        // complete 事件
+        if (progressTime === item.duration) {
+          item.onComplete();
+          mode = 'onComplete';
+        }
+        if (mode === 'onUpdate') {
+          // update 事件
+          item.onUpdate(easeVars);
+        }
+        // onChange
+        this.onChange({
+          moment: this.progressTime,
+          item: item,
+          tween: this.animData.tween,
+          index: i,
+          mode,
+        });
       });
     }
   });

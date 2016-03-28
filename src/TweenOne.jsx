@@ -162,8 +162,6 @@ class TweenOne extends Component {
     const style = assign({}, this.startStyle, this.timeLine.frame(moment));
     this.setState({
       style,
-    }, ()=> {
-      this.timeLine.callback();
     });
   }
 
