@@ -206,7 +206,7 @@ p.getStyle = function() {
     let mode = 'onUpdate';
     // 开始 onStart
     if (i === 0 && progressTime < 5 || i !== 0 && progressTime > 0 && progressTime < this.oneSecond) {
-      item.onStart();
+      this.callback = item.onStart;
       mode = 'onStart';
       this.animData.start = assign({}, this.animData.start, this.animData.tween);
     }
@@ -226,15 +226,17 @@ p.getStyle = function() {
       if (item.yoyo && repeatNum % 2 || item.type === 'from') {
         easeVars = easingTypes[item.ease](progressTime, 1, 0, item.duration);
       }
-      // update 事件
-      item.onUpdate(easeVars);
 
       // 当前点生成样式;
       this.setNewStyle(easeVars, this.animData.start[i], item.data, i);
       // complete 事件
       if (progressTime === item.duration) {
-        item.onComplete();
+        this.callback = item.onComplete;
         mode = 'onComplete';
+      }
+      if (mode === 'onUpdate') {
+        // update 事件
+        this.callback = item.onUpdate.bind(this, easeVars);
       }
       // onChange
       this.onChange({

@@ -162,6 +162,8 @@ class TweenOne extends Component {
     const style = assign({}, this.startStyle, this.timeLine.frame(moment));
     this.setState({
       style,
+    }, ()=> {
+      this.timeLine.callback();
     });
   }
 
@@ -204,9 +206,10 @@ class TweenOne extends Component {
 
 const objectOrArray = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
 const objectOrArrayOrString = PropTypes.oneOfType([PropTypes.string, objectOrArray]);
+const stringOrFunc = React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.func]);
 
 TweenOne.propTypes = {
-  component: PropTypes.string,
+  component: stringOrFunc,
   animation: objectOrArray,
   children: objectOrArrayOrString,
   style: PropTypes.object,
