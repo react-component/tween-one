@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-tween-one@0.2.6 - tween-one anim component for react</title>
+  <title>rc-tween-one@0.2.7 - tween-one anim component for react</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-tween-one@0.2.6</h1>
+  <h1>rc-tween-one@0.2.7</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -821,7 +821,7 @@ npm start</code></pre></div><h2>Example<a id="user-content-example" name="exampl
 <h2>Usage<a id="user-content-usage" name="usage" class="anchor" aria-hidden="true" href="#usage"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="js"><span class="hljs-keyword">var</span> TweenOne = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-tween-one'</span>);
 <span class="hljs-keyword">var</span> React = <span class="hljs-built_in">require</span>(<span class="hljs-string">'react'</span>);
 React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{x:100}}</span>&gt;</span>
-               文案示例
+               demo
              <span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>, container);</span></code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><h3>props<a id="user-content-props" name="props" class="anchor" aria-hidden="true" href="#props"><span class="octicon octicon-link"></span></a></h3><table>
 <thead>
 <tr>
@@ -836,42 +836,42 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>animation</td>
 <td>object / array</td>
 <td>null</td>
-<td>需要执行动画的参数</td>
+<td>animate configure parameters</td>
 </tr>
 <tr>
 <td>paused</td>
 <td>boolean</td>
 <td>false</td>
-<td>暂停</td>
+<td>animate pause</td>
 </tr>
 <tr>
 <td>reverse</td>
 <td>boolean</td>
 <td>false</td>
-<td>倒放</td>
+<td>animate revers</td>
 </tr>
 <tr>
 <td>onChange</td>
 <td>func</td>
 <td>null</td>
-<td>全局变动回调</td>
+<td>when the animation change called, callback({ moment, item, tween, index, mode})</td>
 </tr>
 <tr>
 <td>moment</td>
 <td>number</td>
 <td>null</td>
-<td>设置当前时间轴上的时间</td>
+<td>set the current frame</td>
 </tr>
 <tr>
 <td>component</td>
 <td>string</td>
 <td><code>div</code></td>
-<td>标签</td>
+<td>component tag</td>
 </tr>
 </tbody>
 </table>
 <h3>animation = { }<a id="user-content-animation-=-{-}" name="animation-=-{-}" class="anchor" aria-hidden="true" href="#animation-=-{-}"><span class="octicon octicon-link"></span></a></h3><blockquote>
-<p>transform 需要设定初始值, 必需在 style 里设定;</p>
+<p>transform need to set the initial value, must be set in the style;</p>
 </blockquote>
 <table>
 <thead>
@@ -887,83 +887,83 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>type</td>
 <td>string</td>
 <td><code>to</code></td>
-<td>播放类型，<code>to</code> <code>from</code></td>
+<td>play type: <code>to</code> <code>from</code></td>
 </tr>
 <tr>
-<td>style里的样式</td>
+<td>in style</td>
 <td>string / number</td>
 <td>null</td>
-<td>样式里能执行动画的，如 <code>translateX</code> <code>rotateX</code> <code>color</code> <code>marginTop</code> 或 <code>x</code> <code>y</code>等</td>
+<td>CSS style value: <code>translateX</code> <code>rotateX</code> <code>color</code> <code>marginTop</code> or gsap: <code>x</code> <code>y</code>...</td>
 </tr>
 <tr>
 <td>duration</td>
 <td>number</td>
 <td>450</td>
-<td>动画时间</td>
+<td>animate duration</td>
 </tr>
 <tr>
 <td>delay</td>
 <td>number</td>
 <td>0</td>
-<td>延时</td>
+<td>animate delay</td>
 </tr>
 <tr>
 <td>repeat</td>
 <td>number</td>
 <td>0</td>
-<td>重复, -1 为无限重复</td>
+<td>animate repeat, To repeat indefinitely, use  -1</td>
 </tr>
 <tr>
 <td>repeatDelay</td>
 <td>number</td>
 <td>0</td>
-<td>重复开始时的延时</td>
+<td>repeat start delay</td>
 </tr>
 <tr>
 <td>yoyo</td>
 <td>boolean</td>
 <td>false</td>
-<td>重复时是否倒放</td>
+<td>if <code>true</code>, every other repeat cycle will run in the opposite direction so that the tween appears to go back and forth (forward then backward).</td>
 </tr>
 <tr>
 <td>ease</td>
 <td>string</td>
 <td><code>easeInOutQuad</code></td>
-<td>缓动参数</td>
+<td>animate ease</td>
 </tr>
 <tr>
 <td>bezier</td>
 <td>object</td>
 <td>null</td>
-<td>贝赛尔曲线动画</td>
+<td>bezier curve animate</td>
 </tr>
 <tr>
 <td>onStart</td>
 <td>func</td>
 <td>null</td>
-<td>动画开始时调用</td>
+<td>A function that should be called when the tween begins</td>
 </tr>
 <tr>
 <td>onUpdate</td>
 <td>func</td>
 <td>null</td>
-<td>更新时调用</td>
+<td>A function that should be called every time the animate updates</td>
 </tr>
 <tr>
 <td>onComplete</td>
 <td>func</td>
 <td>null</td>
-<td>结束时调用</td>
+<td>A function that should be called when the animate has completed</td>
 </tr>
 <tr>
 <td>onRepeat</td>
 <td>func</td>
 <td>null</td>
-<td>重复时调用</td>
+<td>A function that should be called each time the animate repeats</td>
 </tr>
 </tbody>
 </table>
-<h3>animation =[ ] 时为timeline<a id="user-content-animation-=[-]-时为timeline" name="animation-=[-]-时为timeline" class="anchor" aria-hidden="true" href="#animation-=[-]-时为timeline"><span class="octicon octicon-link"></span></a></h3><h3>bezier = { }<a id="user-content-bezier-=-{-}" name="bezier-=-{-}" class="anchor" aria-hidden="true" href="#bezier-=-{-}"><span class="octicon octicon-link"></span></a></h3><table>
+<h3>animation =[ ] is timeline<a id="user-content-animation-=[-]-is-timeline" name="animation-=[-]-is-timeline" class="anchor" aria-hidden="true" href="#animation-=[-]-is-timeline"><span class="octicon octicon-link"></span></a></h3><h3>bezier = { }<a id="user-content-bezier-=-{-}" name="bezier-=-{-}" class="anchor" aria-hidden="true" href="#bezier-=-{-}"><span class="octicon octicon-link"></span></a></h3><table>
 <thead>
 <tr>
 <th>name</th>
@@ -983,18 +983,18 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>autoRotate</td>
 <td>boolean</td>
 <td>false</td>
-<td>跟随位置旋转</td>
+<td>to automatically rotate the target according to its position on the Bezier path</td>
 </tr>
 <tr>
 <td>vars</td>
 <td>array</td>
 <td>null</td>
-<td>贝赛尔点的位置，如 <code>{x:100,y:100}</code></td>
+<td>bezier point data，as: <code>{x:100,y:100}</code></td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p>贝赛尔曲线API参照 <a href="http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/" title="null">gsap BezierPlugin</a></p>
+<p>bezier API refer to <a href="http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/" title="null">gsap BezierPlugin</a></p>
 </blockquote>
 
   </div>

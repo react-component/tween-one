@@ -376,9 +376,10 @@
 	
 	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
 	var objectOrArrayOrString = _react.PropTypes.oneOfType([_react.PropTypes.string, objectOrArray]);
+	var stringOrFunc = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.func]);
 	
 	TweenOne.propTypes = {
-	  component: _react.PropTypes.string,
+	  component: stringOrFunc,
 	  animation: objectOrArray,
 	  children: objectOrArrayOrString,
 	  style: _react.PropTypes.object,
@@ -20496,31 +20497,39 @@
 	      _this5.animData.start['bool' + i] = _this5.animData.start['bool' + i] || 1;
 	    }
 	    if (progressTime > -_this5.oneSecond && progressTime < item.duration + _this5.oneSecond) {
-	      _this5.animData.start['bool' + i] = _this5.animData.start['bool' + i] || 1;
-	      progressTime = progressTime < 0 ? 0 : progressTime;
-	      progressTime = progressTime > item.duration ? item.duration : progressTime;
-	      var easeVars = _tweenFunctions2['default'][item.ease](progressTime, 0, 1, item.duration);
-	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
-	        easeVars = _tweenFunctions2['default'][item.ease](progressTime, 1, 0, item.duration);
-	      }
-	      // update 事件
-	      item.onUpdate(easeVars);
+	      (function () {
+	        _this5.animData.start['bool' + i] = _this5.animData.start['bool' + i] || 1;
+	        progressTime = progressTime < 0 ? 0 : progressTime;
+	        progressTime = progressTime > item.duration ? item.duration : progressTime;
+	        var easeVars = _tweenFunctions2['default'][item.ease](progressTime, 0, 1, item.duration);
+	        if (item.yoyo && repeatNum % 2 || item.type === 'from') {
+	          easeVars = _tweenFunctions2['default'][item.ease](progressTime, 1, 0, item.duration);
+	        }
 	
-	      // 当前点生成样式;
-	      _this5.setNewStyle(easeVars, _this5.animData.start[i], item.data, i);
-	      // complete 事件
-	      if (progressTime === item.duration) {
-	        item.onComplete();
-	        mode = 'onComplete';
-	      }
-	      // onChange
-	      _this5.onChange({
-	        moment: _this5.progressTime,
-	        item: item,
-	        tween: _this5.animData.tween,
-	        index: i,
-	        mode: mode
-	      });
+	        // 当前点生成样式;
+	        _this5.setNewStyle(easeVars, _this5.animData.start[i], item.data, i);
+	
+	        setTimeout(function () {
+	          // 加 setTimeout 是为了在 this.setState 之后调用;
+	          // complete 事件
+	          if (progressTime === item.duration) {
+	            item.onComplete();
+	            mode = 'onComplete';
+	          }
+	          if (mode === 'onUpdate') {
+	            // update 事件
+	            item.onUpdate(easeVars);
+	          }
+	          // onChange
+	          _this5.onChange({
+	            moment: _this5.progressTime,
+	            item: item,
+	            tween: _this5.animData.tween,
+	            index: i,
+	            mode: mode
+	          });
+	        });
+	      })();
 	    }
 	  });
 	};
