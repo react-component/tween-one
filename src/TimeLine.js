@@ -106,7 +106,8 @@ p.setAnimStartData = function(endData, i) {
         _obj[_item[0]] = _item[1];
       });
     }
-    _obj[key] = Css.mergeTransformName(cssStyleArr, key) || _obj[key] || 0;
+    const num = key.indexOf('scale') >= 0 ? 1 : 0;
+    _obj[key] = Css.mergeTransformName(cssStyleArr, key) || _obj[key] || num;
   }
 
   Object.keys(_endData).forEach(_key=> {
