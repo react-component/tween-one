@@ -3,7 +3,7 @@
  */
 import assign from 'object-assign';
 import easingTypes from 'tween-functions';
-import Css from './Css';
+import Css from 'style-utils';
 import Bezier from './BezierPlugin';
 
 const DEFAULT_EASING = 'easeInOutQuad';
