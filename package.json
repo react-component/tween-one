@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
@@ -17,11 +17,13 @@
   "bugs": {
     "url": "https://github.com/react-component/tween-one/issues"
   },
-  "files":["lib", "assets/*.css"],
+  "files": [
+    "lib",
+    "assets/*.css"
+  ],
   "licenses": "MIT",
-  
-  "main":"./lib/index",
-  "config":{
+  "main": "./lib/index",
+  "config": {
     "port": 8100
   },
   "scripts": {
@@ -40,17 +42,17 @@
     "pre-commit": "1.x",
     "rc-server": "3.x",
     "rc-tools": "4.x",
-    "react": "0.14.x",
-    "react-addons-test-utils": "0.14.x",
-    "react-dom": "0.14.x"
+    "react": "^15.0.0",
+    "react-addons-test-utils": "^15.0.0",
+    "react-dom": "^15.0.0"
   },
   "pre-commit": [
     "lint"
   ],
   "dependencies": {
-    "raf": "3.1.x",
     "object-assign": "4.0.x",
-    "tween-functions": "1.0.x",
-    "style-utils": "~0.0.1"
+    "raf": "3.1.x",
+    "style-utils": "~0.0.1",
+    "tween-functions": "1.0.x"
   }
 }
