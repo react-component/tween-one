@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
@@ -52,7 +52,7 @@
   "dependencies": {
     "object-assign": "4.0.x",
     "raf": "3.1.x",
-    "style-utils": "~0.0.1",
+    "style-utils": "^0.0.1",
     "tween-functions": "1.0.x"
   }
 }
