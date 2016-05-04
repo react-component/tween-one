@@ -3,7 +3,6 @@ import requestAnimationFrame from 'raf';
 
 const Ticker = function() {
 };
-const ticker = new Ticker;
 const p = Ticker.prototype = {
   tickFnObject: {},
   id: -1,
@@ -24,6 +23,7 @@ p.sleep = function() {
   requestAnimationFrame.cancel(this.id);
   this.id = -1;
 };
+const ticker = new Ticker;
 p.tick = function(a) {
   const obj = ticker.tickFnObject;
   Object.keys(obj).forEach(key => {
@@ -42,5 +42,4 @@ p.tick = function(a) {
   ticker.frame++;
   ticker.id = requestAnimationFrame(ticker.tick);
 };
-
 export default ticker;
