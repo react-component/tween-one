@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		18:0
+/******/ 		19:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"fromDelay","9":"gsapWritten","10":"moment","11":"repeat","12":"shadow","13":"simple","14":"timeline","15":"update","16":"updateStyle","17":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"fromDelay","9":"group","10":"gsapWritten","11":"moment","12":"repeat","13":"shadow","14":"simple","15":"timeline","16":"update","17":"updateStyle","18":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -119,7 +119,9 @@
 
 	'use strict';
 	
-	module.exports = __webpack_require__(4);
+	var TweenOne = __webpack_require__(4);
+	TweenOne.TweenOneGroup = __webpack_require__(178);
+	module.exports = TweenOne;
 
 /***/ },
 /* 4 */
@@ -153,34 +155,19 @@
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var _raf = __webpack_require__(170);
+	var _util = __webpack_require__(170);
 	
-	var _raf2 = _interopRequireDefault(_raf);
-	
-	var _util = __webpack_require__(172);
-	
-	var _TimeLine = __webpack_require__(173);
+	var _TimeLine = __webpack_require__(171);
 	
 	var _TimeLine2 = _interopRequireDefault(_TimeLine);
 	
+	var _ticker = __webpack_require__(175);
+	
+	var _ticker2 = _interopRequireDefault(_ticker);
+	
 	function noop() {}
 	
-	var hidden = undefined;
-	var visibilityChange = undefined;
-	if (typeof document.hidden !== 'undefined') {
-	  // Opera 12.10 and Firefox 18 and later support
-	  hidden = 'hidden';
-	  visibilityChange = 'visibilitychange';
-	} else if (typeof document.mozHidden !== 'undefined') {
-	  hidden = 'mozHidden';
-	  visibilityChange = 'mozvisibilitychange';
-	} else if (typeof document.msHidden !== 'undefined') {
-	  hidden = 'msHidden';
-	  visibilityChange = 'msvisibilitychange';
-	} else if (typeof document.webkitHidden !== 'undefined') {
-	  hidden = 'webkitHidden';
-	  visibilityChange = 'webkitvisibilitychange';
-	}
+	var _fps = Math.round(1000 / 60);
 	
 	var TweenOne = (function (_Component) {
 	  _inherits(TweenOne, _Component);
@@ -196,12 +183,14 @@
 	    this.propsStyle = this.props.style ? (0, _objectAssign2['default'])({}, this.props.style) : this.props.style;
 	    this.startStyle = this.props.style || {};
 	    this.startAnimation = this.props.animation ? (0, _objectAssign2['default'])({}, this.props.animation) : this.props.animation;
-	    this.startMoment = this.props.moment;
 	    this.moment = this.props.moment || 0;
 	    this.state = {
-	      style: this.props.style || {}
+	      style: this.props.style || {},
+	      startMoment: this.props.moment,
+	      startFrame: _ticker2['default'].frame,
+	      paused: this.props.paused
 	    };
-	    ['raf', 'handleVisibilityChange', 'setCurrentDate', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
+	    ['raf', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
 	  }
@@ -212,11 +201,12 @@
 	      var dom = _reactDom2['default'].findDOMNode(this);
 	      this.computedStyle = (0, _objectAssign2['default'])({}, document.defaultView.getComputedStyle(dom));
 	      this.start(this.props);
-	      document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
 	    }
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
+	      var _this2 = this;
+	
 	      var newStyle = nextProps.style;
 	      var styleEqual = (0, _util.objectEqual)(this.propsStyle, newStyle);
 	      // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
@@ -237,7 +227,6 @@
 	      // 跳帧事件 moment;
 	      var newMoment = nextProps.moment;
 	      if (typeof newMoment === 'number') {
-	        this.startMoment = newMoment;
 	        if (nextProps.paused) {
 	          this.oneMoment = true;
 	          this.timeLine = new _TimeLine2['default']((0, _objectAssign2['default'])({}, this.computedStyle, this.startStyle), (0, _util.dataToArray)(nextProps.animation));
@@ -247,6 +236,10 @@
 	          this.state.style = {};
 	          this.start(nextProps);
 	        }
+	        this.setState({
+	          startMoment: newMoment,
+	          startFrame: _ticker2['default'].frame
+	        });
 	      }
 	      // 动画处理
 	      var newAnimation = nextProps.animation;
@@ -259,29 +252,53 @@
 	          this.startStyle = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.animData.tween);
 	        }
 	        this.startAnimation = newAnimation;
-	        this.start(nextProps);
+	        this.setState({
+	          startFrame: _ticker2['default'].frame
+	        }, function () {
+	          _this2.start(nextProps);
+	        });
 	      }
 	      // 暂停倒放
 	      if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
-	        this.restart();
+	        if (nextProps.paused) {
+	          this.cancelRequestAnimationFrame();
+	        } else {
+	          if (nextProps.reverse && nextProps.reverseDelay) {
+	            (function () {
+	              _this2.cancelRequestAnimationFrame();
+	              var startFrame = _ticker2['default'].frame;
+	              var timeoutKey = 'delay' + (Date.now() + Math.random());
+	              _ticker2['default'].wake(timeoutKey, function () {
+	                var _frame = _ticker2['default'].frame - startFrame;
+	                var time = _frame * _fps;
+	                if (time >= nextProps.reverseDelay) {
+	                  _ticker2['default'].clear(timeoutKey);
+	                  _this2.restart();
+	                }
+	              });
+	            })();
+	          } else {
+	            this.restart();
+	          }
+	        }
 	      }
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
 	    value: function componentWillUnmount() {
-	      this.cancelRequestAnimationFram();
-	    }
-	  }, {
-	    key: 'setCurrentDate',
-	    value: function setCurrentDate() {
-	      this.currentNow = Date.now();
+	      this.cancelRequestAnimationFrame();
 	    }
 	  }, {
 	    key: 'restart',
 	    value: function restart() {
-	      this.startMoment = this.timeLine.progressTime;
-	      this.setCurrentDate();
-	      this.play();
+	      var _this3 = this;
+	
+	      this.setState({
+	        startMoment: this.timeLine.progressTime,
+	        startFrame: _ticker2['default'].frame
+	      }, function () {
+	        _this3.play();
+	      });
 	    }
 	  }, {
 	    key: 'start',
@@ -289,37 +306,22 @@
 	      this.timeLine = new _TimeLine2['default']((0, _objectAssign2['default'])({}, this.computedStyle, this.startStyle), (0, _util.dataToArray)(props.animation));
 	      if (this.timeLine.defaultData.length && props.animation) {
 	        // 开始动画
-	        this.setCurrentDate();
 	        this.play();
 	      }
 	    }
 	  }, {
 	    key: 'play',
 	    value: function play() {
-	      this.cancelRequestAnimationFram();
-	      this.rafID = (0, _raf2['default'])(this.raf);
-	    }
-	  }, {
-	    key: 'handleVisibilityChange',
-	    value: function handleVisibilityChange() {
-	      // 不在当前窗口时
-	      if (document[hidden] && this.rafID !== -1) {
-	        this.startMoment = this.timeLine.progressTime;
-	        this.cancelRequestAnimationFram();
-	        this.rafHide = true;
-	      } else if (this.rafID === -1 && this.rafHide) {
-	        this.setCurrentDate();
-	        this.rafID = (0, _raf2['default'])(this.raf);
-	        this.rafHide = false;
-	      }
+	      this.cancelRequestAnimationFrame();
+	      this.rafID = Date.now() + Math.random();
+	      _ticker2['default'].wake(this.rafID, this.raf);
 	    }
 	  }, {
 	    key: 'frame',
 	    value: function frame() {
-	      var now = Date.now() + (this.startMoment || 0);
-	      var moment = now - this.currentNow;
+	      var moment = (_ticker2['default'].frame - this.state.startFrame) * _fps + (this.state.startMoment || 0);
 	      if (this.props.reverse) {
-	        moment = (this.startMoment || 0) - Date.now() + this.currentNow;
+	        moment = (this.state.startMoment || 0) - (_ticker2['default'].frame - this.state.startFrame) * _fps;
 	      }
 	      moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
 	      moment = moment <= 0 ? 0 : moment;
@@ -333,21 +335,15 @@
 	  }, {
 	    key: 'raf',
 	    value: function raf() {
-	      if (this.rafID === -1 || this.props.paused) {
-	        this.rafID = -1;
-	        return;
-	      }
 	      this.frame();
 	      if (this.moment >= this.timeLine.totalTime && !this.props.reverse || this.props.paused || this.props.reverse && this.moment === 0) {
-	        this.cancelRequestAnimationFram();
-	      } else {
-	        this.rafID = (0, _raf2['default'])(this.raf);
+	        return this.cancelRequestAnimationFrame();
 	      }
 	    }
 	  }, {
-	    key: 'cancelRequestAnimationFram',
-	    value: function cancelRequestAnimationFram() {
-	      _raf2['default'].cancel(this.rafID);
+	    key: 'cancelRequestAnimationFrame',
+	    value: function cancelRequestAnimationFrame() {
+	      _ticker2['default'].clear(this.rafID);
 	      this.rafID = -1;
 	    }
 	  }, {
@@ -375,25 +371,24 @@
 	})(_react.Component);
 	
 	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
-	var objectOrArrayOrString = _react.PropTypes.oneOfType([_react.PropTypes.string, objectOrArray]);
-	var stringOrFunc = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.func]);
 	
 	TweenOne.propTypes = {
-	  component: stringOrFunc,
+	  component: _react.PropTypes.any,
 	  animation: objectOrArray,
-	  children: objectOrArrayOrString,
+	  children: _react.PropTypes.any,
 	  style: _react.PropTypes.object,
 	  paused: _react.PropTypes.bool,
 	  reverse: _react.PropTypes.bool,
+	  reverseDelay: _react.PropTypes.number,
 	  moment: _react.PropTypes.number,
 	  onChange: _react.PropTypes.func
 	};
 	
 	TweenOne.defaultProps = {
 	  component: 'div',
+	  reverseDelay: 0,
 	  onChange: noop
 	};
-	
 	exports['default'] = TweenOne;
 	module.exports = exports['default'];
 
@@ -20356,126 +20351,32 @@
 /* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var now = __webpack_require__(171)
-	  , global = typeof window === 'undefined' ? {} : window
-	  , vendors = ['moz', 'webkit']
-	  , suffix = 'AnimationFrame'
-	  , raf = global['request' + suffix]
-	  , caf = global['cancel' + suffix] || global['cancelRequest' + suffix]
-	
-	for(var i = 0; i < vendors.length && !raf; i++) {
-	  raf = global[vendors[i] + 'Request' + suffix]
-	  caf = global[vendors[i] + 'Cancel' + suffix]
-	      || global[vendors[i] + 'CancelRequest' + suffix]
-	}
-	
-	// Some versions of FF have rAF but not cAF
-	if(!raf || !caf) {
-	  var last = 0
-	    , id = 0
-	    , queue = []
-	    , frameDuration = 1000 / 60
-	
-	  raf = function(callback) {
-	    if(queue.length === 0) {
-	      var _now = now()
-	        , next = Math.max(0, frameDuration - (_now - last))
-	      last = next + _now
-	      setTimeout(function() {
-	        var cp = queue.slice(0)
-	        // Clear queue here to prevent
-	        // callbacks from appending listeners
-	        // to the current frame's queue
-	        queue.length = 0
-	        for(var i = 0; i < cp.length; i++) {
-	          if(!cp[i].cancelled) {
-	            try{
-	              cp[i].callback(last)
-	            } catch(e) {
-	              setTimeout(function() { throw e }, 0)
-	            }
-	          }
-	        }
-	      }, Math.round(next))
-	    }
-	    queue.push({
-	      handle: ++id,
-	      callback: callback,
-	      cancelled: false
-	    })
-	    return id
-	  }
-	
-	  caf = function(handle) {
-	    for(var i = 0; i < queue.length; i++) {
-	      if(queue[i].handle === handle) {
-	        queue[i].cancelled = true
-	      }
-	    }
-	  }
-	}
-	
-	module.exports = function(fn) {
-	  // Wrap in a new function to prevent
-	  // `cancel` potentially being assigned
-	  // to the native rAF function
-	  return raf.call(global, fn)
-	}
-	module.exports.cancel = function() {
-	  caf.apply(global, arguments)
-	}
-
-
-/***/ },
-/* 171 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
-	(function() {
-	  var getNanoSeconds, hrtime, loadTime;
-	
-	  if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
-	    module.exports = function() {
-	      return performance.now();
-	    };
-	  } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
-	    module.exports = function() {
-	      return (getNanoSeconds() - loadTime) / 1e6;
-	    };
-	    hrtime = process.hrtime;
-	    getNanoSeconds = function() {
-	      var hr;
-	      hr = hrtime();
-	      return hr[0] * 1e9 + hr[1];
-	    };
-	    loadTime = getNanoSeconds();
-	  } else if (Date.now) {
-	    module.exports = function() {
-	      return Date.now() - loadTime;
-	    };
-	    loadTime = Date.now();
-	  } else {
-	    module.exports = function() {
-	      return new Date().getTime() - loadTime;
-	    };
-	    loadTime = new Date().getTime();
-	  }
-	
-	}).call(this);
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
-
-/***/ },
-/* 172 */
-/***/ function(module, exports) {
-
 	'use strict';
 	
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
+	exports.toArrayChildren = toArrayChildren;
 	exports.dataToArray = dataToArray;
 	exports.objectEqual = objectEqual;
+	exports.findChildInChildrenByKey = findChildInChildrenByKey;
+	exports.mergeChildren = mergeChildren;
+	exports.transformArguments = transformArguments;
+	exports.getChildrenFromProps = getChildrenFromProps;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function toArrayChildren(children) {
+	  var ret = [];
+	  _react2['default'].Children.forEach(children, function (c) {
+	    ret.push(c);
+	  });
+	  return ret;
+	}
 	
 	function dataToArray(vars) {
 	  if (!vars && vars !== 0) {
@@ -20547,9 +20448,82 @@
 	
 	  return equalBool;
 	}
+	
+	function findChildInChildrenByKey(children, key) {
+	  var ret = null;
+	  if (children) {
+	    children.forEach(function (c) {
+	      if (ret || !c) {
+	        return;
+	      }
+	      if (c.key === key) {
+	        ret = c;
+	      }
+	    });
+	  }
+	  return ret;
+	}
+	
+	function mergeChildren(prev, next) {
+	  var ret = [];
+	  // For each key of `next`, the list of keys to insert before that key in
+	  // the combined list
+	  var nextChildrenPending = {};
+	  var pendingChildren = [];
+	  prev.forEach(function (c) {
+	    if (!c) {
+	      return;
+	    }
+	    if (findChildInChildrenByKey(next, c.key)) {
+	      if (pendingChildren.length) {
+	        nextChildrenPending[c.key] = pendingChildren;
+	        pendingChildren = [];
+	      }
+	    } else if (c.key) {
+	      pendingChildren.push(c);
+	    }
+	  });
+	
+	  next.forEach(function (c) {
+	    if (!c) {
+	      return;
+	    }
+	    if (nextChildrenPending.hasOwnProperty(c.key)) {
+	      ret = ret.concat(nextChildrenPending[c.key]);
+	    }
+	    ret.push(c);
+	  });
+	
+	  // 保持原有的顺序
+	  pendingChildren.forEach(function (c) {
+	    var originIndex = prev.indexOf(c);
+	    if (originIndex >= 0) {
+	      ret.splice(originIndex, 0, c);
+	    }
+	  });
+	
+	  return ret;
+	}
+	
+	function transformArguments(arg, key, i) {
+	  var result = undefined;
+	  if (typeof arg === 'function') {
+	    result = arg({
+	      key: key,
+	      index: i
+	    });
+	  } else {
+	    result = arg;
+	  }
+	  return result;
+	}
+	
+	function getChildrenFromProps(props) {
+	  return props && props.children;
+	}
 
 /***/ },
-/* 173 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20567,15 +20541,15 @@
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var _tweenFunctions = __webpack_require__(174);
+	var _tweenFunctions = __webpack_require__(172);
 	
 	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
 	
-	var _styleUtils = __webpack_require__(175);
+	var _styleUtils = __webpack_require__(173);
 	
 	var _styleUtils2 = _interopRequireDefault(_styleUtils);
 	
-	var _BezierPlugin = __webpack_require__(176);
+	var _BezierPlugin = __webpack_require__(174);
 	
 	var _BezierPlugin2 = _interopRequireDefault(_BezierPlugin);
 	
@@ -20615,7 +20589,7 @@
 	    tween: {}
 	  };
 	  // 1秒时间;
-	  this.oneSecond = 1000 / 60;
+	  this._fps = Math.round(1000 / 60);
 	  // 设置默认动画数据;
 	  this.setDefaultData(startData, toData);
 	};
@@ -20781,19 +20755,19 @@
 	    }
 	    var progressTime = _this5.progressTime - initTime;
 	    // onRepeat 处理
-	    if (item.repeat && repeatNum > 0 && progressTime < _this5.oneSecond) {
+	    if (item.repeat && repeatNum > 0 && progressTime < _this5._fps) {
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
 	    // 状态
 	    var mode = 'onUpdate';
 	    // 开始 onStart
-	    if (i === 0 && progressTime < 5 || i !== 0 && progressTime > 0 && progressTime < _this5.oneSecond) {
+	    if (i === 0 && progressTime < _this5._fps || i !== 0 && progressTime > 0 && progressTime < _this5._fps) {
 	      item.onStart();
 	      mode = 'onStart';
 	      _this5.animData.start = (0, _objectAssign2['default'])({}, _this5.animData.start, _this5.animData.tween);
 	    }
-	    if (progressTime > -_this5.oneSecond) {
+	    if (progressTime >= 0) {
 	      // 设置 animData
 	      _this5.animData.start[i] = _this5.animData.start[i] || _this5.setAnimStartData(item);
 	    }
@@ -20801,7 +20775,7 @@
 	      _this5.setNewStyle(0, _this5.animData.start[i], item.data, i);
 	      _this5.animData.start['bool' + i] = _this5.animData.start['bool' + i] || 1;
 	    }
-	    if (progressTime > -_this5.oneSecond && progressTime < item.duration + _this5.oneSecond) {
+	    if (progressTime >= 0 && progressTime < item.duration + _this5._fps) {
 	      (function () {
 	        _this5.animData.start['bool' + i] = _this5.animData.start['bool' + i] || 1;
 	        progressTime = progressTime < 0 ? 0 : progressTime;
@@ -20856,7 +20830,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 174 */
+/* 172 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21117,7 +21091,7 @@
 
 
 /***/ },
-/* 175 */
+/* 173 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21529,7 +21503,7 @@
 
 
 /***/ },
-/* 176 */
+/* 174 */
 /***/ function(module, exports) {
 
 	/**
@@ -21546,7 +21520,7 @@
 	var _r2 = [];
 	var _r3 = [];
 	var _corProps = {};
-	// const _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
+	var _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
 	function createMatrix(style) {
 	  return window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style) || window.MozCSSMatrix && new window.MozCSSMatrix(style) || window.MsCSSMatrix && new window.MsCSSMatrix(style) || window.OCSSMatrix && new window.OCSSMatrix(style) || window.CSSMatrix && new window.CSSMatrix(style) || {};
 	}
@@ -21692,10 +21666,10 @@
 	    a[i] = new this.Segment(values[i][p], 0, 0, values[i + 1][p]);
 	    return a;
 	  },
-	  bezierThrough: function bezierThrough(_values, _curviness, quadratic, basic, _correlate, _prepend) {
+	  bezierThrough: function bezierThrough(_values, _curviness, quadratic, basic, __correlate, _prepend) {
 	    var values = _values;
 	    var curviness = _curviness;
-	    var correlate = _correlate;
+	    var correlate = __correlate;
 	    var prepend = _prepend;
 	    var obj = {};
 	    var props = [];
@@ -21796,10 +21770,6 @@
 	    var tmp = undefined;
 	    if (soft) {
 	      values.splice(0, 0, prepend);
-	    }
-	
-	    if (type === 'cubic' && values.length > 3) {
-	      return console.error('Type cubic, the array length is 3');
 	    }
 	
 	    if (values === null || values.length < inc + 1) {
@@ -22042,6 +22012,370 @@
 	};
 	
 	exports['default'] = Bezier;
+	module.exports = exports['default'];
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _raf = __webpack_require__(176);
+	
+	var _raf2 = _interopRequireDefault(_raf);
+	
+	var Ticker = function Ticker() {};
+	var p = Ticker.prototype = {
+	  tickFnObject: {},
+	  id: -1,
+	  autoSleep: 120,
+	  frame: 0,
+	  autoSleepFrame: 2
+	};
+	p.wake = function (key, fn) {
+	  this.tickFnObject[key] = fn;
+	  if (this.id === -1) {
+	    this.tick();
+	  }
+	};
+	p.clear = function (key) {
+	  delete this.tickFnObject[key];
+	};
+	p.sleep = function () {
+	  _raf2['default'].cancel(this.id);
+	  this.id = -1;
+	};
+	var ticker = new Ticker();
+	p.tick = function (a) {
+	  var obj = ticker.tickFnObject;
+	  Object.keys(obj).forEach(function (key) {
+	    if (obj[key]) {
+	      obj[key](a);
+	    }
+	  });
+	  // 如果 object 里没对象了，两秒种后自动睡眠；
+	  if (!Object.keys(obj).length) {
+	    if (ticker.frame >= ticker.autoSleepFrame) {
+	      return ticker.sleep();
+	    }
+	  } else {
+	    ticker.autoSleepFrame = ticker.frame + ticker.autoSleep;
+	  }
+	  ticker.frame++;
+	  ticker.id = (0, _raf2['default'])(ticker.tick);
+	};
+	exports['default'] = ticker;
+	module.exports = exports['default'];
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var now = __webpack_require__(177)
+	  , global = typeof window === 'undefined' ? {} : window
+	  , vendors = ['moz', 'webkit']
+	  , suffix = 'AnimationFrame'
+	  , raf = global['request' + suffix]
+	  , caf = global['cancel' + suffix] || global['cancelRequest' + suffix]
+	
+	for(var i = 0; i < vendors.length && !raf; i++) {
+	  raf = global[vendors[i] + 'Request' + suffix]
+	  caf = global[vendors[i] + 'Cancel' + suffix]
+	      || global[vendors[i] + 'CancelRequest' + suffix]
+	}
+	
+	// Some versions of FF have rAF but not cAF
+	if(!raf || !caf) {
+	  var last = 0
+	    , id = 0
+	    , queue = []
+	    , frameDuration = 1000 / 60
+	
+	  raf = function(callback) {
+	    if(queue.length === 0) {
+	      var _now = now()
+	        , next = Math.max(0, frameDuration - (_now - last))
+	      last = next + _now
+	      setTimeout(function() {
+	        var cp = queue.slice(0)
+	        // Clear queue here to prevent
+	        // callbacks from appending listeners
+	        // to the current frame's queue
+	        queue.length = 0
+	        for(var i = 0; i < cp.length; i++) {
+	          if(!cp[i].cancelled) {
+	            try{
+	              cp[i].callback(last)
+	            } catch(e) {
+	              setTimeout(function() { throw e }, 0)
+	            }
+	          }
+	        }
+	      }, Math.round(next))
+	    }
+	    queue.push({
+	      handle: ++id,
+	      callback: callback,
+	      cancelled: false
+	    })
+	    return id
+	  }
+	
+	  caf = function(handle) {
+	    for(var i = 0; i < queue.length; i++) {
+	      if(queue[i].handle === handle) {
+	        queue[i].cancelled = true
+	      }
+	    }
+	  }
+	}
+	
+	module.exports = function(fn) {
+	  // Wrap in a new function to prevent
+	  // `cancel` potentially being assigned
+	  // to the native rAF function
+	  return raf.call(global, fn)
+	}
+	module.exports.cancel = function() {
+	  caf.apply(global, arguments)
+	}
+
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
+	(function() {
+	  var getNanoSeconds, hrtime, loadTime;
+	
+	  if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
+	    module.exports = function() {
+	      return performance.now();
+	    };
+	  } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
+	    module.exports = function() {
+	      return (getNanoSeconds() - loadTime) / 1e6;
+	    };
+	    hrtime = process.hrtime;
+	    getNanoSeconds = function() {
+	      var hr;
+	      hr = hrtime();
+	      return hr[0] * 1e9 + hr[1];
+	    };
+	    loadTime = getNanoSeconds();
+	  } else if (Date.now) {
+	    module.exports = function() {
+	      return Date.now() - loadTime;
+	    };
+	    loadTime = Date.now();
+	  } else {
+	    module.exports = function() {
+	      return new Date().getTime() - loadTime;
+	    };
+	    loadTime = new Date().getTime();
+	  }
+	
+	}).call(this);
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _TweenOne = __webpack_require__(4);
+	
+	var _TweenOne2 = _interopRequireDefault(_TweenOne);
+	
+	var _util = __webpack_require__(170);
+	
+	function noop() {}
+	
+	var TweenOneGroup = (function (_Component) {
+	  _inherits(TweenOneGroup, _Component);
+	
+	  function TweenOneGroup() {
+	    var _this = this;
+	
+	    _classCallCheck(this, TweenOneGroup);
+	
+	    _get(Object.getPrototypeOf(TweenOneGroup.prototype), 'constructor', this).apply(this, arguments);
+	    this.keysToEnter = [];
+	    this.keysToLeave = [];
+	    this.onEnterBool = false;
+	    // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
+	    var children = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
+	    children.forEach(function (child) {
+	      if (!child || !child.key) {
+	        return;
+	      }
+	      _this.keysToEnter.push(child.key);
+	    });
+	    this.originalChildren = children;
+	    this.state = {
+	      children: children
+	    };
+	    ['getChildrenToRender', 'getCoverAnimation', 'onChange'].forEach(function (method) {
+	      return _this[method] = _this[method].bind(_this);
+	    });
+	  }
+	
+	  _createClass(TweenOneGroup, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.onEnterBool = true;
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      var _this2 = this;
+	
+	      var nextChildren = (0, _util.toArrayChildren)(nextProps.children);
+	      var currentChildren = this.originalChildren;
+	      var newChildren = (0, _util.mergeChildren)(currentChildren, nextChildren);
+	
+	      this.keysToEnter = [];
+	      this.keysToLeave = [];
+	      nextChildren.forEach(function (c) {
+	        if (!c) {
+	          return;
+	        }
+	        var key = c.key;
+	        var hasPrev = (0, _util.findChildInChildrenByKey)(currentChildren, key);
+	        if (!hasPrev && key) {
+	          _this2.keysToEnter.push(key);
+	        }
+	      });
+	
+	      currentChildren.forEach(function (c) {
+	        if (!c) {
+	          return;
+	        }
+	        var key = c.key;
+	        var hasNext = (0, _util.findChildInChildrenByKey)(nextChildren, key);
+	        if (!hasNext && key) {
+	          _this2.keysToLeave.push(key);
+	        }
+	      });
+	      this.setState({
+	        children: newChildren
+	      });
+	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      this.originalChildren = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
+	    }
+	  }, {
+	    key: 'onChange',
+	    value: function onChange(animation, key, type, obj) {
+	      var length = (0, _util.dataToArray)(animation).length;
+	      if (obj.index === length - 1 && obj.mode === 'onComplete') {
+	        if (type === 'leave') {
+	          var children = this.state.children.filter(function (child) {
+	            return child.key !== key;
+	          });
+	          this.setState({
+	            children: children
+	          });
+	        }
+	        var _obj = { key: key, type: type };
+	        this.props.onEnd(_obj);
+	      }
+	    }
+	  }, {
+	    key: 'getCoverAnimation',
+	    value: function getCoverAnimation(child, i, type) {
+	      var animation = type === 'leave' ? this.props.leave : this.props.enter;
+	      var onChange = this.onChange.bind(this, animation, child.key, type);
+	      return _react2['default'].createElement(_TweenOne2['default'], _extends({}, child.props, {
+	        key: child.key,
+	        component: child.type,
+	        animation: (0, _util.transformArguments)(animation, child.key, i),
+	        onChange: onChange
+	      }));
+	    }
+	  }, {
+	    key: 'getChildrenToRender',
+	    value: function getChildrenToRender(children) {
+	      var _this3 = this;
+	
+	      return children.map(function (child, i) {
+	        if (!child || !child.key) {
+	          return child;
+	        }
+	        var key = child.key;
+	        if (_this3.keysToLeave.indexOf(key) >= 0) {
+	          return _this3.getCoverAnimation(child, i, 'leave');
+	        }
+	        var appear = (0, _util.transformArguments)(_this3.props.appear, key, i);
+	        if (appear || _this3.onEnterBool) {
+	          return _this3.getCoverAnimation(child, i, 'enter');
+	        }
+	        return child.type === _TweenOne2['default'] ? (0, _react.createElement)(child.props.component, _extends({}, child.props, { key: child.key })) : child;
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var childrenToRender = this.getChildrenToRender(this.state.children);
+	      return (0, _react.createElement)(this.props.component, this.props, childrenToRender);
+	    }
+	  }]);
+	
+	  return TweenOneGroup;
+	})(_react.Component);
+	
+	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
+	var objectOrArrayOrFunc = _react.PropTypes.oneOfType([objectOrArray, _react.PropTypes.func]);
+	
+	TweenOneGroup.propTypes = {
+	  component: _react.PropTypes.any,
+	  children: _react.PropTypes.any,
+	  style: _react.PropTypes.object,
+	  appear: _react.PropTypes.bool,
+	  enter: objectOrArrayOrFunc,
+	  leave: objectOrArrayOrFunc,
+	  onEnd: _react.PropTypes.func
+	};
+	
+	TweenOneGroup.defaultProps = {
+	  component: 'div',
+	  appear: true,
+	  enter: { x: 50, opacity: 0, type: 'from' },
+	  leave: { x: -50, opacity: 0 },
+	  onEnd: noop
+	};
+	exports['default'] = TweenOneGroup;
 	module.exports = exports['default'];
 
 /***/ }

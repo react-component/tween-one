@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>yoyo.js - example - rc-tween-one@0.3.0</title>
+  <title>group.js - example - rc-tween-one@0.3.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,19 +263,96 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
   </div>
   <div class="example" id="__react-content"></div>
   <script src="common.js?nowrap"></script>
-  <script src="yoyo.js?nowrap"></script>
-  <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
+  <script src="group.js?nowrap"></script>
+  <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> { TweenOneGroup } <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
   constructor() {
     <span class="hljs-keyword">super</span>(...arguments);
+    <span class="hljs-keyword">this</span>.state = {
+      children: [
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>
+          <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
+            <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">1</span>,
+            <span class="hljs-attribute">backgroundColor:</span> '#<span class="hljs-attribute">000</span>',
+            <span class="hljs-attribute">float:</span> '<span class="hljs-attribute">left</span>',
+            <span class="hljs-attribute">height:</span> <span class="hljs-attribute">200</span>,
+          }}
+          <span class="hljs-attribute">key</span>=<span class="hljs-value">"aa"</span>
+        &gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>,
+        <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"a"</span>
+          <span class="hljs-attribute">style</span>=<span class="hljs-value">{{opacity:</span> <span class="hljs-attribute">1</span>,
+            <span class="hljs-attribute">backgroundColor:</span> '#<span class="hljs-attribute">000</span>',
+            <span class="hljs-attribute">float:</span> '<span class="hljs-attribute">left</span>',
+            <span class="hljs-attribute">height:</span> <span class="hljs-attribute">200</span>,
+          }}
+        &gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>,
+      ],
+    };
+    [
+      'onClick',
+      'enterType',
+      'onEnd',
+    ].forEach((method) =&gt; this[method] = this[method].bind(this));
+  }
+
+  onClick() {
+    const children = !this.state.children ? [
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span>
+        <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
+          <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">1</span>,
+          <span class="hljs-attribute">backgroundColor:</span> '#<span class="hljs-attribute">000</span>',
+          <span class="hljs-attribute">float:</span> '<span class="hljs-attribute">left</span>',
+          <span class="hljs-attribute">height:</span> <span class="hljs-attribute">200</span>,
+        }}
+        <span class="hljs-attribute">key</span>=<span class="hljs-value">"aa"</span>
+      &gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>,
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"a"</span>
+        <span class="hljs-attribute">style</span>=<span class="hljs-value">{{opacity:</span> <span class="hljs-attribute">1</span>,
+            <span class="hljs-attribute">backgroundColor:</span> '#<span class="hljs-attribute">000</span>',
+            <span class="hljs-attribute">float:</span> '<span class="hljs-attribute">left</span>',
+            <span class="hljs-attribute">height:</span> <span class="hljs-attribute">200</span>,
+        }}
+      &gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>,
+    ] : null;
+    this.setState({
+      children,
+    });
+  }
+
+  onEnd(e) {
+    console.log(e);
+  }
+
+  enterType(e) {
+    if (e.key === 'a') {
+      return { x: 100, opacity: 0, type: 'from' };
+    }
+    return { y: 80, opacity: 0, type: 'from' };
   }
 
   render() {
-    <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{opacity:</span> <span class="hljs-attribute">1</span>, <span class="hljs-attribute">translateX:</span> '<span class="hljs-attribute">100px</span>', <span class="hljs-attribute">repeat:</span> <span class="hljs-attribute">-1</span>, <span class="hljs-attribute">duration:</span> <span class="hljs-attribute">1000</span>, <span class="hljs-attribute">yoyo:</span> <span class="hljs-attribute">true</span>}} <span class="hljs-attribute">style</span>=<span class="hljs-value">{{opacity:</span> <span class="hljs-attribute">0</span>}}&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>)</span>;
+    return (<span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.onClick}</span>&gt;</span>切换<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</span>
+        <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">height:</span> <span class="hljs-attribute">300</span> }}
+        <span class="hljs-attribute">enter</span>=<span class="hljs-value">{this.enterType}</span>
+        <span class="hljs-attribute">leave</span>=<span class="hljs-value">{[{</span> <span class="hljs-attribute">y:</span> <span class="hljs-attribute">90</span> }, { <span class="hljs-attribute">x:</span> <span class="hljs-attribute">-100</span>, <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span> }]}
+        <span class="hljs-attribute">onEnd</span>=<span class="hljs-value">{this.onEnd}</span>
+      &gt;</span>
+        {this.state.children}
+      <span class="hljs-tag">&lt;/<span class="hljs-title">TweenOneGroup</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
   }
 }
 ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Demo</span> /&gt;</span>, document.getElementById('__react-content'));

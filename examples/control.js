@@ -3,12 +3,12 @@ webpackJsonp([5],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(181);
+	module.exports = __webpack_require__(183);
 
 
 /***/ },
 
-/***/ 181:
+/***/ 183:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47,9 +47,10 @@ webpackJsonp([5],{
 	    this.state = {
 	      paused: true,
 	      reverse: false,
+	      reverseDelay: 0,
 	      restart: false
 	    };
-	    ['onPlay', 'onPause', 'onReverse', 'onRestart', 'onMoment'].forEach(function (method) {
+	    ['onPlay', 'onPause', 'onReverse', 'onReverseDelay', 'onRestart', 'onMoment'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
 	  }
@@ -76,6 +77,17 @@ webpackJsonp([5],{
 	    value: function onReverse() {
 	      this.setState({
 	        reverse: true,
+	        reverseDelay: 0,
+	        paused: false,
+	        moment: null
+	      });
+	    }
+	  }, {
+	    key: 'onReverseDelay',
+	    value: function onReverseDelay() {
+	      this.setState({
+	        reverse: true,
+	        reverseDelay: 1000,
 	        paused: false,
 	        moment: null
 	      });
@@ -110,6 +122,7 @@ webpackJsonp([5],{
 	            { animation: [{ translateX: '500px', duration: 1000 }, { y: 100 }, { x: 100 }],
 	              paused: this.state.paused,
 	              reverse: this.state.reverse,
+	              reverseDelay: this.state.reverseDelay,
 	              moment: this.state.moment,
 	              style: { opacity: 1, width: 100, transform: 'translate(50px,30px)' } },
 	            _react2['default'].createElement(
@@ -133,6 +146,11 @@ webpackJsonp([5],{
 	          'button',
 	          { onClick: this.onReverse },
 	          'reverse'
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { onClick: this.onReverseDelay },
+	          'reverse Delay 1000'
 	        ),
 	        _react2['default'].createElement(
 	          'button',

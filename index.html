@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-tween-one@0.2.11 - tween-one anim component for react</title>
+  <title>rc-tween-one@0.3.0 - tween-one anim component for react</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-tween-one@0.2.11</h1>
+  <h1>rc-tween-one@0.3.0</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -761,6 +761,8 @@
       <li><a href="examples/from.html">from</a></li>
       
       <li><a href="examples/fromDelay.html">fromDelay</a></li>
+      
+      <li><a href="examples/group.html">group</a></li>
       
       <li><a href="examples/gsapWritten.html">gsapWritten</a></li>
       
@@ -821,8 +823,14 @@ npm start</code></pre></div><h2>Example<a id="user-content-example" name="exampl
 <h2>Usage<a id="user-content-usage" name="usage" class="anchor" aria-hidden="true" href="#usage"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="js"><span class="hljs-keyword">var</span> TweenOne = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-tween-one'</span>);
 <span class="hljs-keyword">var</span> React = <span class="hljs-built_in">require</span>(<span class="hljs-string">'react'</span>);
 React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{x:100}}</span>&gt;</span>
-               demo
-             <span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>, container);</span></code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><h3>props<a id="user-content-props" name="props" class="anchor" aria-hidden="true" href="#props"><span class="octicon octicon-link"></span></a></h3><table>
+  demo
+<span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>, container);</span></code></pre></div><h3>TweenOneGroup<a id="user-content-tweenonegroup" name="tweenonegroup" class="anchor" aria-hidden="true" href="#tweenonegroup"><span class="octicon octicon-link"></span></a></h3><div class="highlight"><pre><code language="js"><span class="hljs-keyword">var</span> TweenOne = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-tween-one'</span>);
+<span class="hljs-keyword">var</span> React = <span class="hljs-built_in">require</span>(<span class="hljs-string">'react'</span>);
+<span class="hljs-keyword">var</span> TweenOneGroup = TweenOne.TweenOneGroup;
+React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"0"</span>&gt;</span>demo<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"1"</span>&gt;</span>demo<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">TweenOneGroup</span>&gt;</span>, container);</span></code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><h3>props<a id="user-content-props" name="props" class="anchor" aria-hidden="true" href="#props"><span class="octicon octicon-link"></span></a></h3><table>
 <thead>
 <tr>
 <th>name</th>
@@ -849,6 +857,12 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>boolean</td>
 <td>false</td>
 <td>animate revers</td>
+</tr>
+<tr>
+<td>reverseDelay</td>
+<td>number</td>
+<td>0</td>
+<td>animate revers start delay</td>
 </tr>
 <tr>
 <td>onChange</td>
@@ -996,6 +1010,48 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <blockquote>
 <p>bezier API refer to <a href="http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/" title="null">gsap BezierPlugin</a></p>
 </blockquote>
+<h2>TweenOneGroup<a id="user-content-tweenonegroup" name="tweenonegroup" class="anchor" aria-hidden="true" href="#tweenonegroup"><span class="octicon octicon-link"></span></a></h2><table>
+<thead>
+<tr>
+<th>name</th>
+<th>type</th>
+<th>default</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appear</td>
+<td>boolean</td>
+<td>true</td>
+<td>whether support appear anim</td>
+</tr>
+<tr>
+<td>enter</td>
+<td>object / array / func</td>
+<td><code>{ x: 30, opacity: 0, type: &#39;from&#39; }</code></td>
+<td>enter anim twee-one data. when array is tween-one timeline, func refer to queue-anim</td>
+</tr>
+<tr>
+<td>leave</td>
+<td>object / array / func</td>
+<td><code>{ x: 30, opacity: 0 }</code></td>
+<td>leave anim twee-one data. when array is tween-one timeline, func refer to queue-anim</td>
+</tr>
+<tr>
+<td>onEnd</td>
+<td>func</td>
+<td>-</td>
+<td>one animation end callback</td>
+</tr>
+<tr>
+<td>component</td>
+<td>React.Element/String</td>
+<td>div</td>
+<td>component tag</td>
+</tr>
+</tbody>
+</table>
 
   </div>
 </div>

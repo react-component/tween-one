@@ -1,14 +1,14 @@
-webpackJsonp([13],{
+webpackJsonp([9],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(191);
+	module.exports = __webpack_require__(187);
 
 
 /***/ },
 
-/***/ 191:
+/***/ 187:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25,8 +25,6 @@ webpackJsonp([13],{
 	
 	var _rcTweenOne = __webpack_require__(2);
 	
-	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
-	
 	var _react = __webpack_require__(5);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -39,23 +37,120 @@ webpackJsonp([13],{
 	  _inherits(Demo, _React$Component);
 	
 	  function Demo() {
+	    var _this = this;
+	
 	    _classCallCheck(this, Demo);
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
-	  }
-	
-	  _createClass(Demo, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        _rcTweenOne2['default'],
+	    this.state = {
+	      children: [_react2['default'].createElement(
+	        'div',
 	        {
-	          animation: [{ textShadow: '0 1em 5px rgba(0,0,0,1)', duration: 1000 }, { boxShadow: '0 0 30px rgba(255,125,0,0.5)', borderRadius: 50, duration: 1000 }],
-	          style: { height: 100, backgroundColor: '#fff000' } },
+	          style: {
+	            opacity: 1,
+	            backgroundColor: '#000',
+	            float: 'left',
+	            height: 200
+	          },
+	          key: 'aa'
+	        },
 	        _react2['default'].createElement(
 	          'div',
 	          null,
 	          '执行动效'
+	        )
+	      ), _react2['default'].createElement(
+	        'div',
+	        { key: 'a',
+	          style: { opacity: 1,
+	            backgroundColor: '#000',
+	            float: 'left',
+	            height: 200
+	          }
+	        },
+	        _react2['default'].createElement(
+	          'div',
+	          null,
+	          '执行动效'
+	        )
+	      )]
+	    };
+	    ['onClick', 'enterType', 'onEnd'].forEach(function (method) {
+	      return _this[method] = _this[method].bind(_this);
+	    });
+	  }
+	
+	  _createClass(Demo, [{
+	    key: 'onClick',
+	    value: function onClick() {
+	      var children = !this.state.children ? [_react2['default'].createElement(
+	        'div',
+	        {
+	          style: {
+	            opacity: 1,
+	            backgroundColor: '#000',
+	            float: 'left',
+	            height: 200
+	          },
+	          key: 'aa'
+	        },
+	        _react2['default'].createElement(
+	          'div',
+	          null,
+	          '执行动效'
+	        )
+	      ), _react2['default'].createElement(
+	        'div',
+	        { key: 'a',
+	          style: { opacity: 1,
+	            backgroundColor: '#000',
+	            float: 'left',
+	            height: 200
+	          }
+	        },
+	        _react2['default'].createElement(
+	          'div',
+	          null,
+	          '执行动效'
+	        )
+	      )] : null;
+	      this.setState({
+	        children: children
+	      });
+	    }
+	  }, {
+	    key: 'onEnd',
+	    value: function onEnd(e) {
+	      console.log(e);
+	    }
+	  }, {
+	    key: 'enterType',
+	    value: function enterType(e) {
+	      if (e.key === 'a') {
+	        return { x: 100, opacity: 0, type: 'from' };
+	      }
+	      return { y: 80, opacity: 0, type: 'from' };
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        null,
+	        _react2['default'].createElement(
+	          'button',
+	          { onClick: this.onClick },
+	          '切换'
+	        ),
+	        _react2['default'].createElement(
+	          _rcTweenOne.TweenOneGroup,
+	          {
+	            style: { height: 300 },
+	            enter: this.enterType,
+	            leave: [{ y: 90 }, { x: -100, opacity: 0 }],
+	            onEnd: this.onEnd
+	          },
+	          this.state.children
 	        )
 	      );
 	    }
@@ -69,4 +164,4 @@ webpackJsonp([13],{
 /***/ }
 
 });
-//# sourceMappingURL=shadow.js.map
+//# sourceMappingURL=group.js.map

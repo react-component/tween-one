@@ -3,12 +3,12 @@ webpackJsonp([1],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(177);
+	module.exports = __webpack_require__(179);
 
 
 /***/ },
 
-/***/ 177:
+/***/ 179:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53,7 +53,7 @@ webpackJsonp([1],{
 	        _react2['default'].createElement(
 	          _rcTweenOne2['default'],
 	          {
-	            animation: { bezier: { type: 'soft', autoRotate: true, vars: [{ x: 200, y: 200 }, { x: 400, y: 0 }, { x: 600, y: 200 }, { x: 800, y: 0 }] }, duration: 5000 },
+	            animation: { bezier: { type: 'thru', autoRotate: true, vars: [{ x: 200, y: 200 }, { x: 400, y: 0 }, { x: 600, y: 200 }, { x: 800, y: 0 }] }, duration: 5000 },
 	            style: { width: 100 } },
 	          _react2['default'].createElement(
 	            'div',
