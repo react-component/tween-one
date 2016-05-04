@@ -214,6 +214,71 @@ describe('rc-tween-one', function() {
     }, 30);
   });
 
+  it('is Bezier type is cubic', function(done) {
+    instance = createTweenInstance({
+      animation: {
+        bezier: {
+          type: 'cubic',
+          vars: [{ x: 100, y: 0 }, { x: 300, y: 400 }, { x: 500, y: 0 }, { x: 700, y: 400 }],
+        },
+        duration: 1000,
+      },
+      style: { position: 'absolute' },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    setTimeout(()=> {
+      let transform = child.style.transform;
+      let xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+      let x = xy[0];
+      let y = xy[1];
+      console.log(`x:${x},y:${y}`);
+      expect(getFloat(x)).to.above(99);
+      expect(getFloat(y)).to.above(-1);
+      setTimeout(() => {
+        transform = child.style.transform;
+        xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+        x = xy[0];
+        y = xy[1];
+        console.log(`x:${x},y:${y}`);
+        expect(getFloat(x)).to.be(700);
+        expect(getFloat(y)).to.be(400);
+        done();
+      }, 1030);
+    });
+  });
+
+  it('is Bezier type is thru', function(done) {
+    instance = createTweenInstance({
+      animation: {
+        bezier: {
+          vars: [{ x: 100, y: 0 }, { x: 300, y: 400 }],
+        },
+        duration: 1000,
+      },
+      style: { position: 'absolute' },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    setTimeout(() => {
+      let transform = child.style.transform;
+      let xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+      let x = xy[0];
+      let y = xy[1];
+      console.log(`x:${x},y:${y}`);
+      expect(getFloat(x)).to.above(-1);
+      expect(getFloat(y)).to.above(-1);
+      setTimeout(() => {
+        transform = child.style.transform;
+        xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+        x = xy[0];
+        y = xy[1];
+        console.log(`x:${x},y:${y}`);
+        expect(getFloat(x)).to.be(300);
+        expect(getFloat(y)).to.be(400);
+        done();
+      }, 1030);
+    });
+  });
+
   it('is update Animation and filter', function(done) {
     instance = createTweenInstance({
       animation: { top: 100, x: 100, color: '#fff', filter: 'sepia(100%) blur(2px)', duration: 1000 },

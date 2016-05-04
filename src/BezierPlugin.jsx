@@ -7,7 +7,7 @@ const _r1 = [];
 const _r2 = [];
 const _r3 = [];
 const _corProps = {};
-// const _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
+const _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
 function createMatrix(style) {
   return (window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style)) ||
     (window.MozCSSMatrix && new window.MozCSSMatrix(style)) ||
@@ -157,10 +157,10 @@ const GsapBezier = {
     a[i] = new this.Segment(values[i][p], 0, 0, values[i + 1][p]);
     return a;
   },
-  bezierThrough(_values, _curviness, quadratic, basic, _correlate, _prepend) {
+  bezierThrough(_values, _curviness, quadratic, basic, __correlate, _prepend) {
     let values = _values;
     let curviness = _curviness;
-    let correlate = _correlate;
+    let correlate = __correlate;
     let prepend = _prepend;
     const obj = {};
     const props = [];
@@ -261,10 +261,6 @@ const GsapBezier = {
     let tmp;
     if (soft) {
       values.splice(0, 0, prepend);
-    }
-
-    if (type === 'cubic' && values.length > 3) {
-      return console.error('Type cubic, the array length is 3');
     }
 
     if (values === null || values.length < inc + 1) {
