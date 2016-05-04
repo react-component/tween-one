@@ -36,7 +36,7 @@ describe('rc-tween-one-group', function() {
       }
 
       render() {
-        return (<TweenOneGroup {...this.props}>
+        return (<TweenOneGroup {...props}>
           {this.state.children}
         </TweenOneGroup>);
       }
@@ -76,16 +76,18 @@ describe('rc-tween-one-group', function() {
   });
 
   it('is normal tween', function(done) {
-    instance = createTweenGroupInstance();
-    children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'p')[0];
-    setTimeout(() => {
-      console.log('opacity is 0:', children.style.opacity);
-      expect(getFloat(children.style.opacity)).to.be(0);
+    instance = createTweenGroupInstance({
+      enter: { marginLeft: 100, opacity: 0, type: 'from' },
+    });
+    setTimeout(()=> {
+      children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'p')[0];
+      console.log('marginLeft > 99:', children.style.marginLeft);
+      expect(getFloat(children.style.marginLeft)).to.above(98);
       setTimeout(() => {
-        console.log('opacity is 1:', children.style.opacity);
-        expect(getFloat(children.style.opacity)).to.be(1);
+        console.log('marginLeft is 0:', children.style.marginLeft);
+        expect(getFloat(children.style.marginLeft)).to.be(0);
         done();
-      }, 450);
+      }, 550);
     });
   });
 
