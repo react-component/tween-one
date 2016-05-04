@@ -251,6 +251,7 @@ describe('rc-tween-one', function() {
     instance = createTweenInstance({
       animation: {
         bezier: {
+          type: 'thru',
           vars: [{ x: 100, y: 0 }, { x: 300, y: 400 }],
         },
         duration: 1000,
