@@ -13,8 +13,9 @@ class Demo extends React.Component {
 
   render() {
     return (<Tween animation={{translateX: '500px'}}
-                   onChange={this.bbb.bind(this)}
-                   style={{opacity: 1, height: 100, transform: 'translate(50px,30px)'}}>
+      onChange={this.bbb.bind(this)}
+      style={{opacity: 1, height: 100, transform: 'translate(50px,30px)'}}
+    >
       <div>执行动效</div>
     </Tween>);
   }

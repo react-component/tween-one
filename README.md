@@ -57,8 +57,19 @@ http://react-component.github.io/tween-one/
 var TweenOne = require('rc-tween-one');
 var React = require('react');
 React.render(<TweenOne animation={{x:100}}>
-               demo
-             </TweenOne>, container);
+  demo
+</TweenOne>, container);
+```
+
+### TweenOneGroup
+```js
+var TweenOne = require('rc-tween-one');
+var React = require('react');
+var TweenOneGroup = TweenOne.TweenOneGroup;
+React.render(<TweenOneGroup>
+  <div key="0">demo</div>
+  <div key="1">demo</div>
+</TweenOneGroup>, container);
 ```
 
 ## API
@@ -70,6 +81,7 @@ React.render(<TweenOne animation={{x:100}}>
 | animation  | object / array | null    | animate configure parameters |
 | paused      | boolean        | false   | animate pause |
 | reverse    | boolean        | false   | animate revers |
+| reverseDelay | number       | 0       | animate revers start delay |
 | onChange   | func           | null    | when the animation change called, callback({ moment, item, tween, index, mode}) |
 | moment     | number         | null    | set the current frame    |
 | component  | string         | `div`   | component tag  |
@@ -108,3 +120,13 @@ React.render(<TweenOne animation={{x:100}}>
 
 > bezier API refer to [gsap BezierPlugin](http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/)
 
+
+## TweenOneGroup
+
+| name      | type           | default | description    |
+|------------|----------------|---------|----------------|
+| appear    |  boolean       |  true   |  whether support appear anim |
+| enter     | object / array / func | `{ x: 30, opacity: 0, type: 'from' }` | enter anim twee-one data. when array is tween-one timeline, func refer to queue-anim  |
+| leave     | object / array / func | `{ x: 30, opacity: 0 }` | leave anim twee-one data. when array is tween-one timeline, func refer to queue-anim  |
+| onEnd     |  func          | -    | one animation end callback |
+| component | 	React.Element/String | div  |  component tag  | 

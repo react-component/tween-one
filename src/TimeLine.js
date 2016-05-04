@@ -43,7 +43,7 @@ const timeLine = function(startData, toData) {
     tween: {},
   };
   // 1秒时间;
-  this.oneSecond = 1000 / 60;
+  this._fps = Math.round(1000 / 60);
   // 设置默认动画数据;
   this.setDefaultData(startData, toData);
 };
@@ -199,19 +199,19 @@ p.getStyle = function() {
     }
     let progressTime = this.progressTime - initTime;
     // onRepeat 处理
-    if (item.repeat && repeatNum > 0 && progressTime < this.oneSecond) {
+    if (item.repeat && repeatNum > 0 && progressTime < this._fps) {
       // 重新开始, 在第一秒触发时调用;
       item.onRepeat();
     }
     // 状态
     let mode = 'onUpdate';
     // 开始 onStart
-    if (i === 0 && progressTime < 5 || i !== 0 && progressTime > 0 && progressTime < this.oneSecond) {
+    if (i === 0 && progressTime < this._fps || i !== 0 && progressTime > 0 && progressTime < this._fps) {
       item.onStart();
       mode = 'onStart';
       this.animData.start = assign({}, this.animData.start, this.animData.tween);
     }
-    if (progressTime > -this.oneSecond) {
+    if (progressTime >= 0) {
       // 设置 animData
       this.animData.start[i] = this.animData.start[i] || this.setAnimStartData(item);
     }
@@ -219,7 +219,7 @@ p.getStyle = function() {
       this.setNewStyle(0, this.animData.start[i], item.data, i);
       this.animData.start['bool' + i] = this.animData.start['bool' + i] || 1;
     }
-    if (progressTime > -this.oneSecond && progressTime < item.duration + this.oneSecond) {
+    if (progressTime >= 0 && progressTime < item.duration + this._fps) {
       this.animData.start['bool' + i] = this.animData.start['bool' + i] || 1;
       progressTime = progressTime < 0 ? 0 : progressTime;
       progressTime = progressTime > item.duration ? item.duration : progressTime;

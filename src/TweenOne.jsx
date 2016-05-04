@@ -1,29 +1,15 @@
 import React, {PropTypes, Component} from 'react';
 import ReactDom from 'react-dom';
 import assign from 'object-assign';
-import requestAnimationFrame from 'raf';
 import {dataToArray, objectEqual} from './util';
 import TimeLine from './TimeLine';
+import ticker from './ticker';
+
 
 function noop() {
 }
 
-let hidden;
-let visibilityChange;
-if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
-  hidden = 'hidden';
-  visibilityChange = 'visibilitychange';
-} else if (typeof document.mozHidden !== 'undefined') {
-  hidden = 'mozHidden';
-  visibilityChange = 'mozvisibilitychange';
-} else if (typeof document.msHidden !== 'undefined') {
-  hidden = 'msHidden';
-  visibilityChange = 'msvisibilitychange';
-} else if (typeof document.webkitHidden !== 'undefined') {
-  hidden = 'webkitHidden';
-  visibilityChange = 'webkitvisibilitychange';
-}
-
+const _fps = Math.round(1000 / 60);
 
 class TweenOne extends Component {
   constructor() {
@@ -33,15 +19,15 @@ class TweenOne extends Component {
     this.propsStyle = this.props.style ? assign({}, this.props.style) : this.props.style;
     this.startStyle = this.props.style || {};
     this.startAnimation = this.props.animation ? assign({}, this.props.animation) : this.props.animation;
-    this.startMoment = this.props.moment;
     this.moment = this.props.moment || 0;
     this.state = {
       style: this.props.style || {},
+      startMoment: this.props.moment,
+      startFrame: ticker.frame,
+      paused: this.props.paused,
     };
     [
       'raf',
-      'handleVisibilityChange',
-      'setCurrentDate',
       'frame',
       'start',
       'play',
@@ -53,7 +39,6 @@ class TweenOne extends Component {
     const dom = ReactDom.findDOMNode(this);
     this.computedStyle = assign({}, document.defaultView.getComputedStyle(dom));
     this.start(this.props);
-    document.addEventListener(visibilityChange, this.handleVisibilityChange, false);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -77,7 +62,6 @@ class TweenOne extends Component {
     // 跳帧事件 moment;
     const newMoment = nextProps.moment;
     if (typeof newMoment === 'number') {
-      this.startMoment = newMoment;
       if (nextProps.paused) {
         this.oneMoment = true;
         this.timeLine = new TimeLine(assign({}, this.computedStyle, this.startStyle), dataToArray(nextProps.animation));
@@ -87,6 +71,10 @@ class TweenOne extends Component {
         this.state.style = {};
         this.start(nextProps);
       }
+      this.setState({
+        startMoment: newMoment,
+        startFrame: ticker.frame,
+      });
     }
     // 动画处理
     const newAnimation = nextProps.animation;
@@ -99,61 +87,67 @@ class TweenOne extends Component {
         this.startStyle = assign({}, this.startStyle, this.timeLine.animData.tween);
       }
       this.startAnimation = newAnimation;
-      this.start(nextProps);
+      this.setState({
+        startFrame: ticker.frame,
+      }, () => {
+        this.start(nextProps);
+      });
     }
     // 暂停倒放
     if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
-      this.restart();
+      if (nextProps.paused) {
+        this.cancelRequestAnimationFrame();
+      } else {
+        if (nextProps.reverse && nextProps.reverseDelay) {
+          this.cancelRequestAnimationFrame();
+          const startFrame = ticker.frame;
+          const timeoutKey = `delay${Date.now() + Math.random()}`;
+          ticker.wake(timeoutKey, ()=> {
+            const _frame = ticker.frame - startFrame;
+            const time = _frame * _fps;
+            if (time >= nextProps.reverseDelay) {
+              ticker.clear(timeoutKey);
+              this.restart();
+            }
+          });
+        } else {
+          this.restart();
+        }
+      }
     }
   }
 
   componentWillUnmount() {
-    this.cancelRequestAnimationFram();
-  }
-
-  setCurrentDate() {
-    this.currentNow = Date.now();
+    this.cancelRequestAnimationFrame();
   }
 
   restart() {
-    this.startMoment = this.timeLine.progressTime;
-    this.setCurrentDate();
-    this.play();
+    this.setState({
+      startMoment: this.timeLine.progressTime,
+      startFrame: ticker.frame,
+    }, () => {
+      this.play();
+    });
   }
 
   start(props) {
     this.timeLine = new TimeLine(assign({}, this.computedStyle, this.startStyle), dataToArray(props.animation));
     if (this.timeLine.defaultData.length && props.animation) {
       // 开始动画
-      this.setCurrentDate();
       this.play();
     }
   }
 
   play() {
-    this.cancelRequestAnimationFram();
-    this.rafID = requestAnimationFrame(this.raf);
-  }
-
-
-  handleVisibilityChange() {
-    // 不在当前窗口时
-    if (document[hidden] && this.rafID !== -1) {
-      this.startMoment = this.timeLine.progressTime;
-      this.cancelRequestAnimationFram();
-      this.rafHide = true;
-    } else if (this.rafID === -1 && this.rafHide) {
-      this.setCurrentDate();
-      this.rafID = requestAnimationFrame(this.raf);
-      this.rafHide = false;
-    }
+    this.cancelRequestAnimationFrame();
+    this.rafID = Date.now() + Math.random();
+    ticker.wake(this.rafID, this.raf);
   }
 
   frame() {
-    const now = Date.now() + (this.startMoment || 0);
-    let moment = now - this.currentNow;
+    let moment = (ticker.frame - this.state.startFrame) * _fps + (this.state.startMoment || 0);
     if (this.props.reverse) {
-      moment = (this.startMoment || 0) - Date.now() + this.currentNow;
+      moment = (this.state.startMoment || 0) - (ticker.frame - this.state.startFrame) * _fps;
     }
     moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
@@ -166,20 +160,15 @@ class TweenOne extends Component {
   }
 
   raf() {
-    if (this.rafID === -1 || this.props.paused) {
-      this.rafID = -1;
-      return;
-    }
     this.frame();
-    if ((this.moment >= this.timeLine.totalTime && !this.props.reverse) || this.props.paused || (this.props.reverse && this.moment === 0)) {
-      this.cancelRequestAnimationFram();
-    } else {
-      this.rafID = requestAnimationFrame(this.raf);
+    if ((this.moment >= this.timeLine.totalTime && !this.props.reverse)
+      || this.props.paused || (this.props.reverse && this.moment === 0)) {
+      return this.cancelRequestAnimationFrame();
     }
   }
 
-  cancelRequestAnimationFram() {
-    requestAnimationFrame.cancel(this.rafID);
+  cancelRequestAnimationFrame() {
+    ticker.clear(this.rafID);
     this.rafID = -1;
   }
 
@@ -203,23 +192,22 @@ class TweenOne extends Component {
 }
 
 const objectOrArray = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
-const objectOrArrayOrString = PropTypes.oneOfType([PropTypes.string, objectOrArray]);
-const stringOrFunc = React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.func]);
 
 TweenOne.propTypes = {
-  component: stringOrFunc,
+  component: PropTypes.any,
   animation: objectOrArray,
-  children: objectOrArrayOrString,
+  children: PropTypes.any,
   style: PropTypes.object,
   paused: PropTypes.bool,
   reverse: PropTypes.bool,
+  reverseDelay: PropTypes.number,
   moment: PropTypes.number,
   onChange: PropTypes.func,
 };
 
 TweenOne.defaultProps = {
   component: 'div',
+  reverseDelay: 0,
   onChange: noop,
 };
-
 export default TweenOne;
