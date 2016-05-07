@@ -52,5 +52,4 @@ p.timeout = function(fn, time) {
     }
   });
 };
-ticker.tick();
 export default ticker;
