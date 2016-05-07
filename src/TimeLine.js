@@ -168,10 +168,10 @@ p.setNewStyle = function(easeValue, startData, endData, i) {
     }
     let cssName = Css.isTransform(key);
     this.startData[cssName] = this.startData[cssName] === 'none' || !this.startData[cssName] ? '' : this.startData[cssName];
-    cssName = cssName === 'bezier' ? 'transform' : cssName;
     let style = this.animData.tween[cssName];
     if (cssName === 'bezier') {
       const bezier = this.animData['bezier' + i];
+      style = this.animData.tween.transform;
       style = Css.mergeStyle(this.startData[cssName], style || '');
       style = Css.mergeStyle(style, bezier.set(easeValue));
     } else if (cssName === 'filter') {
@@ -183,6 +183,7 @@ p.setNewStyle = function(easeValue, startData, endData, i) {
     } else {
       style = Css.getParam(key, endData[_key], differ);
     }
+    cssName = cssName === 'bezier' ? 'transform' : cssName;
     this.animData.tween[cssName] = style;
   });
 };

@@ -9,7 +9,7 @@ class Demo extends React.Component {
   render() {
     return (<div style={{position: 'relative', height: 300}}>
       <Tween
-        animation={{bezier: {type: 'thru', autoRotate: true, vars: [{x: 200, y: 200}, {x: 400, y: 0}, {x: 600, y: 200}, {x: 800, y: 0}]}, duration: 5000}}
+        animation={{bezier: {type: 'cubic', autoRotate: true, vars: [{x: 200, y: 200}, {x: 400, y: 0}, {x: 600, y: 200}, {x: 800, y: 0}]}, duration: 5000}}
         style={{width: 100}}>
         <div>执行动效</div>
       </Tween>

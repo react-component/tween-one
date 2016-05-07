@@ -244,7 +244,7 @@ describe('rc-tween-one', function() {
         expect(getFloat(y)).to.be(400);
         done();
       }, 1030);
-    });
+    }, 10);
   });
 
   it('is Bezier type is thru', function(done) {
@@ -277,7 +277,7 @@ describe('rc-tween-one', function() {
         expect(getFloat(y)).to.be(400);
         done();
       }, 1030);
-    });
+    }, 10);
   });
 
   it('is update Animation and filter', function(done) {
@@ -296,8 +296,8 @@ describe('rc-tween-one', function() {
         expect(getFloat(child.style.left)).to.be(100);
         console.log('child left:' + child.style.left);
         done();
-      }, 530);
-    }, 1030);
+      }, 540);
+    }, 1040);
   });
 
   it('is update style', function(done) {
