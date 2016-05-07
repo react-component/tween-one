@@ -8,12 +8,12 @@ const p = Ticker.prototype = {
   id: -1,
   autoSleep: 120,
   frame: 0,
-  autoSleepFrame: 2,
+  perFrame: Math.round(1000 / 60),
 };
 p.wake = function(key, fn) {
   this.tickFnObject[key] = fn;
   if (this.id === -1) {
-    this.tick();
+    this.id = requestAnimationFrame(this.tick);
   }
 };
 p.clear = function(key) {
@@ -31,15 +31,26 @@ p.tick = function(a) {
       obj[key](a);
     }
   });
-  // 如果 object 里没对象了，两秒种后自动睡眠；
+  // 如果 object 里没对象了，自动睡眠；
   if (!Object.keys(obj).length) {
-    if (ticker.frame >= ticker.autoSleepFrame) {
-      return ticker.sleep();
-    }
-  } else {
-    ticker.autoSleepFrame = ticker.frame + ticker.autoSleep;
+    return ticker.sleep();
   }
   ticker.frame++;
   ticker.id = requestAnimationFrame(ticker.tick);
 };
+p.timeout = function(fn, time) {
+  const timeoutID = `timeout${Date.now() + Math.random()}`;
+  const startFrame = this.frame;
+  this.wake(timeoutID, ()=> {
+    if (!(typeof fn === 'function')) {
+      return console.warn('Is no function');
+    }
+    const moment = (this.frame - startFrame) * this.perFrame;
+    if (moment >= (time || 0)) {
+      this.clear(timeoutID);
+      fn();
+    }
+  });
+};
+ticker.tick();
 export default ticker;

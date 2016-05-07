@@ -5,7 +5,6 @@ import assign from 'object-assign';
 import easingTypes from 'tween-functions';
 import Css from 'style-utils';
 import Bezier from './BezierPlugin';
-
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
 const DEFAULT_DELAY = 0;
@@ -42,8 +41,8 @@ const timeLine = function(startData, toData) {
     start: {},
     tween: {},
   };
-  // 1秒时间;
-  this._fps = Math.round(1000 / 60);
+  // 每帧的时间;
+  this.perFrame = Math.round(1000 / 60);
   // 设置默认动画数据;
   this.setDefaultData(startData, toData);
 };
@@ -162,31 +161,33 @@ p.setNewStyle = function(easeValue, startData, endData, i) {
         return (parseFloat(data) - parseFloat(startVars[ii])) * easeValue + parseFloat(startVars[ii]);
       });
     } else {
-      endVars = parseFloat(endVars.toString().replace(/[^0-9|.|-]/ig, ''));
-      startVars = parseFloat((startVars || 0).toString().replace(/[^0-9|.|-]/ig, ''));
-      differ = (endVars - startVars) * easeValue + startVars;
-      if (typeof endData[_key] === 'string' && endData[_key].charAt(1) === '=') {
-        differ = startVars + endVars * easeValue;
-      }
+      endVars = parseFloat(endVars);
+      startVars = parseFloat(startVars || 0);
+      differ = typeof endData[_key] === 'string' && endData[_key].charAt(1) === '=' ?
+      startVars + endVars * easeValue : (endVars - startVars) * easeValue + startVars;
     }
-    const cssName = Css.isTransform(key);
+    let cssName = Css.isTransform(key);
     this.startData[cssName] = this.startData[cssName] === 'none' || !this.startData[cssName] ? '' : this.startData[cssName];
+    cssName = cssName === 'bezier' ? 'transform' : cssName;
+    let style = this.animData.tween[cssName];
     if (cssName === 'bezier') {
       const bezier = this.animData['bezier' + i];
-      this.animData.tween.transform = Css.mergeStyle(this.startData.transform, this.animData.tween.transform || '');
-      this.animData.tween.transform = Css.mergeStyle(this.animData.tween.transform, bezier.set(easeValue));
+      style = Css.mergeStyle(this.startData[cssName], style || '');
+      style = Css.mergeStyle(style, bezier.set(easeValue));
     } else if (cssName === 'filter') {
-      this.animData.tween[cssName] = Css.mergeStyle(this.startData[cssName] || '', this.animData.tween[cssName] || '');
-      this.animData.tween[cssName] = Css.mergeStyle(this.animData.tween[cssName], Css.getFilterParam(start[_key], endData[_key], easeValue));
+      style = Css.mergeStyle(this.startData[cssName], style || '');
+      style = Css.mergeStyle(style, Css.getFilterParam(start[_key], endData[_key], easeValue));
     } else if (cssName === 'transform') {
-      this.animData.tween[cssName] = Css.mergeStyle(this.startData[cssName] || '', this.animData.tween[cssName] || '');
-      this.animData.tween[cssName] = Css.mergeStyle(this.animData.tween[cssName], Css.getParam(key, endData[_key], differ));
+      style = Css.mergeStyle(this.startData[cssName], style || '');
+      style = Css.mergeStyle(style, Css.getParam(key, endData[_key], differ));
     } else {
-      this.animData.tween[cssName] = Css.getParam(key, endData[_key], differ);
+      style = Css.getParam(key, endData[_key], differ);
     }
+    this.animData.tween[cssName] = style;
   });
 };
-p.getStyle = function() {
+p.render = function() {
+  let onChange = [];
   this.defaultData.forEach((item, i)=> {
     let initTime = item.initTime;
     // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
@@ -199,14 +200,14 @@ p.getStyle = function() {
     }
     let progressTime = this.progressTime - initTime;
     // onRepeat 处理
-    if (item.repeat && repeatNum > 0 && progressTime < this._fps) {
+    if (item.repeat && repeatNum > 0 && progressTime < this.perFrame) {
       // 重新开始, 在第一秒触发时调用;
       item.onRepeat();
     }
     // 状态
     let mode = 'onUpdate';
     // 开始 onStart
-    if (i === 0 && progressTime < this._fps || i !== 0 && progressTime > 0 && progressTime < this._fps) {
+    if ((i === 0 && progressTime < this.perFrame) || (i !== 0 && progressTime > 0 && progressTime < this.perFrame)) {
       item.onStart();
       mode = 'onStart';
       this.animData.start = assign({}, this.animData.start, this.animData.tween);
@@ -219,7 +220,7 @@ p.getStyle = function() {
       this.setNewStyle(0, this.animData.start[i], item.data, i);
       this.animData.start['bool' + i] = this.animData.start['bool' + i] || 1;
     }
-    if (progressTime >= 0 && progressTime < item.duration + this._fps) {
+    if (progressTime >= 0 && progressTime < item.duration + this.perFrame) {
       this.animData.start['bool' + i] = this.animData.start['bool' + i] || 1;
       progressTime = progressTime < 0 ? 0 : progressTime;
       progressTime = progressTime > item.duration ? item.duration : progressTime;
@@ -231,33 +232,34 @@ p.getStyle = function() {
       // 当前点生成样式;
       this.setNewStyle(easeVars, this.animData.start[i], item.data, i);
 
-      setTimeout(()=> {
-        // 加 setTimeout 是为了在 this.setState 之后调用;
-        // complete 事件
-        if (progressTime === item.duration) {
-          item.onComplete();
-          mode = 'onComplete';
-        }
-        if (mode === 'onUpdate') {
-          // update 事件
-          item.onUpdate(easeVars);
-        }
-        // onChange
-        this.onChange({
-          moment: this.progressTime,
-          item: item,
-          tween: this.animData.tween,
-          index: i,
-          mode,
-        });
+      // complete 事件
+      if (progressTime === item.duration) {
+        item.onComplete();
+        mode = 'onComplete';
+      }
+      if (mode === 'onUpdate') {
+        // update 事件
+        item.onUpdate(easeVars);
+      }
+
+      onChange[i] = this.onChange.bind(this, {
+        moment: this.progressTime,
+        item: item,
+        tween: this.animData.tween,
+        index: i,
+        mode,
       });
     }
   });
+  this.onChange = ()=> {
+    onChange.forEach(func => func());
+    onChange = null;
+  };
 };
 // 播放帧
 p.frame = function(moment) {
   this.progressTime = moment;
-  this.getStyle();
+  this.render();
   return this.animData.tween;
 };
 p.resetAnimData = function() {

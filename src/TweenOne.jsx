@@ -9,7 +9,7 @@ import ticker from './ticker';
 function noop() {
 }
 
-const _fps = Math.round(1000 / 60);
+const perFrame = Math.round(1000 / 60);
 
 class TweenOne extends Component {
   constructor() {
@@ -36,8 +36,8 @@ class TweenOne extends Component {
   }
 
   componentDidMount() {
-    const dom = ReactDom.findDOMNode(this);
-    this.computedStyle = assign({}, document.defaultView.getComputedStyle(dom));
+    this.dom = ReactDom.findDOMNode(this);
+    this.computedStyle = document.defaultView.getComputedStyle(this.dom);
     this.start(this.props);
   }
 
@@ -104,7 +104,7 @@ class TweenOne extends Component {
           const timeoutKey = `delay${Date.now() + Math.random()}`;
           ticker.wake(timeoutKey, ()=> {
             const _frame = ticker.frame - startFrame;
-            const time = _frame * _fps;
+            const time = _frame * perFrame;
             if (time >= nextProps.reverseDelay) {
               ticker.clear(timeoutKey);
               this.restart();
@@ -140,22 +140,26 @@ class TweenOne extends Component {
 
   play() {
     this.cancelRequestAnimationFrame();
-    this.rafID = Date.now() + Math.random();
+    this.rafID = `tween${Date.now() + Math.random()}`;
     ticker.wake(this.rafID, this.raf);
   }
 
   frame() {
-    let moment = (ticker.frame - this.state.startFrame) * _fps + (this.state.startMoment || 0);
+    let moment = (ticker.frame - this.state.startFrame) * perFrame + (this.state.startMoment || 0);
     if (this.props.reverse) {
-      moment = (this.state.startMoment || 0) - (ticker.frame - this.state.startFrame) * _fps;
+      moment = (this.state.startMoment || 0) - (ticker.frame - this.state.startFrame) * perFrame;
     }
     moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
     this.moment = moment;
-    this.timeLine.onChange = this.props.onChange.bind(this);
+    this.timeLine.onChange = this.props.onChange;
     const style = assign({}, this.startStyle, this.timeLine.frame(moment));
+    // this.dom.style.marginLeft = moment / 5 + 'px';
+    // this.timeLine.onChange();
     this.setState({
       style,
+    }, ()=> {
+      this.timeLine.onChange();
     });
   }
 
