@@ -16,12 +16,14 @@ describe('rc-tween-one', function() {
           animation: this.props.animation,
           style: this.props.style,
           reverse: false,
+          moment: null,
         };
       }
 
       render() {
         return (<Tween {...this.props} reverse={this.state.reverse}
           animation={this.state.animation} style={this.state.style}
+          moment={this.state.moment}
         >
           <span>demo</span>
         </Tween>);
@@ -296,8 +298,8 @@ describe('rc-tween-one', function() {
         expect(getFloat(child.style.left)).to.be(100);
         console.log('child left:' + child.style.left);
         done();
-      }, 540);
-    }, 1040);
+      }, 50);
+    }, 1050);
   });
 
   it('is update style', function(done) {
@@ -347,5 +349,30 @@ describe('rc-tween-one', function() {
         done();
       }, 350);
     }, 300);
+  });
+
+  it('is moment', function(done) {
+    instance = createTweenInstance({
+      animation: {
+        top: 100,
+        duration: 1000,
+      },
+      style: { position: 'relative', top: 0 },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    setTimeout(() => {
+      instance.setState({
+        moment: 1000,
+      }, () => {
+        instance.setState({
+          moment: null,
+        });
+      });
+      setTimeout(() => {
+        console.log(child.style.top);
+        expect(getFloat(child.style.top)).to.be(100);
+        done();
+      }, 10);
+    }, 100);
   });
 });
