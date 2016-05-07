@@ -298,8 +298,8 @@ describe('rc-tween-one', function() {
         expect(getFloat(child.style.left)).to.be(100);
         console.log('child left:' + child.style.left);
         done();
-      }, 50);
-    }, 1050);
+      }, 540);
+    }, 1040);
   });
 
   it('is update style', function(done) {
