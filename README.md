@@ -89,11 +89,12 @@ React.render(<TweenOneGroup>
 
 ### animation = { }
 > transform need to set the initial value, must be set in the style;
+> 0.4 filter => `grayScale`, `sepia`, `hueRotate`, `invert`, `brightness`, `contrast`, `blur`;  { blur: '5px' }  Unit must bring.
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
 | type       | string         | `to`    | play type: `to` `from`|
-| in style   | string / number| null  | CSS style value: `translateX` `rotateX` `color` `marginTop` or gsap: `x` `y`... |
+| in style   | string / number| null  | CSS style value: `translateX` `rotateX` `color` `marginTop` or `grayScale`, `sepia`, `hueRotate`, `invert`, `brightness`, `contrast`, `blur` or gsap: `x` `y`... |
 | duration   |  number        | 450     | animate duration     |
 | delay      | number         | 0       | animate delay  |
 | repeat     | number         | 0       | animate repeat, To repeat indefinitely, use  -1 |
