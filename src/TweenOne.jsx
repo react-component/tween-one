@@ -191,6 +191,8 @@ class TweenOne extends Component {
         }
       }
     }
+    // 进入时闪屏，清除子级；
+    props.children = !this.dom ? null : props.children;
     return React.createElement(this.props.component, props);
   }
 }

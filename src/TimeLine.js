@@ -203,7 +203,7 @@ p.render = function() {
     // 状态
     let mode = 'onUpdate';
     // 开始 onStart
-    if ((i === 0 && progressTime < this.perFrame) || (i !== 0 && progressTime > 0 && progressTime < this.perFrame)) {
+    if (progressTime >= 0 && progressTime < this.perFrame) {
       item.onStart();
       mode = 'onStart';
     }
@@ -225,23 +225,26 @@ p.render = function() {
       // 当前点生成样式;
       this.setRatio(ratio, item.data, i);
 
-      // complete 事件
-      if (progressTime === item.duration) {
-        item.onComplete();
-        mode = 'onComplete';
-      }
+      mode = progressTime === item.duration ? 'onComplete' : mode;
+
       if (mode === 'onUpdate') {
         // update 事件
         item.onUpdate(ratio);
       }
-
-      onChange[i] = this.onChange.bind(this, {
+      onChange.push(this.onChange.bind(this, {
         moment: this.progressTime,
         item: item,
         tween: this.tween,
         index: i,
         mode,
-      });
+      }));
+
+      // complete 事件
+      if (mode === 'onComplete') {
+        // setState 后处理，扔到 onChange 里一起处理;
+        // 以前去掉 onStart onUpdate onComplete;
+        onChange.push(item.onComplete);
+      }
     }
   });
   this.onChange = ()=> {
