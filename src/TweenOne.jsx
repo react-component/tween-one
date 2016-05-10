@@ -47,7 +47,7 @@ class TweenOne extends Component {
     // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
     if (!styleEqual) {
       // 重置开始的样式;
-      this.startStyle = assign({}, this.startStyle, this.timeLine.animData.tween, newStyle);
+      this.startStyle = assign({}, this.startStyle, this.timeLine.animStyle, newStyle);
       this.propsStyle = newStyle;
       if (this.rafID !== -1) {
         // 重置数据;
@@ -82,9 +82,9 @@ class TweenOne extends Component {
     if (!equal) {
       // 如果样式不相等, 那么用新样式做为开始样式;
       if (!styleEqual) {
-        this.startStyle = assign({}, this.startStyle, this.timeLine.animData.tween, newStyle);
+        this.startStyle = assign({}, this.startStyle, this.timeLine.animStyle, newStyle);
       } else {
-        this.startStyle = assign({}, this.startStyle, this.timeLine.animData.tween);
+        this.startStyle = assign({}, this.startStyle, this.timeLine.animStyle);
       }
       this.startAnimation = newAnimation;
       this.setState({

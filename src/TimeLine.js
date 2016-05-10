@@ -36,11 +36,12 @@ const timeLine = function(startData, toData) {
   this.defaultData = [];
   // 默认状态数据;
   this.startData = {};
-  // 动画样式;
-  this.animData = {
-    start: {},
-    tween: {},
-  };
+  // 每个的开始数据；
+  this.start = {};
+  // 动画过程
+  this.tween = {};
+  // 最后样式；
+  this.animStyle = {};
   // 每帧的时间;
   this.perFrame = Math.round(1000 / 60);
   // 设置默认动画数据;
@@ -51,18 +52,18 @@ const p = timeLine.prototype;
 p.setDefaultData = function(start, vars) {
   let now = 0;
   let repeatMax = false;
-  const data = vars.map(item=> {
+  const data = vars.map((item, i)=> {
     now += item.delay || 0;// 加上延时，在没有播放过时；
     const tweenData = defaultData(item, now);
     tweenData.data = {};
-    for (const _key in item) {
+    Object.keys(item).forEach(_key => {
       if (!(_key in tweenData)) {
-        const key = Css.getGsapType(_key);
-        const cssName = Css.isTransform(key);
-        this.startData[cssName] = start[cssName];
+        // const key = Css.getGsapType(_key);
+        // const cssName = Css.isTransform(key);
+        // this.startData[cssName] = start[cssName];
         tweenData.data[_key] = item[_key];
       }
-    }
+    });
     if (tweenData.yoyo && !tweenData.repeat) {
       console.warn('Warning: yoyo must be used together with repeat;');
     }
@@ -75,75 +76,74 @@ p.setDefaultData = function(start, vars) {
     } else {
       now += tweenData.duration * (tweenData.repeat + 1) + tweenData.repeatDelay * tweenData.repeat;
     }
+    this.startData = { ...this.startData, ...this.getAnimStartData(start, item, i) };
     return tweenData;
   });
   this.totalTime = repeatMax ? Number.MAX_VALUE : now;
   this.defaultData = data;
-  // 初始 animData.tween, 功能: 解决当 type: 'from' 时出场延时会不归位;
-  this.setAnimDataTween();
 };
-p.setAnimDataTween = function() {
-  this.defaultData.forEach((item, i)=> {
-    const _item = this.setAnimStartData(item, i);
-    if (i === 0) {
-      // 第一个先设置, 延时时归位...
-      this.animData.start[0] = _item;
-    }
-    const easeVars = item.type === 'from' ? 1 : 0;
-    this.setNewStyle(easeVars, _item, item.data, i);
-  });
-};
-p.setAnimStartData = function(endData, i) {
-  const _endData = endData.data;
-  const obj = {};
-
-  function setStyle(_obj, data, key) {
-    const cssStyleArr = data.toString().split(' ');
-    if (data) {
-      cssStyleArr.forEach(__item=> {
-        const _item = __item.replace(/[(|)]/ig, '$').split('$');
-        _obj[_item[0]] = _item[1];
-      });
-    }
-    const num = key.indexOf('scale') >= 0 ? 1 : 0;
-    _obj[key] = Css.mergeTransformName(cssStyleArr, key) || _obj[key] || num;
+p.splitData = function(cssName, data, item, _key, i) {
+  let transform = data.split(' ');
+  const startData = {};
+  if (!data) {
+    return startData;
   }
+  if (cssName === 'bezier') {
+    const bezier = this['bezier' + i];
+    transform = item.type === 'from' ? bezier.set(1) : bezier.set(0);
+    transform = transform.split(' ');
+  }
+  const transformArr = Css.splitStyle(transform);
+  transformArr.forEach(style => {
+    const stylaArr = style.split('(');
+    const styleName = stylaArr[0];
+    const styleData = stylaArr[1].replace(')', '');
 
-  Object.keys(_endData).forEach(_key=> {
-    const key = Css.getGsapType(_key);
-    const cssName = Css.isTransform(key);
-    const startData = this.animData.tween && this.animData.tween[cssName] ? this.animData.tween : this.startData;
-    if (!startData[cssName] || startData[cssName] === 'none' || startData[cssName] === 'auto') {
-      startData[cssName] = '';
-    }
-    if (cssName === 'transform' || cssName === 'filter') {
-      if (cssName === 'transform') {
-        // 设置了style
-        setStyle(obj, startData[cssName], key);
+    startData[styleName] = styleData;
+  });
+  return startData;
+};
+p.getAnimStartData = function(start, item, i, one) {
+  let _start = one ? start : {};
+  Object.keys(item).filter(key => !(key in defaultData({})))
+    .forEach(_key => {
+      const key = Css.getGsapType(_key);
+      const cssName = Css.isConvert(key);
+      let startData = start[one ? key : cssName];
+      if (!startData || startData === 'none' || startData === 'auto') {
+        startData = '';
+      }
+      if (cssName === 'transform' || cssName === 'filter' || cssName === 'bezier') {
+        if (one) {
+          _start[key] = startData;
+        } else {
+          _start = assign(_start || {}, this.splitData(cssName, startData, item, _key, i));
+        }
       } else {
-        // 是filter时
-        const cssStyleArr = (startData[cssName] || '').split(' ');
-        obj[key] = cssStyleArr.length ? cssStyleArr.join(' ') : 0;
+        _start[cssName] = startData || 0;
       }
-    } else if (cssName === 'bezier') {
-      const bezier = this.animData['bezier' + i] = new Bezier(startData.transform, _endData[_key]);
-      obj.transform = bezier.set(0);
-      if (endData.type === 'from') {
-        obj.transform = bezier.set(1);
-      }
+    });
+  return _start;
+};
+p.setAnimData = function() {
+  const style = assign({}, this.startData, this.tween);
+  Object.keys(style).forEach(key => {
+    const cssName = Css.isConvert(key);
+    if (cssName === 'transform') {
+      this.animStyle[cssName] = Css.mergeStyleNew(this.animStyle[cssName] || '', Css.getParam(key, style[key]));
+    } else if (cssName === 'filter') {
+      const _key = key in Css.filterConvert ? Css.filterConvert[key] : key;
+      this.animStyle[cssName] = Css.mergeStyleNew(this.animStyle[cssName] || '', Css.getParam(_key, style[key]));
     } else {
-      // 不是以上两种情况时
-      obj[key] = startData[cssName] || 0;
+      this.animStyle[cssName] = style[key];
     }
   });
-  return obj;
 };
-p.setNewStyle = function(easeValue, startData, endData, i) {
-  const start = startData;
-  Object.keys(endData).forEach(_key=> {
+p.setRatio = function(ratio, endData, i) {
+  Object.keys(endData).forEach(_key => {
     const key = Css.getGsapType(_key);
     let endVars = endData[_key];
-    let startVars = start[key];
+    let startVars = (this.start[i] || this.startData)[key];
     let differ;
     if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
       startVars = Css.parseColor(startVars);
@@ -151,52 +151,47 @@ p.setNewStyle = function(easeValue, startData, endData, i) {
       startVars[3] = typeof startVars[3] !== 'number' ? 1 : startVars[3];
       endVars[3] = typeof endVars[3] !== 'number' ? 1 : endVars[3];
       differ = endVars.map((data, ii)=> {
-        return (data - startVars[ii]) * easeValue + startVars[ii];
+        return (data - startVars[ii]) * ratio + startVars[ii];
       });
     } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
       startVars = startVars === 'none' || !startVars ? '0 0 0 transparent' : startVars;
       startVars = Css.parseShadow(startVars);
       endVars = Css.parseShadow(endVars);
       differ = endVars.map((data, ii)=> {
-        return (parseFloat(data) - parseFloat(startVars[ii])) * easeValue + parseFloat(startVars[ii]);
+        return (parseFloat(data) - parseFloat(startVars[ii])) * ratio + parseFloat(startVars[ii]);
       });
     } else {
-      endVars = parseFloat(endVars);
+      endVars = parseFloat(endVars.toString().replace('=', ''));
+      startVars = key === 'opacity' && startVars !== 0 ? 1 : startVars;
+      startVars = key.indexOf('scale') >= 0 ? 1 : startVars;
       startVars = parseFloat(startVars || 0);
       differ = typeof endData[_key] === 'string' && endData[_key].charAt(1) === '=' ?
-      startVars + endVars * easeValue : (endVars - startVars) * easeValue + startVars;
+      startVars + endVars * ratio : (endVars - startVars) * ratio + startVars;
     }
-    let cssName = Css.isTransform(key);
-    this.startData[cssName] = this.startData[cssName] === 'none' || !this.startData[cssName] ? '' : this.startData[cssName];
-    let style = this.animData.tween[cssName];
+    const unit = endData[_key].toString().replace(/[^a-z|%]/ig, '') || 0;
+    const cssName = Css.isTransform(key);
     if (cssName === 'bezier') {
-      const bezier = this.animData['bezier' + i];
-      style = this.animData.tween.transform;
-      style = Css.mergeStyle(this.startData[cssName], style || '');
-      style = Css.mergeStyle(style, bezier.set(easeValue));
-    } else if (cssName === 'filter') {
-      style = Css.mergeStyle(this.startData[cssName], style || '');
-      style = Css.mergeStyle(style, Css.getFilterParam(start[_key], endData[_key], easeValue));
-    } else if (cssName === 'transform') {
-      style = Css.mergeStyle(this.startData[cssName], style || '');
-      style = Css.mergeStyle(style, Css.getParam(key, endData[_key], differ));
+      const bezier = this['bezier' + i] = this['bezier' + i] || new Bezier(startVars, endData[_key]);
+      this.tween = assign(this.tween || {}, this.splitData('transform', bezier.set(ratio)));
+    } else if (cssName === 'filter' || cssName === 'transform') {
+      this.tween[key] = differ + unit;
     } else {
-      style = Css.getParam(key, endData[_key], differ);
+      this.tween[key] = Css.getParam(key, endData[key], differ);
     }
-    cssName = cssName === 'bezier' ? 'transform' : cssName;
-    this.animData.tween[cssName] = style;
   });
+  this.setAnimData();
 };
 p.render = function() {
   let onChange = [];
   this.defaultData.forEach((item, i)=> {
     let initTime = item.initTime;
     // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-    let repeatNum = Math.ceil(this.progressTime / (item.duration + item.repeatDelay)) - 1;
+    let repeatNum = Math.ceil((this.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
+    repeatNum = repeatNum < 0 ? 0 : repeatNum;
     repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
     if (item.repeat) {
       if (item.repeat || item.repeat <= repeatNum) {
-        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
+        initTime = initTime + repeatNum * (item.duration + item.repeatDelay );
       }
     }
     let progressTime = this.progressTime - initTime;
@@ -211,27 +206,24 @@ p.render = function() {
     if ((i === 0 && progressTime < this.perFrame) || (i !== 0 && progressTime > 0 && progressTime < this.perFrame)) {
       item.onStart();
       mode = 'onStart';
-      this.animData.start = assign({}, this.animData.start, this.animData.tween);
     }
-    if (progressTime >= 0) {
-      // 设置 animData
-      this.animData.start[i] = this.animData.start[i] || this.setAnimStartData(item);
-    }
-    if (progressTime > item.duration && !this.animData.start['bool' + i]) {
-      this.setNewStyle(0, this.animData.start[i], item.data, i);
-      this.animData.start['bool' + i] = this.animData.start['bool' + i] || 1;
+    const delay = item.delay >= 0 ? item.delay : -item.delay;
+    const fromDelay = item.type === 'from' ? delay : 0;
+    if (progressTime + fromDelay >= 0 && !this.start[i]) {
+      this.start[i] = this.getAnimStartData(assign({}, this.startData, this.tween), item.data, i, true);
+      const st = progressTime / (item.duration + fromDelay) > 1 ? 1 : (progressTime / (item.duration + fromDelay));
+      this.setRatio(item.type === 'from' ? 1 - st : st, item.data, i);
     }
     if (progressTime >= 0 && progressTime < item.duration + this.perFrame) {
-      this.animData.start['bool' + i] = this.animData.start['bool' + i] || 1;
       progressTime = progressTime < 0 ? 0 : progressTime;
       progressTime = progressTime > item.duration ? item.duration : progressTime;
-      let easeVars = easingTypes[item.ease](progressTime, 0, 1, item.duration);
+      let ratio = easingTypes[item.ease](progressTime, 0, 1, item.duration);
       if (item.yoyo && repeatNum % 2 || item.type === 'from') {
-        easeVars = easingTypes[item.ease](progressTime, 1, 0, item.duration);
+        ratio = easingTypes[item.ease](progressTime, 1, 0, item.duration);
       }
 
       // 当前点生成样式;
-      this.setNewStyle(easeVars, this.animData.start[i], item.data, i);
+      this.setRatio(ratio, item.data, i);
 
       // complete 事件
       if (progressTime === item.duration) {
@@ -240,13 +232,13 @@ p.render = function() {
       }
       if (mode === 'onUpdate') {
         // update 事件
-        item.onUpdate(easeVars);
+        item.onUpdate(ratio);
       }
 
       onChange[i] = this.onChange.bind(this, {
         moment: this.progressTime,
         item: item,
-        tween: this.animData.tween,
+        tween: this.tween,
         index: i,
         mode,
       });
@@ -261,13 +253,12 @@ p.render = function() {
 p.frame = function(moment) {
   this.progressTime = moment;
   this.render();
-  return this.animData.tween;
+  return this.animStyle;
 };
 p.resetAnimData = function() {
-  this.animData = {
-    start: {},
-    tween: {},
-  };
+  this.tween = {};
+  this.start = {};
+  this.animStyle = {};
 };
 
 p.onChange = noop;

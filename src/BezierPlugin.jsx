@@ -370,7 +370,7 @@ Bezier.prototype = {
   init() {
     const vars = this.defaultData;
     const autoRotate = vars.autoRotate;
-    this._timeRes = (vars.timeResolution === null) ? 6 : parseInt(vars.timeResolution, 10);
+    this._timeRes = !vars.timeResolution ? 6 : parseInt(vars.timeResolution, 10);
     const a = (autoRotate === true) ? 0 : Number(autoRotate);
     const b = (autoRotate instanceof Array) ? autoRotate : [['x', 'y', 'rotation', ( a || 0)]];
     this._autoRotate = autoRotate ? b : null;

@@ -182,18 +182,19 @@ describe('rc-tween-one', function() {
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(() => {
       let transform = child.style.transform;
-      let rotate = transform.split(')')[1].replace(/[a-z|(|)]/g, '');
-      let xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+      let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
+      let rotate = xy[2];
       let x = xy[0];
       let y = xy[1];
+      console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
       expect(getFloat(x)).to.above(0).below(5);
       expect(getFloat(y)).to.above(0).below(5);
       expect(getFloat(rotate)).to.above(44).below(45);
-      console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
+
       setTimeout(()=> {
         transform = child.style.transform;
-        rotate = transform.split(')')[1].replace(/[a-z|(|)]/g, '');
-        xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+        xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
+        rotate = xy[2];
         x = xy[0];
         y = xy[1];
         expect(getFloat(x)).to.above(90).below(105);
@@ -202,8 +203,8 @@ describe('rc-tween-one', function() {
         console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
         setTimeout(() => {
           transform = child.style.transform;
-          rotate = transform.split(')')[1].replace(/[a-z|(|)]/g, '');
-          xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+          xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
+          rotate = xy[2];
           x = xy[0];
           y = xy[1];
           expect(getFloat(x)).to.be(200);
@@ -230,7 +231,7 @@ describe('rc-tween-one', function() {
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(()=> {
       let transform = child.style.transform;
-      let xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+      let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
       let x = xy[0];
       let y = xy[1];
       console.log(`x:${x},y:${y}`);
@@ -238,7 +239,7 @@ describe('rc-tween-one', function() {
       expect(getFloat(y)).to.above(-1);
       setTimeout(() => {
         transform = child.style.transform;
-        xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+        xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
         x = xy[0];
         y = xy[1];
         console.log(`x:${x},y:${y}`);
@@ -246,7 +247,7 @@ describe('rc-tween-one', function() {
         expect(getFloat(y)).to.be(400);
         done();
       }, 1030);
-    }, 10);
+    }, 30);
   });
 
   it('is Bezier type is thru', function(done) {
@@ -263,7 +264,7 @@ describe('rc-tween-one', function() {
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(() => {
       let transform = child.style.transform;
-      let xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+      let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
       let x = xy[0];
       let y = xy[1];
       console.log(`x:${x},y:${y}`);
@@ -271,20 +272,20 @@ describe('rc-tween-one', function() {
       expect(getFloat(y)).to.above(-1);
       setTimeout(() => {
         transform = child.style.transform;
-        xy = transform.split(')')[0].replace(/[a-z|(|)]/g, '').split(',');
+        xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
         x = xy[0];
         y = xy[1];
         console.log(`x:${x},y:${y}`);
-        expect(getFloat(x)).to.be(300);
-        expect(getFloat(y)).to.be(400);
+        expect(Math.round(getFloat(x))).to.be(300);
+        expect(Math.round(getFloat(y))).to.be(400);
         done();
-      }, 1030);
-    }, 10);
+      }, 1050);
+    }, 30);
   });
 
   it('is update Animation and filter', function(done) {
     instance = createTweenInstance({
-      animation: { top: 100, x: 100, color: '#fff', filter: 'sepia(100%) blur(2px)', duration: 1000 },
+      animation: { top: 100, x: 100, color: '#fff', sepia: '100%', blur: '2px', duration: 1000 },
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
