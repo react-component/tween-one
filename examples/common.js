@@ -369,6 +369,8 @@
 	          }
 	        }
 	      }
+	      // 进入时闪屏，清除子级；
+	      props.children = !this.dom ? null : props.children;
 	      return _react2['default'].createElement(this.props.component, props);
 	    }
 	  }]);
@@ -20949,7 +20951,7 @@
 	    // 状态
 	    var mode = 'onUpdate';
 	    // 开始 onStart
-	    if (i === 0 && progressTime < _this5.perFrame || i !== 0 && progressTime > 0 && progressTime < _this5.perFrame) {
+	    if (progressTime >= 0 && progressTime < _this5.perFrame) {
 	      item.onStart();
 	      mode = 'onStart';
 	    }
@@ -20971,23 +20973,26 @@
 	      // 当前点生成样式;
 	      _this5.setRatio(ratio, item.data, i);
 	
-	      // complete 事件
-	      if (progressTime === item.duration) {
-	        item.onComplete();
-	        mode = 'onComplete';
-	      }
+	      mode = progressTime === item.duration ? 'onComplete' : mode;
+	
 	      if (mode === 'onUpdate') {
 	        // update 事件
 	        item.onUpdate(ratio);
 	      }
-	
-	      onChange[i] = _this5.onChange.bind(_this5, {
+	      onChange.push(_this5.onChange.bind(_this5, {
 	        moment: _this5.progressTime,
 	        item: item,
 	        tween: _this5.tween,
 	        index: i,
 	        mode: mode
-	      });
+	      }));
+	
+	      // complete 事件
+	      if (mode === 'onComplete') {
+	        // setState 后处理，扔到 onChange 里一起处理;
+	        // 以前去掉 onStart onUpdate onComplete;
+	        onChange.push(item.onComplete);
+	      }
 	    }
 	  });
 	  this.onChange = function () {

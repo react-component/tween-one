@@ -53,7 +53,7 @@ webpackJsonp([2],{
 	        _react2['default'].createElement(
 	          'div',
 	          null,
-	          '模糊与其它filter里滤镜，只支持xxx(10),可以多个'
+	          'filter 里的滤镜，\'grayScale\', \'sepia\', \'hueRotate\', \'invert\', \'brightness\', \'contrast\', \'blur\''
 	        ),
 	        _react2['default'].createElement(
 	          _rcTweenOne2['default'],
