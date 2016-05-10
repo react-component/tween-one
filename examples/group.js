@@ -3,12 +3,12 @@ webpackJsonp([9],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(187);
+	module.exports = __webpack_require__(190);
 
 
 /***/ },
 
-/***/ 187:
+/***/ 190:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29,7 +29,7 @@ webpackJsonp([9],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(36);
+	var _reactDom = __webpack_require__(37);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -147,7 +147,7 @@ webpackJsonp([9],{
 	          {
 	            style: { height: 300 },
 	            enter: this.enterType,
-	            leave: [{ y: 90 }, { x: -100, opacity: 0 }],
+	            leave: [{ y: 90 }, { x: 100, opacity: 0 }],
 	            onEnd: this.onEnd
 	          },
 	          this.state.children

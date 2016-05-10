@@ -3,12 +3,12 @@ webpackJsonp([2],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(180);
+	module.exports = __webpack_require__(183);
 
 
 /***/ },
 
-/***/ 180:
+/***/ 183:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31,7 +31,7 @@ webpackJsonp([2],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(36);
+	var _reactDom = __webpack_require__(37);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -57,7 +57,7 @@ webpackJsonp([2],{
 	        ),
 	        _react2['default'].createElement(
 	          _rcTweenOne2['default'],
-	          { animation: { filter: 'sepia(100%) blur(10px)', duration: 2000 } },
+	          { animation: { blur: '10px', sepia: '100%', duration: 2000 }, style: { filter: 'blur(30px)' } },
 	          _react2['default'].createElement('img', { width: '500', src: 'https://t.alipayobjects.com/images/T1CFtgXb0jXXXXXXXX.jpg' })
 	        )
 	      );

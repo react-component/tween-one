@@ -3,12 +3,12 @@ webpackJsonp([8],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(186);
+	module.exports = __webpack_require__(189);
 
 
 /***/ },
 
-/***/ 186:
+/***/ 189:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31,7 +31,7 @@ webpackJsonp([8],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(36);
+	var _reactDom = __webpack_require__(37);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -53,7 +53,7 @@ webpackJsonp([8],{
 	        _react2['default'].createElement(
 	          _rcTweenOne2['default'],
 	          {
-	            animation: [{ x: 200, delay: 1000, y: '+=300', filter: 'blur(10px)', type: 'from', duration: 500 }, { x: 400, y: 0 }],
+	            animation: [{ x: 200, delay: 1000, y: '300', blur: '10px', duration: 500, type: 'from' }, { x: 400, y: 0 }, { delay: 1000, y: 300, type: 'from' }],
 	            style: { opacity: 1, width: 100, transform: 'translateY(100px)' } },
 	          _react2['default'].createElement(
 	            'div',
