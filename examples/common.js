@@ -22334,6 +22334,7 @@
 	      fn();
 	    }
 	  });
+	  return timeoutID;
 	};
 	exports['default'] = ticker;
 	module.exports = exports['default'];
