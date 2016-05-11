@@ -371,6 +371,7 @@
 	      }
 	      // 进入时闪屏，清除子级；
 	      props.children = !this.dom ? null : props.children;
+	      props.children = this.props.animation ? props.children : this.props.children;
 	      return _react2['default'].createElement(this.props.component, props);
 	    }
 	  }]);
