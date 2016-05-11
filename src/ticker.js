@@ -51,5 +51,6 @@ p.timeout = function(fn, time) {
       fn();
     }
   });
+  return timeoutID;
 };
 export default ticker;
