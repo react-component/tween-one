@@ -37,7 +37,7 @@ class TweenOne extends Component {
 
   componentDidMount() {
     this.dom = ReactDom.findDOMNode(this);
-    this.computedStyle = document.defaultView.getComputedStyle(this.dom);
+    // this.computedStyle = document.defaultView.getComputedStyle(this.dom);
     this.start(this.props);
   }
 
@@ -64,7 +64,7 @@ class TweenOne extends Component {
     if (typeof newMoment === 'number') {
       if (nextProps.paused) {
         this.oneMoment = true;
-        this.timeLine = new TimeLine(assign({}, this.computedStyle, this.startStyle), dataToArray(nextProps.animation));
+        this.timeLine = new TimeLine(this.dom, assign({}, this.computedStyle, this.startStyle), dataToArray(nextProps.animation));
         const style = assign({}, this.startStyle, this.timeLine.frame(nextProps.moment));
         this.setState({ style });
       } else {
@@ -131,11 +131,14 @@ class TweenOne extends Component {
   }
 
   start(props) {
-    this.timeLine = new TimeLine(assign({}, this.computedStyle, this.startStyle), dataToArray(props.animation));
-    if (this.timeLine.defaultData.length && props.animation) {
-      // 开始动画
-      this.play();
-    }
+    this.timeLine = new TimeLine(this.dom, dataToArray(props.animation));
+    /*    setTimeout(()=> {
+     if (this.timeLine.defaultData.length && props.animation) {
+     // 开始动画
+     this.play();
+     }
+     })*/
+    this.play();
   }
 
   play() {
@@ -153,14 +156,8 @@ class TweenOne extends Component {
     moment = moment <= 0 ? 0 : moment;
     this.moment = moment;
     this.timeLine.onChange = this.props.onChange;
-    const style = assign({}, this.startStyle, this.timeLine.frame(moment));
-    // this.dom.style.marginLeft = moment / 5 + 'px';
-    // this.timeLine.onChange();
-    this.setState({
-      style,
-    }, ()=> {
-      this.timeLine.onChange();
-    });
+    // this.timeLine.frame(moment);
+    this.dom.style.marginLeft = `${moment / 3}px`;
   }
 
   raf() {
@@ -177,7 +174,7 @@ class TweenOne extends Component {
   }
 
   render() {
-    const props = assign({}, this.props);
+    let props = assign({}, this.props);
     props.style = assign({}, this.state.style);
     if (this.oneMoment) {
       this.oneMoment = false;
@@ -192,8 +189,11 @@ class TweenOne extends Component {
       }
     }
     // 进入时闪屏，清除子级；
-    props.children = !this.dom ? null : props.children;
+    // props.children = !this.dom ? null : props.children;
     props.children = this.props.animation ? props.children : this.props.children;
+    if (!Object.keys(this.props.animation || {}).length) {
+      props = this.props;
+    }
     return React.createElement(this.props.component, props);
   }
 }
@@ -209,12 +209,14 @@ TweenOne.propTypes = {
   reverse: PropTypes.bool,
   reverseDelay: PropTypes.number,
   moment: PropTypes.number,
+  attr: PropTypes.string,
   onChange: PropTypes.func,
 };
 
 TweenOne.defaultProps = {
   component: 'div',
   reverseDelay: 0,
+  attr: 'style',
   onChange: noop,
 };
 export default TweenOne;

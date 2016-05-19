@@ -52,7 +52,6 @@
   "dependencies": {
     "object-assign": "4.0.x",
     "raf": "3.x",
-    "style-utils": "~0.0.3",
     "tween-functions": "1.x"
   }
 }

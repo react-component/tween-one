@@ -7,17 +7,22 @@ class Demo extends React.Component {
     super(...arguments);
   }
 
-  bbb(e) {
-    console.log(e);
+  bbb() {
+    // console.log(e);
   }
 
   render() {
-    return (<Tween animation={{ translateX: '500px' }}
-      onChange={this.bbb.bind(this)}
-      style={{opacity: 1, height: 100, transform: 'translate(50px,30px)'}}
-    >
-      <div>执行动效</div>
-    </Tween>);
+    const children = [];
+    for (let i = 0; i < 500; i++) {
+      children.push(<Tween animation={{ x: 300, duration: 2000 }}
+        onChange={this.bbb.bind(this)}
+        style={{opacity: 1, marginLeft: '50px'}}
+        key={i}
+      >
+        <div>执行动效</div>
+      </Tween>);
+    }
+    return (<div>{children}</div>);
   }
 }
 ReactDom.render(<Demo />, document.getElementById('__react-content'));
