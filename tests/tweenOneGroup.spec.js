@@ -81,14 +81,14 @@ describe('rc-tween-one-group', function() {
     });
     setTimeout(()=> {
       children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'p')[0];
-      console.log('marginLeft > 99:', children.style.marginLeft);
-      expect(getFloat(children.style.marginLeft)).to.above(98);
+      console.log('marginLeft > 95:', children.style.marginLeft);
+      expect(getFloat(children.style.marginLeft)).to.above(95);
       setTimeout(() => {
         console.log('marginLeft is 0:', children.style.marginLeft);
         expect(getFloat(children.style.marginLeft)).to.be(0);
         done();
-      }, 550);
-    });
+      }, 500);
+    }, 50);
   });
 
   it('appear is false', function() {

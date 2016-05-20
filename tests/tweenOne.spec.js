@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import expect from 'expect.js';
 import Tween from '../index';
+import ticker from '../src/ticker';
 import TestUtils from 'react-addons-test-utils';
-
+import { checkStyleName } from 'style-utils';
 describe('rc-tween-one', function() {
   let div;
   let instance;
@@ -181,32 +182,32 @@ describe('rc-tween-one', function() {
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(() => {
-      let transform = child.style.transform;
+      let transform = child.style[checkStyleName('transform')];
       let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-      let rotate = xy[2];
-      let x = xy[0];
-      let y = xy[1];
+      let rotate = xy[1];
+      let x = xy[0].split(',')[4];
+      let y = xy[0].split(',')[5];
       console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
       expect(getFloat(x)).to.above(0).below(5);
       expect(getFloat(y)).to.above(0).below(5);
       expect(getFloat(rotate)).to.above(44).below(45);
 
       setTimeout(()=> {
-        transform = child.style.transform;
+        transform = child.style[checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-        rotate = xy[2];
-        x = xy[0];
-        y = xy[1];
-        expect(getFloat(x)).to.above(90).below(105);
-        expect(getFloat(y)).to.above(45).below(55);
-        expect(getFloat(rotate)).to.above(-5).below(5);
+        rotate = xy[1];
+        x = xy[0].split(',')[4];
+        y = xy[0].split(',')[5];
+        expect(getFloat(x)).to.above(80).below(120);
+        expect(getFloat(y)).to.above(40).below(60);
+        expect(getFloat(rotate)).to.above(-10).below(10);
         console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
         setTimeout(() => {
-          transform = child.style.transform;
+          transform = child.style[checkStyleName('transform')];
           xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-          rotate = xy[2];
-          x = xy[0];
-          y = xy[1];
+          rotate = xy[1];
+          x = xy[0].split(',')[4];
+          y = xy[0].split(',')[5];
           expect(getFloat(x)).to.be(200);
           expect(getFloat(y)).to.be(0);
           expect(getFloat(rotate)).to.above(-45.0001).below(-44.999);
@@ -230,18 +231,18 @@ describe('rc-tween-one', function() {
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(()=> {
-      let transform = child.style.transform;
+      let transform = child.style[checkStyleName('transform')];
       let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-      let x = xy[0];
-      let y = xy[1];
+      let x = xy[0].split(',')[4];
+      let y = xy[0].split(',')[5];
       console.log(`x:${x},y:${y}`);
       expect(getFloat(x)).to.above(99);
       expect(getFloat(y)).to.above(-1);
       setTimeout(() => {
-        transform = child.style.transform;
+        transform = child.style[checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-        x = xy[0];
-        y = xy[1];
+        x = xy[0].split(',')[4];
+        y = xy[0].split(',')[5];
         console.log(`x:${x},y:${y}`);
         expect(getFloat(x)).to.be(700);
         expect(getFloat(y)).to.be(400);
@@ -263,18 +264,18 @@ describe('rc-tween-one', function() {
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(() => {
-      let transform = child.style.transform;
+      let transform = child.style[checkStyleName('transform')];
       let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-      let x = xy[0];
-      let y = xy[1];
+      let x = xy[0].split(',')[4];
+      let y = xy[0].split(',')[5];
       console.log(`x:${x},y:${y}`);
       expect(getFloat(x)).to.above(-1);
       expect(getFloat(y)).to.above(-1);
       setTimeout(() => {
-        transform = child.style.transform;
+        transform = child.style[checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-        x = xy[0];
-        y = xy[1];
+        x = xy[0].split(',')[4];
+        y = xy[0].split(',')[5];
         console.log(`x:${x},y:${y}`);
         expect(Math.round(getFloat(x))).to.be(300);
         expect(Math.round(getFloat(y))).to.be(400);
@@ -320,6 +321,7 @@ describe('rc-tween-one', function() {
         style: {
           top: 40,
           left: 100,
+          position: 'relative',
         },
       });
       setTimeout(()=> {
@@ -375,5 +377,21 @@ describe('rc-tween-one', function() {
         done();
       }, 10);
     }, 100);
+  });
+
+  it('is timerout', function(done) {
+    instance = createTweenInstance({
+      animation: {
+        top: 100,
+        duration: 1000,
+      },
+      style: { position: 'relative', top: 0 },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    ticker.timeout(() => {
+      console.log(child.style.top);
+      expect(getFloat(child.style.top)).to.be(100);
+      done();
+    }, 1000);
   });
 });

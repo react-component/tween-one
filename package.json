@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
@@ -50,9 +50,9 @@
     "lint"
   ],
   "dependencies": {
-    "object-assign": "4.0.x",
-    "raf": "3.x",
-    "style-utils": "~0.0.3",
-    "tween-functions": "1.x"
+    "object-assign": "~4.1.0",
+    "raf": "~3.2.0",
+    "style-utils": "^0.1.1",
+    "tween-functions": "~1.2.0"
   }
 }
