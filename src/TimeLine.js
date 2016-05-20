@@ -215,13 +215,21 @@ p.setAnimData = function(data) {
           const xPercent = t.xPercent || 0;
           const yPercent = t.yPercent || 0;
           const percent = `${(xPercent || yPercent) ? `translate(${xPercent},${yPercent})` : ''}`;
-          const ss = sx !== 1 || sx !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
           const sk = skx || sky ? `skew(${skx}deg,${sky}deg)` : '';
-          const a = angle ? `rotate(${angle}deg)` : '';
+          const an = angle ? `rotate(${angle}deg)` : '';
+          let ss;
+          if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
+            const matrix = `1,0,0,1,${translateX},${translateY}`;
+            ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
+            // IE 9 没 3d;
+            style[this.transform] = `${percent} matrix(${matrix}) ${an} ${ss} ${sk}`.trim();
+            return;
+          }
+          ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
           const rX = rotateX ? `rotateX(${rotateX}deg)` : '';
           const rY = rotateY ? `rotateY(${rotateY}deg)` : '';
           const per = perspective ? `perspective(${perspective}px)` : '';
-          style[this.transform] = `${per} ${percent} translate3d(${translateX}px,${translateY}px,${translateZ}px) ${ss} ${a} ${rX} ${rY} ${sk}`.trim();
+          style[this.transform] = `${per} ${percent} translate3d(${translateX}px,${translateY}px,${translateZ}px) ${ss} ${an} ${rX} ${rY} ${sk}`.trim();
           return;
         } else if (Css.filter.indexOf(_key) >= 0) {
           this.filterObject[_key] = _data[_key];
@@ -370,7 +378,6 @@ p.render = function() {
       if (item.yoyo && repeatNum % 2 || item.type === 'from') {
         ratio = easingTypes[item.ease](progressTime, 1, 0, item.duration);
       }
-
       // 当前点生成样式;
       this.setRatio(ratio, item, i);
 
