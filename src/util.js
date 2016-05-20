@@ -1,7 +1,4 @@
 import React from 'react';
-import CSSProperty from 'react/lib/CSSProperty';
-const isUnitlessNumber = CSSProperty.isUnitlessNumber;
-const unquotedContentValueRegex = /^(normal|none|(\b(url\([^)]*\)|chapter_counter|attr\([^)]*\)|(no-)?(open|close)-quote|inherit)((\b\s*)|$|\s+))+)$/;
 
 export function toArrayChildren(children) {
   const ret = [];
@@ -153,14 +150,4 @@ export function transformArguments(arg, key, i) {
 
 export function getChildrenFromProps(props) {
   return props && props.children;
-}
-
-export function stylesToCss(key, value) {
-  let _value;
-  if (!isUnitlessNumber[key] && typeof value === 'number') {
-    _value = ` ${value}px`;
-  } else if (key === 'content' && !unquotedContentValueRegex.test(value)) {
-    _value = `'${value.replace(/'/g, "\\'")}'`;
-  }
-  return _value || value;
 }
