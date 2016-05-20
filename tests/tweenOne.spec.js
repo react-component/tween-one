@@ -4,7 +4,7 @@ import expect from 'expect.js';
 import Tween from '../index';
 import ticker from '../src/ticker';
 import TestUtils from 'react-addons-test-utils';
-
+import Css from '../src/CSS';
 describe('rc-tween-one', function() {
   let div;
   let instance;
@@ -182,7 +182,7 @@ describe('rc-tween-one', function() {
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(() => {
-      let transform = child.style.transform;
+      let transform = child.style[Css.checkStyleName('transform')];
       let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
       let rotate = xy[1];
       let x = xy[0].split(',')[4];
@@ -193,7 +193,7 @@ describe('rc-tween-one', function() {
       expect(getFloat(rotate)).to.above(44).below(45);
 
       setTimeout(()=> {
-        transform = child.style.transform;
+        transform = child.style[Css.checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
         rotate = xy[1];
         x = xy[0].split(',')[4];
@@ -203,7 +203,7 @@ describe('rc-tween-one', function() {
         expect(getFloat(rotate)).to.above(-10).below(10);
         console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
         setTimeout(() => {
-          transform = child.style.transform;
+          transform = child.style[Css.checkStyleName('transform')];
           xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
           rotate = xy[1];
           x = xy[0].split(',')[4];
@@ -231,7 +231,7 @@ describe('rc-tween-one', function() {
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(()=> {
-      let transform = child.style.transform;
+      let transform = child.style[Css.checkStyleName('transform')];
       let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
       let x = xy[0].split(',')[4];
       let y = xy[0].split(',')[5];
@@ -239,7 +239,7 @@ describe('rc-tween-one', function() {
       expect(getFloat(x)).to.above(99);
       expect(getFloat(y)).to.above(-1);
       setTimeout(() => {
-        transform = child.style.transform;
+        transform = child.style[Css.checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
         x = xy[0].split(',')[4];
         y = xy[0].split(',')[5];
@@ -264,7 +264,7 @@ describe('rc-tween-one', function() {
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(() => {
-      let transform = child.style.transform;
+      let transform = child.style[Css.checkStyleName('transform')];
       let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
       let x = xy[0].split(',')[4];
       let y = xy[0].split(',')[5];
@@ -272,7 +272,7 @@ describe('rc-tween-one', function() {
       expect(getFloat(x)).to.above(-1);
       expect(getFloat(y)).to.above(-1);
       setTimeout(() => {
-        transform = child.style.transform;
+        transform = child.style[Css.checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
         x = xy[0].split(',')[4];
         y = xy[0].split(',')[5];
