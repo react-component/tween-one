@@ -8,6 +8,7 @@ import Bezier from './BezierPlugin';
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
 const DEFAULT_DELAY = 0;
+import {stylesToCss} from './util';
 function noop() {
 }
 // 设置默认数据
@@ -175,7 +176,7 @@ p.getAnimStartCssData = function(vars, i) {
       if (endUnit && (endUnit !== startUnit || endUnit !== 'px')) {
         startData = this.convertToMarks(cssName, startData, endUnit);
       }
-      style[cssName] = parseFloat(startData);
+      style[cssName] = parseFloat(startData || 0);
     }
   });
   return style;
@@ -208,9 +209,9 @@ p.setAnimData = function(data) {
           const sz = t.scaleZ;
           const skx = t.skewX;
           const sky = t.skewY;
-          const translateX = typeof t.translateX === 'number' ? `${t.translateX}px` : t.translateX;
-          const translateY = typeof t.translateY === 'number' ? `${t.translateY}px` : t.translateY;
-          const translateZ = typeof t.translateZ === 'number' ? `${t.translateZ}px` : t.translateZ;
+          const translateX = t.translateX;
+          const translateY = t.translateY;
+          const translateZ = t.translateZ;
           const xPercent = t.xPercent || 0;
           const yPercent = t.yPercent || 0;
           const percent = `${(xPercent || yPercent) ? `translate(${xPercent},${yPercent})` : ''}`;
@@ -220,7 +221,7 @@ p.setAnimData = function(data) {
           const rX = rotateX ? `rotateX(${rotateX}deg)` : '';
           const rY = rotateY ? `rotateY(${rotateY}deg)` : '';
           const per = perspective ? `perspective(${perspective}px)` : '';
-          style[this.transform] = `${per} ${percent} translate3d(${translateX},${translateY},${translateZ}) ${ss} ${a} ${rX} ${rY} ${sk}`.trim();
+          style[this.transform] = `${per} ${percent} translate3d(${translateX}px,${translateY}px,${translateZ}px) ${ss} ${a} ${rX} ${rY} ${sk}`.trim();
           return;
         } else if (Css.filter.indexOf(_key) >= 0) {
           this.filterObject[_key] = _data[_key];
@@ -271,10 +272,10 @@ p.setStyleRatio = function(ratio, start, vars, unit, count, type) {
         let pName;
         let data;
         if (key === 'translateX') {
-          data = style.transform.translateX;
+          data = start.transform.translateX;
           pName = 'xPercent';
         } else {
-          data = style.transform.translateY;
+          data = start.transform.translateY;
           pName = 'yPercent';
         }
         if (_count.charAt(1) !== '=') {
@@ -283,10 +284,10 @@ p.setStyleRatio = function(ratio, start, vars, unit, count, type) {
         style.transform[pName] = endVars * ratio + _unit;
       } else {
         if (_count.charAt(1) === '=') {
-          style.transform[key] = startVars + endVars * ratio + _unit;
+          style.transform[key] = startVars + endVars * ratio;
           return;
         }
-        style.transform[key] = (endVars - startVars) * ratio + startVars + _unit;
+        style.transform[key] = (endVars - startVars) * ratio + startVars;
       }
       return;
     } else if (key === 'bezier') {
@@ -298,7 +299,9 @@ p.setStyleRatio = function(ratio, start, vars, unit, count, type) {
       style[key] = this.setArrayRatio(ratio, startVars, endVars, _unit, _type);
       return;
     }
-    _unit = _unit || (Css.filter.indexOf(key) >= 0 ? '' : 'px');
+    let styleUnit = stylesToCss(key, 0);
+    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
+    _unit = _unit || (Css.filter.indexOf(key) >= 0 ? '' : styleUnit);
     if (_count.charAt(1) === '=') {
       style[key] = startVars + endVars * ratio + _unit;
       return;
@@ -320,7 +323,7 @@ p.setRatio = function(ratio, endData, i) {
       this.tween.css = assign({}, this.tween.css,
         this.setStyleRatio(ratio, startVars, endVars, unit, count, type));
     } else if (Array.isArray(endVars)) {
-      console.log('is Array');
+      this.tween[key] = this.setArrayRatio(ratio, startVars, endVars, unit[key]);
     } else {
       this.tween[key] = count[key].charAt(1) === '=' ? startVars + endVars * ratio
         : (endVars - startVars) * ratio + startVars;
@@ -351,8 +354,7 @@ p.render = function() {
     const fromDelay = item.type === 'from' ? delay : 0;
     if (progressTime + fromDelay >= 0 && !this.start[i]) {
       this.start[i] = this.getAnimStartData(item.vars, i);
-      const st = progressTime / (item.duration + fromDelay) > 1 ? 1 : (progressTime / (item.duration + fromDelay));
-      this.setRatio(item.type === 'from' ? 1 - st : st, item, i);
+      this.setRatio(item.type === 'from' ? 1 : 0, item, i);
     }
     if (progressTime >= 0 && progressTime < item.duration + this.perFrame) {
       // 状态
@@ -402,7 +404,6 @@ p.frame = function(moment) {
 p.resetAnimData = function() {
   this.tween = {};
   this.start = {};
-  this.animStyle = {};
 };
 
 p.onChange = noop;

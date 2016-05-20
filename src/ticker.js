@@ -38,8 +38,9 @@ p.tick = function(a) {
   ticker.frame++;
   ticker.id = requestAnimationFrame(ticker.tick);
 };
+let timeoutIdNumber = 0;
 p.timeout = function(fn, time) {
-  const timeoutID = `timeout${Date.now() + Math.random()}`;
+  const timeoutID = `timeout${Date.now()}-${timeoutIdNumber}`;
   const startFrame = this.frame;
   this.wake(timeoutID, ()=> {
     if (!(typeof fn === 'function')) {
@@ -51,6 +52,7 @@ p.timeout = function(fn, time) {
       fn();
     }
   });
+  timeoutIdNumber++;
   return timeoutID;
 };
 export default ticker;
