@@ -50,8 +50,9 @@
     "lint"
   ],
   "dependencies": {
-    "object-assign": "4.0.x",
-    "raf": "3.x",
-    "tween-functions": "1.x"
+    "object-assign": "~4.1.0",
+    "raf": "~3.2.0",
+    "style-utils": "^0.1.1",
+    "tween-functions": "~1.2.0"
   }
 }

@@ -1,7 +1,8 @@
 import React, {PropTypes, Component} from 'react';
 import ReactDom from 'react-dom';
 import assign from 'object-assign';
-import {dataToArray, objectEqual, stylesToCss} from './util';
+import { dataToArray, objectEqual } from './util';
+import { stylesToCss } from 'style-utils';
 import TimeLine from './TimeLine';
 import ticker from './ticker';
 

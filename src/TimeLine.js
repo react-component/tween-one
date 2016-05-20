@@ -3,12 +3,22 @@
  */
 import assign from 'object-assign';
 import easingTypes from 'tween-functions';
-import Css from './CSS';
+import cssList, {
+  checkStyleName,
+  getGsapType,
+  parseShadow,
+  getColor,
+  parseColor,
+  isTransform,
+  isConvert,
+  splitFilterToObject,
+  getTransform,
+} from 'style-utils';
 import Bezier from './BezierPlugin';
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
 const DEFAULT_DELAY = 0;
-import {stylesToCss} from './util';
+import { stylesToCss } from './util';
 function noop() {
 }
 // 设置默认数据
@@ -51,6 +61,53 @@ const p = timeLine.prototype;
 p.getComputedStyle = function() {
   return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
 };
+
+p.getTweenData = function(_key, vars) {
+  const data = {
+    data: {},
+    dataType: {},
+    dataUnit: {},
+    dataCount: {},
+  };
+  const key = getGsapType(_key);
+  if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
+    data.data[key] = parseColor(vars);
+    data.dataType[key] = 'color';
+  } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
+    data.data[key] = parseShadow(vars);
+    data.dataType[key] = 'shadow';
+  } else if (key === 'bezier') {
+    data.data[key] = vars;
+  } else if (key === 'scale') {
+    data.data.scaleX = vars;
+    data.data.scaleY = vars;
+    data.dataType.scaleX = data.dataType.scaleY = 'other';
+  } else {
+    data.data[key] = vars;
+    data.dataType[key] = 'other';
+  }
+  if (key !== 'bezier') {
+    if (Array.isArray(data.data[key])) {
+      data.dataUnit[key] = data.data[key]
+        .map(_item => _item.toString().replace(/[^a-z|%]/g, ''));
+      data.dataCount[key] = data.data[key]
+        .map(_item => _item.toString().replace(/[^+|=|-]/g, ''));
+      data.data[key] = data.data[key].map(_item => parseFloat(_item));
+    } else if (key === 'scale') {
+      data.dataUnit.scaleX = data.data.scaleX.toString().replace(/[^a-z|%]/g, '');
+      data.dataCount.scaleX = data.data.scaleX.toString().replace(/[^+|=|-]/g, '');
+      data.data.scaleX = parseFloat(data.data.scaleX);
+      data.dataUnit.scaleY = data.data.scaleY.toString().replace(/[^a-z|%]/g, '');
+      data.dataCount.scaleY = data.data.scaleY.toString().replace(/[^+|=|-]/g, '');
+      data.data.scaleY = parseFloat(data.data.scaleY);
+    } else {
+      data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
+      data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
+      data.data[key] = parseFloat(data.data[key]);
+    }
+  }
+  return data;
+};
 p.setDefaultData = function(vars) {
   let now = 0;
   let repeatMax = false;
@@ -63,9 +120,9 @@ p.setDefaultData = function(vars) {
     tweenData.varsCount = {};
     Object.keys(item).forEach(_key => {
       if (!(_key in tweenData)) {
-        const _data = Css.getTweenData(_key, item[_key]);
-        const key = Css.getGsapType(_key);
-        if (!(_key in this.target) || Css.filter.indexOf(key) >= 0) {
+        const _data = this.getTweenData(_key, item[_key]);
+        const key = getGsapType(_key);
+        if (!(_key in this.target) || cssList.filter.indexOf(key) >= 0) {
           tweenData.vars.css = tweenData.vars.css || {};
           if (key === 'scale') {
             tweenData.vars.css.scaleX = _data.data.scaleX;
@@ -131,8 +188,8 @@ p.getAnimStartCssData = function(vars, i) {
   const computedStyle = this.getComputedStyle();
   const style = {};
   Object.keys(vars).forEach(_key => {
-    const key = Css.getGsapType(_key);
-    const cssName = Css.isConvert(key);
+    const key = getGsapType(_key);
+    const cssName = isConvert(key);
     let startData = computedStyle[cssName];
     if (!startData || startData === 'none' || startData === 'auto') {
       startData = '';
@@ -141,20 +198,20 @@ p.getAnimStartCssData = function(vars, i) {
     let endUnit;
     let startUnit;
     if (cssName === 'transform') {
-      this.transform = Css.checkStyleName('transform');
+      this.transform = checkStyleName('transform');
       startData = computedStyle[this.transform];
-      transform = Css.getTransform(startData);
+      transform = getTransform(startData);
       style.transform = transform;
     } else if (cssName === 'bezier') {
-      this.transform = Css.checkStyleName('transform');
+      this.transform = checkStyleName('transform');
       startData = computedStyle[this.transform];
       const bezier = style.bezier = new Bezier(startData === 'none' ? '' : startData, vars.bezier);
       transform = vars.type === 'from' ? bezier.set(1) : bezier.set(0);
-      transform = Css.getTransform(transform);
+      transform = getTransform(transform);
     } else if (cssName === 'filter') {
-      this.filterName = Css.checkStyleName('filter');
+      this.filterName = checkStyleName('filter');
       startData = computedStyle[this.filterName];
-      this.filterObject = assign(this.filterObject || {}, Css.splitFilterToObject(startData));
+      this.filterObject = assign(this.filterObject || {}, splitFilterToObject(startData));
       startData = this.filterObject[_key] || 0;
       startUnit = startData.toString().replace(/[^a-z|%]/g, '');
       endUnit = this.defaultData[i].varsUnit[_key];
@@ -163,9 +220,9 @@ p.getAnimStartCssData = function(vars, i) {
       }
       style[_key] = parseFloat(startData);
     } else if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
-      style[cssName] = Css.parseColor(startData);
+      style[cssName] = parseColor(startData);
     } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
-      startData = Css.parseShadow(startData);
+      startData = parseShadow(startData);
       endUnit = this.defaultData[i].varsUnit[_key];
       startData = startData.map(this.convertToMarksArray.bind(this, endUnit));
       style[cssName] = startData;
@@ -231,7 +288,7 @@ p.setAnimData = function(data) {
           const per = perspective ? `perspective(${perspective}px)` : '';
           style[this.transform] = `${per} ${percent} translate3d(${translateX}px,${translateY}px,${translateZ}px) ${ss} ${an} ${rX} ${rY} ${sk}`.trim();
           return;
-        } else if (Css.filter.indexOf(_key) >= 0) {
+        } else if (cssList.filter.indexOf(_key) >= 0) {
           this.filterObject[_key] = _data[_key];
           let filterStyle = '';
           Object.keys(this.filterObject).forEach(filterKey => {
@@ -253,11 +310,11 @@ p.setArrayRatio = function(ratio, start, vars, unit, type) {
     return (endData - startData) * ratio + startData + unit[i];
   });
   if (type === 'color') {
-    return Css.getColor(_vars);
+    return getColor(_vars);
   } else if (type === 'shadow') {
     const s = _vars.slice(0, 3);
     const c = _vars.slice(3, _vars.length);
-    const color = Css.getColor(c);
+    const color = getColor(c);
     return `${s.join(' ')} ${color}`;
   }
   return _vars;
@@ -269,12 +326,12 @@ p.setStyleRatio = function(ratio, start, vars, unit, count, type) {
     style.transform = assign({}, start.transform, this.tween.css ? this.tween.css.transform : {});
   }
   Object.keys(vars).forEach(key => {
-    const isTransform = Css.isTransform(key) === 'transform';
-    const startVars = isTransform ? start.transform[key] : start[key];
+    const _isTransform = isTransform(key) === 'transform';
+    const startVars = _isTransform ? start.transform[key] : start[key];
     const endVars = vars[key];
     let _unit = unit[key] ? unit[key] : 0;
     const _count = count[key];
-    if (isTransform) {
+    if (_isTransform) {
       if (_unit === '%' || _unit === 'em' || _unit === 'rem') {
         // translateX translateY => %
         let pName;
@@ -300,7 +357,7 @@ p.setStyleRatio = function(ratio, start, vars, unit, count, type) {
       return;
     } else if (key === 'bezier') {
       const bezier = start[key];
-      style.transform = Css.getTransform(bezier.set(ratio));
+      style.transform = getTransform(bezier.set(ratio));
       return;
     } else if (Array.isArray(endVars)) {
       const _type = type[key];
@@ -309,7 +366,7 @@ p.setStyleRatio = function(ratio, start, vars, unit, count, type) {
     }
     let styleUnit = stylesToCss(key, 0);
     styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
-    _unit = _unit || (Css.filter.indexOf(key) >= 0 ? '' : styleUnit);
+    _unit = _unit || (cssList.filter.indexOf(key) >= 0 ? '' : styleUnit);
     if (_count.charAt(1) === '=') {
       style[key] = startVars + endVars * ratio + _unit;
       return;
@@ -321,7 +378,7 @@ p.setStyleRatio = function(ratio, start, vars, unit, count, type) {
 
 p.setRatio = function(ratio, endData, i) {
   Object.keys(endData.vars).forEach(_key => {
-    const key = Css.getGsapType(_key);
+    const key = getGsapType(_key);
     const endVars = endData.vars[_key];
     const startVars = this.start[i][key];
     const unit = this.defaultData[i].varsUnit;
