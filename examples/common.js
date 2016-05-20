@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		19:0
+/******/ 		20:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"fromDelay","9":"group","10":"gsapWritten","11":"moment","12":"repeat","13":"shadow","14":"simple","15":"timeline","16":"update","17":"updateStyle","18":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"fromDelay","9":"group","10":"groupAbsolute","11":"gsapWritten","12":"moment","13":"repeat","14":"shadow","15":"simple","16":"timeline","17":"update","18":"updateStyle","19":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -120,7 +120,7 @@
 	'use strict';
 	
 	var TweenOne = __webpack_require__(4);
-	TweenOne.TweenOneGroup = __webpack_require__(181);
+	TweenOne.TweenOneGroup = __webpack_require__(180);
 	module.exports = TweenOne;
 
 /***/ },
@@ -151,23 +151,27 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _objectAssign = __webpack_require__(172);
+	var _objectAssign = __webpack_require__(8);
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
-	var _util = __webpack_require__(173);
+	var _util = __webpack_require__(172);
+	
+	var _styleUtils = __webpack_require__(173);
 	
 	var _TimeLine = __webpack_require__(174);
 	
 	var _TimeLine2 = _interopRequireDefault(_TimeLine);
 	
-	var _ticker = __webpack_require__(178);
+	var _ticker = __webpack_require__(177);
 	
 	var _ticker2 = _interopRequireDefault(_ticker);
 	
 	function noop() {}
 	
 	var perFrame = Math.round(1000 / 60);
+	
+	var tickerIdNum = 0;
 	
 	var TweenOne = (function (_Component) {
 	  _inherits(TweenOne, _Component);
@@ -179,13 +183,8 @@
 	
 	    _get(Object.getPrototypeOf(TweenOne.prototype), 'constructor', this).apply(this, arguments);
 	    this.rafID = -1;
-	    // 加这个是防 setState 后 this.props.style 和 nextProps.style 是全等的情况, 走马灯里或滚动组件 React.cloneElement(item, showProps) 情况;
-	    this.propsStyle = this.props.style ? (0, _objectAssign2['default'])({}, this.props.style) : this.props.style;
-	    this.startStyle = this.props.style || {};
-	    this.startAnimation = this.props.animation ? (0, _objectAssign2['default'])({}, this.props.animation) : this.props.animation;
 	    this.moment = this.props.moment || 0;
 	    this.state = {
-	      style: this.props.style || {},
 	      startMoment: this.props.moment,
 	      startFrame: _ticker2['default'].frame,
 	      paused: this.props.paused
@@ -199,7 +198,6 @@
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      this.dom = _reactDom2['default'].findDOMNode(this);
-	      this.computedStyle = document.defaultView.getComputedStyle(this.dom);
 	      this.start(this.props);
 	    }
 	  }, {
@@ -208,50 +206,41 @@
 	      var _this2 = this;
 	
 	      var newStyle = nextProps.style;
-	      var styleEqual = (0, _util.objectEqual)(this.propsStyle, newStyle);
+	      var styleEqual = (0, _util.objectEqual)(this.props.style, newStyle);
 	      // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
 	      if (!styleEqual) {
-	        // 重置开始的样式;
-	        this.startStyle = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.animStyle, newStyle);
-	        this.propsStyle = newStyle;
 	        if (this.rafID !== -1) {
-	          // 重置数据;
-	          this.timeLine.resetAnimData();
-	          // 合并当前在做动画的样式
-	          this.timeLine.setDefaultData(this.startStyle, (0, _util.dataToArray)(nextProps.animation));
-	        } else {
-	          this.state.style = (0, _objectAssign2['default'])({}, this.state.style, this.startStyle);
+	          this.start(nextProps);
 	        }
 	      }
 	
 	      // 跳帧事件 moment;
 	      var newMoment = nextProps.moment;
-	      if (typeof newMoment === 'number') {
-	        if (nextProps.paused) {
-	          this.oneMoment = true;
-	          this.timeLine = new _TimeLine2['default']((0, _objectAssign2['default'])({}, this.computedStyle, this.startStyle), (0, _util.dataToArray)(nextProps.animation));
-	          var style = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.frame(nextProps.moment));
-	          this.setState({ style: style });
-	        } else {
-	          this.state.style = {};
-	          this.start(nextProps);
-	        }
+	      if (typeof newMoment === 'number' && newMoment !== this.moment) {
 	        this.setState({
 	          startMoment: newMoment,
 	          startFrame: _ticker2['default'].frame
+	        }, function () {
+	          if (_this2.rafID === -1 && !nextProps.paused) {
+	            (function () {
+	              _this2.timeLine.resetAnimData();
+	              var style = nextProps.style;
+	              _this2.dom.setAttribute('style', '');
+	              Object.keys(style).forEach(function (key) {
+	                _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
+	              });
+	              _this2.play();
+	            })();
+	          } else {
+	            _this2.raf();
+	          }
 	        });
 	      }
 	      // 动画处理
 	      var newAnimation = nextProps.animation;
-	      var equal = (0, _util.objectEqual)(this.startAnimation, newAnimation);
+	      var currentAnimation = this.props.animation;
+	      var equal = (0, _util.objectEqual)(currentAnimation, newAnimation);
 	      if (!equal) {
-	        // 如果样式不相等, 那么用新样式做为开始样式;
-	        if (!styleEqual) {
-	          this.startStyle = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.animStyle, newStyle);
-	        } else {
-	          this.startStyle = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.animStyle);
-	        }
-	        this.startAnimation = newAnimation;
 	        this.setState({
 	          startFrame: _ticker2['default'].frame
 	        }, function () {
@@ -264,19 +253,7 @@
 	          this.cancelRequestAnimationFrame();
 	        } else {
 	          if (nextProps.reverse && nextProps.reverseDelay) {
-	            (function () {
-	              _this2.cancelRequestAnimationFrame();
-	              var startFrame = _ticker2['default'].frame;
-	              var timeoutKey = 'delay' + (Date.now() + Math.random());
-	              _ticker2['default'].wake(timeoutKey, function () {
-	                var _frame = _ticker2['default'].frame - startFrame;
-	                var time = _frame * perFrame;
-	                if (time >= nextProps.reverseDelay) {
-	                  _ticker2['default'].clear(timeoutKey);
-	                  _this2.restart();
-	                }
-	              });
-	            })();
+	            _ticker2['default'].timeout(this.restart, nextProps.reverseDelay);
 	          } else {
 	            this.restart();
 	          }
@@ -303,7 +280,7 @@
 	  }, {
 	    key: 'start',
 	    value: function start(props) {
-	      this.timeLine = new _TimeLine2['default']((0, _objectAssign2['default'])({}, this.computedStyle, this.startStyle), (0, _util.dataToArray)(props.animation));
+	      this.timeLine = new _TimeLine2['default'](this.dom, (0, _util.dataToArray)(props.animation));
 	      if (this.timeLine.defaultData.length && props.animation) {
 	        // 开始动画
 	        this.play();
@@ -313,14 +290,13 @@
 	    key: 'play',
 	    value: function play() {
 	      this.cancelRequestAnimationFrame();
-	      this.rafID = 'tween' + (Date.now() + Math.random());
+	      this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
 	      _ticker2['default'].wake(this.rafID, this.raf);
+	      tickerIdNum++;
 	    }
 	  }, {
 	    key: 'frame',
 	    value: function frame() {
-	      var _this4 = this;
-	
 	      var moment = (_ticker2['default'].frame - this.state.startFrame) * perFrame + (this.state.startMoment || 0);
 	      if (this.props.reverse) {
 	        moment = (this.state.startMoment || 0) - (_ticker2['default'].frame - this.state.startFrame) * perFrame;
@@ -329,14 +305,7 @@
 	      moment = moment <= 0 ? 0 : moment;
 	      this.moment = moment;
 	      this.timeLine.onChange = this.props.onChange;
-	      var style = (0, _objectAssign2['default'])({}, this.startStyle, this.timeLine.frame(moment));
-	      // this.dom.style.marginLeft = moment / 5 + 'px';
-	      // this.timeLine.onChange();
-	      this.setState({
-	        style: style
-	      }, function () {
-	        _this4.timeLine.onChange();
-	      });
+	      this.timeLine.frame(moment);
 	    }
 	  }, {
 	    key: 'raf',
@@ -356,10 +325,7 @@
 	    key: 'render',
 	    value: function render() {
 	      var props = (0, _objectAssign2['default'])({}, this.props);
-	      props.style = (0, _objectAssign2['default'])({}, this.state.style);
-	      if (this.oneMoment) {
-	        this.oneMoment = false;
-	      }
+	      props.style = (0, _objectAssign2['default'])({}, this.props.style);
 	      for (var p in props.style) {
 	        if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
 	          // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
@@ -369,9 +335,6 @@
 	          }
 	        }
 	      }
-	      // 进入时闪屏，清除子级；
-	      props.children = !this.dom ? null : props.children;
-	      props.children = this.props.animation ? props.children : this.props.children;
 	      return _react2['default'].createElement(this.props.component, props);
 	    }
 	  }]);
@@ -390,12 +353,14 @@
 	  reverse: _react.PropTypes.bool,
 	  reverseDelay: _react.PropTypes.number,
 	  moment: _react.PropTypes.number,
+	  attr: _react.PropTypes.string,
 	  onChange: _react.PropTypes.func
 	};
 	
 	TweenOne.defaultProps = {
 	  component: 'div',
 	  reverseDelay: 0,
+	  attr: 'style',
 	  onChange: noop
 	};
 	exports['default'] = TweenOne;
@@ -20494,51 +20459,6 @@
 
 /***/ },
 /* 172 */
-/***/ function(module, exports) {
-
-	/* eslint-disable no-unused-vars */
-	'use strict';
-	var hasOwnProperty = Object.prototype.hasOwnProperty;
-	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-	
-	function toObject(val) {
-		if (val === null || val === undefined) {
-			throw new TypeError('Object.assign cannot be called with null or undefined');
-		}
-	
-		return Object(val);
-	}
-	
-	module.exports = Object.assign || function (target, source) {
-		var from;
-		var to = toObject(target);
-		var symbols;
-	
-		for (var s = 1; s < arguments.length; s++) {
-			from = Object(arguments[s]);
-	
-			for (var key in from) {
-				if (hasOwnProperty.call(from, key)) {
-					to[key] = from[key];
-				}
-			}
-	
-			if (Object.getOwnPropertySymbols) {
-				symbols = Object.getOwnPropertySymbols(from);
-				for (var i = 0; i < symbols.length; i++) {
-					if (propIsEnumerable.call(from, symbols[i])) {
-						to[symbols[i]] = from[symbols[i]];
-					}
-				}
-			}
-		}
-	
-		return to;
-	};
-
-
-/***/ },
-/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20713,6 +20633,352 @@
 	}
 
 /***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.createMatrix = createMatrix;
+	exports.checkStyleName = checkStyleName;
+	exports.getGsapType = getGsapType;
+	exports.parseColor = parseColor;
+	exports.parseShadow = parseShadow;
+	exports.getColor = getColor;
+	exports.isTransform = isTransform;
+	exports.isConvert = isConvert;
+	exports.splitFilterToObject = splitFilterToObject;
+	exports.getMatrix = getMatrix;
+	exports.getTransform = getTransform;
+	exports.stylesToCss = stylesToCss;
+	
+	var _CSSProperty = __webpack_require__(94);
+	
+	var _CSSProperty2 = _interopRequireDefault(_CSSProperty);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var isUnitlessNumber = _CSSProperty2.default.isUnitlessNumber;
+	var unquotedContentValueRegex = /^(normal|none|(\b(url\([^)]*\)|chapter_counter|attr\([^)]*\)|(no-)?(open|close)-quote|inherit)((\b\s*)|$|\s+))+)$/;
+	
+	var IE = function () {
+	  if (document.documentMode) {
+	    return document.documentMode;
+	  }
+	  for (var i = 7; i > 4; i--) {
+	    var div = document.createElement('div');
+	    div.innerHTML = '<!--[if IE ' + i + ']><span class="is-ie"></span><![endif]-->';
+	    if (div.getElementsByClassName('is-ie').length) {
+	      div = null;
+	      return i;
+	    }
+	  }
+	  return undefined;
+	}();
+	
+	var colorLookup = {
+	  aqua: [0, 255, 255],
+	  lime: [0, 255, 0],
+	  silver: [192, 192, 192],
+	  black: [0, 0, 0],
+	  maroon: [128, 0, 0],
+	  teal: [0, 128, 128],
+	  blue: [0, 0, 255],
+	  navy: [0, 0, 128],
+	  white: [255, 255, 255],
+	  fuchsia: [255, 0, 255],
+	  olive: [128, 128, 0],
+	  yellow: [255, 255, 0],
+	  orange: [255, 165, 0],
+	  gray: [128, 128, 128],
+	  purple: [128, 0, 128],
+	  green: [0, 128, 0],
+	  red: [255, 0, 0],
+	  pink: [255, 192, 203],
+	  cyan: [0, 255, 255],
+	  transparent: [255, 255, 255, 0]
+	};
+	var _hue = function _hue(hh, m1, m2) {
+	  var h = hh > 1 ? hh - 1 : hh;
+	  h = hh < 0 ? hh + 1 : h;
+	  var a = h * 3 < 2 ? m1 + (m2 - m1) * (2 / 3 - h) * 6 : m1;
+	  var b = h < 0.5 ? m2 : a;
+	  var c = h * 6 < 1 ? m1 + (m2 - m1) * h * 6 : b;
+	  return c * 255 + 0.5 | 0;
+	};
+	var DEG2RAD = Math.PI / 180;
+	var RAD2DEG = 180 / Math.PI;
+	
+	var cssList = {
+	  _lists: {
+	    transformsBase: ['translate', 'translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY', 'rotateZ', 'rotate'],
+	    transforms3D: ['translate3d', 'translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective']
+	  },
+	  filter: ['grayScale', 'sepia', 'hueRotate', 'invert', 'brightness', 'contrast', 'blur'],
+	  filterConvert: { grayScale: 'grayscale', hueRotate: 'hue-rotate' }
+	};
+	cssList._lists.transformsBase = !(IE <= 9) ? cssList._lists.transformsBase.concat(cssList._lists.transforms3D) : cssList._lists.transformsBase;
+	
+	function createMatrix(style) {
+	  return window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style) || window.MozCSSMatrix && new window.MozCSSMatrix(style) || window.DOMMatrix && new window.DOMMatrix(style) || window.MsCSSMatrix && new window.MsCSSMatrix(style) || window.OCSSMatrix && new window.OCSSMatrix(style) || window.CSSMatrix && new window.CSSMatrix(style) || null;
+	}
+	
+	function checkStyleName(p) {
+	  var a = ['O', 'Moz', 'ms', 'Ms', 'Webkit'];
+	  if (p !== 'filter' && p in document.body.style) {
+	    return p;
+	  }
+	  var _p = p.charAt(0).toUpperCase() + p.substr(1);
+	  return '' + (a.filter(function (key) {
+	    return '' + key + _p in document.body.style;
+	  })[0] || '') + _p;
+	}
+	
+	function getGsapType(_p) {
+	  var p = _p;
+	  p = p === 'x' ? 'translateX' : p;
+	  p = p === 'y' ? 'translateY' : p;
+	  p = p === 'z' ? 'translateZ' : p;
+	  p = p === 'r' ? 'rotate' : p;
+	  return p;
+	}
+	
+	function parseColor(_v) {
+	  var a = void 0;
+	  var r = void 0;
+	  var g = void 0;
+	  var b = void 0;
+	  var h = void 0;
+	  var s = void 0;
+	  var l = void 0;
+	  var v = _v;
+	  var _numExp = /(?:\d|\-\d|\.\d|\-\.\d)+/g;
+	  if (!v) {
+	    a = colorLookup.black;
+	  } else if (typeof v === 'number') {
+	    a = [v >> 16, v >> 8 & 255, v & 255];
+	  } else {
+	    if (v.charAt(v.length - 1) === ',') {
+	      v = v.substr(0, v.length - 1);
+	    }
+	    if (colorLookup[v]) {
+	      a = colorLookup[v];
+	    } else if (v.charAt(0) === '#') {
+	      // is #FFF
+	      if (v.length === 4) {
+	        r = v.charAt(1);
+	        g = v.charAt(2);
+	        b = v.charAt(3);
+	        v = '#' + r + r + g + g + b + b;
+	      }
+	      v = parseInt(v.substr(1), 16);
+	      a = [v >> 16, v >> 8 & 255, v & 255];
+	    } else if (v.substr(0, 3) === 'hsl') {
+	      a = v.match(_numExp);
+	      h = Number(a[0]) % 360 / 360;
+	      s = Number(a[1]) / 100;
+	      l = Number(a[2]) / 100;
+	      g = l <= 0.5 ? l * (s + 1) : l + s - l * s;
+	      r = l * 2 - g;
+	      if (a.length > 3) {
+	        a[3] = Number(a[3]);
+	      }
+	      a[0] = _hue(h + 1 / 3, r, g);
+	      a[1] = _hue(h, r, g);
+	      a[2] = _hue(h - 1 / 3, r, g);
+	    } else {
+	      a = v.match(_numExp) || colorLookup.transparent;
+	    }
+	    a[0] = Number(a[0]);
+	    a[1] = Number(a[1]);
+	    a[2] = Number(a[2]);
+	
+	    if (a.length > 3) {
+	      a[3] = Number(a[3]);
+	    }
+	  }
+	  return a;
+	}
+	
+	function parseShadow(v) {
+	  if (!v) {
+	    return [0, 0, 0, 0, 0, 0, 0];
+	  }
+	  if (v.indexOf('rgb') >= 0) {
+	    var t = v.match(/rgb+(?:a)?\((.*)\)/);
+	    var s = v.replace(t[0], '').trim().split(' ');
+	    var c = t[1].replace(/\s/g, '').split(',');
+	    if (c.length === 3) {
+	      c.push(1);
+	    }
+	    return s.concat(c);
+	  }
+	  var vArr = v.split(' ');
+	  var color = parseColor(vArr[3]);
+	  color[3] = typeof color[3] === 'number' ? color[3] : 1;
+	  vArr = vArr.splice(0, 3);
+	  return vArr.concat(color);
+	}
+	
+	function getColor(v) {
+	  var rgba = v.length === 4 ? 'rgba' : 'rgb';
+	  var _vars = v.map(function (d, i) {
+	    return i < 3 ? Math.round(d) : d;
+	  });
+	  return rgba + '(' + _vars.join(',') + ')';
+	}
+	
+	function isTransform(p) {
+	  return cssList._lists.transformsBase.indexOf(p) >= 0 ? 'transform' : p;
+	}
+	
+	function isConvert(p) {
+	  var cssName = isTransform(p);
+	  return cssList.filter.indexOf(cssName) >= 0 ? 'filter' : cssName;
+	}
+	
+	function splitFilterToObject(data) {
+	  if (data === 'none' || !data || data === '') {
+	    return null;
+	  }
+	  var filter = data.replace(' ', '').split(')').filter(function (item) {
+	    return item;
+	  });
+	  var startData = {};
+	  filter.forEach(function (item) {
+	    var dataArr = item.split('(');
+	    startData[dataArr[0]] = dataArr[1];
+	  });
+	  return startData;
+	}
+	
+	function getMatrix(t) {
+	  var arr = t.replace(/[a-z|(|)]/g, '').split(',');
+	  var m = {};
+	  m.m11 = parseFloat(arr[0]);
+	  m.m12 = parseFloat(arr[1]);
+	  m.m13 = 0;
+	  m.m14 = 0;
+	  m.m21 = parseFloat(arr[2]);
+	  m.m22 = parseFloat(arr[3]);
+	  m.m23 = 0;
+	  m.m24 = 0;
+	  m.m31 = 0;
+	  m.m32 = 0;
+	  m.m33 = 1;
+	  m.m34 = 0;
+	  m.m41 = parseFloat(arr[4]);
+	  m.m42 = parseFloat(arr[5]);
+	  m.m43 = 0;
+	  m.m44 = 0;
+	  return m;
+	}
+	
+	function getTransform(transform) {
+	  var _transform = transform === 'none' ? 'matrix(1, 0, 0, 1, 0, 0)' : transform;
+	  var m = createMatrix(_transform) || getMatrix(_transform);
+	  var m11 = m.m11;
+	  var m12 = m.m12;
+	  var m13 = m.m13;
+	  var m14 = m.m14;
+	  var m21 = m.m21;
+	  var m22 = m.m22;
+	  var m23 = m.m23;
+	  var m24 = m.m24;
+	  var m31 = m.m31;
+	  var m32 = m.m32;
+	  var m33 = m.m33;
+	  var m34 = m.m34;
+	  var m43 = m.m43;
+	  var t1 = void 0;
+	  var t2 = void 0;
+	  var t3 = void 0;
+	  var tm = {};
+	  tm.perspective = m34 ? parseFloat((m33 / (m34 < 0 ? -m34 : m34)).toFixed(3)) : 0;
+	  tm.rotateX = parseFloat((Math.asin(m23) * RAD2DEG).toFixed(3));
+	  var angle = tm.rotateX * DEG2RAD;
+	  var skewX = Math.tan(m.c);
+	  var skewY = Math.tan(m.b);
+	  var cos = m34 * tm.perspective;
+	  var sin = void 0;
+	  // rotateX
+	  if (angle) {
+	    cos = Math.cos(-angle);
+	    sin = Math.sin(-angle);
+	    t1 = m21 * cos + m31 * sin;
+	    t2 = m22 * cos + m32 * sin;
+	    t3 = m23 * cos + m33 * sin;
+	    m31 = m21 * -sin + m31 * cos;
+	    m32 = m22 * -sin + m32 * cos;
+	    m33 = m23 * -sin + m33 * cos;
+	    m34 = m24 * -sin + m34 * cos;
+	    m21 = t1;
+	    m22 = t2;
+	    m23 = t3;
+	  }
+	  // rotateY
+	  angle = Math.atan2(m31, m33);
+	  tm.rotateY = angle * RAD2DEG;
+	  if (angle) {
+	    cos = Math.cos(-angle);
+	    sin = Math.sin(-angle);
+	    t1 = m11 * cos - m31 * sin;
+	    t2 = m12 * cos - m32 * sin;
+	    t3 = m13 * cos - m33 * sin;
+	    m32 = m12 * sin + m32 * cos;
+	    m33 = m13 * sin + m33 * cos;
+	    m34 = m14 * sin + m34 * cos;
+	    m11 = t1;
+	    m12 = t2;
+	    m13 = t3;
+	  }
+	  // rotateZ
+	  angle = Math.atan2(m12, m11);
+	  tm.rotate = angle * RAD2DEG;
+	  if (angle) {
+	    cos = Math.cos(-angle);
+	    sin = Math.sin(-angle);
+	    m11 = m11 * cos + m21 * sin;
+	    t2 = m12 * cos + m22 * sin;
+	    m22 = m12 * -sin + m22 * cos;
+	    m23 = m13 * -sin + m23 * cos;
+	    m12 = t2;
+	  }
+	
+	  if (tm.rotateX && Math.abs(tm.rotateX) + Math.abs(tm.rotate) > 359.9) {
+	    tm.rotateX = tm.rotate = 0;
+	    tm.rotateY += 180;
+	  }
+	  var rnd = 100000;
+	  tm.scaleX = (Math.sqrt(m11 * m11 + m12 * m12) * rnd + 0.5 | 0) / rnd;
+	  tm.scaleY = (Math.sqrt(m22 * m22 + m32 * m32) * rnd + 0.5 | 0) / rnd;
+	  tm.scaleZ = (Math.sqrt(m23 * m23 + m33 * m33) * rnd + 0.5 | 0) / rnd;
+	  // 不管 skewX skewY了；
+	  tm.skewX = skewX === -skewY ? 0 : skewX;
+	  tm.skewY = skewY === -skewX ? 0 : skewY;
+	  tm.perspective = m34 ? 1 / (m34 < 0 ? -m34 : m34) : 0;
+	  tm.translateX = m.m41;
+	  tm.translateY = m.m42;
+	  tm.translateZ = m43;
+	  return tm;
+	}
+	
+	function stylesToCss(key, value) {
+	  var _value = void 0;
+	  if (!isUnitlessNumber[key] && typeof value === 'number') {
+	    _value = ' ' + value + 'px';
+	  } else if (key === 'content' && !unquotedContentValueRegex.test(value)) {
+	    _value = '\'' + value.replace(/'/g, "\\'") + '\'';
+	  }
+	  return _value || value;
+	}
+	
+	exports.default = cssList;
+
+
+/***/ },
 /* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -20725,11 +20991,9 @@
 	  value: true
 	});
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _objectAssign = __webpack_require__(172);
+	var _objectAssign = __webpack_require__(8);
 	
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
@@ -20737,11 +21001,11 @@
 	
 	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
 	
-	var _styleUtils = __webpack_require__(176);
+	var _styleUtils = __webpack_require__(173);
 	
 	var _styleUtils2 = _interopRequireDefault(_styleUtils);
 	
-	var _BezierPlugin = __webpack_require__(177);
+	var _BezierPlugin = __webpack_require__(176);
 	
 	var _BezierPlugin2 = _interopRequireDefault(_BezierPlugin);
 	
@@ -20766,43 +21030,119 @@
 	    initTime: now
 	  };
 	}
-	var timeLine = function timeLine(startData, toData) {
+	
+	var timeLine = function timeLine(target, toData) {
+	  this.target = target;
 	  // 记录总时间;
 	  this.totalTime = 0;
 	  // 记录当前时间;
 	  this.progressTime = 0;
 	  // 记录时间轴数据;
 	  this.defaultData = [];
-	  // 默认状态数据;
-	  this.startData = {};
 	  // 每个的开始数据；
 	  this.start = {};
 	  // 动画过程
 	  this.tween = {};
-	  // 最后样式；
-	  this.animStyle = {};
 	  // 每帧的时间;
 	  this.perFrame = Math.round(1000 / 60);
 	  // 设置默认动画数据;
-	  this.setDefaultData(startData, toData);
+	  this.setDefaultData(toData);
 	};
 	var p = timeLine.prototype;
 	
-	p.setDefaultData = function (start, vars) {
+	p.getComputedStyle = function () {
+	  return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
+	};
+	
+	p.getTweenData = function (_key, vars) {
+	  var data = {
+	    data: {},
+	    dataType: {},
+	    dataUnit: {},
+	    dataCount: {}
+	  };
+	  var key = (0, _styleUtils.getGsapType)(_key);
+	  if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
+	    data.data[key] = (0, _styleUtils.parseColor)(vars);
+	    data.dataType[key] = 'color';
+	  } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
+	    data.data[key] = (0, _styleUtils.parseShadow)(vars);
+	    data.dataType[key] = 'shadow';
+	  } else if (key === 'bezier') {
+	    data.data[key] = vars;
+	  } else if (key === 'scale') {
+	    data.data.scaleX = vars;
+	    data.data.scaleY = vars;
+	    data.dataType.scaleX = data.dataType.scaleY = 'other';
+	  } else {
+	    data.data[key] = vars;
+	    data.dataType[key] = 'other';
+	  }
+	  if (key !== 'bezier') {
+	    if (Array.isArray(data.data[key])) {
+	      data.dataUnit[key] = data.data[key].map(function (_item) {
+	        return _item.toString().replace(/[^a-z|%]/g, '');
+	      });
+	      data.dataCount[key] = data.data[key].map(function (_item) {
+	        return _item.toString().replace(/[^+|=|-]/g, '');
+	      });
+	      data.data[key] = data.data[key].map(function (_item) {
+	        return parseFloat(_item);
+	      });
+	    } else if (key === 'scale') {
+	      data.dataUnit.scaleX = data.data.scaleX.toString().replace(/[^a-z|%]/g, '');
+	      data.dataCount.scaleX = data.data.scaleX.toString().replace(/[^+|=|-]/g, '');
+	      data.data.scaleX = parseFloat(data.data.scaleX);
+	      data.dataUnit.scaleY = data.data.scaleY.toString().replace(/[^a-z|%]/g, '');
+	      data.dataCount.scaleY = data.data.scaleY.toString().replace(/[^+|=|-]/g, '');
+	      data.data.scaleY = parseFloat(data.data.scaleY);
+	    } else {
+	      data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
+	      data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
+	      data.data[key] = parseFloat(data.data[key].toString().replace(/[+|=|-]/g, ''));
+	    }
+	  }
+	  return data;
+	};
+	p.setDefaultData = function (vars) {
 	  var _this = this;
 	
 	  var now = 0;
 	  var repeatMax = false;
-	  var data = vars.map(function (item, i) {
+	  var data = vars.map(function (item) {
 	    now += item.delay || 0; // 加上延时，在没有播放过时；
 	    var tweenData = defaultData(item, now);
-	    tweenData.data = {};
+	    tweenData.vars = {};
+	    tweenData.varsType = {};
+	    tweenData.varsUnit = {};
+	    tweenData.varsCount = {};
 	    Object.keys(item).forEach(function (_key) {
 	      if (!(_key in tweenData)) {
-	        // const key = Css.getGsapType(_key);
-	        // const cssName = Css.isTransform(key);
-	        // this.startData[cssName] = start[cssName];
-	        tweenData.data[_key] = item[_key];
+	        var _data = _this.getTweenData(_key, item[_key]);
+	        var key = (0, _styleUtils.getGsapType)(_key);
+	        if (!(_key in _this.target) || _styleUtils2['default'].filter.indexOf(key) >= 0) {
+	          tweenData.vars.css = tweenData.vars.css || {};
+	          if (key === 'scale') {
+	            tweenData.vars.css.scaleX = _data.data.scaleX;
+	            tweenData.vars.css.scaleY = _data.data.scaleY;
+	          } else {
+	            tweenData.vars.css[key] = _data.data[key];
+	          }
+	        } else {
+	          tweenData.vars[key] = _data.data[key];
+	        }
+	        if (key === 'scale') {
+	          tweenData.varsType.scaleX = _data.dataType.scaleX;
+	          tweenData.varsUnit.scaleX = _data.dataUnit.scaleX;
+	          tweenData.varsCount.scaleX = _data.dataCount.scaleX;
+	          tweenData.varsType.scaleY = _data.dataType.scaleY;
+	          tweenData.varsUnit.scaleY = _data.dataUnit.scaleY;
+	          tweenData.varsCount.scaleY = _data.dataCount.scaleY;
+	          return;
+	        }
+	        tweenData.varsType[key] = _data.dataType[key];
+	        tweenData.varsUnit[key] = _data.dataUnit[key];
+	        tweenData.varsCount[key] = _data.dataCount[key];
 	      }
 	    });
 	    if (tweenData.yoyo && !tweenData.repeat) {
@@ -20817,162 +21157,300 @@
 	    } else {
 	      now += tweenData.duration * (tweenData.repeat + 1) + tweenData.repeatDelay * tweenData.repeat;
 	    }
-	    _this.startData = _extends({}, _this.startData, _this.getAnimStartData(start, item, i));
 	    return tweenData;
 	  });
 	  this.totalTime = repeatMax ? Number.MAX_VALUE : now;
 	  this.defaultData = data;
 	};
-	p.splitData = function (cssName, data, item, _key, i) {
-	  var transform = data.split(' ');
-	  var startData = {};
-	  if (!data) {
-	    return startData;
+	p.convertToMarks = function (style, num, unit) {
+	  var horiz = /(?:Left|Right|Width)/i.test(style);
+	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
+	  var pix = undefined;
+	  if (unit === '%') {
+	    pix = parseFloat(num) * 100 / (horiz ? t.clientWidth : t.clientHeight);
+	  } else {
+	    // em rem
+	    pix = parseFloat(num) / 16;
 	  }
-	  if (cssName === 'bezier') {
-	    var bezier = this['bezier' + i];
-	    transform = item.type === 'from' ? bezier.set(1) : bezier.set(0);
-	    transform = transform.split(' ');
-	  }
-	  var transformArr = _styleUtils2['default'].splitStyle(transform);
-	  transformArr.forEach(function (style) {
-	    var stylaArr = style.split('(');
-	    var styleName = stylaArr[0];
-	    var styleData = stylaArr[1].replace(')', '');
-	
-	    startData[styleName] = styleData;
-	  });
-	  return startData;
+	  return pix;
 	};
-	p.getAnimStartData = function (start, item, i, one) {
+	p.convertToMarksArray = function (unit, data, i) {
+	  var startUnit = data.toString().replace(/[^a-z|%]/g, '');
+	  var endUnit = unit[i];
+	  if (startUnit === endUnit) {
+	    return parseFloat(data);
+	  }
+	  return this.convertToMarks('shadow', data, endUnit);
+	};
+	p.getAnimStartCssData = function (vars, i) {
 	  var _this2 = this;
 	
-	  var _start = one ? start : {};
-	  Object.keys(item).filter(function (key) {
-	    return !(key in defaultData({}));
-	  }).forEach(function (_key) {
-	    var key = _styleUtils2['default'].getGsapType(_key);
-	    var cssName = _styleUtils2['default'].isConvert(key);
-	    var startData = start[one ? key : cssName];
+	  var computedStyle = this.getComputedStyle();
+	  var style = {};
+	  Object.keys(vars).forEach(function (_key) {
+	    var key = (0, _styleUtils.getGsapType)(_key);
+	    var cssName = (0, _styleUtils.isConvert)(key);
+	    var startData = computedStyle[cssName];
 	    if (!startData || startData === 'none' || startData === 'auto') {
 	      startData = '';
 	    }
-	    if (cssName === 'transform' || cssName === 'filter' || cssName === 'bezier') {
-	      if (one) {
-	        _start[key] = startData;
-	      } else {
-	        _start = (0, _objectAssign2['default'])(_start || {}, _this2.splitData(cssName, startData, item, _key, i));
+	    var transform = undefined;
+	    var endUnit = undefined;
+	    var startUnit = undefined;
+	    if (cssName === 'transform') {
+	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
+	      startData = computedStyle[_this2.transform];
+	      transform = (0, _styleUtils.getTransform)(startData);
+	      style.transform = transform;
+	    } else if (cssName === 'bezier') {
+	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
+	      startData = computedStyle[_this2.transform];
+	      var bezier = style.bezier = new _BezierPlugin2['default'](startData === 'none' ? '' : startData, vars.bezier);
+	      transform = vars.type === 'from' ? bezier.set(1) : bezier.set(0);
+	      transform = (0, _styleUtils.getTransform)(transform);
+	    } else if (cssName === 'filter') {
+	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter');
+	      startData = computedStyle[_this2.filterName];
+	      _this2.filterObject = (0, _objectAssign2['default'])(_this2.filterObject || {}, (0, _styleUtils.splitFilterToObject)(startData));
+	      startData = _this2.filterObject[_key] || 0;
+	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
+	      endUnit = _this2.defaultData[i].varsUnit[_key];
+	      if (endUnit !== startUnit) {
+	        startData = _this2.convertToMarks(_key, startData, endUnit);
 	      }
+	      style[_key] = parseFloat(startData);
+	    } else if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
+	      style[cssName] = (0, _styleUtils.parseColor)(startData);
+	    } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
+	      startData = (0, _styleUtils.parseShadow)(startData);
+	      endUnit = _this2.defaultData[i].varsUnit[_key];
+	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit));
+	      style[cssName] = startData;
 	    } else {
-	      _start[cssName] = startData || 0;
+	      // 计算单位， em rem % px;
+	      endUnit = _this2.defaultData[i].varsUnit[cssName];
+	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
+	      if (endUnit && (endUnit !== startUnit || endUnit !== 'px')) {
+	        startData = _this2.convertToMarks(cssName, startData, endUnit);
+	      }
+	      style[cssName] = parseFloat(startData || 0);
 	    }
 	  });
-	  return _start;
+	  return style;
 	};
-	p.setAnimData = function () {
+	p.getAnimStartData = function (item, i) {
 	  var _this3 = this;
 	
-	  var style = (0, _objectAssign2['default'])({}, this.startData, this.tween);
-	  Object.keys(style).forEach(function (key) {
-	    var cssName = _styleUtils2['default'].isConvert(key);
-	    if (cssName === 'transform') {
-	      _this3.animStyle[cssName] = _styleUtils2['default'].mergeStyleNew(_this3.animStyle[cssName] || '', _styleUtils2['default'].getParam(key, style[key]));
-	    } else if (cssName === 'filter') {
-	      var _key = key in _styleUtils2['default'].filterConvert ? _styleUtils2['default'].filterConvert[key] : key;
-	      _this3.animStyle[cssName] = _styleUtils2['default'].mergeStyleNew(_this3.animStyle[cssName] || '', _styleUtils2['default'].getParam(_key, style[key]));
-	    } else {
-	      _this3.animStyle[cssName] = style[key];
+	  var start = {};
+	  Object.keys(item).forEach(function (_key) {
+	    if (_key === 'css') {
+	      start[_key] = _this3.getAnimStartCssData(item[_key], i);
+	      return;
 	    }
+	    start[_key] = _this3.target[_key] || 0;
 	  });
+	  return start;
 	};
-	p.setRatio = function (ratio, endData, i) {
+	p.setAnimData = function (data) {
 	  var _this4 = this;
 	
-	  Object.keys(endData).forEach(function (_key) {
-	    var key = _styleUtils2['default'].getGsapType(_key);
-	    var endVars = endData[_key];
-	    var startVars = (_this4.start[i] || _this4.startData)[key];
-	    var differ = undefined;
-	    if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
-	      startVars = _styleUtils2['default'].parseColor(startVars);
-	      endVars = _styleUtils2['default'].parseColor(endVars);
-	      startVars[3] = typeof startVars[3] !== 'number' ? 1 : startVars[3];
-	      endVars[3] = typeof endVars[3] !== 'number' ? 1 : endVars[3];
-	      differ = endVars.map(function (data, ii) {
-	        return (data - startVars[ii]) * ratio + startVars[ii];
-	      });
-	    } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
-	      startVars = startVars === 'none' || !startVars ? '0 0 0 transparent' : startVars;
-	      startVars = _styleUtils2['default'].parseShadow(startVars);
-	      endVars = _styleUtils2['default'].parseShadow(endVars);
-	      differ = endVars.map(function (data, ii) {
-	        return (parseFloat(data) - parseFloat(startVars[ii])) * ratio + parseFloat(startVars[ii]);
-	      });
-	    } else {
-	      endVars = parseFloat(endVars.toString().replace('=', ''));
-	      startVars = key === 'opacity' && startVars !== 0 ? 1 : startVars;
-	      startVars = key.indexOf('scale') >= 0 ? 1 : startVars;
-	      startVars = parseFloat(startVars || 0);
-	      differ = typeof endData[_key] === 'string' && endData[_key].charAt(1) === '=' ? startVars + endVars * ratio : (endVars - startVars) * ratio + startVars;
+	  var style = this.target.style;
+	  Object.keys(data).forEach(function (key) {
+	    if (key === 'css') {
+	      var _ret = (function () {
+	        var _data = data[key];
+	        Object.keys(_data).forEach(function (_key) {
+	          if (_key === 'transform') {
+	            var t = _data[_key];
+	            var perspective = t.perspective;
+	            var angle = t.rotate;
+	            var rotateX = t.rotateX;
+	            var rotateY = t.rotateY;
+	            var sx = t.scaleX;
+	            var sy = t.scaleY;
+	            var sz = t.scaleZ;
+	            var skx = t.skewX;
+	            var sky = t.skewY;
+	            var translateX = t.translateX;
+	            var translateY = t.translateY;
+	            var translateZ = t.translateZ;
+	            var xPercent = t.xPercent || 0;
+	            var yPercent = t.yPercent || 0;
+	            var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
+	            var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
+	            var an = angle ? 'rotate(' + angle + 'deg)' : '';
+	            var ss = undefined;
+	            if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
+	              var matrix = '1,0,0,1,' + translateX + ',' + translateY;
+	              ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
+	              // IE 9 没 3d;
+	              style[_this4.transform] = (percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk).trim();
+	              return;
+	            }
+	            ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
+	            var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
+	            var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
+	            var per = perspective ? 'perspective(' + perspective + 'px)' : '';
+	            style[_this4.transform] = (per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
+	            return;
+	          } else if (_styleUtils2['default'].filter.indexOf(_key) >= 0) {
+	            _this4.filterObject[_key] = _data[_key];
+	            var filterStyle = '';
+	            Object.keys(_this4.filterObject).forEach(function (filterKey) {
+	              filterStyle += ' ' + filterKey + '(' + _this4.filterObject[filterKey] + ')';
+	            });
+	            style[_this4.filterName] = filterStyle.trim();
+	            return;
+	          }
+	          style[_key] = data[key][_key];
+	        });
+	        return {
+	          v: undefined
+	        };
+	      })();
+	
+	      if (typeof _ret === 'object') return _ret.v;
 	    }
-	    var unit = endData[_key].toString().replace(/[^a-z|%]/ig, '') || 0;
-	    var cssName = _styleUtils2['default'].isTransform(key);
-	    if (cssName === 'bezier') {
-	      var bezier = _this4['bezier' + i] = _this4['bezier' + i] || new _BezierPlugin2['default'](startVars, endData[_key]);
-	      _this4.tween = (0, _objectAssign2['default'])(_this4.tween || {}, _this4.splitData('transform', bezier.set(ratio)));
-	    } else if (cssName === 'filter' || cssName === 'transform') {
-	      _this4.tween[key] = differ + unit;
-	    } else {
-	      _this4.tween[key] = _styleUtils2['default'].getParam(key, endData[key], differ);
-	    }
+	    _this4.target[key] = data[key];
 	  });
-	  this.setAnimData();
 	};
-	p.render = function () {
+	p.setArrayRatio = function (ratio, start, vars, unit, type) {
+	  var _vars = vars.map(function (endData, i) {
+	    var startData = start[i] || 0;
+	    return (endData - startData) * ratio + startData + unit[i];
+	  });
+	  if (type === 'color') {
+	    return (0, _styleUtils.getColor)(_vars);
+	  } else if (type === 'shadow') {
+	    var s = _vars.slice(0, 3);
+	    var c = _vars.slice(3, _vars.length);
+	    var color = (0, _styleUtils.getColor)(c);
+	    return s.join(' ') + ' ' + color;
+	  }
+	  return _vars;
+	};
+	
+	p.setStyleRatio = function (ratio, start, vars, unit, count, type) {
 	  var _this5 = this;
 	
-	  var onChange = [];
+	  var style = {};
+	  if (start.transform) {
+	    style.transform = (0, _objectAssign2['default'])({}, start.transform, this.tween.css ? this.tween.css.transform : {});
+	  }
+	  Object.keys(vars).forEach(function (key) {
+	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
+	    var startVars = _isTransform ? start.transform[key] : start[key];
+	    var endVars = vars[key];
+	    var _unit = unit[key] ? unit[key] : 0;
+	    var _count = count[key];
+	    if (_isTransform) {
+	      if (_unit === '%' || _unit === 'em' || _unit === 'rem') {
+	        // translateX translateY => %
+	        var pName = undefined;
+	        var data = undefined;
+	        if (key === 'translateX') {
+	          data = start.transform.translateX;
+	          pName = 'xPercent';
+	        } else {
+	          data = start.transform.translateY;
+	          pName = 'yPercent';
+	        }
+	        if (_count.charAt(1) !== '=') {
+	          style.transform[key] = data - data * ratio;
+	        }
+	        style.transform[pName] = endVars * ratio + _unit;
+	      } else {
+	        if (_count.charAt(1) === '=') {
+	          style.transform[key] = startVars + endVars * ratio;
+	          return;
+	        }
+	        style.transform[key] = (endVars - startVars) * ratio + startVars;
+	      }
+	      return;
+	    } else if (key === 'bezier') {
+	      var bezier = start[key];
+	      style.transform = (0, _styleUtils.getTransform)(bezier.set(ratio));
+	      return;
+	    } else if (Array.isArray(endVars)) {
+	      var _type = type[key];
+	      style[key] = _this5.setArrayRatio(ratio, startVars, endVars, _unit, _type);
+	      return;
+	    }
+	    var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
+	    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
+	    _unit = _unit || (_styleUtils2['default'].filter.indexOf(key) >= 0 ? '' : styleUnit);
+	    if (_count.charAt(1) === '=') {
+	      style[key] = startVars + endVars * ratio + _unit;
+	      return;
+	    }
+	    style[key] = (endVars - startVars) * ratio + startVars + _unit;
+	  });
+	  return style;
+	};
+	
+	p.setRatio = function (ratio, endData, i) {
+	  var _this6 = this;
+	
+	  Object.keys(endData.vars).forEach(function (_key) {
+	    var key = (0, _styleUtils.getGsapType)(_key);
+	    var endVars = endData.vars[_key];
+	    var startVars = _this6.start[i][key];
+	    var unit = _this6.defaultData[i].varsUnit;
+	    var count = _this6.defaultData[i].varsCount;
+	    var type = _this6.defaultData[i].varsType;
+	    if (typeof endVars === 'object' && _key === 'css') {
+	      _this6.tween.css = (0, _objectAssign2['default'])({}, _this6.tween.css, _this6.setStyleRatio(ratio, startVars, endVars, unit, count, type));
+	    } else if (Array.isArray(endVars)) {
+	      _this6.tween[key] = _this6.setArrayRatio(ratio, startVars, endVars, unit[key]);
+	    } else {
+	      _this6.tween[key] = count[key].charAt(1) === '=' ? startVars + endVars * ratio : (endVars - startVars) * ratio + startVars;
+	    }
+	  });
+	  this.setAnimData(this.tween);
+	};
+	p.render = function () {
+	  var _this7 = this;
+	
 	  this.defaultData.forEach(function (item, i) {
 	    var initTime = item.initTime;
 	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-	    var repeatNum = Math.ceil((_this5.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
+	    var repeatNum = Math.ceil((_this7.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
 	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
-	    repeatNum = _this5.progressTime === 0 ? repeatNum + 1 : repeatNum;
+	    repeatNum = _this7.progressTime === 0 ? repeatNum + 1 : repeatNum;
 	    if (item.repeat) {
 	      if (item.repeat || item.repeat <= repeatNum) {
 	        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
 	      }
 	    }
-	    var progressTime = _this5.progressTime - initTime;
+	    var progressTime = _this7.progressTime - initTime;
 	    // onRepeat 处理
-	    if (item.repeat && repeatNum > 0 && progressTime < _this5.perFrame) {
+	    if (item.repeat && repeatNum > 0 && progressTime < _this7.perFrame) {
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
-	    // 状态
-	    var mode = 'onUpdate';
-	    // 开始 onStart
-	    if (progressTime >= 0 && progressTime < _this5.perFrame) {
-	      item.onStart();
-	      mode = 'onStart';
-	    }
+	    // 设置 start
 	    var delay = item.delay >= 0 ? item.delay : -item.delay;
 	    var fromDelay = item.type === 'from' ? delay : 0;
-	    if (progressTime + fromDelay >= 0 && !_this5.start[i]) {
-	      _this5.start[i] = _this5.getAnimStartData((0, _objectAssign2['default'])({}, _this5.startData, _this5.tween), item.data, i, true);
-	      var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : progressTime / (item.duration + fromDelay);
-	      _this5.setRatio(item.type === 'from' ? 1 - st : st, item.data, i);
+	    if (progressTime + fromDelay >= 0 && !_this7.start[i]) {
+	      _this7.start[i] = _this7.getAnimStartData(item.vars, i);
+	      _this7.setRatio(item.type === 'from' ? 1 : 0, item, i);
 	    }
-	    if (progressTime >= 0 && progressTime < item.duration + _this5.perFrame) {
+	    if (progressTime >= 0 && progressTime < item.duration + _this7.perFrame) {
+	      // 状态
+	      var mode = 'onUpdate';
+	      // 开始 onStart
+	      if (progressTime < _this7.perFrame) {
+	        item.onStart();
+	        mode = 'onStart';
+	      }
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > item.duration ? item.duration : progressTime;
 	      var ratio = _tweenFunctions2['default'][item.ease](progressTime, 0, 1, item.duration);
 	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
 	        ratio = _tweenFunctions2['default'][item.ease](progressTime, 1, 0, item.duration);
 	      }
-	
 	      // 当前点生成样式;
-	      _this5.setRatio(ratio, item.data, i);
+	      _this7.setRatio(ratio, item, i);
 	
 	      mode = progressTime === item.duration ? 'onComplete' : mode;
 	
@@ -20980,28 +21458,20 @@
 	        // update 事件
 	        item.onUpdate(ratio);
 	      }
-	      onChange.push(_this5.onChange.bind(_this5, {
-	        moment: _this5.progressTime,
+	
+	      _this7.onChange({
+	        moment: _this7.progressTime,
 	        item: item,
-	        tween: _this5.tween,
+	        tween: _this7.tween,
 	        index: i,
 	        mode: mode
-	      }));
-	
+	      });
 	      // complete 事件
 	      if (mode === 'onComplete') {
-	        // setState 后处理，扔到 onChange 里一起处理;
-	        // 以前去掉 onStart onUpdate onComplete;
-	        onChange.push(item.onComplete);
+	        item.onComplete();
 	      }
 	    }
 	  });
-	  this.onChange = function () {
-	    onChange.forEach(function (func) {
-	      return func();
-	    });
-	    onChange = null;
-	  };
 	};
 	// 播放帧
 	p.frame = function (moment) {
@@ -21012,7 +21482,6 @@
 	p.resetAnimData = function () {
 	  this.tween = {};
 	  this.start = {};
-	  this.animStyle = {};
 	};
 	
 	p.onChange = noop;
@@ -21276,488 +21745,6 @@
 
 /***/ },
 /* 176 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var IE = function () {
-	  if (document.documentMode) {
-	    return document.documentMode;
-	  }
-	  for (var i = 7; i > 4; i--) {
-	    var div = document.createElement('div');
-	    div.innerHTML = '<!--[if IE ' + i + ']><span class="is-ie"></span><![endif]-->';
-	    if (div.getElementsByClassName('is-ie').length) {
-	      div = null;
-	      return i;
-	    }
-	  }
-	  return undefined;
-	}();
-	
-	var colorLookup = {
-	  aqua: [0, 255, 255],
-	  lime: [0, 255, 0],
-	  silver: [192, 192, 192],
-	  black: [0, 0, 0],
-	  maroon: [128, 0, 0],
-	  teal: [0, 128, 128],
-	  blue: [0, 0, 255],
-	  navy: [0, 0, 128],
-	  white: [255, 255, 255],
-	  fuchsia: [255, 0, 255],
-	  olive: [128, 128, 0],
-	  yellow: [255, 255, 0],
-	  orange: [255, 165, 0],
-	  gray: [128, 128, 128],
-	  purple: [128, 0, 128],
-	  green: [0, 128, 0],
-	  red: [255, 0, 0],
-	  pink: [255, 192, 203],
-	  cyan: [0, 255, 255],
-	  transparent: [255, 255, 255, 0]
-	};
-	var _hue = function _hue(hh, m1, m2) {
-	  var h = hh > 1 ? hh - 1 : hh;
-	  h = hh < 0 ? hh + 1 : h;
-	  var a = h * 3 < 2 ? m1 + (m2 - m1) * (2 / 3 - h) * 6 : m1;
-	  var b = h < 0.5 ? m2 : a;
-	  var c = h * 6 < 1 ? m1 + (m2 - m1) * h * 6 : b;
-	  return c * 255 + 0.5 | 0;
-	};
-	
-	var CSS = {
-	  _lists: {
-	    transformsBase: ['translate', 'translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY', 'rotateZ', 'rotate'],
-	    transforms3D: ['translate3d', 'translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective']
-	  },
-	  filter: ['grayScale', 'sepia', 'hueRotate', 'invert', 'brightness', 'contrast', 'blur'],
-	  filterConvert: { grayScale: 'grayscale', hueRotate: 'hue-rotate' },
-	  transformGroup: { translate: 1, translate3d: 1, scale: 1, scale3d: 1, rotate: 1, rotate3d: 1 },
-	
-	  getGsapType: function getGsapType(_p) {
-	    var p = _p;
-	    p = p === 'x' ? 'translateX' : p;
-	    p = p === 'y' ? 'translateY' : p;
-	    p = p === 'z' ? 'translateZ' : p;
-	    p = p === 'r' ? 'rotate' : p;
-	    return p;
-	  },
-	  parseShadow: function parseShadow(v) {
-	    var vArr = v.split(' ');
-	    var color = this.parseColor(vArr[3]);
-	    color[3] = typeof color[3] === 'number' ? color[3] : 1;
-	    vArr = vArr.splice(0, 3);
-	    return vArr.concat(color);
-	  },
-	  parseColor: function parseColor(_v) {
-	    var a = void 0;
-	    var r = void 0;
-	    var g = void 0;
-	    var b = void 0;
-	    var h = void 0;
-	    var s = void 0;
-	    var l = void 0;
-	    var v = _v;
-	    var _numExp = /(?:\d|\-\d|\.\d|\-\.\d)+/g;
-	    if (!v) {
-	      a = colorLookup.black;
-	    } else if (typeof v === 'number') {
-	      a = [v >> 16, v >> 8 & 255, v & 255];
-	    } else {
-	      if (v.charAt(v.length - 1) === ',') {
-	        v = v.substr(0, v.length - 1);
-	      }
-	      if (colorLookup[v]) {
-	        a = colorLookup[v];
-	      } else if (v.charAt(0) === '#') {
-	        // is #FFF
-	        if (v.length === 4) {
-	          r = v.charAt(1);
-	          g = v.charAt(2);
-	          b = v.charAt(3);
-	          v = '#' + r + r + g + g + b + b;
-	        }
-	        v = parseInt(v.substr(1), 16);
-	        a = [v >> 16, v >> 8 & 255, v & 255];
-	      } else if (v.substr(0, 3) === 'hsl') {
-	        a = v.match(_numExp);
-	        h = Number(a[0]) % 360 / 360;
-	        s = Number(a[1]) / 100;
-	        l = Number(a[2]) / 100;
-	        g = l <= 0.5 ? l * (s + 1) : l + s - l * s;
-	        r = l * 2 - g;
-	        if (a.length > 3) {
-	          a[3] = Number(a[3]);
-	        }
-	        a[0] = _hue(h + 1 / 3, r, g);
-	        a[1] = _hue(h, r, g);
-	        a[2] = _hue(h - 1 / 3, r, g);
-	      } else {
-	        a = v.match(_numExp) || colorLookup.transparent;
-	      }
-	      a[0] = Number(a[0]);
-	      a[1] = Number(a[1]);
-	      a[2] = Number(a[2]);
-	
-	      if (a.length > 3) {
-	        a[3] = Number(a[3]);
-	      }
-	    }
-	    return a;
-	  },
-	  getArrayToColor: function getArrayToColor(arr) {
-	    var color = 'rgba(';
-	    var _arr = arr.map(function (item, i) {
-	      if (i < 3) {
-	        return parseInt(item, 10);
-	      }
-	      return item;
-	    });
-	    return color + _arr.join(',') + ')';
-	  },
-	  splitStyle: function splitStyle(styleArr) {
-	    var _this = this;
-	
-	    var arr = [];
-	    styleArr.forEach(function (_item) {
-	      var _itemArr = _item.split('(');
-	      var cssName = _itemArr[0];
-	      var data = _itemArr[1];
-	      var dataArr = data.replace(')', '').split(',');
-	      if (dataArr.length === 1) {
-	        return arr.push(_item);
-	      }
-	      if (cssName.indexOf('translate') >= 0) {
-	        arr.push(_this.getValues('translateX', dataArr[0]));
-	        if (dataArr[1]) {
-	          arr.push(_this.getValues('translateY', dataArr[1]));
-	        }
-	        if (cssName === 'translate3d' && dataArr[2]) {
-	          arr.push(_this.getValues('translateZ', dataArr[2]));
-	        }
-	      } else if (cssName === 'scale') {
-	        arr.push(_this.getValues('scaleX', dataArr[0]));
-	        arr.push(_this.getValues('scaleY', dataArr[1] || dataArr[0]));
-	      } else if (cssName === 'skew') {
-	        if (dataArr[0]) {
-	          arr.push(_this.getValues('skewX', dataArr[0]));
-	        }
-	        if (dataArr[1]) {
-	          arr.push(_this.getValues('skewY', dataArr[1]));
-	        }
-	      }
-	    });
-	    return arr;
-	  },
-	  getTransformStart: function getTransformStart(name, obj) {
-	    if (name in obj) {
-	      return obj[name];
-	    }
-	    if (name.indexOf('translate') >= 0) {
-	      if ('translate' in obj || 'translate3d' in obj) {
-	        switch (name) {
-	          case 'translateX':
-	            return obj.translate.split(',')[0];
-	          case 'translateY':
-	            return obj.translate.split(',')[1];
-	          case 'translateZ':
-	            return obj.translate.split(',')[2];
-	          default:
-	            return null;
-	        }
-	      }
-	    } else if (name.indexOf('rotate') >= 0) {
-	      if ('rotate' in obj || 'rotate3d' in obj) {
-	        switch (name) {
-	          case 'rotateX':
-	            return obj.rotate.split(',')[0];
-	          case 'rotateY':
-	            return obj.rotate.split(',')[1];
-	          case 'rotateZ':
-	            return obj.rotate.split(',')[2];
-	          default:
-	            return null;
-	        }
-	      }
-	    } else if (name.indexOf('scale') >= 0) {
-	      if ('scale' in obj) {
-	        switch (name) {
-	          case 'scaleX':
-	            return obj.scale.split(',')[0];
-	          case 'scaleY':
-	            return obj.scale.split(',')[1];
-	          default:
-	            return null;
-	        }
-	      }
-	    }
-	    return '';
-	  },
-	  mergeTransformName: function mergeTransformName(a, b) {
-	    var belongTransform = this.findStyleByName(a, b);
-	    if (belongTransform) {
-	      var bArr = belongTransform.split('(');
-	      var dataArr = bArr[1].replace(')', '').split(',');
-	      switch (b) {
-	        case 'translateY' || 'scaleY' || 'rotateY':
-	          return dataArr[1];
-	        case 'translateZ' || 'rotateZ':
-	          return dataArr[2];
-	        default:
-	          return dataArr[0];
-	      }
-	    }
-	    return null;
-	  },
-	  findStyleByName: function findStyleByName(cssArray, name) {
-	    var _this2 = this;
-	
-	    var ret = null;
-	    if (cssArray) {
-	      cssArray.forEach(function (_cname) {
-	        if (ret) {
-	          return;
-	        }
-	        var cName = _cname.split('(')[0];
-	        var a = cName in _this2.transformGroup && name.substring(0, name.length - 1).indexOf(cName) >= 0;
-	        var b = name in _this2.transformGroup && cName.substring(0, cName.length - 1).indexOf(name) >= 0;
-	        var c = cName in _this2.transformGroup && name in _this2.transformGroup && (cName.substring(0, cName.length - 2) === name || name.substring(0, name.length - 2) === cName);
-	        if (cName === name || a || b || c) {
-	          ret = _cname;
-	        }
-	      });
-	    }
-	    return ret;
-	  },
-	  mergeStyleNew: function mergeStyleNew(current, change) {
-	    var _this3 = this;
-	
-	    if (!current || current === '') {
-	      return change;
-	    }
-	    if (!change || change === '') {
-	      return current;
-	    }
-	    var _current = current.replace(/\s/g, '').split(')').filter(function (item) {
-	      return item !== '' && item;
-	    }).map(function (item) {
-	      return item + ')';
-	    });
-	    var _change = change.replace(/\s/g, '').split(')').filter(function (item) {
-	      return item !== '' && item;
-	    });
-	    _change.forEach(function (changeOnly) {
-	      var changeArr = changeOnly.split('(');
-	      var changeName = changeArr[0];
-	      var currentSame = _this3.findStyleByName(_current, changeName);
-	      if (!currentSame) {
-	        _current.push(changeOnly + ')');
-	      } else {
-	        var index = _current.indexOf(currentSame);
-	        _current[index] = changeOnly + ')';
-	      }
-	    });
-	    _current.forEach(function (item, i) {
-	      if (item.indexOf('perspective') >= 0 && i) {
-	        _current.splice(i, 1);
-	        _current.unshift(item);
-	      }
-	    });
-	    return _current.join(' ').trim();
-	  },
-	  mergeStyle: function mergeStyle(current, change) {
-	    var _this4 = this;
-	
-	    if (!current || current === '') {
-	      return change;
-	    }
-	    if (!change || change === '') {
-	      return current;
-	    }
-	    var addArr = [];
-	
-	    var _current = current.replace(/\s/g, '').split(')').filter(function (item) {
-	      return item !== '' && item;
-	    });
-	    var _change = change.replace(/\s/g, '').split(')').filter(function (item) {
-	      return item !== '' && item;
-	    });
-	
-	    // 如果变动的在旧的里没有，把变动的插回进去；
-	    _change.forEach(function (changeOnly) {
-	      var changeArr = changeOnly.split('(');
-	      var changeOnlyName = changeArr[0];
-	      var changeDataArr = changeArr[1].split(',');
-	      var currentSame = _this4.findStyleByName(_current, changeOnlyName);
-	      if (!currentSame) {
-	        addArr.push(changeOnlyName + '(' + changeDataArr.join(',') + ')');
-	      }
-	    });
-	    _current.forEach(function (currentOnly) {
-	      var currentArr = currentOnly.split('(');
-	      var currentOnlyName = currentArr[0];
-	
-	      var currentDataArr = currentArr[1].split(',');
-	      var changeSame = _this4.findStyleByName(_change, currentOnlyName);
-	      // 三种情况，ＸＹＺ时分析，空时组合前面的分析，
-	      if (changeSame) {
-	        var changeArr = changeSame.split('(');
-	        var changeOnlyName = changeArr[0];
-	        var changeDataArr = changeArr[1].split(',');
-	        if (currentOnlyName === changeOnlyName) {
-	          addArr.push(changeSame + ')');
-	        } else if (currentOnlyName in _this4.transformGroup && changeOnlyName.substring(0, changeOnlyName.length - 1).indexOf(currentOnlyName) >= 0) {
-	          switch (changeOnlyName) {
-	            case 'translateX' || 'scaleX' || 'rotateX':
-	              currentDataArr[0] = changeDataArr.join();
-	              break;
-	            case 'translateY' || 'scaleY' || 'rotateY':
-	              currentDataArr[1] = changeDataArr.join();
-	              break;
-	            case 'translateZ' || 'rotateZ':
-	              currentDataArr[2] = changeDataArr.join();
-	              break;
-	            default:
-	              return null;
-	          }
-	          addArr.push(currentOnlyName + '(' + currentDataArr.join(',') + ')');
-	        } else if (changeOnlyName in _this4.transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 1).indexOf(changeOnlyName) >= 0) {
-	          addArr.push(changeOnlyName + '(' + changeDataArr.join(',') + ')');
-	        } else if (changeOnlyName in _this4.transformGroup && currentOnlyName in _this4.transformGroup && currentOnlyName.substring(0, currentOnlyName.length - 2) === changeOnlyName) {
-	          // 如果是3d时,且一个为2d时；
-	          switch (changeOnlyName) {
-	            case 'translateX' || 'scaleX' || 'rotateX':
-	              currentDataArr[0] = changeDataArr[0];
-	              break;
-	            case 'translateY' || 'scaleY' || 'rotateY':
-	              currentDataArr[1] = changeDataArr[1];
-	              break;
-	            default:
-	              return null;
-	          }
-	          addArr.push(currentOnlyName + '(' + currentDataArr.join(',') + ')');
-	        }
-	      } else {
-	        addArr.push(currentOnlyName + '(' + currentDataArr.join(',') + ')');
-	      }
-	    });
-	
-	    if (!addArr.length) {
-	      addArr.push(current, change);
-	    }
-	    addArr.forEach(function (item, i) {
-	      if (item.indexOf('perspective') >= 0 && i) {
-	        addArr.splice(i, 1);
-	        addArr.unshift(item);
-	      }
-	    });
-	    return addArr.join(' ').trim();
-	  },
-	  getValues: function getValues(p, d, u) {
-	    return p + '(' + d + (u || '') + ')';
-	  },
-	  getUnit: function getUnit(p, v) {
-	    var currentUnit = v.toString().replace(/[^a-z|%]/ig, '');
-	    var unit = '';
-	    if (p.indexOf('translate') >= 0 || p.indexOf('perspective') >= 0) {
-	      unit = 'px';
-	    } else if (p.indexOf('skew') >= 0 || p.indexOf('rotate') >= 0) {
-	      unit = 'deg';
-	    }
-	    return currentUnit || unit;
-	  },
-	  isTransform: function isTransform(p) {
-	    return this._lists.transformsBase.indexOf(p) >= 0 ? 'transform' : p;
-	  },
-	  isConvert: function isConvert(p) {
-	    var cssName = this.isTransform(p);
-	    return this.filter.indexOf(cssName) >= 0 ? 'filter' : cssName;
-	  },
-	  getShadowParam: function getShadowParam(v, d) {
-	    var color = [];
-	    for (var i = 3; i < d.length; i++) {
-	      color.push(d[i]);
-	    }
-	    color = this.getArrayToColor(color);
-	    var vArr = v.split(' ');
-	    var blur = [];
-	    // 获取单位
-	    vArr.forEach(function (item, ii) {
-	      if (ii < 3) {
-	        var unit = item.toString().replace(/[^a-z|%]/ig, '');
-	        blur.push(d[ii] + unit);
-	      }
-	    });
-	    return blur.join(' ') + ' ' + color;
-	  },
-	  getParam: function getParam(p, v, dd) {
-	    var unit = this.getUnit(p, v);
-	    if (!dd && dd !== '' && dd !== 0) {
-	      return this.getValues(p, parseFloat(v.toString().replace('=', '')), unit);
-	    }
-	    var d = Array.isArray(dd) && dd.length === 1 ? dd[0] : dd;
-	    if (p.indexOf('translate') >= 0 || p.indexOf('perspective') >= 0 || p.indexOf('skew') >= 0 || p.indexOf('rotate') >= 0 || p.indexOf('scale') >= 0) {
-	      return this.getValues(p, d, unit);
-	    } else if (p.indexOf('Shadow') >= 0 || p.indexOf('shadow') >= 0) {
-	      return this.getShadowParam(v, d);
-	    } else if (p.indexOf('color') >= 0 || p.indexOf('Color') >= 0) {
-	      return this.getArrayToColor(d);
-	    }
-	    return d + (unit || 0);
-	  },
-	  getFilterParam: function getFilterParam(current, change, data) {
-	    var _this5 = this;
-	
-	    var unit = void 0;
-	    var changeArr = change.replace(/\s/g, '').split(')').filter(function (item) {
-	      return item !== '' && item;
-	    });
-	    var currentArr = current.replace(/\s/g, '').split(')').filter(function (item) {
-	      return item !== '' && item;
-	    });
-	    changeArr = changeArr.map(function (changeOnly) {
-	      var changeOnlyArr = changeOnly.split('(');
-	      var changeOnlyName = changeOnlyArr[0];
-	      if (!changeOnlyArr[1]) {
-	        return '';
-	      }
-	      var changeDataArr = changeOnlyArr[1].replace(')', '').split(',');
-	      var currentSame = _this5.findStyleByName(currentArr, changeOnlyName);
-	      if (currentSame) {
-	        (function () {
-	          var currentDataArr = currentSame.split('(')[1].replace(')', '').split(',');
-	          changeDataArr = changeDataArr.map(function (dataOnly, i) {
-	            unit = dataOnly.toString().replace(/[^a-z|%]/ig, '');
-	            var currentDataOnly = currentDataArr[i];
-	            var currentUnit = currentDataOnly.toString().replace(/[^a-z|%]/ig, '');
-	            var dataOnlyNumber = parseFloat(dataOnly);
-	            var currentDataOnlyNumber = parseFloat(currentDataOnly);
-	            var differData = currentUnit !== unit ? dataOnlyNumber : dataOnlyNumber - currentDataOnlyNumber;
-	            var _data = differData * data + currentDataOnlyNumber + unit;
-	            return _data;
-	          });
-	        })();
-	      } else {
-	        changeDataArr = changeDataArr.map(function (dataOnly) {
-	          unit = dataOnly.toString().replace(/[^a-z|%]/ig, '');
-	          return parseFloat(dataOnly) * data + unit;
-	        });
-	      }
-	      return changeOnlyName + '(' + changeDataArr.join(',') + ')';
-	    });
-	    return changeArr.join(' ');
-	  }
-	};
-	CSS._lists.transformsBase = !(IE <= 9) ? CSS._lists.transformsBase.concat(CSS._lists.transforms3D) : CSS._lists.transformsBase;
-	exports.default = CSS;
-
-
-/***/ },
-/* 177 */
 /***/ function(module, exports) {
 
 	/**
@@ -22269,7 +22256,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 178 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22280,7 +22267,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _raf = __webpack_require__(179);
+	var _raf = __webpack_require__(178);
 	
 	var _raf2 = _interopRequireDefault(_raf);
 	
@@ -22320,10 +22307,11 @@
 	  ticker.frame++;
 	  ticker.id = (0, _raf2['default'])(ticker.tick);
 	};
+	var timeoutIdNumber = 0;
 	p.timeout = function (fn, time) {
 	  var _this = this;
 	
-	  var timeoutID = 'timeout' + (Date.now() + Math.random());
+	  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
 	  var startFrame = this.frame;
 	  this.wake(timeoutID, function () {
 	    if (!(typeof fn === 'function')) {
@@ -22335,16 +22323,17 @@
 	      fn();
 	    }
 	  });
+	  timeoutIdNumber++;
 	  return timeoutID;
 	};
 	exports['default'] = ticker;
 	module.exports = exports['default'];
 
 /***/ },
-/* 179 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(180)
+	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(179)
 	  , root = typeof window === 'undefined' ? global : window
 	  , vendors = ['moz', 'webkit']
 	  , suffix = 'AnimationFrame'
@@ -22420,7 +22409,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 180 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
@@ -22459,7 +22448,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ },
-/* 181 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22488,7 +22477,7 @@
 	
 	var _TweenOne2 = _interopRequireDefault(_TweenOne);
 	
-	var _util = __webpack_require__(173);
+	var _util = __webpack_require__(172);
 	
 	function noop() {}
 	

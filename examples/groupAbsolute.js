@@ -1,14 +1,14 @@
-webpackJsonp([14],{
+webpackJsonp([10],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(194);
+	module.exports = __webpack_require__(190);
 
 
 /***/ },
 
-/***/ 194:
+/***/ 190:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25,8 +25,6 @@ webpackJsonp([14],{
 	
 	var _rcTweenOne = __webpack_require__(2);
 	
-	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
-	
 	var _react = __webpack_require__(5);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -39,23 +37,54 @@ webpackJsonp([14],{
 	  _inherits(Demo, _React$Component);
 	
 	  function Demo() {
+	    var _this = this;
+	
 	    _classCallCheck(this, Demo);
 	
 	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
+	    this.imgArray = ['https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg', 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'];
+	    this.state = {
+	      int: 0
+	    };
+	    ['onClick'].forEach(function (method) {
+	      return _this[method] = _this[method].bind(_this);
+	    });
 	  }
 	
 	  _createClass(Demo, [{
+	    key: 'onClick',
+	    value: function onClick() {
+	      var int = this.state.int;
+	      int++;
+	      if (int >= this.imgArray.length) {
+	        int = 0;
+	      }
+	      this.setState({ int: int });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
-	        _rcTweenOne2['default'],
-	        {
-	          animation: [{ textShadow: '0 1em 5px rgba(0,0,0,1)', duration: 1000 }, { boxShadow: '0 0 30px rgba(255,125,0,0.5)', borderRadius: 50, duration: 1000 }],
-	          style: { height: 100, backgroundColor: '#fff000' } },
+	        'div',
+	        null,
 	        _react2['default'].createElement(
-	          'div',
-	          null,
-	          '执行动效'
+	          'button',
+	          { onClick: this.onClick },
+	          '切换'
+	        ),
+	        _react2['default'].createElement(
+	          _rcTweenOne.TweenOneGroup,
+	          {
+	            style: { height: 300 },
+	            enter: { opacity: 0, type: 'from' },
+	            leave: { opacity: 0 }
+	          },
+	          _react2['default'].createElement(
+	            'div',
+	            { key: this.state.int, style: { position: 'absolute' } },
+	            _react2['default'].createElement('img', { src: this.imgArray[this.state.int],
+	              height: '200' })
+	          )
 	        )
 	      );
 	    }
@@ -69,4 +98,4 @@ webpackJsonp([14],{
 /***/ }
 
 });
-//# sourceMappingURL=shadow.js.map
+//# sourceMappingURL=groupAbsolute.js.map
