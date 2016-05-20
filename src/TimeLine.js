@@ -13,12 +13,12 @@ import cssList, {
   isConvert,
   splitFilterToObject,
   getTransform,
+  stylesToCss,
 } from 'style-utils';
 import Bezier from './BezierPlugin';
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
 const DEFAULT_DELAY = 0;
-import { stylesToCss } from './util';
 function noop() {
 }
 // 设置默认数据
@@ -103,7 +103,7 @@ p.getTweenData = function(_key, vars) {
     } else {
       data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
       data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
-      data.data[key] = parseFloat(data.data[key]);
+      data.data[key] = parseFloat(data.data[key].toString().replace(/[+|=|-]/g, ''));
     }
   }
   return data;
