@@ -280,8 +280,8 @@
 	  }, {
 	    key: 'start',
 	    value: function start(props) {
-	      this.timeLine = new _TimeLine2['default'](this.dom, (0, _util.dataToArray)(props.animation));
-	      if (this.timeLine.defaultData.length && props.animation) {
+	      if (props.animation && Object.keys(props.animation).length) {
+	        this.timeLine = new _TimeLine2['default'](this.dom, (0, _util.dataToArray)(props.animation));
 	        // 开始动画
 	        this.play();
 	      }
@@ -291,6 +291,7 @@
 	    value: function play() {
 	      this.cancelRequestAnimationFrame();
 	      this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
+	      this.raf();
 	      _ticker2['default'].wake(this.rafID, this.raf);
 	      tickerIdNum++;
 	    }
@@ -21099,7 +21100,7 @@
 	    } else {
 	      data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
 	      data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
-	      data.data[key] = parseFloat(data.data[key].toString().replace(/[+|=|-]/g, ''));
+	      data.data[key] = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
 	    }
 	  }
 	  return data;
@@ -22311,12 +22312,12 @@
 	p.timeout = function (fn, time) {
 	  var _this = this;
 	
+	  if (!(typeof fn === 'function')) {
+	    return console.warn('Is no function');
+	  }
 	  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
 	  var startFrame = this.frame;
 	  this.wake(timeoutID, function () {
-	    if (!(typeof fn === 'function')) {
-	      return console.warn('Is no function');
-	    }
 	    var moment = (_this.frame - startFrame) * _this.perFrame;
 	    if (moment >= (time || 0)) {
 	      _this.clear(timeoutID);
@@ -22325,6 +22326,25 @@
 	  });
 	  timeoutIdNumber++;
 	  return timeoutID;
+	};
+	var intervalIdNumber = 0;
+	p.interval = function (fn, time) {
+	  var _this2 = this;
+	
+	  if (!(typeof fn === 'function')) {
+	    return console.warn('Is no function');
+	  }
+	  var intervalID = 'interval' + Date.now() + '-' + intervalIdNumber;
+	  var starFrame = this.frame;
+	  this.wake(intervalID, function () {
+	    var moment = (_this2.frame - starFrame) * _this2.perFrame;
+	    if (moment >= (time || 0)) {
+	      starFrame = _this2.frame;
+	      fn();
+	    }
+	  });
+	  intervalIdNumber++;
+	  return intervalID;
 	};
 	exports['default'] = ticker;
 	module.exports = exports['default'];
