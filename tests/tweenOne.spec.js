@@ -391,7 +391,8 @@ describe('rc-tween-one', function() {
     ticker.timeout(() => {
       console.log(child.style.top);
       expect(getFloat(child.style.top)).to.be(100);
-      ticker.interval(()=> {
+      const t = ticker.interval(()=> {
+        ticker.clear(t);
         done();
       }, 500);
     }, 500);
