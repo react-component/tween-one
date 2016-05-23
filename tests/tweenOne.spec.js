@@ -156,7 +156,7 @@ describe('rc-tween-one', function() {
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('default:' + child.style.top);
-    expect(getFloat(child.style.top)).to.be(0);
+    expect(getFloat(child.style.top)).to.be(100);
     setTimeout(()=> {
       expect(getFloat(child.style.top)).to.above(95);
       console.log('start:' + child.style.top);
@@ -383,7 +383,7 @@ describe('rc-tween-one', function() {
     instance = createTweenInstance({
       animation: {
         top: 100,
-        duration: 1000,
+        duration: 500,
       },
       style: { position: 'relative', top: 0 },
     });
@@ -391,7 +391,9 @@ describe('rc-tween-one', function() {
     ticker.timeout(() => {
       console.log(child.style.top);
       expect(getFloat(child.style.top)).to.be(100);
-      done();
-    }, 1000);
+      ticker.interval(()=> {
+        done();
+      }, 500);
+    }, 500);
   });
 });

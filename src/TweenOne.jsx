@@ -105,8 +105,8 @@ class TweenOne extends Component {
   }
 
   start(props) {
-    this.timeLine = new TimeLine(this.dom, dataToArray(props.animation));
-    if (this.timeLine.defaultData.length && props.animation) {
+    if (props.animation && Object.keys(props.animation).length) {
+      this.timeLine = new TimeLine(this.dom, dataToArray(props.animation));
       // 开始动画
       this.play();
     }
@@ -115,6 +115,7 @@ class TweenOne extends Component {
   play() {
     this.cancelRequestAnimationFrame();
     this.rafID = `tween${Date.now()}-${tickerIdNum}`;
+    this.raf();
     ticker.wake(this.rafID, this.raf);
     tickerIdNum++;
   }

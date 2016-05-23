@@ -103,7 +103,7 @@ p.getTweenData = function(_key, vars) {
     } else {
       data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
       data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
-      data.data[key] = parseFloat(data.data[key].toString().replace(/[+|=|-]/g, ''));
+      data.data[key] = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
     }
   }
   return data;

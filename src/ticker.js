@@ -40,12 +40,12 @@ p.tick = function(a) {
 };
 let timeoutIdNumber = 0;
 p.timeout = function(fn, time) {
+  if (!(typeof fn === 'function')) {
+    return console.warn('Is no function');
+  }
   const timeoutID = `timeout${Date.now()}-${timeoutIdNumber}`;
   const startFrame = this.frame;
   this.wake(timeoutID, ()=> {
-    if (!(typeof fn === 'function')) {
-      return console.warn('Is no function');
-    }
     const moment = (this.frame - startFrame) * this.perFrame;
     if (moment >= (time || 0)) {
       this.clear(timeoutID);
@@ -54,5 +54,22 @@ p.timeout = function(fn, time) {
   });
   timeoutIdNumber++;
   return timeoutID;
+};
+let intervalIdNumber = 0;
+p.interval = function(fn, time) {
+  if (!(typeof fn === 'function')) {
+    return console.warn('Is no function');
+  }
+  const intervalID = `interval${Date.now()}-${intervalIdNumber}`;
+  let starFrame = this.frame;
+  this.wake(intervalID, ()=> {
+    const moment = (this.frame - starFrame) * this.perFrame;
+    if (moment >= (time || 0)) {
+      starFrame = this.frame;
+      fn();
+    }
+  });
+  intervalIdNumber++;
+  return intervalID;
 };
 export default ticker;
