@@ -111,7 +111,7 @@ p.getTweenData = function(_key, vars) {
 p.setDefaultData = function(vars) {
   let now = 0;
   let repeatMax = false;
-  const data = vars.map(item=> {
+  const data = vars.map(item => {
     now += item.delay || 0;// 加上延时，在没有播放过时；
     const tweenData = defaultData(item, now);
     tweenData.vars = {};
@@ -304,6 +304,7 @@ p.setAnimData = function(data) {
     this.target[key] = data[key];
   });
 };
+
 p.setArrayRatio = function(ratio, start, vars, unit, type) {
   const _vars = vars.map((endData, i) => {
     const startData = start[i] || 0;
@@ -376,10 +377,10 @@ p.setStyleRatio = function(ratio, start, vars, unit, count, type) {
   return style;
 };
 
-p.setRatio = function(ratio, endData, i) {
-  Object.keys(endData.vars).forEach(_key => {
+p.setRatioData = function(ratio, endData, i) {
+  Object.keys(endData).forEach(_key => {
     const key = getGsapType(_key);
-    const endVars = endData.vars[_key];
+    const endVars = endData[_key];
     const startVars = this.start[i][key];
     const unit = this.defaultData[i].varsUnit;
     const count = this.defaultData[i].varsCount;
@@ -394,6 +395,20 @@ p.setRatio = function(ratio, endData, i) {
         : (endVars - startVars) * ratio + startVars;
     }
   });
+};
+
+p.setRatio = function(ratio, endData, i) {
+  // start 里有大于当前 i 的个数，把 this.startData 合回来
+  if (Object.keys(this.start).length - 1 > i) {
+    Object.keys(this.start).forEach((key, ii) => {
+      if (ii <= i) {
+        return false;
+      }
+      const data = this.defaultData[key];
+      this.setRatioData(0, data.vars, ii);
+    });
+  }
+  this.setRatioData(ratio, endData.vars, i);
   this.setAnimData(this.tween);
 };
 p.render = function() {
@@ -409,53 +424,45 @@ p.render = function() {
       }
     }
     let progressTime = this.progressTime - initTime;
-    // onRepeat 处理
-    if (item.repeat && repeatNum > 0 && progressTime < this.perFrame) {
-      // 重新开始, 在第一秒触发时调用;
-      item.onRepeat();
-    }
     // 设置 start
     const delay = item.delay >= 0 ? item.delay : -item.delay;
     const fromDelay = item.type === 'from' ? delay : 0;
     if (progressTime + fromDelay >= 0 && !this.start[i]) {
       this.start[i] = this.getAnimStartData(item.vars, i);
-      this.setRatio(item.type === 'from' ? 1 : 0, item, i);
     }
-    if (progressTime >= 0 && progressTime < item.duration + this.perFrame) {
-      // 状态
-      let mode = 'onUpdate';
-      // 开始 onStart
-      if (progressTime < this.perFrame) {
-        item.onStart();
-        mode = 'onStart';
-      }
+    // onRepeat 处理
+    if (item.repeat && repeatNum > 0
+      && progressTime + fromDelay >= 0 && progressTime < this.perFrame) {
+      // 重新开始, 在第一秒触发时调用;
+      item.onRepeat();
+    }
+    if (progressTime + fromDelay >= 0 && progressTime < this.perFrame && repeatNum <= 0) {
+      item.mode = 'onStart';
+      this.setRatio(item.type === 'from' ? 1 : 0, item, i);
+      item.onStart();
+    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
+      item.mode = 'onComplete';
+      this.setRatio(item.type === 'from' || (repeatNum % 2 && item.yoyo) ? 0 : 1, item, i);
+      item.onComplete();
+    } else if (progressTime >= 0 && progressTime < item.duration) {
+      item.mode = 'onUpdate';
       progressTime = progressTime < 0 ? 0 : progressTime;
       progressTime = progressTime > item.duration ? item.duration : progressTime;
       let ratio = easingTypes[item.ease](progressTime, 0, 1, item.duration);
       if (item.yoyo && repeatNum % 2 || item.type === 'from') {
         ratio = easingTypes[item.ease](progressTime, 1, 0, item.duration);
       }
-      // 当前点生成样式;
       this.setRatio(ratio, item, i);
-
-      mode = progressTime === item.duration ? 'onComplete' : mode;
-
-      if (mode === 'onUpdate') {
-        // update 事件
-        item.onUpdate(ratio);
-      }
-
+      item.onUpdate(ratio);
+    }
+    if (progressTime >= 0 && progressTime < item.duration + this.perFrame) {
       this.onChange({
         moment: this.progressTime,
         item: item,
         tween: this.tween,
         index: i,
-        mode,
+        mode: item.mode,
       });
-      // complete 事件
-      if (mode === 'onComplete') {
-        item.onComplete();
-      }
     }
   });
 };
@@ -463,7 +470,6 @@ p.render = function() {
 p.frame = function(moment) {
   this.progressTime = moment;
   this.render();
-  return this.animStyle;
 };
 p.resetAnimData = function() {
   this.tween = {};
