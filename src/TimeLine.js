@@ -161,6 +161,7 @@ p.setDefaultData = function(vars) {
     } else {
       now += tweenData.duration * (tweenData.repeat + 1) + tweenData.repeatDelay * tweenData.repeat;
     }
+    tweenData.mode = '';
     return tweenData;
   });
   this.totalTime = repeatMax ? Number.MAX_VALUE : now;
@@ -433,9 +434,11 @@ p.render = function() {
       this.setRatio(item.type === 'from' ? 1 : 0, item, i);
       item.onStart();
     } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
-      item.mode = 'onComplete';
       this.setRatio(item.type === 'from' || (repeatNum % 2 && item.yoyo) ? 0 : 1, item, i);
-      item.onComplete();
+      if (item.mode !== 'reset') {
+        item.onComplete();
+      }
+      item.mode = 'onComplete';
     } else if (progressTime >= 0 && progressTime < item.duration) {
       item.mode = 'onUpdate';
       progressTime = progressTime < 0 ? 0 : progressTime;
@@ -473,6 +476,10 @@ p.resetAnimData = function() {
 
 p.resetDefaultStyle = function() {
   this.tween = {};
+  this.defaultData = this.defaultData.map(item => {
+    item.mode = 'reset';
+    return item;
+  });
   this.target.setAttribute('style', this.startDefaultData);
 };
 
