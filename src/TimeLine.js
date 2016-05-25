@@ -463,9 +463,6 @@ p.render = function() {
 };
 // 播放帧
 p.frame = function(moment) {
-  if (moment < this.progressTime) {
-    this.resetDefaultStyle();
-  }
   this.progressTime = moment;
   this.render();
 };
