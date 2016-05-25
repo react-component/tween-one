@@ -304,6 +304,9 @@
 	      }
 	      moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
 	      moment = moment <= 0 ? 0 : moment;
+	      if (moment < this.moment) {
+	        this.timeLine.resetDefaultStyle();
+	      }
 	      this.moment = moment;
 	      this.timeLine.onChange = this.props.onChange;
 	      this.timeLine.frame(moment);
@@ -21477,9 +21480,6 @@
 	};
 	// 播放帧
 	p.frame = function (moment) {
-	  if (moment < this.progressTime) {
-	    this.resetDefaultStyle();
-	  }
 	  this.progressTime = moment;
 	  this.render();
 	};
