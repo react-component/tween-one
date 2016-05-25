@@ -21042,6 +21042,8 @@
 	  this.defaultData = [];
 	  // 每个的开始数据；
 	  this.start = {};
+	  // 开始默认的数据；
+	  this.startDefaultData = this.target.getAttribute('style');
 	  // 动画过程
 	  this.tween = {};
 	  // 每帧的时间;
@@ -21411,54 +21413,42 @@
 	};
 	
 	p.setRatio = function (ratio, endData, i) {
-	  var _this7 = this;
-	
-	  // start 里有大于当前 i 的个数，把 this.startData 合回来
-	  if (Object.keys(this.start).length - 1 > i) {
-	    Object.keys(this.start).forEach(function (key, ii) {
-	      if (ii <= i) {
-	        return false;
-	      }
-	      var data = _this7.defaultData[key];
-	      _this7.setRatioData(0, data.vars, ii);
-	    });
-	  }
 	  this.setRatioData(ratio, endData.vars, i);
 	  this.setAnimData(this.tween);
 	};
 	p.render = function () {
-	  var _this8 = this;
+	  var _this7 = this;
 	
 	  this.defaultData.forEach(function (item, i) {
 	    var initTime = item.initTime;
 	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-	    var repeatNum = Math.ceil((_this8.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
+	    var repeatNum = Math.ceil((_this7.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
 	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
-	    repeatNum = _this8.progressTime === 0 ? repeatNum + 1 : repeatNum;
+	    repeatNum = _this7.progressTime === 0 ? repeatNum + 1 : repeatNum;
 	    if (item.repeat) {
 	      if (item.repeat || item.repeat <= repeatNum) {
 	        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
 	      }
 	    }
-	    var progressTime = _this8.progressTime - initTime;
+	    var progressTime = _this7.progressTime - initTime;
 	    // 设置 start
 	    var delay = item.delay >= 0 ? item.delay : -item.delay;
 	    var fromDelay = item.type === 'from' ? delay : 0;
-	    if (progressTime + fromDelay >= 0 && !_this8.start[i]) {
-	      _this8.start[i] = _this8.getAnimStartData(item.vars, i);
+	    if (progressTime + fromDelay >= 0 && !_this7.start[i]) {
+	      _this7.start[i] = _this7.getAnimStartData(item.vars, i);
 	    }
 	    // onRepeat 处理
-	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this8.perFrame) {
+	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this7.perFrame) {
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
-	    if (progressTime + fromDelay >= 0 && progressTime < _this8.perFrame && repeatNum <= 0) {
+	    if (progressTime + fromDelay >= 0 && progressTime < _this7.perFrame && repeatNum <= 0) {
 	      item.mode = 'onStart';
-	      _this8.setRatio(item.type === 'from' ? 1 : 0, item, i);
+	      _this7.setRatio(item.type === 'from' ? 1 : 0, item, i);
 	      item.onStart();
 	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
 	      item.mode = 'onComplete';
-	      _this8.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
+	      _this7.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
 	      item.onComplete();
 	    } else if (progressTime >= 0 && progressTime < item.duration) {
 	      item.mode = 'onUpdate';
@@ -21468,14 +21458,14 @@
 	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
 	        ratio = _tweenFunctions2['default'][item.ease](progressTime, 1, 0, item.duration);
 	      }
-	      _this8.setRatio(ratio, item, i);
+	      _this7.setRatio(ratio, item, i);
 	      item.onUpdate(ratio);
 	    }
-	    if (progressTime >= 0 && progressTime < item.duration + _this8.perFrame) {
-	      _this8.onChange({
-	        moment: _this8.progressTime,
+	    if (progressTime >= 0 && progressTime < item.duration + _this7.perFrame) {
+	      _this7.onChange({
+	        moment: _this7.progressTime,
 	        item: item,
-	        tween: _this8.tween,
+	        tween: _this7.tween,
 	        index: i,
 	        mode: item.mode
 	      });
@@ -21484,12 +21474,20 @@
 	};
 	// 播放帧
 	p.frame = function (moment) {
+	  if (moment < this.progressTime) {
+	    this.resetDefaultStyle();
+	  }
 	  this.progressTime = moment;
 	  this.render();
 	};
 	p.resetAnimData = function () {
 	  this.tween = {};
 	  this.start = {};
+	};
+	
+	p.resetDefaultStyle = function () {
+	  this.tween = {};
+	  this.target.setAttribute('style', this.startDefaultData);
 	};
 	
 	p.onChange = noop;
