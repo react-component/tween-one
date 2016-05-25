@@ -21315,6 +21315,7 @@
 	    _this4.target[key] = data[key];
 	  });
 	};
+	
 	p.setArrayRatio = function (ratio, start, vars, unit, type) {
 	  var _vars = vars.map(function (endData, i) {
 	    var startData = start[i] || 0;
@@ -21389,12 +21390,12 @@
 	  return style;
 	};
 	
-	p.setRatio = function (ratio, endData, i) {
+	p.setRatioData = function (ratio, endData, i) {
 	  var _this6 = this;
 	
-	  Object.keys(endData.vars).forEach(function (_key) {
+	  Object.keys(endData).forEach(function (_key) {
 	    var key = (0, _styleUtils.getGsapType)(_key);
-	    var endVars = endData.vars[_key];
+	    var endVars = endData[_key];
 	    var startVars = _this6.start[i][key];
 	    var unit = _this6.defaultData[i].varsUnit;
 	    var count = _this6.defaultData[i].varsCount;
@@ -21407,70 +21408,77 @@
 	      _this6.tween[key] = count[key].charAt(1) === '=' ? startVars + endVars * ratio : (endVars - startVars) * ratio + startVars;
 	    }
 	  });
+	};
+	
+	p.setRatio = function (ratio, endData, i) {
+	  var _this7 = this;
+	
+	  // start 里有大于当前 i 的个数，把 this.startData 合回来
+	  if (Object.keys(this.start).length - 1 > i) {
+	    Object.keys(this.start).forEach(function (key, ii) {
+	      if (ii <= i) {
+	        return false;
+	      }
+	      var data = _this7.defaultData[key];
+	      _this7.setRatioData(0, data.vars, ii);
+	    });
+	  }
+	  this.setRatioData(ratio, endData.vars, i);
 	  this.setAnimData(this.tween);
 	};
 	p.render = function () {
-	  var _this7 = this;
+	  var _this8 = this;
 	
 	  this.defaultData.forEach(function (item, i) {
 	    var initTime = item.initTime;
 	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-	    var repeatNum = Math.ceil((_this7.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
+	    var repeatNum = Math.ceil((_this8.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
 	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
-	    repeatNum = _this7.progressTime === 0 ? repeatNum + 1 : repeatNum;
+	    repeatNum = _this8.progressTime === 0 ? repeatNum + 1 : repeatNum;
 	    if (item.repeat) {
 	      if (item.repeat || item.repeat <= repeatNum) {
 	        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
 	      }
 	    }
-	    var progressTime = _this7.progressTime - initTime;
-	    // onRepeat 处理
-	    if (item.repeat && repeatNum > 0 && progressTime < _this7.perFrame) {
-	      // 重新开始, 在第一秒触发时调用;
-	      item.onRepeat();
-	    }
+	    var progressTime = _this8.progressTime - initTime;
 	    // 设置 start
 	    var delay = item.delay >= 0 ? item.delay : -item.delay;
 	    var fromDelay = item.type === 'from' ? delay : 0;
-	    if (progressTime + fromDelay >= 0 && !_this7.start[i]) {
-	      _this7.start[i] = _this7.getAnimStartData(item.vars, i);
-	      _this7.setRatio(item.type === 'from' ? 1 : 0, item, i);
+	    if (progressTime + fromDelay >= 0 && !_this8.start[i]) {
+	      _this8.start[i] = _this8.getAnimStartData(item.vars, i);
 	    }
-	    if (progressTime >= 0 && progressTime < item.duration + _this7.perFrame) {
-	      // 状态
-	      var mode = 'onUpdate';
-	      // 开始 onStart
-	      if (progressTime < _this7.perFrame) {
-	        item.onStart();
-	        mode = 'onStart';
-	      }
+	    // onRepeat 处理
+	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this8.perFrame) {
+	      // 重新开始, 在第一秒触发时调用;
+	      item.onRepeat();
+	    }
+	    if (progressTime + fromDelay >= 0 && progressTime < _this8.perFrame && repeatNum <= 0) {
+	      item.mode = 'onStart';
+	      _this8.setRatio(item.type === 'from' ? 1 : 0, item, i);
+	      item.onStart();
+	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
+	      item.mode = 'onComplete';
+	      _this8.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
+	      item.onComplete();
+	    } else if (progressTime >= 0 && progressTime < item.duration) {
+	      item.mode = 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > item.duration ? item.duration : progressTime;
 	      var ratio = _tweenFunctions2['default'][item.ease](progressTime, 0, 1, item.duration);
 	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
 	        ratio = _tweenFunctions2['default'][item.ease](progressTime, 1, 0, item.duration);
 	      }
-	      // 当前点生成样式;
-	      _this7.setRatio(ratio, item, i);
-	
-	      mode = progressTime === item.duration ? 'onComplete' : mode;
-	
-	      if (mode === 'onUpdate') {
-	        // update 事件
-	        item.onUpdate(ratio);
-	      }
-	
-	      _this7.onChange({
-	        moment: _this7.progressTime,
+	      _this8.setRatio(ratio, item, i);
+	      item.onUpdate(ratio);
+	    }
+	    if (progressTime >= 0 && progressTime < item.duration + _this8.perFrame) {
+	      _this8.onChange({
+	        moment: _this8.progressTime,
 	        item: item,
-	        tween: _this7.tween,
+	        tween: _this8.tween,
 	        index: i,
-	        mode: mode
+	        mode: item.mode
 	      });
-	      // complete 事件
-	      if (mode === 'onComplete') {
-	        item.onComplete();
-	      }
 	    }
 	  });
 	};
@@ -21478,7 +21486,6 @@
 	p.frame = function (moment) {
 	  this.progressTime = moment;
 	  this.render();
-	  return this.animStyle;
 	};
 	p.resetAnimData = function () {
 	  this.tween = {};
