@@ -49,6 +49,8 @@ const timeLine = function(target, toData) {
   this.defaultData = [];
   // 每个的开始数据；
   this.start = {};
+  // 开始默认的数据；
+  this.startDefaultData = this.target.getAttribute('style');
   // 动画过程
   this.tween = {};
   // 每帧的时间;
@@ -398,16 +400,6 @@ p.setRatioData = function(ratio, endData, i) {
 };
 
 p.setRatio = function(ratio, endData, i) {
-  // start 里有大于当前 i 的个数，把 this.startData 合回来
-  if (Object.keys(this.start).length - 1 > i) {
-    Object.keys(this.start).forEach((key, ii) => {
-      if (ii <= i) {
-        return false;
-      }
-      const data = this.defaultData[key];
-      this.setRatioData(0, data.vars, ii);
-    });
-  }
   this.setRatioData(ratio, endData.vars, i);
   this.setAnimData(this.tween);
 };
@@ -468,12 +460,20 @@ p.render = function() {
 };
 // 播放帧
 p.frame = function(moment) {
+  if (moment < this.progressTime) {
+    this.resetDefaultStyle();
+  }
   this.progressTime = moment;
   this.render();
 };
 p.resetAnimData = function() {
   this.tween = {};
   this.start = {};
+};
+
+p.resetDefaultStyle = function() {
+  this.tween = {};
+  this.target.setAttribute('style', this.startDefaultData);
 };
 
 p.onChange = noop;
