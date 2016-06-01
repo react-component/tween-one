@@ -1,6 +1,8 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
+import BezierPlugin from '../src/plugin/BezierPlugin';
+Tween.plugins.push(BezierPlugin);
 class Demo extends React.Component {
   constructor() {
     super(...arguments);

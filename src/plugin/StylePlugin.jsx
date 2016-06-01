@@ -10,8 +10,8 @@ import cssList, {
   getTransform,
   stylesToCss,
 } from 'style-utils';
-import Bezier from './BezierPlugin';
 import assign from 'object-assign';
+import _plugin from '../plugins';
 
 const StylePlugin = function(target, vars, type) {
   this.target = target;
@@ -39,25 +39,21 @@ p.getTweenData = function(key, vars) {
   } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
     data.data[key] = parseShadow(vars);
     data.dataType[key] = 'shadow';
-  } else if (key === 'bezier') {
-    data.data[key] = vars;
   } else {
     data.data[key] = vars;
     data.dataType[key] = 'other';
   }
-  if (key !== 'bezier') {
-    if (Array.isArray(data.data[key])) {
-      data.dataUnit[key] = data.data[key]
-        .map(_item => _item.toString().replace(/[^a-z|%]/g, ''));
-      data.dataCount[key] = data.data[key]
-        .map(_item => _item.toString().replace(/[^+|=|-]/g, ''));
+  if (Array.isArray(data.data[key])) {
+    data.dataUnit[key] = data.data[key]
+      .map(_item => _item.toString().replace(/[^a-z|%]/g, ''));
+    data.dataCount[key] = data.data[key]
+      .map(_item => _item.toString().replace(/[^+|=|-]/g, ''));
 
-      data.data[key] = data.data[key].map(_item => parseFloat(_item));
-    } else {
-      data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
-      data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
-      data.data[key] = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
-    }
+    data.data[key] = data.data[key].map(_item => parseFloat(_item));
+  } else {
+    data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
+    data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
+    data.data[key] = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
   }
   return data;
 };
@@ -67,6 +63,10 @@ p.setDefaultData = function() {
   this.propsData.dataUnit = {};
   this.propsData.dataCount = {};
   Object.keys(this.vars).forEach(_key => {
+    if (_key in _plugin) {
+      this.propsData.data[_key] = new _plugin[_key](this.target, this.vars[_key]);
+      return;
+    }
     const key = getGsapType(_key);
     const _data = this.getTweenData(key, this.vars[_key]);
     this.propsData.data[key] = _data.data[key];
@@ -107,17 +107,16 @@ p.getAnimStart = function() {
     let transform;
     let endUnit;
     let startUnit;
-    if (cssName === 'transform') {
+    if (key in _plugin) {
+      if (key === 'bezier') {
+        this.transform = checkStyleName('transform');
+      }
+      this.propsData.data[key].getAnimStart();
+    } else if (cssName === 'transform') {
       this.transform = checkStyleName('transform');
       startData = computedStyle[this.transform];
       transform = getTransform(startData);
       style.transform = transform;
-    } else if (cssName === 'bezier') {
-      this.transform = checkStyleName('transform');
-      startData = computedStyle[this.transform];
-      const bezier = style.bezier = new Bezier(startData === 'none' ? '' : startData, this.propsData.data.bezier);
-      transform = this.type === 'from' ? bezier.set(1) : bezier.set(0);
-      transform = getTransform(transform);
     } else if (cssName === 'filter') {
       this.filterName = checkStyleName('filter');
       startData = computedStyle[this.filterName];
@@ -224,7 +223,10 @@ p.setRatio = function(ratio, tween) {
     const endVars = this.propsData.data[key];
     let unit = this.propsData.dataUnit[key];
     const count = this.propsData.dataCount[key];
-    if (_isTransform) {
+    if (key in _plugin) {
+      this.propsData.data[key].setRatio(ratio, tween);
+      return;
+    } else if (_isTransform) {
       if (unit === '%' || unit === 'em' || unit === 'rem') {
         const pName = key === 'translateX' ? 'xPercent' : 'yPercent';
         const data = key === 'translateX' ? this.start.transform.translateX : this.start.transform.translateY;
@@ -251,16 +253,11 @@ p.setRatio = function(ratio, tween) {
       }
       tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
       return;
-    } else if (key === 'bezier') {
-      const bezier = this.start[key];
-      tween.style.transform = getTransform(bezier.set(ratio));
-      return;
     } else if (Array.isArray(endVars)) {
       const _type = this.propsData.dataType[key];
       tween.style[key] = this.setArrayRatio(ratio, startVars, endVars, unit, _type);
       return;
     }
-
     let styleUnit = stylesToCss(key, 0);
     styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
     unit = unit || (cssList.filter.indexOf(key) >= 0 ? '' : styleUnit);

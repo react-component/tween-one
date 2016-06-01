@@ -2,6 +2,10 @@
  * Created by jljsj on 15/12/22.
  * The algorithm is GSAP BezierPlugin VERSION: beta 1.3.4
  */
+import {
+  checkStyleName,
+  getTransform,
+} from 'style-utils';
 const _RAD2DEG = 180 / Math.PI;
 const _r1 = [];
 const _r2 = [];
@@ -351,13 +355,11 @@ const GsapBezier = {
   },
 };
 
-function Bezier(transform, obj) {
-  this.defaultData = this.getDefaultData(obj);
-  const matrix = createMatrix(transform || '');
-  // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
-  this.defaultData.startPoint = { x: matrix.e, y: matrix.f };
-  this.init();
-}
+const Bezier = function(target, vars) {
+  this.vars = this.getDefaultData(vars);
+  this.target = target;
+  this.transform = checkStyleName('transform');
+};
 Bezier.prototype = {
   name: 'bezier',
   getDefaultData(obj) {
@@ -369,7 +371,7 @@ Bezier.prototype = {
     };
   },
   init() {
-    const vars = this.defaultData;
+    const vars = this.vars;
     const autoRotate = vars.autoRotate;
     this._timeRes = !vars.timeResolution ? 6 : parseInt(vars.timeResolution, 10);
     const a = (autoRotate === true) ? 0 : Number(autoRotate);
@@ -493,6 +495,21 @@ Bezier.prototype = {
       }
     }
     return rotate ? 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px) rotate(' + rotate + 'deg)' : 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px)';
+  },
+  getComputedStyle() {
+    return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
+  },
+  getAnimStart() {
+    const computedStyle = this.getComputedStyle();
+    const transform = computedStyle[this.transform];
+    const matrix = createMatrix(transform || '');
+    // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
+    this.vars.startPoint = { x: matrix.e, y: matrix.f };
+    this.init();
+  },
+  setRatio(r, t) {
+    const transform = getTransform(this.set(r));
+    t.style.transform = transform;
   },
 };
 Bezier.bezierThrough = GsapBezier.bezierThrough;

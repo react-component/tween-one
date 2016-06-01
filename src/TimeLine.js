@@ -4,11 +4,13 @@
 import assign from 'object-assign';
 import easingTypes from 'tween-functions';
 import _plugin from './plugins';
+import StylePlugin from './plugin/StylePlugin';
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
 const DEFAULT_DELAY = 0;
 function noop() {
 }
+_plugin.push(StylePlugin);
 // 设置默认数据
 function defaultData(vars, now) {
   return {
@@ -104,7 +106,7 @@ p.setDefaultData = function(_vars) {
            * d: M*** *** L*** ** C*** *** *** *** *** *** Z || M***,***L***,***Z
            * - split(/[a-z]/i).filter(item => item), unit: split(/\d+[0-9|\s]+\s/)
            */
-          tweenData.vars[_key] = new _plugin.SvgMorph(this.target, _key, _data);
+          tweenData.vars[_key] = new _plugin.SvgMorph(this.target, _data, _key);
         }
       }
     });

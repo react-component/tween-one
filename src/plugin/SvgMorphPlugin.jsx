@@ -1,5 +1,5 @@
 import {path2curve} from './snapsvglite';
-const SvgPlugin = function(target, key, vars) {
+const SvgPlugin = function(target, vars, key) {
   this.target = target;
   this.vars = vars;
   this.key = key;
@@ -32,6 +32,7 @@ p.getAnimStart = function() {
   } else {
     this.pathArray = this.polygonPoints(this.start, this.vars);
   }
+  return this.pathArray;
 };
 p.setArrayRatio = function(ratio, start, item, i) {
   if (typeof item === 'string') {
