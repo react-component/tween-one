@@ -185,15 +185,10 @@ const pathToAbsolute = function(_pathArray) {
         case 'M':
           mx = +pa[1] + x;
           my = +pa[2] + y;
-          for (j = 1, jj = pa.length; j < jj; j++) {
-            r[j] = +pa[j] + ((j % 2) ? x : y);
-          }
-          break;
         default:
           for (j = 1, jj = pa.length; j < jj; j++) {
             r[j] = +pa[j] + ((j % 2) ? x : y);
           }
-          break;
       }
     } else if (pa0 === 'R') {
       dots = [x, y].concat(pa.slice(1));
@@ -230,13 +225,9 @@ const pathToAbsolute = function(_pathArray) {
         case 'M':
           mx = r[r.length - 2];
           my = r[r.length - 1];
-          x = mx;
-          y = my;
-          break;
         default:
           x = r[r.length - 2];
           y = r[r.length - 1];
-          break;
       }
     }
   }
