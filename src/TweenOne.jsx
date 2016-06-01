@@ -4,6 +4,7 @@ import assign from 'object-assign';
 import { dataToArray, objectEqual } from './util';
 import { stylesToCss } from 'style-utils';
 import TimeLine from './TimeLine';
+import plugins from './plugins';
 import ticker from './ticker';
 
 function noop() {
@@ -106,7 +107,7 @@ class TweenOne extends Component {
 
   start(props) {
     if (props.animation && Object.keys(props.animation).length) {
-      this.timeLine = new TimeLine(this.dom, dataToArray(props.animation));
+      this.timeLine = new TimeLine(this.dom, dataToArray(props.animation), this.props.attr);
       // 开始动画
       this.play();
     }
@@ -185,4 +186,5 @@ TweenOne.defaultProps = {
   attr: 'style',
   onChange: noop,
 };
+TweenOne.plugins = plugins;
 export default TweenOne;
