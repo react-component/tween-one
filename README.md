@@ -61,6 +61,14 @@ React.render(<TweenOne animation={{x:100}}>
 </TweenOne>, container);
 ```
 
+### Plugin
+
+```
+var TweenOne = require('rc-tween-one');
+var SvgDrawPlugin = require('rc-tween-one/lib/plugin/SvgDrawPlugin');
+Tween.plugins.push(SvgDrawPlugin);
+```
+
 ### TweenOneGroup
 ```js
 var TweenOne = require('rc-tween-one');
@@ -73,6 +81,9 @@ React.render(<TweenOneGroup>
 ```
 
 ## API
+
+> version >= 0.6.x support SVG;
+
 
 ### props
 
