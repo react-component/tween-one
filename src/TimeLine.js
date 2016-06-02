@@ -97,7 +97,7 @@ p.setDefaultData = function(_vars) {
           const unit = _data.toString().replace(/[^a-z|%]/g, '');
           const count = _data.toString().replace(/[^+|=|-]/g, '');
           tweenData.vars[_key] = { type: 0, unit, vars, count };
-        } else if ((_key === 'd' || _key === 'points') && 'SvgMorph' in _plugin) {
+        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugin) {
           /*
            * SVG 情况如下：
            * points: ***,*** ***,***
@@ -106,7 +106,7 @@ p.setDefaultData = function(_vars) {
            * d: M*** *** L*** ** C*** *** *** *** *** *** Z || M***,***L***,***Z
            * - split(/[a-z]/i).filter(item => item), unit: split(/\d+[0-9|\s]+\s/)
            */
-          tweenData.vars[_key] = new _plugin.SvgMorph(this.target, _data, _key);
+          tweenData.vars[_key] = new _plugin.SVGMorph(this.target, _data, _key);
         }
       }
     });

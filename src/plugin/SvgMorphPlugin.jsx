@@ -7,7 +7,7 @@ const SvgPlugin = function(target, vars, key) {
 };
 
 const p = SvgPlugin.prototype = {
-  name: 'SvgMorph',
+  name: 'SVGMorph',
 };
 p.getPointVars = function(d) {
   return d.split(/\s+/).map(item => item.split(',').map(_item => parseFloat(_item)));

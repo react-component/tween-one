@@ -5,6 +5,8 @@ import Tween from '../index';
 import ticker from '../src/ticker';
 import TestUtils from 'react-addons-test-utils';
 import { checkStyleName } from 'style-utils';
+import BezierPlugin from '../src/plugin/BezierPlugin';
+Tween.plugins.push(BezierPlugin);
 describe('rc-tween-one', function() {
   let div;
   let instance;
