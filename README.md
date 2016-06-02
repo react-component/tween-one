@@ -145,7 +145,7 @@ SVGDraw = string or number;
 
 ### SvgMorphPlugin
 
-svg polygon or path values: polygon is points, path is d; [demo](http://react-component.github.io/tween-one/svg.html)
+svg polygon or path values: polygon is points, path is d; [demo](http://react-component.github.io/tween-one/examples/svg.html)
 
 
 ## TweenOneGroup
