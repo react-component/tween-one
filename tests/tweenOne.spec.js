@@ -399,4 +399,20 @@ describe('rc-tween-one', function() {
       }, 500);
     }, 500);
   });
+
+  it('is attr', function(done) {
+    instance = createTweenInstance({
+      animation: {
+        width: 100,
+      },
+      attr: 'attr',
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    ticker.timeout(() => {
+      const width = child.getAttribute('width');
+      console.log(width);
+      expect(getFloat(width)).to.be(100);
+      done();
+    }, 500);
+  });
 });
