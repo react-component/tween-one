@@ -125,7 +125,9 @@ React.render(<TweenOneGroup>
 
 ### animation =[ ] is timeline
 
-### bezier = { }
+### BezierPlugin
+
+bezier = { }
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
@@ -134,6 +136,16 @@ React.render(<TweenOneGroup>
 | vars       | array          | null    | bezier point data，as: `{x:100,y:100}` |
 
 > bezier API refer to [gsap BezierPlugin](http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/)
+
+### SvgDrawPlugin
+
+SVGDraw = string or number;
+
+{ SVGDraw: 30 } or { SVGDraw: 'start end' } start and end values can be `%`;
+
+### SvgMorphPlugin
+
+svg polygon or path values: polygon is points, path is d; [demo](http://react-component.github.io/tween-one/svg.html)
 
 
 ## TweenOneGroup
