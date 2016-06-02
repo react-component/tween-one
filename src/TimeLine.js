@@ -92,7 +92,7 @@ p.setDefaultData = function(_vars) {
         const _data = item[_key];
         if (_key in _plugin) {
           tweenData.vars[_key] = new _plugin[_key](this.target, _data, tweenData.type);
-        } else if (typeof _data === 'number' || !_data.split(/[,|\s]/g).length) {
+        } else if (typeof _data === 'number' || _data.split(/[,|\s]/g).length <= 1) {
           const vars = parseFloat(_data);
           const unit = _data.toString().replace(/[^a-z|%]/g, '');
           const count = _data.toString().replace(/[^+|=|-]/g, '');
@@ -161,7 +161,7 @@ p.getAnimStartData = function(item) {
     if (this.attr === 'attr') {
       // 除了d和这points外的标签动画；
       const data = this.target.getAttribute(_key) || 0;
-      if (parseFloat(data)) {
+      if (parseFloat(data) || data === 0) {
         const unit = data.toString().replace(/[^a-z|%]/g, '');
         start[_key] = unit !== item[_key].unit ?
           this.convertToPixels(_key, parseFloat(data), unit) : parseFloat(data);
