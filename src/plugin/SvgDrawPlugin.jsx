@@ -29,10 +29,61 @@ SvgDrawPlugin.prototype = {
   getComputedStyle() {
     return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
   },
+  getLineLength(x1, y1, x2, y2) {
+    const _x2 = parseFloat(x2) - parseFloat(x1);
+    const _y2 = parseFloat(y2) - parseFloat(y1);
+    return Math.sqrt(_x2 * _x2 + _y2 * _y2);
+  },
+  getPolyLength(name) {
+    // .match(/(?:(-|-=|\+=)?\d*\.?\d*(?:e[\-+]?\d+)?)[0-9]/gi)
+    const pointsArray = (this.target.getAttribute('points') || '').split(/\s+/)
+      .map(item => item.split(',').map(n => parseFloat(n)));
+    if (name === 'polygon') {
+      pointsArray.push(pointsArray[0]);
+    }
+    let length = 0;
+    pointsArray.forEach((item, i) => {
+      if (i < pointsArray.length - 1) {
+        const nextPoint = pointsArray[i + 1];
+        length += this.getLineLength(item[0], item[1], nextPoint[0], nextPoint[1]);
+      }
+    });
+    return length;
+  },
+  getEllipseLength() {
+    const rx = parseFloat(this.target.getAttribute('rx'));
+    const ry = parseFloat(this.target.getAttribute('ry'));
+    if (!rx || !ry) {
+      throw new Error(`ellipse rx or ry error.`);
+    }
+    return Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (3 * ry + rx)));
+  },
   getAnimStart() {
     // console.log(this.target.getTotalLength(), this.target.getBBox())
     const computedStyle = this.getComputedStyle();
-    this.length = this.target.getTotalLength();
+    switch (this.tagName) {
+      case 'rect':
+        this.length = this.target.getAttribute('width') * 2 + this.target.getAttribute('height') * 2;
+        break;
+      case 'circle':
+        this.length = Math.PI * 2 * this.target.getAttribute('r');
+        break;
+      case 'line':
+        this.length = this.getLineLength(this.target.getAttribute('x1'),
+          this.target.getAttribute('y1'), this.target.getAttribute('x2'),
+          this.target.getAttribute('y2'));
+        break;
+      case 'polyline':
+      case 'polygon':
+        this.length = this.getPolyLength(this.tagName);
+        break;
+      case 'ellipse':
+        this.length = this.getEllipseLength();
+        break;
+      default:
+        this.length = this.target.getTotalLength();
+        break;
+    }
     this.start.strokeDasharray = computedStyle.strokeDasharray === 'none'
       ? '100% 100%' : computedStyle.strokeDasharray;
     this.start.strokeDashoffset = parseFloat(computedStyle.strokeDashoffset);
