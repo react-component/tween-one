@@ -84,11 +84,14 @@ React.render(<TweenOneGroup>
 | reverseDelay | number       | 0       | animate revers start delay |
 | onChange   | func           | null    | when the animation change called, callback({ moment, item, tween, index, mode}) |
 | moment     | number         | null    | set the current frame    |
+| attr       | string         | `style` | `style` or `attr`, `attr` is tag attribute. when morph SVG must be `attr`.  |
 | component  | string         | `div`   | component tag  |
 
 
 ### animation = { }
+
 > transform need to set the initial value, must be set in the style;
+
 > 0.4 filter => `grayScale`, `sepia`, `hueRotate`, `invert`, `brightness`, `contrast`, `blur`;  { blur: '5px' }  Unit must bring.
 
 | name      | type           | default | description    |
