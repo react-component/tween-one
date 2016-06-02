@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-tween-one@0.5.5 - tween-one anim component for react</title>
+  <title>rc-tween-one@0.6.0 - tween-one anim component for react</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-tween-one@0.5.5</h1>
+  <h1>rc-tween-one@0.6.0</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -775,6 +775,14 @@
       <li><a href="examples/shadow.html">shadow</a></li>
       
       <li><a href="examples/simple.html">simple</a></li>
+      
+      <li><a href="examples/svg.html">svg</a></li>
+      
+      <li><a href="examples/svgDraw.html">svgDraw</a></li>
+      
+      <li><a href="examples/svgDrawShape.html">svgDrawShape</a></li>
+      
+      <li><a href="examples/svgPoints.html">svgPoints</a></li>
       
       <li><a href="examples/timeline.html">timeline</a></li>
       
@@ -826,13 +834,18 @@ npm start</code></pre></div><h2>Example<a id="user-content-example" name="exampl
 <span class="hljs-keyword">var</span> React = <span class="hljs-built_in">require</span>(<span class="hljs-string">'react'</span>);
 React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{x:100}}</span>&gt;</span>
   demo
-<span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>, container);</span></code></pre></div><h3>TweenOneGroup<a id="user-content-tweenonegroup" name="tweenonegroup" class="anchor" aria-hidden="true" href="#tweenonegroup"><span class="octicon octicon-link"></span></a></h3><div class="highlight"><pre><code language="js"><span class="hljs-keyword">var</span> TweenOne = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-tween-one'</span>);
+<span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>, container);</span></code></pre></div><h3>Plugin<a id="user-content-plugin" name="plugin" class="anchor" aria-hidden="true" href="#plugin"><span class="octicon octicon-link"></span></a></h3><div class="highlight"><pre><code language="js"><span class="hljs-keyword">var</span> TweenOne = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-tween-one'</span>);
+<span class="hljs-keyword">var</span> SvgDrawPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-tween-one/lib/plugin/SvgDrawPlugin'</span>);
+Tween.plugins.push(SvgDrawPlugin);</code></pre></div><h3>TweenOneGroup<a id="user-content-tweenonegroup" name="tweenonegroup" class="anchor" aria-hidden="true" href="#tweenonegroup"><span class="octicon octicon-link"></span></a></h3><div class="highlight"><pre><code language="js"><span class="hljs-keyword">var</span> TweenOne = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-tween-one'</span>);
 <span class="hljs-keyword">var</span> React = <span class="hljs-built_in">require</span>(<span class="hljs-string">'react'</span>);
 <span class="hljs-keyword">var</span> TweenOneGroup = TweenOne.TweenOneGroup;
 React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"0"</span>&gt;</span>demo<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"1"</span>&gt;</span>demo<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-title">TweenOneGroup</span>&gt;</span>, container);</span></code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><h3>props<a id="user-content-props" name="props" class="anchor" aria-hidden="true" href="#props"><span class="octicon octicon-link"></span></a></h3><table>
+<span class="hljs-tag">&lt;/<span class="hljs-title">TweenOneGroup</span>&gt;</span>, container);</span></code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><blockquote>
+<p>version &gt;= 0.6.x support SVG;</p>
+</blockquote>
+<h3>props<a id="user-content-props" name="props" class="anchor" aria-hidden="true" href="#props"><span class="octicon octicon-link"></span></a></h3><table>
 <thead>
 <tr>
 <th>name</th>
@@ -879,6 +892,12 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>set the current frame</td>
 </tr>
 <tr>
+<td>attr</td>
+<td>string</td>
+<td><code>style</code></td>
+<td><code>style</code> or <code>attr</code>, <code>attr</code> is tag attribute. when morph SVG must be <code>attr</code>.</td>
+</tr>
+<tr>
 <td>component</td>
 <td>string</td>
 <td><code>div</code></td>
@@ -887,8 +906,8 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 </tbody>
 </table>
 <h3>animation = { }<a id="user-content-animation-=-{-}" name="animation-=-{-}" class="anchor" aria-hidden="true" href="#animation-=-{-}"><span class="octicon octicon-link"></span></a></h3><blockquote>
-<p>transform need to set the initial value, must be set in the style;
-0.4 filter =&gt; <code>grayScale</code>, <code>sepia</code>, <code>hueRotate</code>, <code>invert</code>, <code>brightness</code>, <code>contrast</code>, <code>blur</code>;  { blur: &#39;5px&#39; }  Unit must bring.</p>
+<p>transform need to set the initial value, must be set in the style;</p>
+<p>0.4 filter =&gt; <code>grayScale</code>, <code>sepia</code>, <code>hueRotate</code>, <code>invert</code>, <code>brightness</code>, <code>contrast</code>, <code>blur</code>;  { blur: &#39;5px&#39; }  Unit must bring.</p>
 </blockquote>
 <table>
 <thead>
@@ -980,7 +999,8 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 </tr>
 </tbody>
 </table>
-<h3>animation =[ ] is timeline<a id="user-content-animation-=[-]-is-timeline" name="animation-=[-]-is-timeline" class="anchor" aria-hidden="true" href="#animation-=[-]-is-timeline"><span class="octicon octicon-link"></span></a></h3><h3>bezier = { }<a id="user-content-bezier-=-{-}" name="bezier-=-{-}" class="anchor" aria-hidden="true" href="#bezier-=-{-}"><span class="octicon octicon-link"></span></a></h3><table>
+<h3>animation =[ ] is timeline<a id="user-content-animation-=[-]-is-timeline" name="animation-=[-]-is-timeline" class="anchor" aria-hidden="true" href="#animation-=[-]-is-timeline"><span class="octicon octicon-link"></span></a></h3><h3>BezierPlugin<a id="user-content-bezierplugin" name="bezierplugin" class="anchor" aria-hidden="true" href="#bezierplugin"><span class="octicon octicon-link"></span></a></h3><p>bezier = { }</p>
+<table>
 <thead>
 <tr>
 <th>name</th>
@@ -1013,6 +1033,9 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <blockquote>
 <p>bezier API refer to <a href="http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/" title="null">gsap BezierPlugin</a></p>
 </blockquote>
+<h3>SvgDrawPlugin<a id="user-content-svgdrawplugin" name="svgdrawplugin" class="anchor" aria-hidden="true" href="#svgdrawplugin"><span class="octicon octicon-link"></span></a></h3><p>SVGDraw = string or number;</p>
+<p>{ SVGDraw: 30 } or { SVGDraw: &#39;start end&#39; } start and end values can be <code>%</code>;</p>
+<h3>SvgMorphPlugin<a id="user-content-svgmorphplugin" name="svgmorphplugin" class="anchor" aria-hidden="true" href="#svgmorphplugin"><span class="octicon octicon-link"></span></a></h3><p>svg polygon or path values: polygon is points, path is d; <a href="http://react-component.github.io/tween-one/svg.html" title="null">demo</a></p>
 <h2>TweenOneGroup<a id="user-content-tweenonegroup" name="tweenonegroup" class="anchor" aria-hidden="true" href="#tweenonegroup"><span class="octicon octicon-link"></span></a></h2><table>
 <thead>
 <tr>

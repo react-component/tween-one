@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		20:0
+/******/ 		24:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"fromDelay","9":"group","10":"groupAbsolute","11":"gsapWritten","12":"moment","13":"repeat","14":"shadow","15":"simple","16":"timeline","17":"update","18":"updateStyle","19":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"fromDelay","9":"group","10":"groupAbsolute","11":"gsapWritten","12":"moment","13":"repeat","14":"shadow","15":"simple","16":"svg","17":"svgDraw","18":"svgDrawShape","19":"svgPoints","20":"timeline","21":"update","22":"updateStyle","23":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -120,7 +120,7 @@
 	'use strict';
 	
 	var TweenOne = __webpack_require__(4);
-	TweenOne.TweenOneGroup = __webpack_require__(180);
+	TweenOne.TweenOneGroup = __webpack_require__(181);
 	module.exports = TweenOne;
 
 /***/ },
@@ -163,7 +163,11 @@
 	
 	var _TimeLine2 = _interopRequireDefault(_TimeLine);
 	
-	var _ticker = __webpack_require__(177);
+	var _plugins = __webpack_require__(176);
+	
+	var _plugins2 = _interopRequireDefault(_plugins);
+	
+	var _ticker = __webpack_require__(178);
 	
 	var _ticker2 = _interopRequireDefault(_ticker);
 	
@@ -281,7 +285,7 @@
 	    key: 'start',
 	    value: function start(props) {
 	      if (props.animation && Object.keys(props.animation).length) {
-	        this.timeLine = new _TimeLine2['default'](this.dom, (0, _util.dataToArray)(props.animation));
+	        this.timeLine = new _TimeLine2['default'](this.dom, (0, _util.dataToArray)(props.animation), this.props.attr);
 	        // 开始动画
 	        this.play();
 	      }
@@ -367,6 +371,7 @@
 	  attr: 'style',
 	  onChange: noop
 	};
+	TweenOne.plugins = _plugins2['default'];
 	exports['default'] = TweenOne;
 	module.exports = exports['default'];
 
@@ -21005,18 +21010,19 @@
 	
 	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
 	
-	var _styleUtils = __webpack_require__(173);
+	var _plugins = __webpack_require__(176);
 	
-	var _styleUtils2 = _interopRequireDefault(_styleUtils);
+	var _plugins2 = _interopRequireDefault(_plugins);
 	
-	var _BezierPlugin = __webpack_require__(176);
+	var _pluginStylePlugin = __webpack_require__(177);
 	
-	var _BezierPlugin2 = _interopRequireDefault(_BezierPlugin);
+	var _pluginStylePlugin2 = _interopRequireDefault(_pluginStylePlugin);
 	
 	var DEFAULT_EASING = 'easeInOutQuad';
 	var DEFAULT_DURATION = 450;
 	var DEFAULT_DELAY = 0;
 	function noop() {}
+	_plugins2['default'].push(_pluginStylePlugin2['default']);
 	// 设置默认数据
 	function defaultData(vars, now) {
 	  return {
@@ -21035,8 +21041,11 @@
 	  };
 	}
 	
-	var timeLine = function timeLine(target, toData) {
+	var timeLine = function timeLine(target, toData, attr) {
+	  var _this = this;
+	
 	  this.target = target;
+	  this.attr = attr || 'style';
 	  // 记录总时间;
 	  this.totalTime = 0;
 	  // 记录当前时间;
@@ -21046,109 +21055,75 @@
 	  // 每个的开始数据；
 	  this.start = {};
 	  // 开始默认的数据；
-	  this.startDefaultData = this.target.getAttribute('style');
+	  this.startDefaultData = {};
+	  var data = [];
+	  toData.forEach(function (d, i) {
+	    var _d = (0, _objectAssign2['default'])({}, d);
+	    if (_this.attr === 'style') {
+	      data[i] = {};
+	      Object.keys(_d).forEach(function (key) {
+	        if (key in defaultData({}, 0)) {
+	          data[i][key] = _d[key];
+	          delete _d[key];
+	        }
+	      });
+	      data[i].style = _d;
+	      _this.startDefaultData.style = _this.target.getAttribute('style');
+	    } else if (_this.attr === 'attr') {
+	      Object.keys(_d).forEach(function (key) {
+	        if (key === 'style' && Array.isArray(d[key])) {
+	          throw new Error('Style should be the object.');
+	        }
+	        if (key === 'bezier') {
+	          _d.style = (0, _objectAssign2['default'])(_d.style || {}, { bezier: _d[key] });
+	          delete _d[key];
+	          _this.startDefaultData.style = _this.target.getAttribute('style');
+	        } else {
+	          _this.startDefaultData[key] = _this.target.getAttribute(key);
+	        }
+	      });
+	      data[i] = _d;
+	    }
+	  });
 	  // 动画过程
 	  this.tween = {};
 	  // 每帧的时间;
 	  this.perFrame = Math.round(1000 / 60);
 	  // 设置默认动画数据;
-	  this.setDefaultData(toData);
+	  this.setDefaultData(data);
 	};
 	var p = timeLine.prototype;
 	
-	p.getComputedStyle = function () {
-	  return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
-	};
-	
-	p.getTweenData = function (_key, vars) {
-	  var data = {
-	    data: {},
-	    dataType: {},
-	    dataUnit: {},
-	    dataCount: {}
-	  };
-	  var key = (0, _styleUtils.getGsapType)(_key);
-	  if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
-	    data.data[key] = (0, _styleUtils.parseColor)(vars);
-	    data.dataType[key] = 'color';
-	  } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
-	    data.data[key] = (0, _styleUtils.parseShadow)(vars);
-	    data.dataType[key] = 'shadow';
-	  } else if (key === 'bezier') {
-	    data.data[key] = vars;
-	  } else if (key === 'scale') {
-	    data.data.scaleX = vars;
-	    data.data.scaleY = vars;
-	    data.dataType.scaleX = data.dataType.scaleY = 'other';
-	  } else {
-	    data.data[key] = vars;
-	    data.dataType[key] = 'other';
-	  }
-	  if (key !== 'bezier') {
-	    if (Array.isArray(data.data[key])) {
-	      data.dataUnit[key] = data.data[key].map(function (_item) {
-	        return _item.toString().replace(/[^a-z|%]/g, '');
-	      });
-	      data.dataCount[key] = data.data[key].map(function (_item) {
-	        return _item.toString().replace(/[^+|=|-]/g, '');
-	      });
-	      data.data[key] = data.data[key].map(function (_item) {
-	        return parseFloat(_item);
-	      });
-	    } else if (key === 'scale') {
-	      data.dataUnit.scaleX = data.data.scaleX.toString().replace(/[^a-z|%]/g, '');
-	      data.dataCount.scaleX = data.data.scaleX.toString().replace(/[^+|=|-]/g, '');
-	      data.data.scaleX = parseFloat(data.data.scaleX);
-	      data.dataUnit.scaleY = data.data.scaleY.toString().replace(/[^a-z|%]/g, '');
-	      data.dataCount.scaleY = data.data.scaleY.toString().replace(/[^+|=|-]/g, '');
-	      data.data.scaleY = parseFloat(data.data.scaleY);
-	    } else {
-	      data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
-	      data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
-	      data.data[key] = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
-	    }
-	  }
-	  return data;
-	};
-	p.setDefaultData = function (vars) {
-	  var _this = this;
+	p.setDefaultData = function (_vars) {
+	  var _this2 = this;
 	
 	  var now = 0;
 	  var repeatMax = false;
-	  var data = vars.map(function (item) {
+	  var data = _vars.map(function (item) {
 	    now += item.delay || 0; // 加上延时，在没有播放过时；
 	    var tweenData = defaultData(item, now);
 	    tweenData.vars = {};
-	    tweenData.varsType = {};
-	    tweenData.varsUnit = {};
-	    tweenData.varsCount = {};
 	    Object.keys(item).forEach(function (_key) {
 	      if (!(_key in tweenData)) {
-	        var _data = _this.getTweenData(_key, item[_key]);
-	        var key = (0, _styleUtils.getGsapType)(_key);
-	        if (!(_key in _this.target) || _styleUtils2['default'].filter.indexOf(key) >= 0) {
-	          tweenData.vars.css = tweenData.vars.css || {};
-	          if (key === 'scale') {
-	            tweenData.vars.css.scaleX = _data.data.scaleX;
-	            tweenData.vars.css.scaleY = _data.data.scaleY;
-	          } else {
-	            tweenData.vars.css[key] = _data.data[key];
-	          }
-	        } else {
-	          tweenData.vars[key] = _data.data[key];
+	        var _data = item[_key];
+	        if (_key in _plugins2['default']) {
+	          tweenData.vars[_key] = new _plugins2['default'][_key](_this2.target, _data, tweenData.type);
+	        } else if (typeof _data === 'number' || _data.split(/[,|\s]/g).length <= 1) {
+	          var vars = parseFloat(_data);
+	          var unit = _data.toString().replace(/[^a-z|%]/g, '');
+	          var count = _data.toString().replace(/[^+|=|-]/g, '');
+	          tweenData.vars[_key] = { type: 0, unit: unit, vars: vars, count: count };
+	        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugins2['default']) {
+	          /*
+	           * SVG 情况如下：
+	           * points: ***,*** ***,***
+	           * - split(' ') => ['***,***','***,**'] split(',') => [[***,***],[***,***]];
+	           * - array 里的 array.trim(',') => array.join(' ');
+	           * d: M*** *** L*** ** C*** *** *** *** *** *** Z || M***,***L***,***Z
+	           * - split(/[a-z]/i).filter(item => item), unit: split(/\d+[0-9|\s]+\s/)
+	           */
+	          tweenData.vars[_key] = new _plugins2['default'].SVGMorph(_this2.target, _data, _key);
 	        }
-	        if (key === 'scale') {
-	          tweenData.varsType.scaleX = _data.dataType.scaleX;
-	          tweenData.varsUnit.scaleX = _data.dataUnit.scaleX;
-	          tweenData.varsCount.scaleX = _data.dataCount.scaleX;
-	          tweenData.varsType.scaleY = _data.dataType.scaleY;
-	          tweenData.varsUnit.scaleY = _data.dataUnit.scaleY;
-	          tweenData.varsCount.scaleY = _data.dataCount.scaleY;
-	          return;
-	        }
-	        tweenData.varsType[key] = _data.dataType[key];
-	        tweenData.varsUnit[key] = _data.dataUnit[key];
-	        tweenData.varsCount[key] = _data.dataCount[key];
 	      }
 	    });
 	    if (tweenData.yoyo && !tweenData.repeat) {
@@ -21181,77 +21156,34 @@
 	  }
 	  return pix;
 	};
-	p.convertToMarksArray = function (unit, data, i) {
-	  var startUnit = data.toString().replace(/[^a-z|%]/g, '');
-	  var endUnit = unit[i];
-	  if (startUnit === endUnit) {
-	    return parseFloat(data);
+	p.convertToPixels = function (style, num, unit) {
+	  var horiz = /(?:Left|Right|Width)/i.test(style);
+	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
+	  var pix = undefined;
+	  if (unit === '%') {
+	    pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
+	  } else {
+	    pix = parseFloat(num) * 16;
 	  }
-	  return this.convertToMarks('shadow', data, endUnit);
+	  return pix;
 	};
-	p.getAnimStartCssData = function (vars, i) {
-	  var _this2 = this;
-	
-	  var computedStyle = this.getComputedStyle();
-	  var style = {};
-	  Object.keys(vars).forEach(function (_key) {
-	    var key = (0, _styleUtils.getGsapType)(_key);
-	    var cssName = (0, _styleUtils.isConvert)(key);
-	    var startData = computedStyle[cssName];
-	    if (!startData || startData === 'none' || startData === 'auto') {
-	      startData = '';
-	    }
-	    var transform = undefined;
-	    var endUnit = undefined;
-	    var startUnit = undefined;
-	    if (cssName === 'transform') {
-	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
-	      startData = computedStyle[_this2.transform];
-	      transform = (0, _styleUtils.getTransform)(startData);
-	      style.transform = transform;
-	    } else if (cssName === 'bezier') {
-	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
-	      startData = computedStyle[_this2.transform];
-	      var bezier = style.bezier = new _BezierPlugin2['default'](startData === 'none' ? '' : startData, vars.bezier);
-	      transform = vars.type === 'from' ? bezier.set(1) : bezier.set(0);
-	      transform = (0, _styleUtils.getTransform)(transform);
-	    } else if (cssName === 'filter') {
-	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter');
-	      startData = computedStyle[_this2.filterName];
-	      _this2.filterObject = (0, _objectAssign2['default'])(_this2.filterObject || {}, (0, _styleUtils.splitFilterToObject)(startData));
-	      startData = _this2.filterObject[_key] || 0;
-	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
-	      endUnit = _this2.defaultData[i].varsUnit[_key];
-	      if (endUnit !== startUnit) {
-	        startData = _this2.convertToMarks(_key, startData, endUnit);
-	      }
-	      style[_key] = parseFloat(startData);
-	    } else if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
-	      style[cssName] = (0, _styleUtils.parseColor)(startData);
-	    } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
-	      startData = (0, _styleUtils.parseShadow)(startData);
-	      endUnit = _this2.defaultData[i].varsUnit[_key];
-	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit));
-	      style[cssName] = startData;
-	    } else {
-	      // 计算单位， em rem % px;
-	      endUnit = _this2.defaultData[i].varsUnit[cssName];
-	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
-	      if (endUnit && (endUnit !== startUnit || endUnit !== 'px')) {
-	        startData = _this2.convertToMarks(cssName, startData, endUnit);
-	      }
-	      style[cssName] = parseFloat(startData || 0);
-	    }
-	  });
-	  return style;
-	};
-	p.getAnimStartData = function (item, i) {
+	p.getAnimStartData = function (item) {
 	  var _this3 = this;
 	
 	  var start = {};
 	  Object.keys(item).forEach(function (_key) {
-	    if (_key === 'css') {
-	      start[_key] = _this3.getAnimStartCssData(item[_key], i);
+	    if (_key in _plugins2['default'] || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+	      start[_key] = item[_key].getAnimStart();
+	      return;
+	    }
+	    if (_this3.attr === 'attr') {
+	      // 除了d和这points外的标签动画；
+	      var data = _this3.target.getAttribute(_key) || 0;
+	      if (parseFloat(data) || data === 0) {
+	        var unit = data.toString().replace(/[^a-z|%]/g, '');
+	        start[_key] = unit !== item[_key].unit ? _this3.convertToPixels(_key, parseFloat(data), unit) : parseFloat(data);
+	      }
+	      // start[_key] = data;
 	      return;
 	    }
 	    start[_key] = _this3.target[_key] || 0;
@@ -21261,197 +21193,67 @@
 	p.setAnimData = function (data) {
 	  var _this4 = this;
 	
-	  var style = this.target.style;
 	  Object.keys(data).forEach(function (key) {
-	    if (key === 'css') {
-	      var _ret = (function () {
-	        var _data = data[key];
-	        Object.keys(_data).forEach(function (_key) {
-	          if (_key === 'transform') {
-	            var t = _data[_key];
-	            var perspective = t.perspective;
-	            var angle = t.rotate;
-	            var rotateX = t.rotateX;
-	            var rotateY = t.rotateY;
-	            var sx = t.scaleX;
-	            var sy = t.scaleY;
-	            var sz = t.scaleZ;
-	            var skx = t.skewX;
-	            var sky = t.skewY;
-	            var translateX = t.translateX;
-	            var translateY = t.translateY;
-	            var translateZ = t.translateZ;
-	            var xPercent = t.xPercent || 0;
-	            var yPercent = t.yPercent || 0;
-	            var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
-	            var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
-	            var an = angle ? 'rotate(' + angle + 'deg)' : '';
-	            var ss = undefined;
-	            if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
-	              var matrix = '1,0,0,1,' + translateX + ',' + translateY;
-	              ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-	              // IE 9 没 3d;
-	              style[_this4.transform] = (percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk).trim();
-	              return;
-	            }
-	            ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
-	            var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
-	            var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
-	            var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	            style[_this4.transform] = (per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
-	            return;
-	          } else if (_styleUtils2['default'].filter.indexOf(_key) >= 0) {
-	            _this4.filterObject[_key] = _data[_key];
-	            var filterStyle = '';
-	            Object.keys(_this4.filterObject).forEach(function (filterKey) {
-	              filterStyle += ' ' + filterKey + '(' + _this4.filterObject[filterKey] + ')';
-	            });
-	            style[_this4.filterName] = filterStyle.trim();
-	            return;
-	          }
-	          style[_key] = data[key][_key];
-	        });
-	        return {
-	          v: undefined
-	        };
-	      })();
-	
-	      if (typeof _ret === 'object') return _ret.v;
+	    if (key in _plugins2['default'] || _this4.attr === 'attr' && (key === 'd' || key === 'points')) {
+	      return;
 	    }
 	    _this4.target[key] = data[key];
 	  });
 	};
 	
-	p.setArrayRatio = function (ratio, start, vars, unit, type) {
-	  var _vars = vars.map(function (endData, i) {
-	    var startData = start[i] || 0;
-	    return (endData - startData) * ratio + startData + unit[i];
-	  });
-	  if (type === 'color') {
-	    return (0, _styleUtils.getColor)(_vars);
-	  } else if (type === 'shadow') {
-	    var s = _vars.slice(0, 3);
-	    var c = _vars.slice(3, _vars.length);
-	    var color = (0, _styleUtils.getColor)(c);
-	    return s.join(' ') + ' ' + color;
-	  }
-	  return _vars;
-	};
-	
-	p.setStyleRatio = function (ratio, start, vars, unit, count, type) {
+	p.setRatio = function (ratio, endData, i) {
 	  var _this5 = this;
 	
-	  var style = {};
-	  if (start.transform) {
-	    style.transform = (0, _objectAssign2['default'])({}, start.transform, this.tween.css ? this.tween.css.transform : {});
-	  }
-	  Object.keys(vars).forEach(function (key) {
-	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
-	    var startVars = _isTransform ? start.transform[key] : start[key];
-	    var endVars = vars[key];
-	    var _unit = unit[key] ? unit[key] : 0;
-	    var _count = count[key];
-	    if (_isTransform) {
-	      if (_unit === '%' || _unit === 'em' || _unit === 'rem') {
-	        // translateX translateY => %
-	        var pName = undefined;
-	        var data = undefined;
-	        if (key === 'translateX') {
-	          data = start.transform.translateX;
-	          pName = 'xPercent';
-	        } else {
-	          data = start.transform.translateY;
-	          pName = 'yPercent';
-	        }
-	        if (_count.charAt(1) !== '=') {
-	          style.transform[key] = data - data * ratio;
-	        }
-	        style.transform[pName] = endVars * ratio + _unit;
-	      } else {
-	        if (_count.charAt(1) === '=') {
-	          style.transform[key] = startVars + endVars * ratio;
-	          return;
-	        }
-	        style.transform[key] = (endVars - startVars) * ratio + startVars;
+	  Object.keys(endData.vars).forEach(function (_key) {
+	    if (_key in _plugins2['default'] || _this5.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+	      endData.vars[_key].setRatio(ratio, _this5.tween);
+	      return;
+	    }
+	    var endVars = endData.vars[_key];
+	    var startVars = _this5.start[i][_key];
+	    var data = undefined;
+	    if (_this5.attr === 'attr') {
+	      // 除了d和这points外的标签动画；
+	      if (!endVars.type) {
+	        data = endVars.unit.charAt(1) === '=' ? startVars + endVars.vars * ratio + endVars.unit : (endVars.vars - startVars) * ratio + startVars + endVars.unit;
+	        _this5.target.setAttribute(_key, data);
 	      }
-	      return;
-	    } else if (key === 'bezier') {
-	      var bezier = start[key];
-	      style.transform = (0, _styleUtils.getTransform)(bezier.set(ratio));
-	      return;
-	    } else if (Array.isArray(endVars)) {
-	      var _type = type[key];
-	      style[key] = _this5.setArrayRatio(ratio, startVars, endVars, _unit, _type);
-	      return;
-	    }
-	    var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
-	    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
-	    _unit = _unit || (_styleUtils2['default'].filter.indexOf(key) >= 0 ? '' : styleUnit);
-	    if (_count.charAt(1) === '=') {
-	      style[key] = startVars + endVars * ratio + _unit;
-	      return;
-	    }
-	    style[key] = (endVars - startVars) * ratio + startVars + _unit;
-	  });
-	  return style;
-	};
-	
-	p.setRatioData = function (ratio, endData, i) {
-	  var _this6 = this;
-	
-	  Object.keys(endData).forEach(function (_key) {
-	    var key = (0, _styleUtils.getGsapType)(_key);
-	    var endVars = endData[_key];
-	    var startVars = _this6.start[i][key];
-	    var unit = _this6.defaultData[i].varsUnit;
-	    var count = _this6.defaultData[i].varsCount;
-	    var type = _this6.defaultData[i].varsType;
-	    if (typeof endVars === 'object' && _key === 'css') {
-	      _this6.tween.css = (0, _objectAssign2['default'])({}, _this6.tween.css, _this6.setStyleRatio(ratio, startVars, endVars, unit, count, type));
-	    } else if (Array.isArray(endVars)) {
-	      _this6.tween[key] = _this6.setArrayRatio(ratio, startVars, endVars, unit[key]);
-	    } else {
-	      _this6.tween[key] = count[key].charAt(1) === '=' ? startVars + endVars * ratio : (endVars - startVars) * ratio + startVars;
 	    }
 	  });
-	};
-	
-	p.setRatio = function (ratio, endData, i) {
-	  this.setRatioData(ratio, endData.vars, i);
 	  this.setAnimData(this.tween);
 	};
 	p.render = function () {
-	  var _this7 = this;
+	  var _this6 = this;
 	
 	  this.defaultData.forEach(function (item, i) {
 	    var initTime = item.initTime;
 	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-	    var repeatNum = Math.ceil((_this7.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
+	    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
 	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
-	    repeatNum = _this7.progressTime === 0 ? repeatNum + 1 : repeatNum;
+	    repeatNum = _this6.progressTime === 0 ? repeatNum + 1 : repeatNum;
 	    if (item.repeat) {
 	      if (item.repeat || item.repeat <= repeatNum) {
 	        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
 	      }
 	    }
-	    var progressTime = _this7.progressTime - initTime;
+	    var progressTime = _this6.progressTime - initTime;
 	    // 设置 start
 	    var delay = item.delay >= 0 ? item.delay : -item.delay;
 	    var fromDelay = item.type === 'from' ? delay : 0;
-	    if (progressTime + fromDelay >= 0 && !_this7.start[i]) {
-	      _this7.start[i] = _this7.getAnimStartData(item.vars, i);
+	    if (progressTime + fromDelay >= 0 && !_this6.start[i]) {
+	      _this6.start[i] = _this6.getAnimStartData(item.vars);
 	    }
 	    // onRepeat 处理
-	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this7.perFrame) {
+	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
-	    if (progressTime + fromDelay >= 0 && progressTime < _this7.perFrame && repeatNum <= 0) {
+	    if (progressTime + fromDelay >= 0 && progressTime < _this6.perFrame && repeatNum <= 0) {
 	      item.mode = 'onStart';
-	      _this7.setRatio(item.type === 'from' ? 1 : 0, item, i);
+	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
 	      item.onStart();
 	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
-	      _this7.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
+	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
 	      if (item.mode !== 'reset') {
 	        item.onComplete();
 	      }
@@ -21464,14 +21266,14 @@
 	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
 	        ratio = _tweenFunctions2['default'][item.ease](progressTime, 1, 0, item.duration);
 	      }
-	      _this7.setRatio(ratio, item, i);
+	      _this6.setRatio(ratio, item, i);
 	      item.onUpdate(ratio);
 	    }
-	    if (progressTime >= 0 && progressTime < item.duration + _this7.perFrame) {
-	      _this7.onChange({
-	        moment: _this7.progressTime,
+	    if (progressTime >= 0 && progressTime < item.duration + _this6.perFrame) {
+	      _this6.onChange({
+	        moment: _this6.progressTime,
 	        item: item,
-	        tween: _this7.tween,
+	        tween: _this6.tween,
 	        index: i,
 	        mode: item.mode
 	      });
@@ -21489,12 +21291,16 @@
 	};
 	
 	p.resetDefaultStyle = function () {
+	  var _this7 = this;
+	
 	  this.tween = {};
 	  this.defaultData = this.defaultData.map(function (item) {
 	    item.mode = 'reset';
 	    return item;
 	  });
-	  this.target.setAttribute('style', this.startDefaultData);
+	  Object.keys(this.startDefaultData).forEach(function (key) {
+	    _this7.target.setAttribute(key, _this7.startDefaultData[key]);
+	  });
 	};
 	
 	p.onChange = noop;
@@ -21760,513 +21566,18 @@
 /* 176 */
 /***/ function(module, exports) {
 
-	/**
-	 * Created by jljsj on 15/12/22.
-	 * The algorithm is GSAP BezierPlugin VERSION: beta 1.3.4
-	 */
-	'use strict';
+	"use strict";
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var _RAD2DEG = 180 / Math.PI;
-	var _r1 = [];
-	var _r2 = [];
-	var _r3 = [];
-	var _corProps = {};
-	var _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
-	function createMatrix(style) {
-	  return window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style) || window.MozCSSMatrix && new window.MozCSSMatrix(style) || window.MsCSSMatrix && new window.MsCSSMatrix(style) || window.OCSSMatrix && new window.OCSSMatrix(style) || window.CSSMatrix && new window.CSSMatrix(style) || {};
-	}
-	
-	var GsapBezier = {
-	  Segment: function Segment(a, b, c, d) {
-	    this.a = a;
-	    this.b = b;
-	    this.c = c;
-	    this.d = d;
-	    this.da = d - a;
-	    this.ca = c - a;
-	    this.ba = b - a;
-	  },
-	  cubicToQuadratic: function cubicToQuadratic(a, b, c, d) {
-	    var q1 = { a: a };
-	    var q2 = {};
-	    var q3 = {};
-	    var q4 = { c: d };
-	    var mab = (a + b) / 2;
-	    var mbc = (b + c) / 2;
-	    var mcd = (c + d) / 2;
-	    var mabc = (mab + mbc) / 2;
-	    var mbcd = (mbc + mcd) / 2;
-	    var m8 = (mbcd - mabc) / 8;
-	    q1.b = mab + (a - mab) / 4;
-	    q2.b = mabc + m8;
-	    q1.c = q2.a = (q1.b + q2.b) / 2;
-	    q2.c = q3.a = (mabc + mbcd) / 2;
-	    q3.b = mbcd - m8;
-	    q4.b = mcd + (d - mcd) / 4;
-	    q3.c = q4.a = (q3.b + q4.b) / 2;
-	    return [q1, q2, q3, q4];
-	  },
-	  calculateControlPoints: function calculateControlPoints(a, curviness, quad, basic, correlate) {
-	    var l = a.length - 1;
-	    var i = undefined;
-	    var ii = 0;
-	    var p1 = undefined;
-	    var p2 = undefined;
-	    var p3 = undefined;
-	    var seg = undefined;
-	    var m1 = undefined;
-	    var m2 = undefined;
-	    var mm = undefined;
-	    var cp2 = undefined;
-	    var qb = undefined;
-	    var r1 = undefined;
-	    var r2 = undefined;
-	    var tl = undefined;
-	    var cp1 = a[0].a;
-	    for (i = 0; i < l; i++) {
-	      seg = a[ii];
-	      p1 = seg.a;
-	      p2 = seg.d;
-	      p3 = a[ii + 1].d;
-	
-	      if (correlate) {
-	        r1 = _r1[i];
-	        r2 = _r2[i];
-	        tl = (r2 + r1) * curviness * 0.25 / (basic ? 0.5 : _r3[i] || 0.5);
-	        var _aa = r1 !== 0 ? tl / r1 : 0;
-	        var _a = basic ? curviness * 0.5 : _aa;
-	        m1 = p2 - (p2 - p1) * _a;
-	        var bb = r2 !== 0 ? tl / r2 : 0;
-	        var b = basic ? curviness * 0.5 : bb;
-	        m2 = p2 + (p3 - p2) * b;
-	        mm = p2 - (m1 + ((m2 - m1) * (r1 * 3 / (r1 + r2) + 0.5) / 4 || 0));
-	      } else {
-	        m1 = p2 - (p2 - p1) * curviness * 0.5;
-	        m2 = p2 + (p3 - p2) * curviness * 0.5;
-	        mm = p2 - (m1 + m2) / 2;
-	      }
-	      m1 += mm;
-	      m2 += mm;
-	
-	      seg.c = cp2 = m1;
-	      if (i !== 0) {
-	        seg.b = cp1;
-	      } else {
-	        seg.b = cp1 = seg.a + (seg.c - seg.a) * 0.6;
-	      }
-	
-	      seg.da = p2 - p1;
-	      seg.ca = cp2 - p1;
-	      seg.ba = cp1 - p1;
-	
-	      if (quad) {
-	        qb = this.cubicToQuadratic(p1, cp1, cp2, p2);
-	        a.splice(ii, 1, qb[0], qb[1], qb[2], qb[3]);
-	        ii += 4;
-	      } else {
-	        ii++;
-	      }
-	
-	      cp1 = m2;
-	    }
-	    seg = a[ii];
-	    seg.b = cp1;
-	    seg.c = cp1 + (seg.d - cp1) * 0.4;
-	    seg.da = seg.d - seg.a;
-	    seg.ca = seg.c - seg.a;
-	    seg.ba = cp1 - seg.a;
-	    if (quad) {
-	      qb = this.cubicToQuadratic(seg.a, cp1, seg.c, seg.d);
-	      a.splice(ii, 1, qb[0], qb[1], qb[2], qb[3]);
-	    }
-	  },
-	  parseAnchors: function parseAnchors(_values, p, correlate, prepend) {
-	    var a = [];
-	    var l = undefined;
-	    var i = undefined;
-	    var p1 = undefined;
-	    var p2 = undefined;
-	    var p3 = undefined;
-	    var tmp = undefined;
-	    var values = _values;
-	    if (prepend) {
-	      values = [prepend].concat(values);
-	      i = values.length;
-	      while (--i > -1) {
-	        tmp = values[i][p];
-	        if (typeof tmp === 'string' && tmp.charAt(1) === '=') {
-	          values[i][p] = prepend[p] + Number(tmp.charAt(0) + tmp.substr(2));
-	        }
-	      }
-	    }
-	    l = values.length - 2;
-	    if (l < 0) {
-	      a[0] = new this.Segment(values[0][p], 0, 0, values[l < -1 ? 0 : 1][p]);
-	      return a;
-	    }
-	    for (i = 0; i < l; i++) {
-	      p1 = values[i][p];
-	      p2 = values[i + 1][p];
-	      a[i] = new this.Segment(p1, 0, 0, p2);
-	      if (correlate) {
-	        p3 = values[i + 2][p];
-	        _r1[i] = (_r1[i] || 0) + (p2 - p1) * (p2 - p1);
-	        _r2[i] = (_r2[i] || 0) + (p3 - p2) * (p3 - p2);
-	      }
-	    }
-	    a[i] = new this.Segment(values[i][p], 0, 0, values[i + 1][p]);
-	    return a;
-	  },
-	  bezierThrough: function bezierThrough(_values, _curviness, quadratic, basic, __correlate, _prepend) {
-	    var values = _values;
-	    var curviness = _curviness;
-	    var correlate = __correlate;
-	    var prepend = _prepend;
-	    var obj = {};
-	    var props = [];
-	    var first = prepend || values[0];
-	    var i = undefined;
-	    var p = undefined;
-	    var a = undefined;
-	    var j = undefined;
-	    var r = undefined;
-	    var l = undefined;
-	    var seamless = undefined;
-	    var last = undefined;
-	    correlate = typeof correlate === 'string' ? ',' + correlate + ',' : _correlate;
-	    if (curviness === null) {
-	      curviness = 1;
-	    }
-	    Object.keys(values[0]).forEach(function (key) {
-	      props.push(key);
-	    });
-	    if (values.length > 1) {
-	      last = values[values.length - 1];
-	      seamless = true;
-	      i = props.length;
-	      while (--i > -1) {
-	        p = props[i];
-	        if (Math.abs(first[p] - last[p]) > 0.05) {
-	          seamless = false;
-	          break;
-	        }
-	      }
-	      if (seamless) {
-	        values = values.concat();
-	        if (prepend) {
-	          values.unshift(prepend);
-	        }
-	        values.push(values[1]);
-	        prepend = values[values.length - 3];
-	      }
-	    }
-	    _r1.length = _r2.length = _r3.length = 0;
-	    i = props.length;
-	    while (--i > -1) {
-	      p = props[i];
-	      _corProps[p] = correlate.indexOf(',' + p + ',') !== -1;
-	      obj[p] = this.parseAnchors(values, p, _corProps[p], prepend);
-	    }
-	    i = _r1.length;
-	    while (--i > -1) {
-	      _r1[i] = Math.sqrt(_r1[i]);
-	      _r2[i] = Math.sqrt(_r2[i]);
-	    }
-	    if (!basic) {
-	      i = props.length;
-	      while (--i > -1) {
-	        if (_corProps[p]) {
-	          a = obj[props[i]];
-	          l = a.length - 1;
-	          for (j = 0; j < l; j++) {
-	            r = a[j + 1].da / _r2[j] + a[j].da / _r1[j];
-	            _r3[j] = (_r3[j] || 0) + r * r;
-	          }
-	        }
-	      }
-	      i = _r3.length;
-	      while (--i > -1) {
-	        _r3[i] = Math.sqrt(_r3[i]);
-	      }
-	    }
-	    i = props.length;
-	    j = quadratic ? 4 : 1;
-	    while (--i > -1) {
-	      p = props[i];
-	      a = obj[p];
-	      this.calculateControlPoints(a, curviness, quadratic, basic, _corProps[p]);
-	      if (seamless) {
-	        a.splice(0, j);
-	        a.splice(a.length - j, j);
-	      }
-	    }
-	    return obj;
-	  },
-	  parseBezierData: function parseBezierData(data) {
-	    var values = data.vars.concat();
-	    var type = data.type;
-	    var prepend = data.startPoint;
-	
-	    var obj = {};
-	    var inc = type === 'cubic' ? 3 : 2;
-	    var soft = type === 'soft';
-	    var a = undefined;
-	    var b = undefined;
-	    var c = undefined;
-	    var d = undefined;
-	    var cur = undefined;
-	    var l = undefined;
-	    var p = undefined;
-	    var cnt = undefined;
-	    var tmp = undefined;
-	    if (soft) {
-	      values.splice(0, 0, prepend);
-	    }
-	
-	    if (values === null || values.length < inc + 1) {
-	      return console.error('invalid Bezier data');
-	    }
-	    for (var i = 1; i >= 0; i--) {
-	      p = i ? 'x' : 'y';
-	      obj[p] = cur = [];
-	      cnt = 0;
-	      for (var j = 0; j < values.length; j++) {
-	        tmp = values[j][p];
-	        var _a = typeof tmp === 'string' && tmp.charAt(1) === '=' ? prepend[p] + Number(tmp.charAt(0) + tmp.substr(2)) : Number(tmp);
-	        a = prepend === null ? values[j][p] : _a;
-	        if (soft && j > 1 && j < values.length - 1) {
-	          cur[cnt++] = (a + cur[cnt - 2]) / 2;
-	        }
-	        cur[cnt++] = a;
-	      }
-	      l = cnt - inc + 1;
-	      cnt = 0;
-	      for (var jj = 0; jj < l; jj += inc) {
-	        a = cur[jj];
-	        b = cur[jj + 1];
-	        c = cur[jj + 2];
-	        d = inc === 2 ? 0 : cur[jj + 3];
-	        cur[cnt++] = tmp = inc === 3 ? new this.Segment(a, b, c, d) : new this.Segment(a, (2 * b + a) / 3, (2 * b + c) / 3, c);
-	      }
-	      cur.length = cnt;
-	    }
-	    return obj;
-	  },
-	  addCubicLengths: function addCubicLengths(a, steps, resolution) {
-	    var inc = 1 / resolution;
-	    var j = a.length;
-	    var d = undefined;
-	    var d1 = undefined;
-	    var s = undefined;
-	    var da = undefined;
-	    var ca = undefined;
-	    var ba = undefined;
-	    var p = undefined;
-	    var i = undefined;
-	    var inv = undefined;
-	    var bez = undefined;
-	    var index = undefined;
-	    while (--j > -1) {
-	      bez = a[j];
-	      s = bez.a;
-	      da = bez.d - s;
-	      ca = bez.c - s;
-	      ba = bez.b - s;
-	      d = d1 = 0;
-	      for (i = 1; i <= resolution; i++) {
-	        p = inc * i;
-	        inv = 1 - p;
-	        d = d1 - (d1 = (p * p * da + 3 * inv * (p * ca + inv * ba)) * p);
-	        index = j * resolution + i - 1;
-	        steps[index] = (steps[index] || 0) + d * d;
-	      }
-	    }
-	  },
-	  parseLengthData: function parseLengthData(obj, _resolution) {
-	    var _this = this;
-	
-	    var resolution = _resolution || 6;
-	    var a = [];
-	    var lengths = [];
-	    var threshold = resolution - 1;
-	    var segments = [];
-	    var d = 0;
-	    var total = 0;
-	    var curLS = [];
-	    Object.keys(obj).forEach(function (key) {
-	      _this.addCubicLengths(obj[key], a, resolution);
-	    });
-	    a.forEach(function (c, i) {
-	      d += Math.sqrt(c);
-	      var index = i % resolution;
-	      curLS[index] = d;
-	      if (index === threshold) {
-	        total += d;
-	        index = i / resolution >> 0;
-	        segments[index] = curLS;
-	        lengths[index] = total;
-	        d = 0;
-	        curLS = [];
-	      }
-	    });
-	    return { length: total, lengths: lengths, segments: segments };
-	  }
+	var Plugins = function Plugins() {};
+	var p = Plugins.prototype;
+	p.push = function (plugin) {
+	  this[plugin.prototype.name] = plugin;
 	};
-	
-	function Bezier(transform, obj) {
-	  this.defaultData = this.getDefaultData(obj);
-	  var matrix = createMatrix(transform || '');
-	  // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
-	  this.defaultData.startPoint = { x: matrix.e, y: matrix.f };
-	  this.init();
-	}
-	Bezier.prototype = {
-	  getDefaultData: function getDefaultData(obj) {
-	    return {
-	      type: obj.type || 'soft',
-	      autoRotate: obj.autoRotate || false,
-	      vars: obj.vars || {},
-	      startPoint: null
-	    };
-	  },
-	  init: function init() {
-	    var vars = this.defaultData;
-	    var autoRotate = vars.autoRotate;
-	    this._timeRes = !vars.timeResolution ? 6 : parseInt(vars.timeResolution, 10);
-	    var a = autoRotate === true ? 0 : Number(autoRotate);
-	    var b = autoRotate instanceof Array ? autoRotate : [['x', 'y', 'rotation', a || 0]];
-	    this._autoRotate = autoRotate ? b : null;
-	    this._beziers = vars.type !== 'cubic' && vars.type !== 'quadratic' && vars.type !== 'soft' ? GsapBezier.bezierThrough(vars.vars, isNaN(vars.curviness) ? 1 : vars.curviness, false, vars.type === 'thruBasic', vars.correlate, vars.startPoint) : GsapBezier.parseBezierData(vars);
-	    this._segCount = this._beziers.x.length;
-	    if (this._timeRes) {
-	      var ld = GsapBezier.parseLengthData(this._beziers, this._timeRes);
-	      this._length = ld.length;
-	      this._lengths = ld.lengths;
-	      this._segments = ld.segments;
-	      this._l1 = this._li = this._s1 = this._si = 0;
-	      this._l2 = this._lengths[0];
-	      this._curSeg = this._segments[0];
-	      this._s2 = this._curSeg[0];
-	      this._prec = 1 / this._curSeg.length;
-	    }
-	  },
-	  set: function set(v) {
-	    var segments = this._segCount;
-	    var XYobj = {};
-	    var curIndex = undefined;
-	    var inv = undefined;
-	    var i = undefined;
-	    var p = undefined;
-	    var b = undefined;
-	    var t = undefined;
-	    var val = undefined;
-	    var lengths = undefined;
-	    var curSeg = undefined;
-	    var value = undefined;
-	    var rotate = undefined;
-	    if (!this._timeRes) {
-	      var _cur = v >= 1 ? segments - 1 : segments * v >> 0;
-	      curIndex = v < 0 ? 0 : _cur;
-	      t = (v - curIndex * (1 / segments)) * segments;
-	    } else {
-	      lengths = this._lengths;
-	      curSeg = this._curSeg;
-	      value = v * this._length;
-	      i = this._li;
-	      if (value > this._l2 && i < segments) {
-	        this._l2 = lengths[++i];
-	        this._l1 = lengths[i - 1];
-	        this._li = i;
-	        this._curSeg = curSeg = this._segments[i];
-	        this._s2 = curSeg[this._s1 = this._si = 0];
-	      } else if (value < this._l1 && i > 0) {
-	        this._l1 = lengths[--i];
-	        if (i === 0 && value < this._l1) {
-	          this._l1 = 0;
-	        } else {
-	          i++;
-	        }
-	        this._l2 = lengths[i];
-	        this._li = i;
-	        this._curSeg = curSeg = this._segments[i];
-	        this._s1 = curSeg[(this._si = curSeg.length - 1) - 1] || 0;
-	        this._s2 = curSeg[this._si];
-	      }
-	      curIndex = i;
-	      value -= this._l1;
-	      i = this._si;
-	      if (value > this._s2 && i < curSeg.length - 1) {
-	        this._s2 = curSeg[++i];
-	        this._s1 = curSeg[i - 1];
-	        this._si = i;
-	      } else if (value < this._s1 && i > 0) {
-	        this._s1 = curSeg[--i];
-	        if (i === 0 && value < this._s1) {
-	          this._s1 = 0;
-	        } else {
-	          i++;
-	        }
-	        this._s2 = curSeg[i];
-	        this._si = i;
-	      }
-	      t = (i + (value - this._s1) / (this._s2 - this._s1)) * this._prec;
-	    }
-	    inv = 1 - t;
-	    for (i = 1; i >= 0; i--) {
-	      p = i ? 'x' : 'y';
-	      b = this._beziers[p][curIndex];
-	      val = (t * t * b.da + 3 * inv * (t * b.ca + inv * b.ba)) * t + b.a;
-	      XYobj[p] = val;
-	    }
-	    if (this._autoRotate) {
-	      var ar = this._autoRotate;
-	      var b2 = undefined;
-	      var x1 = undefined;
-	      var y1 = undefined;
-	      var x2 = undefined;
-	      var y2 = undefined;
-	      var add = undefined;
-	      var conv = undefined;
-	      i = ar.length;
-	      while (--i > -1) {
-	        p = ar[i][2];
-	        add = ar[i][3] || 0;
-	        conv = ar[i][4] === true ? 1 : _RAD2DEG;
-	        b = this._beziers[ar[i][0]];
-	        b2 = this._beziers[ar[i][1]];
-	
-	        if (b && b2) {
-	          b = b[curIndex];
-	          b2 = b2[curIndex];
-	
-	          x1 = b.a + (b.b - b.a) * t;
-	          x2 = b.b + (b.c - b.b) * t;
-	          x1 += (x2 - x1) * t;
-	          x2 += (b.c + (b.d - b.c) * t - x2) * t;
-	
-	          y1 = b2.a + (b2.b - b2.a) * t;
-	          y2 = b2.b + (b2.c - b2.b) * t;
-	          y1 += (y2 - y1) * t;
-	          y2 += (b2.c + (b2.d - b2.c) * t - y2) * t;
-	          var _r = Math.atan2(y2 - y1, x2 - x1) * conv;
-	          rotate = _r + add;
-	        }
-	      }
-	    }
-	    return rotate ? 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px) rotate(' + rotate + 'deg)' : 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px)';
-	  }
-	};
-	Bezier.bezierThrough = GsapBezier.bezierThrough;
-	Bezier.cubicToQuadratic = GsapBezier.cubicToQuadratic;
-	Bezier.quadraticToCubic = function (a, b, c) {
-	  return new GsapBezier.Segment(a, (2 * b + a) / 3, (2 * b + c) / 3, c);
-	};
-	
-	exports['default'] = Bezier;
-	module.exports = exports['default'];
+	exports["default"] = new Plugins();
+	module.exports = exports["default"];
 
 /***/ },
 /* 177 */
@@ -22280,7 +21591,302 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _raf = __webpack_require__(178);
+	var _styleUtils = __webpack_require__(173);
+	
+	var _styleUtils2 = _interopRequireDefault(_styleUtils);
+	
+	var _objectAssign = __webpack_require__(8);
+	
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+	
+	var _plugins = __webpack_require__(176);
+	
+	var _plugins2 = _interopRequireDefault(_plugins);
+	
+	var StylePlugin = function StylePlugin(target, vars, type) {
+	  this.target = target;
+	  this.vars = vars;
+	  this.type = type;
+	  this.propsData = {};
+	  this.setDefaultData();
+	};
+	var p = StylePlugin.prototype = {
+	  name: 'style'
+	};
+	p.getComputedStyle = function () {
+	  return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
+	};
+	p.getTweenData = function (key, vars) {
+	  var data = {
+	    data: {},
+	    dataType: {},
+	    dataUnit: {},
+	    dataCount: {}
+	  };
+	  if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
+	    data.data[key] = (0, _styleUtils.parseColor)(vars);
+	    data.dataType[key] = 'color';
+	  } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
+	    data.data[key] = (0, _styleUtils.parseShadow)(vars);
+	    data.dataType[key] = 'shadow';
+	  } else {
+	    data.data[key] = vars;
+	    data.dataType[key] = 'other';
+	  }
+	  if (Array.isArray(data.data[key])) {
+	    data.dataUnit[key] = data.data[key].map(function (_item) {
+	      return _item.toString().replace(/[^a-z|%]/g, '');
+	    });
+	    data.dataCount[key] = data.data[key].map(function (_item) {
+	      return _item.toString().replace(/[^+|=|-]/g, '');
+	    });
+	
+	    data.data[key] = data.data[key].map(function (_item) {
+	      return parseFloat(_item);
+	    });
+	  } else {
+	    data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
+	    data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
+	    data.data[key] = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
+	  }
+	  return data;
+	};
+	p.setDefaultData = function () {
+	  var _this = this;
+	
+	  this.propsData.data = {};
+	  this.propsData.dataType = {};
+	  this.propsData.dataUnit = {};
+	  this.propsData.dataCount = {};
+	  Object.keys(this.vars).forEach(function (_key) {
+	    if (_key in _plugins2['default']) {
+	      _this.propsData.data[_key] = new _plugins2['default'][_key](_this.target, _this.vars[_key]);
+	      return;
+	    }
+	    var key = (0, _styleUtils.getGsapType)(_key);
+	    var _data = _this.getTweenData(key, _this.vars[_key]);
+	    _this.propsData.data[key] = _data.data[key];
+	    _this.propsData.dataType[key] = _data.dataType[key];
+	    _this.propsData.dataUnit[key] = _data.dataUnit[key];
+	    _this.propsData.dataCount[key] = _data.dataCount[key];
+	  });
+	};
+	p.convertToMarks = function (style, num, unit) {
+	  var horiz = /(?:Left|Right|Width)/i.test(style);
+	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
+	  var pix = undefined;
+	  if (unit === '%') {
+	    pix = parseFloat(num) * 100 / (horiz ? t.clientWidth : t.clientHeight);
+	  } else {
+	    // em rem
+	    pix = parseFloat(num) / 16;
+	  }
+	  return pix;
+	};
+	p.convertToMarksArray = function (unit, data, i) {
+	  var startUnit = data.toString().replace(/[^a-z|%]/g, '');
+	  var endUnit = unit[i];
+	  if (startUnit === endUnit) {
+	    return parseFloat(data);
+	  }
+	  return this.convertToMarks('shadow', data, endUnit);
+	};
+	p.getAnimStart = function () {
+	  var _this2 = this;
+	
+	  var computedStyle = this.getComputedStyle();
+	  var style = {};
+	  Object.keys(this.propsData.data).forEach(function (key) {
+	    var cssName = (0, _styleUtils.isConvert)(key);
+	    var startData = computedStyle[cssName];
+	    if (!startData || startData === 'none' || startData === 'auto') {
+	      startData = '';
+	    }
+	    var transform = undefined;
+	    var endUnit = undefined;
+	    var startUnit = undefined;
+	    if (key in _plugins2['default']) {
+	      if (key === 'bezier') {
+	        _this2.transform = (0, _styleUtils.checkStyleName)('transform');
+	      }
+	      _this2.propsData.data[key].getAnimStart();
+	    } else if (cssName === 'transform') {
+	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
+	      startData = computedStyle[_this2.transform];
+	      transform = (0, _styleUtils.getTransform)(startData);
+	      style.transform = transform;
+	    } else if (cssName === 'filter') {
+	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter');
+	      startData = computedStyle[_this2.filterName];
+	      _this2.filterObject = (0, _objectAssign2['default'])(_this2.filterObject || {}, (0, _styleUtils.splitFilterToObject)(startData));
+	      startData = _this2.filterObject[key] || 0;
+	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
+	      endUnit = _this2.propsData.dataUnit[key];
+	      if (endUnit !== startUnit) {
+	        startData = _this2.convertToMarks(key, startData, endUnit);
+	      }
+	      style[key] = parseFloat(startData);
+	    } else if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
+	      style[cssName] = (0, _styleUtils.parseColor)(startData);
+	    } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
+	      startData = (0, _styleUtils.parseShadow)(startData);
+	      endUnit = _this2.propsData.dataUnit[key];
+	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit));
+	      style[cssName] = startData;
+	    } else {
+	      // 计算单位， em rem % px;
+	      endUnit = _this2.propsData.dataUnit[cssName];
+	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
+	      if (endUnit && (endUnit !== startUnit || endUnit !== 'px')) {
+	        startData = _this2.convertToMarks(cssName, startData, endUnit);
+	      }
+	      style[cssName] = parseFloat(startData || 0);
+	    }
+	  });
+	  this.start = style;
+	  return style;
+	};
+	p.setAnimData = function (data) {
+	  var _this3 = this;
+	
+	  var style = this.target.style;
+	  Object.keys(data).forEach(function (_key) {
+	    if (_key === 'transform') {
+	      var t = data[_key];
+	      var perspective = t.perspective;
+	      var angle = t.rotate;
+	      var rotateX = t.rotateX;
+	      var rotateY = t.rotateY;
+	      var sx = t.scaleX;
+	      var sy = t.scaleY;
+	      var sz = t.scaleZ;
+	      var skx = t.skewX;
+	      var sky = t.skewY;
+	      var translateX = t.translateX;
+	      var translateY = t.translateY;
+	      var translateZ = t.translateZ;
+	      var xPercent = t.xPercent || 0;
+	      var yPercent = t.yPercent || 0;
+	      var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
+	      var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
+	      var an = angle ? 'rotate(' + angle + 'deg)' : '';
+	      var ss = undefined;
+	      if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
+	        var matrix = '1,0,0,1,' + translateX + ',' + translateY;
+	        ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
+	        // IE 9 没 3d;
+	        style[_this3.transform] = (percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk).trim();
+	        return;
+	      }
+	      ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
+	      var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
+	      var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
+	      var per = perspective ? 'perspective(' + perspective + 'px)' : '';
+	      style[_this3.transform] = (per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
+	      return;
+	    } else if (_styleUtils2['default'].filter.indexOf(_key) >= 0) {
+	      _this3.filterObject[_key] = data[_key];
+	      var filterStyle = '';
+	      Object.keys(_this3.filterObject).forEach(function (filterKey) {
+	        filterStyle += ' ' + filterKey + '(' + _this3.filterObject[filterKey] + ')';
+	      });
+	      style[_this3.filterName] = filterStyle.trim();
+	      return;
+	    }
+	    style[_key] = data[_key];
+	  });
+	};
+	p.setArrayRatio = function (ratio, start, vars, unit, type) {
+	  var _vars = vars.map(function (endData, i) {
+	    var startData = start[i] || 0;
+	    return (endData - startData) * ratio + startData + unit[i];
+	  });
+	  if (type === 'color') {
+	    return (0, _styleUtils.getColor)(_vars);
+	  } else if (type === 'shadow') {
+	    var s = _vars.slice(0, 3);
+	    var c = _vars.slice(3, _vars.length);
+	    var color = (0, _styleUtils.getColor)(c);
+	    return s.join(' ') + ' ' + color;
+	  }
+	  return _vars;
+	};
+	
+	p.setRatio = function (ratio, tween) {
+	  var _this4 = this;
+	
+	  tween.style = tween.style || {};
+	  if (this.start.transform) {
+	    tween.style.transform = (0, _objectAssign2['default'])({}, this.start.transform, tween.style.transform || {});
+	  }
+	  Object.keys(this.propsData.data).forEach(function (key) {
+	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
+	    var startVars = _isTransform ? _this4.start.transform[key] : _this4.start[key];
+	    var endVars = _this4.propsData.data[key];
+	    var unit = _this4.propsData.dataUnit[key];
+	    var count = _this4.propsData.dataCount[key];
+	    if (key in _plugins2['default']) {
+	      _this4.propsData.data[key].setRatio(ratio, tween);
+	      return;
+	    } else if (_isTransform) {
+	      if (unit === '%' || unit === 'em' || unit === 'rem') {
+	        var pName = key === 'translateX' ? 'xPercent' : 'yPercent';
+	        var data = key === 'translateX' ? _this4.start.transform.translateX : _this4.start.transform.translateY;
+	        if (count.charAt(1) === '=') {
+	          tween.style.transform[key] = data - data * ratio;
+	        }
+	        tween.style.transform[pName] = endVars * ratio + unit;
+	        return;
+	      } else if (key === 'scale') {
+	        var xStart = _this4.start.transform.scaleX;
+	        var yStart = _this4.start.transform.scaleY;
+	        if (count.charAt(1) === '=') {
+	          tween.style.transform.scaleX = xStart + endVars * ratio;
+	          tween.style.transform.scaleY = yStart + endVars * ratio;
+	          return;
+	        }
+	        tween.style.transform.scaleX = (endVars - xStart) * ratio + xStart;
+	        tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
+	        return;
+	      }
+	      if (count.charAt(1) === '=') {
+	        tween.style.transform[key] = startVars + endVars * ratio;
+	        return;
+	      }
+	      tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
+	      return;
+	    } else if (Array.isArray(endVars)) {
+	      var _type = _this4.propsData.dataType[key];
+	      tween.style[key] = _this4.setArrayRatio(ratio, startVars, endVars, unit, _type);
+	      return;
+	    }
+	    var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
+	    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
+	    unit = unit || (_styleUtils2['default'].filter.indexOf(key) >= 0 ? '' : styleUnit);
+	    if (count.charAt(1) === '=') {
+	      tween.style[key] = startVars + endVars * ratio + unit;
+	      return;
+	    }
+	    tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
+	  });
+	  this.setAnimData(tween.style);
+	};
+	exports['default'] = StylePlugin;
+	module.exports = exports['default'];
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _raf = __webpack_require__(179);
 	
 	var _raf2 = _interopRequireDefault(_raf);
 	
@@ -22362,10 +21968,10 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(179)
+	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(180)
 	  , root = typeof window === 'undefined' ? global : window
 	  , vendors = ['moz', 'webkit']
 	  , suffix = 'AnimationFrame'
@@ -22441,7 +22047,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
@@ -22480,7 +22086,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
