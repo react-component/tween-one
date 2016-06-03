@@ -70,7 +70,7 @@ describe('rc-tween-one', () => {
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('start:', child.style.top);
     expect(getFloat(child.style.top)).to.be(0);
-    setTimeout(() => {
+    ticker.timeout(() => {
       // 默认时间为450,用500是肯定过值；
       console.log('end:', child.style.top);
       expect(getFloat(child.style.top)).to.be(100);
