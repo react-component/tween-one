@@ -269,7 +269,7 @@ const GsapBezier = {
     }
 
     if (values === null || values.length < inc + 1) {
-      return console.error('invalid Bezier data');
+      return console.error('invalid Bezier data');// eslint-disable-line
     }
     for (let i = 1; i >= 0; i--) {
       p = i ? 'x' : 'y';

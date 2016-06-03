@@ -111,7 +111,7 @@ p.setDefaultData = function (_vars) {
       }
     });
     if (tweenData.yoyo && !tweenData.repeat) {
-      console.warn('Warning: yoyo must be used together with repeat;');
+      console.warn('Warning: yoyo must be used together with repeat;');// eslint-disable-line
     }
     if (tweenData.repeat === -1) {
       repeatMax = true;

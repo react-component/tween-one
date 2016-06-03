@@ -41,7 +41,7 @@ p.tick = function (a) {
 let timeoutIdNumber = 0;
 p.timeout = function (fn, time) {
   if (!(typeof fn === 'function')) {
-    return console.warn('Is no function');
+    return console.warn('Is no function');// eslint-disable-line
   }
   const timeoutID = `timeout${Date.now()}-${timeoutIdNumber}`;
   const startFrame = this.frame;
@@ -58,7 +58,8 @@ p.timeout = function (fn, time) {
 let intervalIdNumber = 0;
 p.interval = function (fn, time) {
   if (!(typeof fn === 'function')) {
-    return console.warn('Is no function');
+    console.warn('Is no function');// eslint-disable-line
+    return null;
   }
   const intervalID = `interval${Date.now()}-${intervalIdNumber}`;
   let starFrame = this.frame;

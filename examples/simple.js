@@ -8,7 +8,7 @@ class Demo extends React.Component {
   }
 
   bbb(e) {
-    console.log(e);
+    console.log(e);// eslint-disable-line no-console
   }
 
   render() {
