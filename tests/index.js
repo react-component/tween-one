@@ -1,2 +1,2 @@
-require('./tweenOne.spec');
-require('./tweenOneGroup.spec');
+const req = require.context('.', false, /\.spec\.jsx?$/);
+req.keys().forEach(req);
