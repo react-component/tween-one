@@ -29,7 +29,7 @@ function defaultData(vars, now) {
   };
 }
 
-const timeLine = function(target, toData, attr) {
+const timeLine = function (target, toData, attr) {
   this.target = target;
   this.attr = attr || 'style';
   // 记录总时间;
@@ -80,7 +80,7 @@ const timeLine = function(target, toData, attr) {
 };
 const p = timeLine.prototype;
 
-p.setDefaultData = function(_vars) {
+p.setDefaultData = function (_vars) {
   let now = 0;
   let repeatMax = false;
   const data = _vars.map(item => {
@@ -128,7 +128,7 @@ p.setDefaultData = function(_vars) {
   this.totalTime = repeatMax ? Number.MAX_VALUE : now;
   this.defaultData = data;
 };
-p.convertToMarks = function(style, num, unit) {
+p.convertToMarks = function (style, num, unit) {
   const horiz = /(?:Left|Right|Width)/i.test(style);
   const t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
   let pix;
@@ -140,7 +140,7 @@ p.convertToMarks = function(style, num, unit) {
   }
   return pix;
 };
-p.convertToPixels = function(style, num, unit) {
+p.convertToPixels = function (style, num, unit) {
   const horiz = /(?:Left|Right|Width)/i.test(style);
   const t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
   let pix;
@@ -151,7 +151,7 @@ p.convertToPixels = function(style, num, unit) {
   }
   return pix;
 };
-p.getAnimStartData = function(item) {
+p.getAnimStartData = function (item) {
   const start = {};
   Object.keys(item).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
@@ -173,7 +173,7 @@ p.getAnimStartData = function(item) {
   });
   return start;
 };
-p.setAnimData = function(data) {
+p.setAnimData = function (data) {
   Object.keys(data).forEach(key => {
     if (key in _plugin || (this.attr === 'attr' && (key === 'd' || key === 'points'))) {
       return;
@@ -183,7 +183,7 @@ p.setAnimData = function(data) {
 };
 
 
-p.setRatio = function(ratio, endData, i) {
+p.setRatio = function (ratio, endData, i) {
   Object.keys(endData.vars).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
       endData.vars[_key].setRatio(ratio, this.tween);
@@ -203,16 +203,17 @@ p.setRatio = function(ratio, endData, i) {
   });
   this.setAnimData(this.tween);
 };
-p.render = function() {
-  this.defaultData.forEach((item, i)=> {
+p.render = function () {
+  this.defaultData.forEach((item, i) => {
     let initTime = item.initTime;
     // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-    let repeatNum = Math.ceil((this.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
+    let repeatNum = Math.ceil((this.progressTime - initTime) /
+        (item.duration + item.repeatDelay)) - 1;
     repeatNum = repeatNum < 0 ? 0 : repeatNum;
     repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
     if (item.repeat) {
       if (item.repeat || item.repeat <= repeatNum) {
-        initTime = initTime + repeatNum * (item.duration + item.repeatDelay );
+        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
       }
     }
     let progressTime = this.progressTime - initTime;
@@ -221,6 +222,11 @@ p.render = function() {
     const fromDelay = item.type === 'from' ? delay : 0;
     if (progressTime + fromDelay >= 0 && !this.start[i]) {
       this.start[i] = this.getAnimStartData(item.vars);
+      // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
+      let st = progressTime / (item.duration + fromDelay) > 1 ? 1 :
+        (progressTime / (item.duration + fromDelay));
+      st = st < 0 ? 0 : st;
+      this.setRatio(item.type === 'from' ? 1 - st : st, item, i);
     }
     // onRepeat 处理
     if (item.repeat && repeatNum > 0
@@ -252,7 +258,7 @@ p.render = function() {
     if (progressTime >= 0 && progressTime < item.duration + this.perFrame) {
       this.onChange({
         moment: this.progressTime,
-        item: item,
+        item,
         tween: this.tween,
         index: i,
         mode: item.mode,
@@ -261,16 +267,16 @@ p.render = function() {
   });
 };
 // 播放帧
-p.frame = function(moment) {
+p.frame = function (moment) {
   this.progressTime = moment;
   this.render();
 };
-p.resetAnimData = function() {
+p.resetAnimData = function () {
   this.tween = {};
   this.start = {};
 };
 
-p.resetDefaultStyle = function() {
+p.resetDefaultStyle = function () {
   this.tween = {};
   this.defaultData = this.defaultData.map(item => {
     item.mode = 'reset';

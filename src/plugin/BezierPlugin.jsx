@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Created by jljsj on 15/12/22.
  * The algorithm is GSAP BezierPlugin VERSION: beta 1.3.4
@@ -276,7 +277,8 @@ const GsapBezier = {
       cnt = 0;
       for (let j = 0; j < values.length; j++) {
         tmp = values[j][p];
-        const _a = typeof tmp === 'string' && tmp.charAt(1) === '=' ? prepend[p] + Number(tmp.charAt(0) + tmp.substr(2)) : Number(tmp);
+        const _a = typeof tmp === 'string' && tmp.charAt(1) === '=' ?
+        prepend[p] + Number(tmp.charAt(0) + tmp.substr(2)) : Number(tmp);
         a = (prepend === null) ? values[j][p] : _a;
         if (soft && j > 1 && j < values.length - 1) {
           cur[cnt++] = (a + cur[cnt - 2]) / 2;
@@ -290,7 +292,8 @@ const GsapBezier = {
         b = cur[jj + 1];
         c = cur[jj + 2];
         d = (inc === 2) ? 0 : cur[jj + 3];
-        cur[cnt++] = tmp = (inc === 3) ? new this.Segment(a, b, c, d) : new this.Segment(a, (2 * b + a) / 3, (2 * b + c) / 3, c);
+        cur[cnt++] = tmp = (inc === 3) ? new this.Segment(a, b, c, d) :
+          new this.Segment(a, (2 * b + a) / 3, (2 * b + c) / 3, c);
       }
       cur.length = cnt;
     }
@@ -377,7 +380,10 @@ Bezier.prototype = {
     const a = (autoRotate === true) ? 0 : Number(autoRotate);
     const b = (autoRotate instanceof Array) ? autoRotate : [['x', 'y', 'rotation', ( a || 0)]];
     this._autoRotate = autoRotate ? b : null;
-    this._beziers = (vars.type !== 'cubic' && vars.type !== 'quadratic' && vars.type !== 'soft') ? GsapBezier.bezierThrough(vars.vars, isNaN(vars.curviness) ? 1 : vars.curviness, false, (vars.type === 'thruBasic'), vars.correlate, vars.startPoint) : GsapBezier.parseBezierData(vars);
+    this._beziers = (vars.type !== 'cubic' && vars.type !== 'quadratic' && vars.type !== 'soft') ?
+      GsapBezier.bezierThrough(vars.vars, isNaN(vars.curviness) ?
+      1 : vars.curviness, false, (vars.type === 'thruBasic'), vars.correlate, vars.startPoint) :
+      GsapBezier.parseBezierData(vars);
     this._segCount = this._beziers.x.length;
     if (this._timeRes) {
       const ld = GsapBezier.parseLengthData(this._beziers, this._timeRes);

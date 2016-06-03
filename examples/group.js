@@ -19,7 +19,8 @@ class Demo extends React.Component {
           <div>执行动效</div>
         </div>,
         <div key="a"
-          style={{opacity: 1,
+          style={{
+            opacity: 1,
             backgroundColor: '#000',
             float: 'left',
             height: 200,
@@ -50,10 +51,11 @@ class Demo extends React.Component {
         <div>执行动效</div>
       </div>,
       <div key="a"
-        style={{opacity: 1,
-            backgroundColor: '#000',
-            float: 'left',
-            height: 200,
+        style={{
+          opacity: 1,
+          backgroundColor: '#000',
+          float: 'left',
+          height: 200,
         }}
       >
         <div>执行动效</div>

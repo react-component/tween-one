@@ -72,13 +72,14 @@ class Demo extends React.Component {
   render() {
     return (
       <div>
-        <div style={{height: 200}}>
-          <Tween animation={[{translateX: '500px', duration: 1000}, {y: 100}, {x: 100}]}
+        <div style={{ height: 200 }}>
+          <Tween animation={[{ translateX: '500px', duration: 1000 }, { y: 100 }, { x: 100 }]}
             paused={this.state.paused}
             reverse={this.state.reverse}
             reverseDelay={this.state.reverseDelay}
             moment={this.state.moment}
-            style={{opacity: 1, width: 100, transform: 'translate(50px,30px)'}}>
+            style={{ opacity: 1, width: 100, transform: 'translate(50px,30px)' }}
+          >
             <div>执行动效</div>
           </Tween>
         </div>

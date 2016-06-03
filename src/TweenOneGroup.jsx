@@ -48,7 +48,7 @@ class TweenOneGroup extends Component {
 
     this.keysToEnter = [];
     this.keysToLeave = [];
-    nextChildren.forEach((c)=> {
+    nextChildren.forEach((c) => {
       if (!c) {
         return;
       }
@@ -59,7 +59,7 @@ class TweenOneGroup extends Component {
       }
     });
 
-    currentChildren.forEach((c)=> {
+    currentChildren.forEach((c) => {
       if (!c) {
         return;
       }
@@ -89,7 +89,7 @@ class TweenOneGroup extends Component {
           children,
         });
       }
-      const _obj = { key: key, type: type };
+      const _obj = { key, type };
       this.props.onEnd(_obj);
     }
   }

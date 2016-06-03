@@ -1,4 +1,4 @@
-const SvgDrawPlugin = function(target, vars) {
+const SvgDrawPlugin = function (target, vars) {
   this.target = target;
   this.vars = vars;
   this.start = {};
@@ -63,7 +63,8 @@ SvgDrawPlugin.prototype = {
     const computedStyle = this.getComputedStyle();
     switch (this.tagName) {
       case 'rect':
-        this.length = this.target.getAttribute('width') * 2 + this.target.getAttribute('height') * 2;
+        this.length = this.target.getAttribute('width') * 2 +
+          this.target.getAttribute('height') * 2;
         break;
       case 'circle':
         this.length = Math.PI * 2 * this.target.getAttribute('r');
@@ -91,8 +92,11 @@ SvgDrawPlugin.prototype = {
     this.vars = this.setVars(this.vars);
   },
   setRatio(r, t) {
-    t.style.strokeDasharray = `${(this.vars.end - this.vars.start - this.start.strokeDasharray.start) * r + this.start.strokeDasharray.start}px, ${this.length}px`;
-    t.style.strokeDashoffset = -((this.vars.start + this.start.strokeDashoffset) * r - this.start.strokeDashoffset);
+    t.style.strokeDasharray = `${(this.vars.end - this.vars.start -
+      this.start.strokeDasharray.start) * r +
+      this.start.strokeDasharray.start}px, ${this.length}px`;
+    t.style.strokeDashoffset = -((this.vars.start + this.start.strokeDashoffset) * r
+      - this.start.strokeDashoffset);
   },
 };
 export default SvgDrawPlugin;

@@ -43,7 +43,7 @@ export function objectEqual(obj1, obj2) {
     }
   }
 
-  Object.keys(obj1).forEach(key=> {
+  Object.keys(obj1).forEach(key => {
     if (!(key in obj2)) {
       equalBool = false;
       return false;
@@ -60,7 +60,7 @@ export function objectEqual(obj1, obj2) {
     }
   });
 
-  Object.keys(obj2).forEach(key=> {
+  Object.keys(obj2).forEach(key => {
     if (!(key in obj1)) {
       equalBool = false;
       return false;
@@ -139,7 +139,7 @@ export function transformArguments(arg, key, i) {
   let result;
   if (typeof arg === 'function') {
     result = arg({
-      key: key,
+      key,
       index: i,
     });
   } else {

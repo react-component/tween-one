@@ -5,14 +5,14 @@ class Demo extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      tweenData: { translateX: '100px', duration: 2000},
+      tweenData: { translateX: '100px', duration: 2000 },
     };
   }
 
   componentDidMount() {
-    setTimeout(()=> {
+    setTimeout(() => {
       this.setState({
-        style: {transform: 'translateX(500px)', marginTop: 300},
+        style: { transform: 'translateX(500px)', marginTop: 300 },
       });
     }, 1100);
   }

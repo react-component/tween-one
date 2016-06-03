@@ -10,8 +10,12 @@ class Demo extends React.Component {
   render() {
     return (<div style={{ position: 'relative', height: 500 }}>
       <Tween
-        animation={[{ x: 200, y: '+=300', blur: '10px', type: 'from', duration: 500 }, { x: 400, y: 0 }]}
-        style={{opacity: 1, width: 100, transform: 'translateY(100px)'}}>
+        animation={[
+          { x: 200, y: '+=300', blur: '10px', type: 'from', duration: 500 },
+          { x: 400, y: 0 },
+        ]}
+        style={{ opacity: 1, width: 100, transform: 'translateY(100px)' }}
+      >
         <div>执行动效</div>
       </Tween></div>);
   }

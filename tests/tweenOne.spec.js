@@ -7,7 +7,7 @@ import TestUtils from 'react-addons-test-utils';
 import { checkStyleName } from 'style-utils';
 import BezierPlugin from '../src/plugin/BezierPlugin';
 Tween.plugins.push(BezierPlugin);
-describe('rc-tween-one', function() {
+describe('rc-tween-one', () => {
   let div;
   let instance;
 
@@ -32,7 +32,8 @@ describe('rc-tween-one', function() {
         </Tween>);
       }
     }
-    const objectOrArray = React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]);
+    const objectOrArray = React.PropTypes.oneOfType([React.PropTypes.object,
+      React.PropTypes.array]);
 
     TweenDemo.propTypes = {
       animation: objectOrArray,
@@ -42,12 +43,12 @@ describe('rc-tween-one', function() {
     return ReactDom.render(<TweenDemo {...props} />, div);
   }
 
-  beforeEach(function() {
+  beforeEach(() => {
     div = document.createElement('div');
     document.body.appendChild(div);
   });
 
-  afterEach(function() {
+  afterEach(() => {
     try {
       ReactDom.unmountComponentAtNode(div);
       document.body.removeChild(div);
@@ -60,42 +61,46 @@ describe('rc-tween-one', function() {
     return parseFloat(str);
   }
 
-  it('single tween-one', function(done) {
+  it('single tween-one', (done) => {
     instance = createTweenInstance({
       animation: { top: 100 },
       style: { top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    console.log('start:' + child.style.top);
+    console.log('start:', child.style.top);
     expect(getFloat(child.style.top)).to.be(0);
-    setTimeout(function() {
+    setTimeout(() => {
       // 默认时间为450,用500是肯定过值；
-      console.log('end:' + child.style.top);
+      console.log('end:', child.style.top);
       expect(getFloat(child.style.top)).to.be(100);
       done();
     }, 500);
   });
 
-  it('timeline tween-one', function(done) {
+  it('timeline tween-one', (done) => {
     instance = createTweenInstance({
       animation: [{ top: 100 }, { left: 100 }, { top: 0 }, { left: 0 }],
       style: { position: 'relative' },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(function() {
-      console.log('top===100,data:', child.style.top, '########', 'left>0,data:', child.style.left);
+    setTimeout(() => {
+      console.log('top===100,data:', child.style.top, '########',
+        'left>0,data:', child.style.left);
       expect(getFloat(child.style.top)).to.be(100);
       expect(getFloat(child.style.left)).to.above(0);
-      setTimeout(function() {
-        console.log('top<100,data:', child.style.top, '########', 'left===0,data:', child.style.left);
+      setTimeout(() => {
+        console.log('top<100,data:', child.style.top, '########',
+          'left===0,data:', child.style.left);
         expect(getFloat(child.style.left)).to.be(100);
         expect(getFloat(child.style.top)).to.below(100);
-        setTimeout(function() {
-          console.log('top===0,data:', child.style.top, '########', 'left<100,data:', child.style.left);
+        setTimeout(() => {
+          console.log('top===0,data:', child.style.top, '########',
+            'left<100,data:', child.style.left);
           expect(getFloat(child.style.left)).to.below(100);
           expect(getFloat(child.style.top)).to.be(0);
-          setTimeout(function() {
-            console.log('top===0,data:', child.style.top, '########', 'left===0,data:', child.style.left);
+          setTimeout(() => {
+            console.log('top===0,data:', child.style.top,
+              '########', 'left===0,data:', child.style.left);
             expect(getFloat(child.style.top)).to.be(0);
             expect(getFloat(child.style.left)).to.be(0);
             done();
@@ -105,21 +110,22 @@ describe('rc-tween-one', function() {
     }, 500);
   });
 
-  it('repeat tween-one', function(done) {
+  it('repeat tween-one', (done) => {
     instance = createTweenInstance({
       animation: { top: 100, repeat: 1, repeatDelay: 300 },
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    console.log('start:' + child.style.top);
+    console.log('start:', child.style.top);
     expect(getFloat(child.style.top)).to.be(0);
-    setTimeout(function() {
+    setTimeout(() => {
       expect(getFloat(child.style.top)).to.above(95);
       console.log('20 milliseconds before the first repeat end, top>95, data:', child.style.top);
-      setTimeout(function() {
+      setTimeout(() => {
         expect(getFloat(child.style.top)).to.below(10);
-        console.log('20 ms after the beginning of the second repeat, top<10, data', child.style.top);
-        setTimeout(function() {
+        console.log('20 ms after the beginning of the second repeat, top<10, data',
+          child.style.top);
+        setTimeout(() => {
           expect(getFloat(child.style.top)).to.be(100);
           console.log('repeat end,top:', child.style.top);
           done();
@@ -128,21 +134,22 @@ describe('rc-tween-one', function() {
     }, 430);
   });
 
-  it('repeat yoyo tween-one', function(done) {
+  it('repeat yoyo tween-one', (done) => {
     instance = createTweenInstance({
       animation: { top: 100, repeat: 1, yoyo: true },
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    console.log('start:' + child.style.top);
+    console.log('start:', child.style.top);
     expect(getFloat(child.style.top)).to.be(0);
-    setTimeout(function() {
+    setTimeout(() => {
       expect(getFloat(child.style.top)).to.above(95);
       console.log('20 milliseconds before the first repeat end, top>95, data:', child.style.top);
-      setTimeout(function() {
+      setTimeout(() => {
         expect(getFloat(child.style.top)).to.below(101).above(95);
-        console.log('20 ms after the beginning of the second repeat, 95<top<100, data', child.style.top);
-        setTimeout(function() {
+        console.log('20 ms after the beginning of the second repeat, 95<top<100, data',
+          child.style.top);
+        setTimeout(() => {
           expect(getFloat(child.style.top)).to.be(0);
           console.log('repeat end,top:', child.style.top);
           done();
@@ -151,26 +158,26 @@ describe('rc-tween-one', function() {
     }, 430);
   });
 
-  it('type is from tween-one', function(done) {
+  it('type is from tween-one', (done) => {
     instance = createTweenInstance({
       animation: { top: 100, type: 'from' },
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    console.log('default:' + child.style.top);
+    console.log(`default:${child.style.top}`);
     expect(getFloat(child.style.top)).to.be(100);
-    setTimeout(()=> {
+    setTimeout(() => {
       expect(getFloat(child.style.top)).to.above(95);
-      console.log('start:' + child.style.top);
-      setTimeout(()=> {
+      console.log(`start:${child.style.top}`);
+      setTimeout(() => {
         expect(getFloat(child.style.top)).to.be(0);
-        console.log('end:' + child.style.top);
+        console.log(`end:${child.style.top}`);
         done();
       }, 450);
     }, 30);
   });
 
-  it('is Bezier', function(done) {
+  it('is Bezier', (done) => {
     instance = createTweenInstance({
       animation: {
         bezier: {
@@ -189,12 +196,12 @@ describe('rc-tween-one', function() {
       let rotate = xy[1];
       let x = xy[0].split(',')[4];
       let y = xy[0].split(',')[5];
-      console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
+      console.log(`x:${x}, y: ${y}, rotate:${rotate}`);
       expect(getFloat(x)).to.above(0).below(5);
       expect(getFloat(y)).to.above(0).below(5);
       expect(getFloat(rotate)).to.above(44).below(45);
 
-      setTimeout(()=> {
+      setTimeout(() => {
         transform = child.style[checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
         rotate = xy[1];
@@ -203,7 +210,7 @@ describe('rc-tween-one', function() {
         expect(getFloat(x)).to.above(80).below(120);
         expect(getFloat(y)).to.above(40).below(60);
         expect(getFloat(rotate)).to.above(-10).below(10);
-        console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
+        console.log(`x:${x}, y: ${y}, rotate:${rotate}`);
         setTimeout(() => {
           transform = child.style[checkStyleName('transform')];
           xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
@@ -213,14 +220,14 @@ describe('rc-tween-one', function() {
           expect(getFloat(x)).to.be(200);
           expect(getFloat(y)).to.be(0);
           expect(getFloat(rotate)).to.above(-45.0001).below(-44.999);
-          console.log('x:' + x, 'y:' + y, 'rotate:' + rotate);
+          console.log(`x:${x}, y: ${y}, rotate:${rotate}`);
           done();
         }, 530);
       }, 470);
     }, 30);
   });
 
-  it('is Bezier type is cubic', function(done) {
+  it('is Bezier type is cubic', (done) => {
     instance = createTweenInstance({
       animation: {
         bezier: {
@@ -232,7 +239,7 @@ describe('rc-tween-one', function() {
       style: { position: 'absolute' },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(()=> {
+    setTimeout(() => {
       let transform = child.style[checkStyleName('transform')];
       let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
       let x = xy[0].split(',')[4];
@@ -253,7 +260,7 @@ describe('rc-tween-one', function() {
     }, 30);
   });
 
-  it('is Bezier type is thru', function(done) {
+  it('is Bezier type is thru', (done) => {
     instance = createTweenInstance({
       animation: {
         bezier: {
@@ -286,7 +293,7 @@ describe('rc-tween-one', function() {
     }, 30);
   });
 
-  it('is update Animation and filter', function(done) {
+  it('is update Animation and filter', (done) => {
     instance = createTweenInstance({
       animation: { top: 100, x: 100, color: '#fff', sepia: '100%', blur: '2px', duration: 1000 },
       style: { position: 'relative', top: 0 },
@@ -294,19 +301,19 @@ describe('rc-tween-one', function() {
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(() => {
       expect(getFloat(child.style.top)).to.be(100);
-      console.log('child top:' + child.style.top);
+      console.log(`child top:${child.style.top}`);
       instance.setState({
         animation: { left: 100, y: 100 },
       });
-      setTimeout(()=> {
+      setTimeout(() => {
         expect(getFloat(child.style.left)).to.be(100);
-        console.log('child left:' + child.style.left);
+        console.log(`child left:${child.style.left}`);
         done();
       }, 540);
     }, 1040);
   });
 
-  it('is update style', function(done) {
+  it('is update style', (done) => {
     instance = createTweenInstance({
       animation: {
         top: 100,
@@ -326,17 +333,17 @@ describe('rc-tween-one', function() {
           position: 'relative',
         },
       });
-      setTimeout(()=> {
+      setTimeout(() => {
         expect(getFloat(child.style.left)).to.be(100);
         console.log('child left:', child.style.left);
-        setTimeout(()=> {
+        setTimeout(() => {
           done();
         }, 400);
       }, 30);
     }, 600);
   });
 
-  it('is reverse', function(done) {
+  it('is reverse', (done) => {
     instance = createTweenInstance({
       animation: {
         top: 100,
@@ -356,7 +363,7 @@ describe('rc-tween-one', function() {
     }, 300);
   });
 
-  it('is moment', function(done) {
+  it('is moment', (done) => {
     instance = createTweenInstance({
       animation: {
         top: 100,
@@ -381,7 +388,7 @@ describe('rc-tween-one', function() {
     }, 100);
   });
 
-  it('is timerout', function(done) {
+  it('is timerout', (done) => {
     instance = createTweenInstance({
       animation: {
         top: 100,
@@ -393,14 +400,14 @@ describe('rc-tween-one', function() {
     ticker.timeout(() => {
       console.log(child.style.top);
       expect(getFloat(child.style.top)).to.be(100);
-      const t = ticker.interval(()=> {
+      const t = ticker.interval(() => {
         ticker.clear(t);
         done();
       }, 500);
     }, 500);
   });
 
-  it('is attr', function(done) {
+  it('is attr', (done) => {
     instance = createTweenInstance({
       animation: {
         width: 100,

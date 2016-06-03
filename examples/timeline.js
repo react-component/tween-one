@@ -10,7 +10,7 @@ class Demo extends React.Component {
   }
 
   componentDidMount() {
-    setTimeout(()=> {
+    setTimeout(() => {
       this.setState({
         children: [<div key="1">121221</div>, <div key="2">1122121</div>],
       });
@@ -19,8 +19,15 @@ class Demo extends React.Component {
 
   render() {
     return (<Tween
-      animation={[{translateX: 100, rotate: 10}, {translateY: 100, translateX: 500, rotate: 0}, {translateX: 0, marginTop: 100}, {translateY: 0, marginLeft: 100}, {marginLeft: 0, marginTop: 0}]}
-      style={{height: 400}}>
+      animation={[
+        { translateX: 100, rotate: 10 },
+        { translateY: 100, translateX: 500, rotate: 0 },
+        { translateX: 0, marginTop: 100 },
+        { translateY: 0, marginLeft: 100 },
+        { marginLeft: 0, marginTop: 0 },
+      ]}
+      style={{ height: 400 }}
+    >
       {this.state.children}
     </Tween>);
   }

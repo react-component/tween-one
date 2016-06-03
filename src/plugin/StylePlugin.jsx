@@ -13,7 +13,7 @@ import cssList, {
 import assign from 'object-assign';
 import _plugin from '../plugins';
 
-const StylePlugin = function(target, vars, type) {
+const StylePlugin = function (target, vars, type) {
   this.target = target;
   this.vars = vars;
   this.type = type;
@@ -23,10 +23,10 @@ const StylePlugin = function(target, vars, type) {
 const p = StylePlugin.prototype = {
   name: 'style',
 };
-p.getComputedStyle = function() {
+p.getComputedStyle = function () {
   return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
 };
-p.getTweenData = function(key, vars) {
+p.getTweenData = function (key, vars) {
   const data = {
     data: {},
     dataType: {},
@@ -57,7 +57,7 @@ p.getTweenData = function(key, vars) {
   }
   return data;
 };
-p.setDefaultData = function() {
+p.setDefaultData = function () {
   this.propsData.data = {};
   this.propsData.dataType = {};
   this.propsData.dataUnit = {};
@@ -75,7 +75,7 @@ p.setDefaultData = function() {
     this.propsData.dataCount[key] = _data.dataCount[key];
   });
 };
-p.convertToMarks = function(style, num, unit) {
+p.convertToMarks = function (style, num, unit) {
   const horiz = /(?:Left|Right|Width)/i.test(style);
   const t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
   let pix;
@@ -87,7 +87,7 @@ p.convertToMarks = function(style, num, unit) {
   }
   return pix;
 };
-p.convertToMarksArray = function(unit, data, i) {
+p.convertToMarksArray = function (unit, data, i) {
   const startUnit = data.toString().replace(/[^a-z|%]/g, '');
   const endUnit = unit[i];
   if (startUnit === endUnit) {
@@ -95,7 +95,7 @@ p.convertToMarksArray = function(unit, data, i) {
   }
   return this.convertToMarks('shadow', data, endUnit);
 };
-p.getAnimStart = function() {
+p.getAnimStart = function () {
   const computedStyle = this.getComputedStyle();
   const style = {};
   Object.keys(this.propsData.data).forEach(key => {
@@ -148,7 +148,7 @@ p.getAnimStart = function() {
   this.start = style;
   return style;
 };
-p.setAnimData = function(data) {
+p.setAnimData = function (data) {
   const style = this.target.style;
   Object.keys(data).forEach(_key => {
     if (_key === 'transform') {
@@ -182,9 +182,13 @@ p.setAnimData = function(data) {
       const rX = rotateX ? `rotateX(${rotateX}deg)` : '';
       const rY = rotateY ? `rotateY(${rotateY}deg)` : '';
       const per = perspective ? `perspective(${perspective}px)` : '';
-      style[this.transform] = `${per} ${percent} translate3d(${translateX}px,${translateY}px,${translateZ}px) ${ss} ${an} ${rX} ${rY} ${sk}`.trim();
+      style[this.transform] = `${per} ${percent} translate3d(${translateX}px,${
+        translateY}px,${translateZ}px) ${ss} ${an} ${rX} ${rY} ${sk}`.trim();
       return;
     } else if (cssList.filter.indexOf(_key) >= 0) {
+      if (!this.filterObject) {
+        return;
+      }
       this.filterObject[_key] = data[_key];
       let filterStyle = '';
       Object.keys(this.filterObject).forEach(filterKey => {
@@ -196,7 +200,7 @@ p.setAnimData = function(data) {
     style[_key] = data[_key];
   });
 };
-p.setArrayRatio = function(ratio, start, vars, unit, type) {
+p.setArrayRatio = function (ratio, start, vars, unit, type) {
   const _vars = vars.map((endData, i) => {
     const startData = start[i] || 0;
     return (endData - startData) * ratio + startData + unit[i];
@@ -212,7 +216,7 @@ p.setArrayRatio = function(ratio, start, vars, unit, type) {
   return _vars;
 };
 
-p.setRatio = function(ratio, tween) {
+p.setRatio = function (ratio, tween) {
   tween.style = tween.style || {};
   if (this.start.transform) {
     tween.style.transform = assign({}, this.start.transform, tween.style.transform || {});
@@ -229,7 +233,8 @@ p.setRatio = function(ratio, tween) {
     } else if (_isTransform) {
       if (unit === '%' || unit === 'em' || unit === 'rem') {
         const pName = key === 'translateX' ? 'xPercent' : 'yPercent';
-        const data = key === 'translateX' ? this.start.transform.translateX : this.start.transform.translateY;
+        const data = key === 'translateX' ?
+          this.start.transform.translateX : this.start.transform.translateY;
         if (count.charAt(1) === '=') {
           tween.style.transform[key] = data - data * ratio;
         }

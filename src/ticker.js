@@ -1,7 +1,7 @@
 import requestAnimationFrame from 'raf';
 
 
-const Ticker = function() {
+const Ticker = function () {
 };
 const p = Ticker.prototype = {
   tickFnObject: {},
@@ -10,21 +10,21 @@ const p = Ticker.prototype = {
   frame: 0,
   perFrame: Math.round(1000 / 60),
 };
-p.wake = function(key, fn) {
+p.wake = function (key, fn) {
   this.tickFnObject[key] = fn;
   if (this.id === -1) {
     this.id = requestAnimationFrame(this.tick);
   }
 };
-p.clear = function(key) {
+p.clear = function (key) {
   delete this.tickFnObject[key];
 };
-p.sleep = function() {
+p.sleep = function () {
   requestAnimationFrame.cancel(this.id);
   this.id = -1;
 };
 const ticker = new Ticker;
-p.tick = function(a) {
+p.tick = function (a) {
   const obj = ticker.tickFnObject;
   Object.keys(obj).forEach(key => {
     if (obj[key]) {
@@ -39,13 +39,13 @@ p.tick = function(a) {
   ticker.id = requestAnimationFrame(ticker.tick);
 };
 let timeoutIdNumber = 0;
-p.timeout = function(fn, time) {
+p.timeout = function (fn, time) {
   if (!(typeof fn === 'function')) {
     return console.warn('Is no function');
   }
   const timeoutID = `timeout${Date.now()}-${timeoutIdNumber}`;
   const startFrame = this.frame;
-  this.wake(timeoutID, ()=> {
+  this.wake(timeoutID, () => {
     const moment = (this.frame - startFrame) * this.perFrame;
     if (moment >= (time || 0)) {
       this.clear(timeoutID);
@@ -56,13 +56,13 @@ p.timeout = function(fn, time) {
   return timeoutID;
 };
 let intervalIdNumber = 0;
-p.interval = function(fn, time) {
+p.interval = function (fn, time) {
   if (!(typeof fn === 'function')) {
     return console.warn('Is no function');
   }
   const intervalID = `interval${Date.now()}-${intervalIdNumber}`;
   let starFrame = this.frame;
-  this.wake(intervalID, ()=> {
+  this.wake(intervalID, () => {
     const moment = (this.frame - starFrame) * this.perFrame;
     if (moment >= (time || 0)) {
       starFrame = this.frame;

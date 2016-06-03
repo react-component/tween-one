@@ -4,7 +4,7 @@ import expect from 'expect.js';
 import { TweenOneGroup } from '../index';
 import TestUtils from 'react-addons-test-utils';
 
-describe('rc-tween-one-group', function() {
+describe('rc-tween-one-group', () => {
   let div;
   let instance;
   let children;
@@ -41,7 +41,8 @@ describe('rc-tween-one-group', function() {
         </TweenOneGroup>);
       }
     }
-    const objectOrArray = React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]);
+    const objectOrArray = React.PropTypes.oneOfType([React.PropTypes.object,
+      React.PropTypes.array]);
 
     TweenGroupDemo.propTypes = {
       animation: objectOrArray,
@@ -51,12 +52,12 @@ describe('rc-tween-one-group', function() {
     return ReactDom.render(<TweenGroupDemo {...props} />, div);
   }
 
-  beforeEach(function() {
+  beforeEach(() => {
     div = document.createElement('div');
     document.body.appendChild(div);
   });
 
-  afterEach(function() {
+  afterEach(() => {
     try {
       ReactDom.unmountComponentAtNode(div);
       document.body.removeChild(div);
@@ -69,17 +70,17 @@ describe('rc-tween-one-group', function() {
     return parseFloat(str);
   }
 
-  it('should render children', function() {
+  it('should render children', () => {
     instance = createTweenGroupInstance();
     children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'p');
     expect(children.length).to.be(1);
   });
 
-  it('is normal tween', function(done) {
+  it('is normal tween', (done) => {
     instance = createTweenGroupInstance({
       enter: { marginLeft: 100, opacity: 0, type: 'from' },
     });
-    setTimeout(()=> {
+    setTimeout(() => {
       children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'p')[0];
       console.log('marginLeft > 95:', children.style.marginLeft);
       expect(getFloat(children.style.marginLeft)).to.above(95);
@@ -91,7 +92,7 @@ describe('rc-tween-one-group', function() {
     }, 50);
   });
 
-  it('appear is false', function() {
+  it('appear is false', () => {
     instance = createTweenGroupInstance({
       appear: false,
     });
@@ -99,16 +100,16 @@ describe('rc-tween-one-group', function() {
     expect(children.style.opacity).to.be('');
   });
 
-  it('add and remove', function(done) {
+  it('add and remove', (done) => {
     instance = createTweenGroupInstance();
     setTimeout(() => {
       instance.add();
       children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'p');
       console.log('length is 2:', children.length);
       expect(children.length).to.be(2);
-      setTimeout(()=> {
+      setTimeout(() => {
         instance.removeAll();
-        setTimeout(()=> {
+        setTimeout(() => {
           children = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'p');
           console.log('length is 0:', children.length);
           expect(children.length).to.be(0);

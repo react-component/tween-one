@@ -12,7 +12,11 @@ class Demo extends React.Component {
   render() {
     return (
       <svg width="100%" height="600" version="1.2" xmlns="http://www.w3.org/2000/svg">
-        <Tween animation={[{ points: '300,10 500,200 120,230 450,220 0,20' }, { points: '100,10 200,200 120,430 450,220 0,20' }]}
+        <Tween
+          animation={[
+            { points: '300,10 500,200 120,230 450,220 0,20' },
+            { points: '100,10 200,200 120,430 450,220 0,20' },
+          ]}
           style={{ fill: '#fff000', storkeWidth: 1, stroke: '#000fff' }}
           component="polygon"
           points="220,100 300,210 170,250 123,234"

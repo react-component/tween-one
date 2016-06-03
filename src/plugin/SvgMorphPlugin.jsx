@@ -1,5 +1,5 @@
-import {path2curve} from './snapsvglite';
-const SvgPlugin = function(target, vars, key) {
+import { path2curve } from './snapsvglite';
+const SvgPlugin = function (target, vars, key) {
   this.target = target;
   this.vars = vars;
   this.key = key;
@@ -9,10 +9,10 @@ const SvgPlugin = function(target, vars, key) {
 const p = SvgPlugin.prototype = {
   name: 'SVGMorph',
 };
-p.getPointVars = function(d) {
+p.getPointVars = function (d) {
   return d.split(/\s+/).map(item => item.split(',').map(_item => parseFloat(_item)));
 };
-p.polygonPoints = function(start, end) {
+p.polygonPoints = function (start, end) {
   const startArray = this.getPointVars(start);
   const endArray = this.getPointVars(end);
   if (startArray.length !== endArray.length) {
@@ -25,7 +25,7 @@ p.polygonPoints = function(start, end) {
   }
   return [startArray, endArray];
 };
-p.getAnimStart = function() {
+p.getAnimStart = function () {
   this.start = this.target.getAttribute(this.key);
   if (this.key === 'd') {
     this.pathArray = path2curve(this.start, this.vars);
@@ -34,14 +34,14 @@ p.getAnimStart = function() {
   }
   return this.pathArray;
 };
-p.setArrayRatio = function(ratio, start, item, i) {
+p.setArrayRatio = function (ratio, start, item, i) {
   if (typeof item === 'string') {
     return item;
   }
   const startData = start[i];
   return (item - startData) * ratio + startData;
 };
-p.setRatio = function(ratio, tween) {
+p.setRatio = function (ratio, tween) {
   const start = this.pathArray[0];
   const end = this.pathArray[1];
   tween[this.key] = end.map((item, i) => {

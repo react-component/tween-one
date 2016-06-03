@@ -1,4 +1,4 @@
-import React, {PropTypes, Component} from 'react';
+import React, { PropTypes, Component } from 'react';
 import ReactDom from 'react-dom';
 import assign from 'object-assign';
 import { dataToArray, objectEqual } from './util';
@@ -53,7 +53,7 @@ class TweenOne extends Component {
       this.setState({
         startMoment: newMoment,
         startFrame: ticker.frame,
-      }, ()=> {
+      }, () => {
         if (this.rafID === -1 && !nextProps.paused) {
           this.timeLine.resetAnimData();
           const style = nextProps.style;

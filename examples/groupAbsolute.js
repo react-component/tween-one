@@ -34,8 +34,9 @@ class Demo extends React.Component {
         enter={{ opacity: 0, type: 'from' }}
         leave={{ opacity: 0 }}
       >
-        <div key={this.state.int} style={{ position: 'absolute'}}><img src={this.imgArray[this.state.int]}
-          height="200" /></div>
+        <div key={this.state.int} style={{ position: 'absolute' }}>
+          <img src={this.imgArray[this.state.int]} height="200" />
+        </div>
       </TweenOneGroup>
     </div>);
   }
