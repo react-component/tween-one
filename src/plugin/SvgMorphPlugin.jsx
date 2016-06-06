@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 import { path2curve } from './snapsvglite';
 const SvgPlugin = function (target, vars, key) {
   this.target = target;

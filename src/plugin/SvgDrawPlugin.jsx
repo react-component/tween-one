@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 const SvgDrawPlugin = function (target, vars) {
   this.target = target;
   this.vars = vars;

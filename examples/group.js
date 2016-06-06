@@ -67,7 +67,7 @@ class Demo extends React.Component {
   }
 
   onEnd(e) {
-    console.log(e);
+    console.log(e);// eslint-disable-line no-console
   }
 
   enterType(e) {

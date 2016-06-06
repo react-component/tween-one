@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 /**
  * Created by jljsj on 16/1/27.
  */
