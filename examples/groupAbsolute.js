@@ -1,6 +1,7 @@
 import { TweenOneGroup } from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
+import '../assets/index.less';
 
 class Demo extends React.Component {
   constructor() {
@@ -29,12 +30,8 @@ class Demo extends React.Component {
   render() {
     return (<div>
       <button onClick={this.onClick}>切换</button>
-      <TweenOneGroup
-        style={{ height: 300 }}
-        enter={{ opacity: 0, type: 'from' }}
-        leave={{ opacity: 0 }}
-      >
-        <div key={this.state.int} style={{ position: 'absolute' }}>
+      <TweenOneGroup>
+        <div key={this.state.int}>
           <img src={this.imgArray[this.state.int]} height="200" />
         </div>
       </TweenOneGroup>

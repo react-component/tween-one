@@ -18,6 +18,7 @@ class TweenOneGroup extends Component {
     this.keysToEnter = [];
     this.keysToLeave = [];
     this.onEnterBool = false;
+    this.enterAnimEnd = false;
     // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
     const children = toArrayChildren(getChildrenFromProps(this.props));
     children.forEach(child => {
@@ -69,6 +70,9 @@ class TweenOneGroup extends Component {
         this.keysToLeave.push(key);
       }
     });
+    if (this.keysToEnter.length || this.keysToLeave.length) {
+      this.enterAnimEnd = false;
+    }
     this.setState({
       children: newChildren,
     });
@@ -81,14 +85,16 @@ class TweenOneGroup extends Component {
   onChange(animation, key, type, obj) {
     const length = dataToArray(animation).length;
     if (obj.index === length - 1 && obj.mode === 'onComplete') {
-      if (type === 'leave') {
-        const children = this.state.children.filter(child =>
-          child.key !== key
-        );
-        this.setState({
-          children,
-        });
+      let children;
+      if (type === 'enter') {
+        children = this.state.children;
+        this.enterAnimEnd = true;
+      } else {
+        children = this.state.children.filter(child => key !== child.key);
       }
+      this.setState({
+        children,
+      });
       const _obj = { key, type };
       this.props.onEnd(_obj);
     }
@@ -97,12 +103,18 @@ class TweenOneGroup extends Component {
   getCoverAnimation(child, i, type) {
     const animation = type === 'leave' ? this.props.leave : this.props.enter;
     const onChange = this.onChange.bind(this, animation, child.key, type);
+    let className = '';
+    if (!this.enterAnimEnd) {
+      className = `${child.props.className || ''} ${type === 'leave' ?
+        this.props.animatingClassName[1] : this.props.animatingClassName[0]}`.trim();
+    }
     return (<TweenOne
       {...child.props}
       key={child.key}
       component={child.type}
       animation={transformArguments(animation, child.key, i)}
       onChange={onChange}
+      className={className}
     />);
   }
 
@@ -141,12 +153,14 @@ TweenOneGroup.propTypes = {
   appear: PropTypes.bool,
   enter: objectOrArrayOrFunc,
   leave: objectOrArrayOrFunc,
+  animatingClassName: PropTypes.array,
   onEnd: PropTypes.func,
 };
 
 TweenOneGroup.defaultProps = {
   component: 'div',
   appear: true,
+  animatingClassName: ['tween-one-entering', 'tween-one-leaving'],
   enter: { x: 50, opacity: 0, type: 'from' },
   leave: { x: -50, opacity: 0 },
   onEnd: noop,

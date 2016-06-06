@@ -156,4 +156,5 @@ svg polygon or path values: polygon is points, path is d; [demo](http://react-co
 | enter     | object / array / func | `{ x: 30, opacity: 0, type: 'from' }` | enter anim twee-one data. when array is tween-one timeline, func refer to queue-anim  |
 | leave     | object / array / func | `{ x: 30, opacity: 0 }` | leave anim twee-one data. when array is tween-one timeline, func refer to queue-anim  |
 | onEnd     |  func          | -    | one animation end callback |
+| animatingClassName | array | `['tween-one-entering', 'tween-one-leaving']` | className to every element of animating |
 | component | 	React.Element/String | div  |  component tag  | 
