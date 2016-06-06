@@ -3,12 +3,12 @@ webpackJsonp([17],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(201);
+	module.exports = __webpack_require__(202);
 
 
 /***/ },
 
-/***/ 201:
+/***/ 202:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25,7 +25,7 @@ webpackJsonp([17],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _SvgDrawPlugin = __webpack_require__(202);
+	var _SvgDrawPlugin = __webpack_require__(203);
 	
 	var _SvgDrawPlugin2 = _interopRequireDefault(_SvgDrawPlugin);
 	
@@ -103,7 +103,7 @@ webpackJsonp([17],{
 
 /***/ },
 
-/***/ 202:
+/***/ 203:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -111,6 +111,7 @@ webpackJsonp([17],{
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	/* eslint-disable func-names */
 	var SvgDrawPlugin = function SvgDrawPlugin(target, vars) {
 	  this.target = target;
 	  this.vars = vars;

@@ -120,7 +120,7 @@ webpackJsonp([9],{
 	  };
 	
 	  Demo.prototype.onEnd = function onEnd(e) {
-	    console.log(e);
+	    console.log(e); // eslint-disable-line no-console
 	  };
 	
 	  Demo.prototype.enterType = function enterType(e) {

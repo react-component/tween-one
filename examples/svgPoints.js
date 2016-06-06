@@ -3,12 +3,12 @@ webpackJsonp([19],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(204);
+	module.exports = __webpack_require__(205);
 
 
 /***/ },
 
-/***/ 199:
+/***/ 200:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17,14 +17,15 @@ webpackJsonp([19],{
 	  value: true
 	});
 	
-	var _snapsvglite = __webpack_require__(200);
+	var _snapsvglite = __webpack_require__(201);
 	
 	var SvgPlugin = function SvgPlugin(target, vars, key) {
 	  this.target = target;
 	  this.vars = vars;
 	  this.key = key;
 	  this.propsData = {};
-	};
+	}; /* eslint-disable func-names */
+	
 	
 	var p = SvgPlugin.prototype = {
 	  name: 'SVGMorph'
@@ -89,7 +90,7 @@ webpackJsonp([19],{
 
 /***/ },
 
-/***/ 200:
+/***/ 201:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -590,7 +591,7 @@ webpackJsonp([19],{
 
 /***/ },
 
-/***/ 204:
+/***/ 205:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -607,7 +608,7 @@ webpackJsonp([19],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _SvgMorphPlugin = __webpack_require__(199);
+	var _SvgMorphPlugin = __webpack_require__(200);
 	
 	var _SvgMorphPlugin2 = _interopRequireDefault(_SvgMorphPlugin);
 	

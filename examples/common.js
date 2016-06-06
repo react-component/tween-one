@@ -21080,6 +21080,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	/* eslint-disable func-names */
 	/**
 	 * Created by jljsj on 16/1/27.
 	 */
@@ -21641,6 +21642,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	/* eslint-disable func-names */
 	var Plugins = function Plugins() {};
 	var p = Plugins.prototype;
 	p.push = function (plugin) {
@@ -21679,7 +21681,8 @@
 	  this.type = type;
 	  this.propsData = {};
 	  this.setDefaultData();
-	};
+	}; /* eslint-disable func-names */
+	
 	var p = StylePlugin.prototype = {
 	  name: 'style'
 	};
@@ -21963,7 +21966,8 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var Ticker = function Ticker() {};
+	var Ticker = function Ticker() {}; /* eslint-disable func-names */
+	
 	var p = Ticker.prototype = {
 	  tickFnObject: {},
 	  id: -1,
@@ -22204,6 +22208,7 @@
 	    _this.keysToEnter = [];
 	    _this.keysToLeave = [];
 	    _this.onEnterBool = false;
+	    _this.enterAnimEnd = false;
 	    // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
 	    var children = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(_this.props));
 	    children.forEach(function (child) {
@@ -22256,6 +22261,9 @@
 	        _this2.keysToLeave.push(key);
 	      }
 	    });
+	    if (this.keysToEnter.length || this.keysToLeave.length) {
+	      this.enterAnimEnd = false;
+	    }
 	    this.setState({
 	      children: newChildren
 	    });
@@ -22268,14 +22276,18 @@
 	  TweenOneGroup.prototype.onChange = function onChange(animation, key, type, obj) {
 	    var length = (0, _util.dataToArray)(animation).length;
 	    if (obj.index === length - 1 && obj.mode === 'onComplete') {
-	      if (type === 'leave') {
-	        var children = this.state.children.filter(function (child) {
-	          return child.key !== key;
-	        });
-	        this.setState({
-	          children: children
+	      var children = void 0;
+	      if (type === 'enter') {
+	        children = this.state.children;
+	        this.enterAnimEnd = true;
+	      } else {
+	        children = this.state.children.filter(function (child) {
+	          return key !== child.key;
 	        });
 	      }
+	      this.setState({
+	        children: children
+	      });
 	      var _obj = { key: key, type: type };
 	      this.props.onEnd(_obj);
 	    }
@@ -22284,11 +22296,16 @@
 	  TweenOneGroup.prototype.getCoverAnimation = function getCoverAnimation(child, i, type) {
 	    var animation = type === 'leave' ? this.props.leave : this.props.enter;
 	    var onChange = this.onChange.bind(this, animation, child.key, type);
+	    var className = '';
+	    if (!this.enterAnimEnd) {
+	      className = ((child.props.className || '') + ' ' + (type === 'leave' ? this.props.animatingClassName[1] : this.props.animatingClassName[0])).trim();
+	    }
 	    return _react2.default.createElement(_TweenOne2.default, _extends({}, child.props, {
 	      key: child.key,
 	      component: child.type,
 	      animation: (0, _util.transformArguments)(animation, child.key, i),
-	      onChange: onChange
+	      onChange: onChange,
+	      className: className
 	    }));
 	  };
 	
@@ -22329,12 +22346,14 @@
 	  appear: _react.PropTypes.bool,
 	  enter: objectOrArrayOrFunc,
 	  leave: objectOrArrayOrFunc,
+	  animatingClassName: _react.PropTypes.array,
 	  onEnd: _react.PropTypes.func
 	};
 	
 	TweenOneGroup.defaultProps = {
 	  component: 'div',
 	  appear: true,
+	  animatingClassName: ['tween-one-entering', 'tween-one-leaving'],
 	  enter: { x: 50, opacity: 0, type: 'from' },
 	  leave: { x: -50, opacity: 0 },
 	  onEnd: noop

@@ -23,6 +23,8 @@ webpackJsonp([10],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
+	__webpack_require__(193);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
@@ -71,14 +73,10 @@ webpackJsonp([10],{
 	      ),
 	      _react2.default.createElement(
 	        _rcTweenOne.TweenOneGroup,
-	        {
-	          style: { height: 300 },
-	          enter: { opacity: 0, type: 'from' },
-	          leave: { opacity: 0 }
-	        },
+	        null,
 	        _react2.default.createElement(
 	          'div',
-	          { key: this.state.int, style: { position: 'absolute' } },
+	          { key: this.state.int },
 	          _react2.default.createElement('img', { src: this.imgArray[this.state.int], height: '200' })
 	        )
 	      )
@@ -89,6 +87,13 @@ webpackJsonp([10],{
 	}(_react2.default.Component);
 	
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
+
+/***/ },
+
+/***/ 193:
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
 
 /***/ }
 
