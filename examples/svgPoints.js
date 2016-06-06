@@ -13,7 +13,7 @@ webpackJsonp([19],{
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
@@ -84,7 +84,7 @@ webpackJsonp([19],{
 	
 	  this.target.setAttribute(this.key, vars);
 	};
-	exports['default'] = SvgPlugin;
+	exports.default = SvgPlugin;
 	module.exports = exports['default'];
 
 /***/ },
@@ -92,6 +92,15 @@ webpackJsonp([19],{
 /***/ 200:
 /***/ function(module, exports) {
 
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	exports.path2curve = path2curve;
 	/* eslint-disable */
 	
 	/*
@@ -99,12 +108,6 @@ webpackJsonp([19],{
 	 * source: https://github.com/alexk111/SVG-Morpheus
 	 */
 	
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.path2curve = path2curve;
 	var spaces = '\t\n\u000b\f\r   ᠎             　\u2028\u2029';
 	var pathCommand = new RegExp('([a-z])[' + spaces + ',]*((-?\\d*\\.?\\d*(?:e[\\-+]?\\d+)?[' + spaces + ']*,?[' + spaces + ']*)+)', 'ig');
 	var pathValues = new RegExp('(-?\\d*\\.?\\d*(?:e[\\-+]?\\d+)?)[' + spaces + ']*,?[' + spaces + ']*', 'ig');
@@ -115,7 +118,7 @@ webpackJsonp([19],{
 	    return null;
 	  }
 	
-	  if (typeof pathString === typeof []) {
+	  if ((typeof pathString === 'undefined' ? 'undefined' : _typeof(pathString)) === _typeof([])) {
 	    return pathString;
 	  }
 	  var paramCounts = { a: 7, c: 6, o: 2, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, u: 3, z: 0 };
@@ -177,7 +180,7 @@ webpackJsonp([19],{
 	  var y = +_y;
 	  var rx = +_rx;
 	  var ry = a === null && _ry === null ? _rx : +_ry;
-	  var res = undefined;
+	  var res = void 0;
 	  if (a !== null) {
 	    var rad = Math.PI / 180;
 	    var x1 = x + rx * Math.cos(-ry * rad);
@@ -203,8 +206,8 @@ webpackJsonp([19],{
 	  var mx = 0;
 	  var my = 0;
 	  var start = 0;
-	  var pa0 = undefined;
-	  var dots = undefined;
+	  var pa0 = void 0;
+	  var dots = void 0;
 	  if (pathArray[0][0] === 'M') {
 	    x = +pathArray[0][1];
 	    y = +pathArray[0][2];
@@ -214,10 +217,10 @@ webpackJsonp([19],{
 	    res[0] = ['M', x, y];
 	  }
 	  var crz = pathArray.length === 3 && pathArray[0][0] === 'M' && pathArray[1][0].toUpperCase() === 'R' && pathArray[2][0].toUpperCase() === 'Z';
-	  var r = undefined;
-	  var pa = undefined;
-	  var j = undefined;
-	  var jj = undefined;
+	  var r = void 0;
+	  var pa = void 0;
+	  var j = void 0;
+	  var jj = void 0;
 	  for (var i = start, ii = pathArray.length; i < ii; i++) {
 	    res.push(r = []);
 	    pa = pathArray[i];
@@ -327,17 +330,17 @@ webpackJsonp([19],{
 	  var _120 = Math.PI * 120 / 180;
 	  var rad = Math.PI / 180 * (+angle || 0);
 	  var res = [];
-	  var xy = undefined;
+	  var xy = void 0;
 	  var x1 = _x1;
 	  var y1 = _y1;
 	  var x2 = _x2;
 	  var y2 = _y2;
 	  var rx = _rx;
 	  var ry = _ry;
-	  var f1 = undefined;
-	  var f2 = undefined;
-	  var cx = undefined;
-	  var cy = undefined;
+	  var f1 = void 0;
+	  var f2 = void 0;
+	  var cx = void 0;
+	  var cy = void 0;
 	  var rotate = function rotate(x, y, _rad) {
 	    var X = x * Math.cos(_rad) - y * Math.sin(_rad);
 	    var Y = x * Math.sin(_rad) + y * Math.cos(_rad);
@@ -430,10 +433,10 @@ webpackJsonp([19],{
 	  var pcoms2 = []; // path commands of original path p2
 	  var pfirst = ''; // temporary holder for original path command
 	  var pcom = ''; // holder for previous path command of original path
-	  var ii = undefined;
+	  var ii = void 0;
 	  var processPath = function processPath(__path, d, _pcom) {
-	    var nx = undefined;
-	    var ny = undefined;
+	    var nx = void 0;
+	    var ny = void 0;
 	    var _path = __path;
 	    if (!_path) {
 	      return ['C', d.x, d.y, d.x, d.y, d.x, d.y];
@@ -592,16 +595,6 @@ webpackJsonp([19],{
 
 	'use strict';
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
 	var _rcTweenOne = __webpack_require__(2);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
@@ -614,41 +607,49 @@ webpackJsonp([19],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _srcPluginSvgMorphPlugin = __webpack_require__(199);
+	var _SvgMorphPlugin = __webpack_require__(199);
 	
-	var _srcPluginSvgMorphPlugin2 = _interopRequireDefault(_srcPluginSvgMorphPlugin);
+	var _SvgMorphPlugin2 = _interopRequireDefault(_SvgMorphPlugin);
 	
-	_rcTweenOne2['default'].plugins.push(_srcPluginSvgMorphPlugin2['default']);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var Demo = (function (_React$Component) {
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
+	_rcTweenOne2.default.plugins.push(_SvgMorphPlugin2.default);
+	
+	var Demo = function (_React$Component) {
 	  _inherits(Demo, _React$Component);
 	
 	  function Demo() {
 	    _classCallCheck(this, Demo);
 	
-	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
+	    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
 	  }
 	
-	  _createClass(Demo, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'svg',
-	        { width: '100%', height: '600', version: '1.2', xmlns: 'http://www.w3.org/2000/svg' },
-	        _react2['default'].createElement(_rcTweenOne2['default'], { animation: [{ points: '300,10 500,200 120,230 450,220 0,20' }, { points: '100,10 200,200 120,430 450,220 0,20' }],
-	          style: { fill: '#fff000', storkeWidth: 1, stroke: '#000fff' },
-	          component: 'polygon',
-	          points: '220,100 300,210 170,250 123,234',
-	          attr: 'attr'
-	        })
-	      );
-	    }
-	  }]);
+	  Demo.prototype.render = function render() {
+	    return _react2.default.createElement(
+	      'svg',
+	      { width: '100%', height: '600', version: '1.2', xmlns: 'http://www.w3.org/2000/svg' },
+	      _react2.default.createElement(_rcTweenOne2.default, {
+	        animation: [{ points: '300,10 500,200 120,230 450,220 0,20' }, { points: '100,10 200,200 120,430 450,220 0,20' }],
+	        style: { fill: '#fff000', storkeWidth: 1, stroke: '#000fff' },
+	        component: 'polygon',
+	        points: '220,100 300,210 170,250 123,234',
+	        attr: 'attr'
+	      })
+	    );
+	  };
 	
 	  return Demo;
-	})(_react2['default'].Component);
+	}(_react2.default.Component);
 	
-	_reactDom2['default'].render(_react2['default'].createElement(Demo, null), document.getElementById('__react-content'));
+	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
 /***/ }
 

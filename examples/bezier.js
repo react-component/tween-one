@@ -13,16 +13,6 @@ webpackJsonp([1],{
 
 	'use strict';
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
 	var _rcTweenOne = __webpack_require__(2);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
@@ -35,73 +25,99 @@ webpackJsonp([1],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _srcPluginBezierPlugin = __webpack_require__(183);
+	var _BezierPlugin = __webpack_require__(183);
 	
-	var _srcPluginBezierPlugin2 = _interopRequireDefault(_srcPluginBezierPlugin);
+	var _BezierPlugin2 = _interopRequireDefault(_BezierPlugin);
 	
-	_rcTweenOne2['default'].plugins.push(_srcPluginBezierPlugin2['default']);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var Demo = (function (_React$Component) {
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
+	_rcTweenOne2.default.plugins.push(_BezierPlugin2.default);
+	
+	var Demo = function (_React$Component) {
 	  _inherits(Demo, _React$Component);
 	
 	  function Demo() {
 	    _classCallCheck(this, Demo);
 	
-	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
+	    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
 	  }
 	
-	  _createClass(Demo, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        { style: { position: 'relative', height: 300 } },
-	        _react2['default'].createElement(
-	          _rcTweenOne2['default'],
-	          {
-	            animation: { bezier: { type: 'thru', autoRotate: true, vars: [{ x: 200, y: 200 }, { x: 400, y: 0 }, { x: 600, y: 200 }, { x: 800, y: 0 }] }, duration: 5000 },
-	            style: { width: 100 } },
-	          _react2['default'].createElement(
-	            'div',
-	            null,
-	            '执行动效'
-	          )
-	        ),
-	        _react2['default'].createElement('div', {
-	          style: { width: 5, height: 5, background: '#000', position: 'absolute', top: 0, transform: 'translate(200px,200px)' } }),
-	        _react2['default'].createElement('div', {
-	          style: { width: 5, height: 5, background: '#000', position: 'absolute', top: 0, transform: 'translate(400px,0px)' } }),
-	        _react2['default'].createElement('div', {
-	          style: { width: 5, height: 5, background: '#000', position: 'absolute', top: 0, transform: 'translate(600px,200px)' } }),
-	        _react2['default'].createElement('div', {
-	          style: { width: 5, height: 5, background: '#000', position: 'absolute', top: 0, transform: 'translate(800px,0px)' } })
-	      );
-	    }
-	  }]);
+	  Demo.prototype.render = function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      { style: { position: 'relative', height: 300 } },
+	      _react2.default.createElement(
+	        _rcTweenOne2.default,
+	        {
+	          animation: {
+	            bezier: { type: 'thru', autoRotate: true,
+	              vars: [{ x: 200, y: 200 }, { x: 400, y: 0 }, { x: 600, y: 200 }, { x: 800, y: 0 }]
+	            },
+	            duration: 5000
+	          },
+	          style: { width: 100 }
+	        },
+	        _react2.default.createElement(
+	          'div',
+	          null,
+	          '执行动效'
+	        )
+	      ),
+	      _react2.default.createElement('div', {
+	        style: { width: 5, height: 5, background: '#000',
+	          position: 'absolute', top: 0, transform: 'translate(200px,200px)'
+	        }
+	      }),
+	      _react2.default.createElement('div', {
+	        style: { width: 5, height: 5, background: '#000', position: 'absolute',
+	          top: 0, transform: 'translate(400px,0px)'
+	        }
+	      }),
+	      _react2.default.createElement('div', {
+	        style: { width: 5, height: 5, background: '#000', position: 'absolute',
+	          top: 0, transform: 'translate(600px,200px)'
+	        }
+	      }),
+	      _react2.default.createElement('div', {
+	        style: { width: 5, height: 5, background: '#000', position: 'absolute',
+	          top: 0, transform: 'translate(800px,0px)'
+	        }
+	      })
+	    );
+	  };
 	
 	  return Demo;
-	})(_react2['default'].Component);
+	}(_react2.default.Component);
 	
-	_reactDom2['default'].render(_react2['default'].createElement(Demo, null), document.getElementById('__react-content'));
+	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
 /***/ },
 
 /***/ 183:
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * Created by jljsj on 15/12/22.
-	 * The algorithm is GSAP BezierPlugin VERSION: beta 1.3.4
-	 */
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
 	var _styleUtils = __webpack_require__(173);
 	
-	var _RAD2DEG = 180 / Math.PI;
+	var _RAD2DEG = 180 / Math.PI; /* eslint-disable */
+	/**
+	 * Created by jljsj on 15/12/22.
+	 * The algorithm is GSAP BezierPlugin VERSION: beta 1.3.4
+	 */
+	
 	var _r1 = [];
 	var _r2 = [];
 	var _r3 = [];
@@ -143,20 +159,20 @@ webpackJsonp([1],{
 	  },
 	  calculateControlPoints: function calculateControlPoints(a, curviness, quad, basic, correlate) {
 	    var l = a.length - 1;
-	    var i = undefined;
+	    var i = void 0;
 	    var ii = 0;
-	    var p1 = undefined;
-	    var p2 = undefined;
-	    var p3 = undefined;
-	    var seg = undefined;
-	    var m1 = undefined;
-	    var m2 = undefined;
-	    var mm = undefined;
-	    var cp2 = undefined;
-	    var qb = undefined;
-	    var r1 = undefined;
-	    var r2 = undefined;
-	    var tl = undefined;
+	    var p1 = void 0;
+	    var p2 = void 0;
+	    var p3 = void 0;
+	    var seg = void 0;
+	    var m1 = void 0;
+	    var m2 = void 0;
+	    var mm = void 0;
+	    var cp2 = void 0;
+	    var qb = void 0;
+	    var r1 = void 0;
+	    var r2 = void 0;
+	    var tl = void 0;
 	    var cp1 = a[0].a;
 	    for (i = 0; i < l; i++) {
 	      seg = a[ii];
@@ -217,12 +233,12 @@ webpackJsonp([1],{
 	  },
 	  parseAnchors: function parseAnchors(_values, p, correlate, prepend) {
 	    var a = [];
-	    var l = undefined;
-	    var i = undefined;
-	    var p1 = undefined;
-	    var p2 = undefined;
-	    var p3 = undefined;
-	    var tmp = undefined;
+	    var l = void 0;
+	    var i = void 0;
+	    var p1 = void 0;
+	    var p2 = void 0;
+	    var p3 = void 0;
+	    var tmp = void 0;
 	    var values = _values;
 	    if (prepend) {
 	      values = [prepend].concat(values);
@@ -260,14 +276,14 @@ webpackJsonp([1],{
 	    var obj = {};
 	    var props = [];
 	    var first = prepend || values[0];
-	    var i = undefined;
-	    var p = undefined;
-	    var a = undefined;
-	    var j = undefined;
-	    var r = undefined;
-	    var l = undefined;
-	    var seamless = undefined;
-	    var last = undefined;
+	    var i = void 0;
+	    var p = void 0;
+	    var a = void 0;
+	    var j = void 0;
+	    var r = void 0;
+	    var l = void 0;
+	    var seamless = void 0;
+	    var last = void 0;
 	    correlate = typeof correlate === 'string' ? ',' + correlate + ',' : _correlate;
 	    if (curviness === null) {
 	      curviness = 1;
@@ -345,21 +361,21 @@ webpackJsonp([1],{
 	    var obj = {};
 	    var inc = type === 'cubic' ? 3 : 2;
 	    var soft = type === 'soft';
-	    var a = undefined;
-	    var b = undefined;
-	    var c = undefined;
-	    var d = undefined;
-	    var cur = undefined;
-	    var l = undefined;
-	    var p = undefined;
-	    var cnt = undefined;
-	    var tmp = undefined;
+	    var a = void 0;
+	    var b = void 0;
+	    var c = void 0;
+	    var d = void 0;
+	    var cur = void 0;
+	    var l = void 0;
+	    var p = void 0;
+	    var cnt = void 0;
+	    var tmp = void 0;
 	    if (soft) {
 	      values.splice(0, 0, prepend);
 	    }
 	
 	    if (values === null || values.length < inc + 1) {
-	      return console.error('invalid Bezier data');
+	      return console.error('invalid Bezier data'); // eslint-disable-line
 	    }
 	    for (var i = 1; i >= 0; i--) {
 	      p = i ? 'x' : 'y';
@@ -390,17 +406,17 @@ webpackJsonp([1],{
 	  addCubicLengths: function addCubicLengths(a, steps, resolution) {
 	    var inc = 1 / resolution;
 	    var j = a.length;
-	    var d = undefined;
-	    var d1 = undefined;
-	    var s = undefined;
-	    var da = undefined;
-	    var ca = undefined;
-	    var ba = undefined;
-	    var p = undefined;
-	    var i = undefined;
-	    var inv = undefined;
-	    var bez = undefined;
-	    var index = undefined;
+	    var d = void 0;
+	    var d1 = void 0;
+	    var s = void 0;
+	    var da = void 0;
+	    var ca = void 0;
+	    var ba = void 0;
+	    var p = void 0;
+	    var i = void 0;
+	    var inv = void 0;
+	    var bez = void 0;
+	    var index = void 0;
 	    while (--j > -1) {
 	      bez = a[j];
 	      s = bez.a;
@@ -487,17 +503,17 @@ webpackJsonp([1],{
 	  set: function set(v) {
 	    var segments = this._segCount;
 	    var XYobj = {};
-	    var curIndex = undefined;
-	    var inv = undefined;
-	    var i = undefined;
-	    var p = undefined;
-	    var b = undefined;
-	    var t = undefined;
-	    var val = undefined;
-	    var lengths = undefined;
-	    var curSeg = undefined;
-	    var value = undefined;
-	    var rotate = undefined;
+	    var curIndex = void 0;
+	    var inv = void 0;
+	    var i = void 0;
+	    var p = void 0;
+	    var b = void 0;
+	    var t = void 0;
+	    var val = void 0;
+	    var lengths = void 0;
+	    var curSeg = void 0;
+	    var value = void 0;
+	    var rotate = void 0;
 	    if (!this._timeRes) {
 	      var _cur = v >= 1 ? segments - 1 : segments * v >> 0;
 	      curIndex = v < 0 ? 0 : _cur;
@@ -554,13 +570,13 @@ webpackJsonp([1],{
 	    }
 	    if (this._autoRotate) {
 	      var ar = this._autoRotate;
-	      var b2 = undefined;
-	      var x1 = undefined;
-	      var y1 = undefined;
-	      var x2 = undefined;
-	      var y2 = undefined;
-	      var add = undefined;
-	      var conv = undefined;
+	      var b2 = void 0;
+	      var x1 = void 0;
+	      var y1 = void 0;
+	      var x2 = void 0;
+	      var y2 = void 0;
+	      var add = void 0;
+	      var conv = void 0;
 	      i = ar.length;
 	      while (--i > -1) {
 	        p = ar[i][2];
@@ -611,7 +627,7 @@ webpackJsonp([1],{
 	  return new GsapBezier.Segment(a, (2 * b + a) / 3, (2 * b + c) / 3, c);
 	};
 	
-	exports['default'] = Bezier;
+	exports.default = Bezier;
 	module.exports = exports['default'];
 
 /***/ }

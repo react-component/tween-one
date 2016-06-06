@@ -2,12 +2,12 @@
 <html>
 
 <head>
-  <title>updateStyle.js - example - rc-tween-one@0.6.0</title>
+  <title>updateStyle.js - example - rc-tween-one@0.6.1</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
+  <link href="https://a.alipayobjects.com/normalize.css/3.0.1/normalize.css" rel="stylesheet"/>
   <style>
     .highlight pre {
       padding: .8em 1em;
@@ -252,19 +252,19 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
   <script src="https://a.alipayobjects.com/??es5-shim/4.0.5/es5-shim.js,es5-shim/4.0.5/es5-sham.js,html5shiv/3.7.2/src/html5shiv.js"></script>
   <![endif]-->
   
+  
 </head>
 
 <body>
-<div class="container">
-  <div class="header">
-    <h1>rc-tween-one@0.6.0</h1>
+  <div class="container">
+    <div class="header">
+      <h1>rc-tween-one@0.6.1</h1>
 
-    <p>tween-one anim component for react</p>
-  </div>
-  <div class="example" id="__react-content"></div>
-  <script src="common.js?nowrap"></script>
-  <script src="updateStyle.js?nowrap"></script>
-  <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
+      <p>tween-one anim component for react</p>
+    </div>
+    <div class="example" id="__react-content"></div>
+
+    <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
 
@@ -273,16 +273,16 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     <span class="hljs-keyword">super</span>(...arguments);
     <span class="hljs-keyword">this</span>.testText = <span class="hljs-string">'刚开始的样式:'</span>;
     <span class="hljs-keyword">this</span>.state = {
-      style: {opacity: <span class="hljs-number">1</span>, height: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">0</span>, transform: <span class="hljs-string">'translateY(0px)'</span>},
+      style: { opacity: <span class="hljs-number">1</span>, height: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">0</span>, transform: <span class="hljs-string">'translateY(0px)'</span> },
       test: <span class="hljs-string">''</span>,
-      animation: {translateY: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">500</span>, duration: <span class="hljs-number">5000</span>},
+      animation: { translateY: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">500</span>, duration: <span class="hljs-number">5000</span> },
     };
   }
 
   componentDidMount() {
-    setTimeout(()=&gt; {
+    setTimeout(() =&gt; {
       <span class="hljs-keyword">this</span>.setState({
-        style: {opacity: <span class="hljs-number">1</span>, height: <span class="hljs-number">250</span>, transform: <span class="hljs-string">'translateY(100px)'</span>, marginLeft: <span class="hljs-number">100</span>},
+        style: { opacity: <span class="hljs-number">1</span>, height: <span class="hljs-number">250</span>, transform: <span class="hljs-string">'translateY(100px)'</span>, marginLeft: <span class="hljs-number">100</span> },
       });
       <span class="hljs-keyword">this</span>.testText = <span class="hljs-string">'变更后的样式:'</span>;
       <span class="hljs-keyword">this</span>.bool = <span class="hljs-literal">false</span>;
@@ -291,9 +291,11 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 
   onChange(e) {
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.bool) {
-      <span class="hljs-keyword">let</span> text = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>;</span>
+      <span class="hljs-keyword">let</span> text = (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.test) {
-        text = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.state.test}<span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>;</span>
+        text = (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.state.test}
+          <span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
       }
       <span class="hljs-keyword">this</span>.setState({
         test: text,
@@ -304,16 +306,16 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 
   onClick() {
     <span class="hljs-keyword">this</span>.setState({
-      style: {transform: <span class="hljs-string">'translateY(10px)'</span>, marginLeft: <span class="hljs-number">30</span>, height: <span class="hljs-number">300</span>},
-      animation: {translateY: <span class="hljs-number">100</span>, marginLeft: <span class="hljs-number">100</span>, duration: <span class="hljs-number">1000</span>},
+      style: { transform: <span class="hljs-string">'translateY(10px)'</span>, marginLeft: <span class="hljs-number">30</span>, height: <span class="hljs-number">300</span> },
+      animation: { translateY: <span class="hljs-number">100</span>, marginLeft: <span class="hljs-number">100</span>, duration: <span class="hljs-number">1000</span> },
     });
     <span class="hljs-keyword">this</span>.bool = <span class="hljs-literal">false</span>;
   }
 
   onClick2() {
     <span class="hljs-keyword">this</span>.setState({
-      style: {transform: <span class="hljs-string">'translateY(0px)'</span>, marginLeft: <span class="hljs-number">130</span>, height: <span class="hljs-number">300</span>},
-      animation: {translateY: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">500</span>, duration: <span class="hljs-number">1000</span>},
+      style: { transform: <span class="hljs-string">'translateY(0px)'</span>, marginLeft: <span class="hljs-number">130</span>, height: <span class="hljs-number">300</span> },
+      animation: { translateY: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">500</span>, duration: <span class="hljs-number">1000</span> },
     });
     <span class="hljs-keyword">this</span>.bool = <span class="hljs-literal">false</span>;
   }
@@ -326,8 +328,9 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
         <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.onClick2.bind(this)}</span>&gt;</span>点击改变样式2<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{this.state.animation}</span>
-             <span class="hljs-attribute">style</span>=<span class="hljs-value">{this.state.style}</span>
-             <span class="hljs-attribute">onChange</span>=<span class="hljs-value">{this.onChange.bind(this)}</span>&gt;</span>
+        <span class="hljs-attribute">style</span>=<span class="hljs-value">{this.state.style}</span>
+        <span class="hljs-attribute">onChange</span>=<span class="hljs-value">{this.onChange.bind(this)}</span>
+      &gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>变化的样式<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.state.test}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
@@ -336,13 +339,16 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 }
 ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Demo</span> /&gt;</span>, document.getElementById('__react-content'));
 </span></code></pre></div>
-</div>
-<a href="https://github.com/react-component/tween-one">
-  <img style="position: absolute; top: 0; right: 0; border: 0;"
-       src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
-       alt="Fork me on GitHub"
-       data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
-</a>
+  </div>
+  <a href="https://github.com/react-component/tween-one">
+    <img style="position: absolute; top: 0; right: 0; border: 0;"
+         src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
+         alt="Fork me on GitHub"
+         data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+  </a>
+  
+  <script src="common.js?nowrap"></script>
+  <script src="updateStyle.js?nowrap"></script>
 </body>
 
 </html>

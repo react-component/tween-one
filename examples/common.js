@@ -97,20 +97,20 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// export this package's api
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _src = __webpack_require__(3);
 	
 	var _src2 = _interopRequireDefault(_src);
 
-	exports['default'] = _src2['default'];
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _src2.default; // export this package's api
+
 	module.exports = exports['default'];
 
 /***/ },
@@ -129,19 +129,9 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _react = __webpack_require__(5);
 	
@@ -171,184 +161,182 @@
 	
 	var _ticker2 = _interopRequireDefault(_ticker);
 	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
 	function noop() {}
 	
 	var perFrame = Math.round(1000 / 60);
 	
 	var tickerIdNum = 0;
 	
-	var TweenOne = (function (_Component) {
+	var TweenOne = function (_Component) {
 	  _inherits(TweenOne, _Component);
 	
 	  function TweenOne() {
-	    var _this = this;
-	
 	    _classCallCheck(this, TweenOne);
 	
-	    _get(Object.getPrototypeOf(TweenOne.prototype), 'constructor', this).apply(this, arguments);
-	    this.rafID = -1;
-	    this.moment = this.props.moment || 0;
-	    this.state = {
-	      startMoment: this.props.moment,
-	      startFrame: _ticker2['default'].frame,
-	      paused: this.props.paused
+	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
+	
+	    _this.rafID = -1;
+	    _this.moment = _this.props.moment || 0;
+	    _this.state = {
+	      startMoment: _this.props.moment,
+	      startFrame: _ticker2.default.frame,
+	      paused: _this.props.paused
 	    };
 	    ['raf', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
+	    return _this;
 	  }
 	
-	  _createClass(TweenOne, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.dom = _reactDom2['default'].findDOMNode(this);
-	      this.start(this.props);
-	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(nextProps) {
-	      var _this2 = this;
+	  TweenOne.prototype.componentDidMount = function componentDidMount() {
+	    this.dom = _reactDom2.default.findDOMNode(this);
+	    this.start(this.props);
+	  };
 	
-	      var newStyle = nextProps.style;
-	      var styleEqual = (0, _util.objectEqual)(this.props.style, newStyle);
-	      // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
-	      if (!styleEqual) {
-	        if (this.rafID !== -1) {
-	          this.start(nextProps);
-	        }
-	      }
+	  TweenOne.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    var _this2 = this;
 	
-	      // 跳帧事件 moment;
-	      var newMoment = nextProps.moment;
-	      if (typeof newMoment === 'number' && newMoment !== this.moment) {
-	        this.setState({
-	          startMoment: newMoment,
-	          startFrame: _ticker2['default'].frame
-	        }, function () {
-	          if (_this2.rafID === -1 && !nextProps.paused) {
-	            (function () {
-	              _this2.timeLine.resetAnimData();
-	              var style = nextProps.style;
-	              _this2.dom.setAttribute('style', '');
-	              Object.keys(style).forEach(function (key) {
-	                _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
-	              });
-	              _this2.play();
-	            })();
-	          } else {
-	            _this2.raf();
-	          }
-	        });
-	      }
-	      // 动画处理
-	      var newAnimation = nextProps.animation;
-	      var currentAnimation = this.props.animation;
-	      var equal = (0, _util.objectEqual)(currentAnimation, newAnimation);
-	      if (!equal) {
-	        this.setState({
-	          startFrame: _ticker2['default'].frame
-	        }, function () {
-	          _this2.start(nextProps);
-	        });
-	      }
-	      // 暂停倒放
-	      if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
-	        if (nextProps.paused) {
-	          this.cancelRequestAnimationFrame();
-	        } else {
-	          if (nextProps.reverse && nextProps.reverseDelay) {
-	            _ticker2['default'].timeout(this.restart, nextProps.reverseDelay);
-	          } else {
-	            this.restart();
-	          }
-	        }
+	    var newStyle = nextProps.style;
+	    var styleEqual = (0, _util.objectEqual)(this.props.style, newStyle);
+	    // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
+	    if (!styleEqual) {
+	      if (this.rafID !== -1) {
+	        this.start(nextProps);
 	      }
 	    }
-	  }, {
-	    key: 'componentWillUnmount',
-	    value: function componentWillUnmount() {
-	      this.cancelRequestAnimationFrame();
-	    }
-	  }, {
-	    key: 'restart',
-	    value: function restart() {
-	      var _this3 = this;
 	
+	    // 跳帧事件 moment;
+	    var newMoment = nextProps.moment;
+	    if (typeof newMoment === 'number' && newMoment !== this.moment) {
 	      this.setState({
-	        startMoment: this.timeLine.progressTime,
-	        startFrame: _ticker2['default'].frame
+	        startMoment: newMoment,
+	        startFrame: _ticker2.default.frame
 	      }, function () {
-	        _this3.play();
+	        if (_this2.rafID === -1 && !nextProps.paused) {
+	          (function () {
+	            _this2.timeLine.resetAnimData();
+	            var style = nextProps.style;
+	            _this2.dom.setAttribute('style', '');
+	            Object.keys(style).forEach(function (key) {
+	              _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
+	            });
+	            _this2.play();
+	          })();
+	        } else {
+	          _this2.raf();
+	        }
 	      });
 	    }
-	  }, {
-	    key: 'start',
-	    value: function start(props) {
-	      if (props.animation && Object.keys(props.animation).length) {
-	        this.timeLine = new _TimeLine2['default'](this.dom, (0, _util.dataToArray)(props.animation), this.props.attr);
-	        // 开始动画
-	        this.play();
-	      }
+	    // 动画处理
+	    var newAnimation = nextProps.animation;
+	    var currentAnimation = this.props.animation;
+	    var equal = (0, _util.objectEqual)(currentAnimation, newAnimation);
+	    if (!equal) {
+	      this.setState({
+	        startFrame: _ticker2.default.frame
+	      }, function () {
+	        _this2.start(nextProps);
+	      });
 	    }
-	  }, {
-	    key: 'play',
-	    value: function play() {
-	      this.cancelRequestAnimationFrame();
-	      this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
-	      this.raf();
-	      _ticker2['default'].wake(this.rafID, this.raf);
-	      tickerIdNum++;
-	    }
-	  }, {
-	    key: 'frame',
-	    value: function frame() {
-	      var moment = (_ticker2['default'].frame - this.state.startFrame) * perFrame + (this.state.startMoment || 0);
-	      if (this.props.reverse) {
-	        moment = (this.state.startMoment || 0) - (_ticker2['default'].frame - this.state.startFrame) * perFrame;
-	      }
-	      moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
-	      moment = moment <= 0 ? 0 : moment;
-	      if (moment < this.moment) {
-	        this.timeLine.resetDefaultStyle();
-	      }
-	      this.moment = moment;
-	      this.timeLine.onChange = this.props.onChange;
-	      this.timeLine.frame(moment);
-	    }
-	  }, {
-	    key: 'raf',
-	    value: function raf() {
-	      this.frame();
-	      if (this.moment >= this.timeLine.totalTime && !this.props.reverse || this.props.paused || this.props.reverse && this.moment === 0) {
-	        return this.cancelRequestAnimationFrame();
-	      }
-	    }
-	  }, {
-	    key: 'cancelRequestAnimationFrame',
-	    value: function cancelRequestAnimationFrame() {
-	      _ticker2['default'].clear(this.rafID);
-	      this.rafID = -1;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var props = (0, _objectAssign2['default'])({}, this.props);
-	      props.style = (0, _objectAssign2['default'])({}, this.props.style);
-	      for (var p in props.style) {
-	        if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
-	          // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
-	          var transformArr = ['Webkit', 'Moz', 'Ms', 'ms'];
-	          for (var i = 0; i < transformArr.length; i++) {
-	            props.style[transformArr[i] + 'Filter'] = props.style[p];
-	          }
+	    // 暂停倒放
+	    if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
+	      if (nextProps.paused) {
+	        this.cancelRequestAnimationFrame();
+	      } else {
+	        if (nextProps.reverse && nextProps.reverseDelay) {
+	          _ticker2.default.timeout(this.restart, nextProps.reverseDelay);
+	        } else {
+	          this.restart();
 	        }
 	      }
-	      return _react2['default'].createElement(this.props.component, props);
 	    }
-	  }]);
+	  };
+	
+	  TweenOne.prototype.componentWillUnmount = function componentWillUnmount() {
+	    this.cancelRequestAnimationFrame();
+	  };
+	
+	  TweenOne.prototype.restart = function restart() {
+	    var _this3 = this;
+	
+	    this.setState({
+	      startMoment: this.timeLine.progressTime,
+	      startFrame: _ticker2.default.frame
+	    }, function () {
+	      _this3.play();
+	    });
+	  };
+	
+	  TweenOne.prototype.start = function start(props) {
+	    if (props.animation && Object.keys(props.animation).length) {
+	      this.timeLine = new _TimeLine2.default(this.dom, (0, _util.dataToArray)(props.animation), this.props.attr);
+	      // 开始动画
+	      this.play();
+	    }
+	  };
+	
+	  TweenOne.prototype.play = function play() {
+	    this.cancelRequestAnimationFrame();
+	    this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
+	    this.raf();
+	    _ticker2.default.wake(this.rafID, this.raf);
+	    tickerIdNum++;
+	  };
+	
+	  TweenOne.prototype.frame = function frame() {
+	    var moment = (_ticker2.default.frame - this.state.startFrame) * perFrame + (this.state.startMoment || 0);
+	    if (this.props.reverse) {
+	      moment = (this.state.startMoment || 0) - (_ticker2.default.frame - this.state.startFrame) * perFrame;
+	    }
+	    moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
+	    moment = moment <= 0 ? 0 : moment;
+	    if (moment < this.moment) {
+	      this.timeLine.resetDefaultStyle();
+	    }
+	    this.moment = moment;
+	    this.timeLine.onChange = this.props.onChange;
+	    this.timeLine.frame(moment);
+	  };
+	
+	  TweenOne.prototype.raf = function raf() {
+	    this.frame();
+	    if (this.moment >= this.timeLine.totalTime && !this.props.reverse || this.props.paused || this.props.reverse && this.moment === 0) {
+	      return this.cancelRequestAnimationFrame();
+	    }
+	  };
+	
+	  TweenOne.prototype.cancelRequestAnimationFrame = function cancelRequestAnimationFrame() {
+	    _ticker2.default.clear(this.rafID);
+	    this.rafID = -1;
+	  };
+	
+	  TweenOne.prototype.render = function render() {
+	    var props = (0, _objectAssign2.default)({}, this.props);
+	    props.style = (0, _objectAssign2.default)({}, this.props.style);
+	    for (var p in props.style) {
+	      if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
+	        // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
+	        var transformArr = ['Webkit', 'Moz', 'Ms', 'ms'];
+	        for (var i = 0; i < transformArr.length; i++) {
+	          props.style[transformArr[i] + 'Filter'] = props.style[p];
+	        }
+	      }
+	    }
+	    return _react2.default.createElement(this.props.component, props);
+	  };
 	
 	  return TweenOne;
-	})(_react.Component);
+	}(_react.Component);
 	
 	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
 	
@@ -371,8 +359,8 @@
 	  attr: 'style',
 	  onChange: noop
 	};
-	TweenOne.plugins = _plugins2['default'];
-	exports['default'] = TweenOne;
+	TweenOne.plugins = _plugins2.default;
+	exports.default = TweenOne;
 	module.exports = exports['default'];
 
 /***/ },
@@ -20472,9 +20460,12 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
 	exports.toArrayChildren = toArrayChildren;
 	exports.dataToArray = dataToArray;
 	exports.objectEqual = objectEqual;
@@ -20483,15 +20474,15 @@
 	exports.transformArguments = transformArguments;
 	exports.getChildrenFromProps = getChildrenFromProps;
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
 	var _react = __webpack_require__(5);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	function toArrayChildren(children) {
 	  var ret = [];
-	  _react2['default'].Children.forEach(children, function (c) {
+	  _react2.default.Children.forEach(children, function (c) {
 	    ret.push(c);
 	  });
 	  return ret;
@@ -20521,7 +20512,7 @@
 	      var nextObj = obj2[i];
 	      for (var p in currentObj) {
 	        if (currentObj[p] !== nextObj[p]) {
-	          if (typeof currentObj[p] === 'object' && typeof nextObj[p] === 'object') {
+	          if (_typeof(currentObj[p]) === 'object' && _typeof(nextObj[p]) === 'object') {
 	            equalBool = objectEqual(currentObj[p], nextObj[p]);
 	          } else {
 	            equalBool = false;
@@ -20538,7 +20529,7 @@
 	      return false;
 	    }
 	
-	    if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+	    if (_typeof(obj1[key]) === 'object' && _typeof(obj2[key]) === 'object') {
 	      equalBool = objectEqual(obj1[key], obj2[key]);
 	    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
 	      if (obj1[key].name !== obj2[key].name) {
@@ -20554,7 +20545,7 @@
 	      equalBool = false;
 	      return false;
 	    }
-	    if (typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
+	    if (_typeof(obj2[key]) === 'object' && _typeof(obj1[key]) === 'object') {
 	      equalBool = objectEqual(obj2[key], obj1[key]);
 	    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
 	      if (obj1[key].name !== obj2[key].name) {
@@ -20625,7 +20616,7 @@
 	}
 	
 	function transformArguments(arg, key, i) {
-	  var result = undefined;
+	  var result = void 0;
 	  if (typeof arg === 'function') {
 	    result = arg({
 	      key: key,
@@ -20662,6 +20653,10 @@
 	exports.getMatrix = getMatrix;
 	exports.getTransform = getTransform;
 	exports.stylesToCss = stylesToCss;
+	exports.getUnit = getUnit;
+	exports.getValues = getValues;
+	exports.findStyleByName = findStyleByName;
+	exports.mergeStyle = mergeStyle;
 	
 	var _CSSProperty = __webpack_require__(94);
 	
@@ -20725,6 +20720,7 @@
 	    transformsBase: ['translate', 'translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY', 'rotateZ', 'rotate'],
 	    transforms3D: ['translate3d', 'translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective']
 	  },
+	  transformGroup: { translate: 1, translate3d: 1, scale: 1, scale3d: 1, rotate: 1, rotate3d: 1 },
 	  filter: ['grayScale', 'sepia', 'hueRotate', 'invert', 'brightness', 'contrast', 'blur'],
 	  filterConvert: { grayScale: 'grayscale', hueRotate: 'hue-rotate' }
 	};
@@ -20984,6 +20980,75 @@
 	  return _value || value;
 	}
 	
+	function getUnit(p, v) {
+	  var currentUnit = v && v.toString().replace(/[^a-z|%]/ig, '');
+	  var unit = '';
+	  if (p.indexOf('translate') >= 0 || p.indexOf('perspective') >= 0 || p.indexOf('blur') >= 0) {
+	    unit = 'px';
+	  } else if (p.indexOf('skew') >= 0 || p.indexOf('rotate') >= 0) {
+	    unit = 'deg';
+	  }
+	  return currentUnit || unit;
+	}
+	
+	function getValues(p, d, u) {
+	  return p + '(' + d + (u || '') + ')';
+	}
+	
+	function findStyleByName(cssArray, name) {
+	  var ret = null;
+	  if (cssArray) {
+	    cssArray.forEach(function (_cname) {
+	      if (ret) {
+	        return;
+	      }
+	      var cName = _cname.split('(')[0];
+	      var a = cName in cssList.transformGroup && name.substring(0, name.length - 1).indexOf(cName) >= 0;
+	      var b = name in cssList.transformGroup && cName.substring(0, cName.length - 1).indexOf(name) >= 0;
+	      var c = cName in cssList.transformGroup && name in cssList.transformGroup && (cName.substring(0, cName.length - 2) === name || name.substring(0, name.length - 2) === cName);
+	      if (cName === name || a || b || c) {
+	        ret = _cname;
+	      }
+	    });
+	  }
+	  return ret;
+	}
+	
+	function mergeStyle(current, change) {
+	  if (!current || current === '') {
+	    return change;
+	  }
+	  if (!change || change === '') {
+	    return current;
+	  }
+	  var _current = current.replace(/\s/g, '').split(')').filter(function (item) {
+	    return item !== '' && item;
+	  }).map(function (item) {
+	    return item + ')';
+	  });
+	  var _change = change.replace(/\s/g, '').split(')').filter(function (item) {
+	    return item !== '' && item;
+	  });
+	  _change.forEach(function (changeOnly) {
+	    var changeArr = changeOnly.split('(');
+	    var changeName = changeArr[0];
+	    var currentSame = findStyleByName(_current, changeName);
+	    if (!currentSame) {
+	      _current.push(changeOnly + ')');
+	    } else {
+	      var index = _current.indexOf(currentSame);
+	      _current[index] = changeOnly + ')';
+	    }
+	  });
+	  _current.forEach(function (item, i) {
+	    if (item.indexOf('perspective') >= 0 && i) {
+	      _current.splice(i, 1);
+	      _current.unshift(item);
+	    }
+	  });
+	  return _current.join(' ').trim();
+	}
+	
 	exports.default = cssList;
 
 
@@ -20991,16 +21056,11 @@
 /* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * Created by jljsj on 16/1/27.
-	 */
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _objectAssign = __webpack_require__(8);
 	
@@ -21014,15 +21074,21 @@
 	
 	var _plugins2 = _interopRequireDefault(_plugins);
 	
-	var _pluginStylePlugin = __webpack_require__(177);
+	var _StylePlugin = __webpack_require__(177);
 	
-	var _pluginStylePlugin2 = _interopRequireDefault(_pluginStylePlugin);
+	var _StylePlugin2 = _interopRequireDefault(_StylePlugin);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 * Created by jljsj on 16/1/27.
+	 */
 	
 	var DEFAULT_EASING = 'easeInOutQuad';
 	var DEFAULT_DURATION = 450;
 	var DEFAULT_DELAY = 0;
 	function noop() {}
-	_plugins2['default'].push(_pluginStylePlugin2['default']);
+	_plugins2.default.push(_StylePlugin2.default);
 	// 设置默认数据
 	function defaultData(vars, now) {
 	  return {
@@ -21058,7 +21124,7 @@
 	  this.startDefaultData = {};
 	  var data = [];
 	  toData.forEach(function (d, i) {
-	    var _d = (0, _objectAssign2['default'])({}, d);
+	    var _d = (0, _objectAssign2.default)({}, d);
 	    if (_this.attr === 'style') {
 	      data[i] = {};
 	      Object.keys(_d).forEach(function (key) {
@@ -21075,7 +21141,7 @@
 	          throw new Error('Style should be the object.');
 	        }
 	        if (key === 'bezier') {
-	          _d.style = (0, _objectAssign2['default'])(_d.style || {}, { bezier: _d[key] });
+	          _d.style = (0, _objectAssign2.default)(_d.style || {}, { bezier: _d[key] });
 	          delete _d[key];
 	          _this.startDefaultData.style = _this.target.getAttribute('style');
 	        } else {
@@ -21106,14 +21172,14 @@
 	    Object.keys(item).forEach(function (_key) {
 	      if (!(_key in tweenData)) {
 	        var _data = item[_key];
-	        if (_key in _plugins2['default']) {
-	          tweenData.vars[_key] = new _plugins2['default'][_key](_this2.target, _data, tweenData.type);
+	        if (_key in _plugins2.default) {
+	          tweenData.vars[_key] = new _plugins2.default[_key](_this2.target, _data, tweenData.type);
 	        } else if (typeof _data === 'number' || _data.split(/[,|\s]/g).length <= 1) {
 	          var vars = parseFloat(_data);
 	          var unit = _data.toString().replace(/[^a-z|%]/g, '');
 	          var count = _data.toString().replace(/[^+|=|-]/g, '');
 	          tweenData.vars[_key] = { type: 0, unit: unit, vars: vars, count: count };
-	        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugins2['default']) {
+	        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugins2.default) {
 	          /*
 	           * SVG 情况如下：
 	           * points: ***,*** ***,***
@@ -21122,12 +21188,12 @@
 	           * d: M*** *** L*** ** C*** *** *** *** *** *** Z || M***,***L***,***Z
 	           * - split(/[a-z]/i).filter(item => item), unit: split(/\d+[0-9|\s]+\s/)
 	           */
-	          tweenData.vars[_key] = new _plugins2['default'].SVGMorph(_this2.target, _data, _key);
+	          tweenData.vars[_key] = new _plugins2.default.SVGMorph(_this2.target, _data, _key);
 	        }
 	      }
 	    });
 	    if (tweenData.yoyo && !tweenData.repeat) {
-	      console.warn('Warning: yoyo must be used together with repeat;');
+	      console.warn('Warning: yoyo must be used together with repeat;'); // eslint-disable-line
 	    }
 	    if (tweenData.repeat === -1) {
 	      repeatMax = true;
@@ -21147,7 +21213,7 @@
 	p.convertToMarks = function (style, num, unit) {
 	  var horiz = /(?:Left|Right|Width)/i.test(style);
 	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
-	  var pix = undefined;
+	  var pix = void 0;
 	  if (unit === '%') {
 	    pix = parseFloat(num) * 100 / (horiz ? t.clientWidth : t.clientHeight);
 	  } else {
@@ -21159,7 +21225,7 @@
 	p.convertToPixels = function (style, num, unit) {
 	  var horiz = /(?:Left|Right|Width)/i.test(style);
 	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
-	  var pix = undefined;
+	  var pix = void 0;
 	  if (unit === '%') {
 	    pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
 	  } else {
@@ -21172,7 +21238,7 @@
 	
 	  var start = {};
 	  Object.keys(item).forEach(function (_key) {
-	    if (_key in _plugins2['default'] || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+	    if (_key in _plugins2.default || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
 	      start[_key] = item[_key].getAnimStart();
 	      return;
 	    }
@@ -21194,7 +21260,7 @@
 	  var _this4 = this;
 	
 	  Object.keys(data).forEach(function (key) {
-	    if (key in _plugins2['default'] || _this4.attr === 'attr' && (key === 'd' || key === 'points')) {
+	    if (key in _plugins2.default || _this4.attr === 'attr' && (key === 'd' || key === 'points')) {
 	      return;
 	    }
 	    _this4.target[key] = data[key];
@@ -21205,13 +21271,13 @@
 	  var _this5 = this;
 	
 	  Object.keys(endData.vars).forEach(function (_key) {
-	    if (_key in _plugins2['default'] || _this5.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+	    if (_key in _plugins2.default || _this5.attr === 'attr' && (_key === 'd' || _key === 'points')) {
 	      endData.vars[_key].setRatio(ratio, _this5.tween);
 	      return;
 	    }
 	    var endVars = endData.vars[_key];
 	    var startVars = _this5.start[i][_key];
-	    var data = undefined;
+	    var data = void 0;
 	    if (_this5.attr === 'attr') {
 	      // 除了d和这points外的标签动画；
 	      if (!endVars.type) {
@@ -21242,6 +21308,10 @@
 	    var fromDelay = item.type === 'from' ? delay : 0;
 	    if (progressTime + fromDelay >= 0 && !_this6.start[i]) {
 	      _this6.start[i] = _this6.getAnimStartData(item.vars);
+	      // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
+	      var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : progressTime / (item.duration + fromDelay);
+	      st = st < 0 ? 0 : st;
+	      _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
 	    }
 	    // onRepeat 处理
 	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
@@ -21262,9 +21332,9 @@
 	      item.mode = 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > item.duration ? item.duration : progressTime;
-	      var ratio = _tweenFunctions2['default'][item.ease](progressTime, 0, 1, item.duration);
+	      var ratio = _tweenFunctions2.default[item.ease](progressTime, 0, 1, item.duration);
 	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
-	        ratio = _tweenFunctions2['default'][item.ease](progressTime, 1, 0, item.duration);
+	        ratio = _tweenFunctions2.default[item.ease](progressTime, 1, 0, item.duration);
 	      }
 	      _this6.setRatio(ratio, item, i);
 	      item.onUpdate(ratio);
@@ -21304,7 +21374,7 @@
 	};
 	
 	p.onChange = noop;
-	exports['default'] = timeLine;
+	exports.default = timeLine;
 	module.exports = exports['default'];
 
 /***/ },
@@ -21576,8 +21646,8 @@
 	p.push = function (plugin) {
 	  this[plugin.prototype.name] = plugin;
 	};
-	exports["default"] = new Plugins();
-	module.exports = exports["default"];
+	exports.default = new Plugins();
+	module.exports = exports['default'];
 
 /***/ },
 /* 177 */
@@ -21585,11 +21655,9 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _styleUtils = __webpack_require__(173);
 	
@@ -21602,6 +21670,8 @@
 	var _plugins = __webpack_require__(176);
 	
 	var _plugins2 = _interopRequireDefault(_plugins);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var StylePlugin = function StylePlugin(target, vars, type) {
 	  this.target = target;
@@ -21659,8 +21729,8 @@
 	  this.propsData.dataUnit = {};
 	  this.propsData.dataCount = {};
 	  Object.keys(this.vars).forEach(function (_key) {
-	    if (_key in _plugins2['default']) {
-	      _this.propsData.data[_key] = new _plugins2['default'][_key](_this.target, _this.vars[_key]);
+	    if (_key in _plugins2.default) {
+	      _this.propsData.data[_key] = new _plugins2.default[_key](_this.target, _this.vars[_key]);
 	      return;
 	    }
 	    var key = (0, _styleUtils.getGsapType)(_key);
@@ -21674,7 +21744,7 @@
 	p.convertToMarks = function (style, num, unit) {
 	  var horiz = /(?:Left|Right|Width)/i.test(style);
 	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
-	  var pix = undefined;
+	  var pix = void 0;
 	  if (unit === '%') {
 	    pix = parseFloat(num) * 100 / (horiz ? t.clientWidth : t.clientHeight);
 	  } else {
@@ -21702,10 +21772,10 @@
 	    if (!startData || startData === 'none' || startData === 'auto') {
 	      startData = '';
 	    }
-	    var transform = undefined;
-	    var endUnit = undefined;
-	    var startUnit = undefined;
-	    if (key in _plugins2['default']) {
+	    var transform = void 0;
+	    var endUnit = void 0;
+	    var startUnit = void 0;
+	    if (key in _plugins2.default) {
 	      if (key === 'bezier') {
 	        _this2.transform = (0, _styleUtils.checkStyleName)('transform');
 	      }
@@ -21718,7 +21788,7 @@
 	    } else if (cssName === 'filter') {
 	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter');
 	      startData = computedStyle[_this2.filterName];
-	      _this2.filterObject = (0, _objectAssign2['default'])(_this2.filterObject || {}, (0, _styleUtils.splitFilterToObject)(startData));
+	      _this2.filterObject = (0, _objectAssign2.default)(_this2.filterObject || {}, (0, _styleUtils.splitFilterToObject)(startData));
 	      startData = _this2.filterObject[key] || 0;
 	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
 	      endUnit = _this2.propsData.dataUnit[key];
@@ -21770,7 +21840,7 @@
 	      var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
 	      var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
 	      var an = angle ? 'rotate(' + angle + 'deg)' : '';
-	      var ss = undefined;
+	      var ss = void 0;
 	      if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
 	        var matrix = '1,0,0,1,' + translateX + ',' + translateY;
 	        ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
@@ -21784,7 +21854,10 @@
 	      var per = perspective ? 'perspective(' + perspective + 'px)' : '';
 	      style[_this3.transform] = (per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
 	      return;
-	    } else if (_styleUtils2['default'].filter.indexOf(_key) >= 0) {
+	    } else if (_styleUtils2.default.filter.indexOf(_key) >= 0) {
+	      if (!_this3.filterObject) {
+	        return;
+	      }
 	      _this3.filterObject[_key] = data[_key];
 	      var filterStyle = '';
 	      Object.keys(_this3.filterObject).forEach(function (filterKey) {
@@ -21817,7 +21890,7 @@
 	
 	  tween.style = tween.style || {};
 	  if (this.start.transform) {
-	    tween.style.transform = (0, _objectAssign2['default'])({}, this.start.transform, tween.style.transform || {});
+	    tween.style.transform = (0, _objectAssign2.default)({}, this.start.transform, tween.style.transform || {});
 	  }
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
@@ -21825,7 +21898,7 @@
 	    var endVars = _this4.propsData.data[key];
 	    var unit = _this4.propsData.dataUnit[key];
 	    var count = _this4.propsData.dataCount[key];
-	    if (key in _plugins2['default']) {
+	    if (key in _plugins2.default) {
 	      _this4.propsData.data[key].setRatio(ratio, tween);
 	      return;
 	    } else if (_isTransform) {
@@ -21862,7 +21935,7 @@
 	    }
 	    var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
 	    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
-	    unit = unit || (_styleUtils2['default'].filter.indexOf(key) >= 0 ? '' : styleUnit);
+	    unit = unit || (_styleUtils2.default.filter.indexOf(key) >= 0 ? '' : styleUnit);
 	    if (count.charAt(1) === '=') {
 	      tween.style[key] = startVars + endVars * ratio + unit;
 	      return;
@@ -21871,7 +21944,7 @@
 	  });
 	  this.setAnimData(tween.style);
 	};
-	exports['default'] = StylePlugin;
+	exports.default = StylePlugin;
 	module.exports = exports['default'];
 
 /***/ },
@@ -21880,15 +21953,15 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _raf = __webpack_require__(179);
 	
 	var _raf2 = _interopRequireDefault(_raf);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var Ticker = function Ticker() {};
 	var p = Ticker.prototype = {
@@ -21901,14 +21974,14 @@
 	p.wake = function (key, fn) {
 	  this.tickFnObject[key] = fn;
 	  if (this.id === -1) {
-	    this.id = (0, _raf2['default'])(this.tick);
+	    this.id = (0, _raf2.default)(this.tick);
 	  }
 	};
 	p.clear = function (key) {
 	  delete this.tickFnObject[key];
 	};
 	p.sleep = function () {
-	  _raf2['default'].cancel(this.id);
+	  _raf2.default.cancel(this.id);
 	  this.id = -1;
 	};
 	var ticker = new Ticker();
@@ -21924,14 +21997,14 @@
 	    return ticker.sleep();
 	  }
 	  ticker.frame++;
-	  ticker.id = (0, _raf2['default'])(ticker.tick);
+	  ticker.id = (0, _raf2.default)(ticker.tick);
 	};
 	var timeoutIdNumber = 0;
 	p.timeout = function (fn, time) {
 	  var _this = this;
 	
 	  if (!(typeof fn === 'function')) {
-	    return console.warn('Is no function');
+	    return console.warn('Is no function'); // eslint-disable-line
 	  }
 	  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
 	  var startFrame = this.frame;
@@ -21950,7 +22023,8 @@
 	  var _this2 = this;
 	
 	  if (!(typeof fn === 'function')) {
-	    return console.warn('Is no function');
+	    console.warn('Is no function'); // eslint-disable-line
+	    return null;
 	  }
 	  var intervalID = 'interval' + Date.now() + '-' + intervalIdNumber;
 	  var starFrame = this.frame;
@@ -21964,7 +22038,7 @@
 	  intervalIdNumber++;
 	  return intervalID;
 	};
-	exports['default'] = ticker;
+	exports.default = ticker;
 	module.exports = exports['default'];
 
 /***/ },
@@ -22091,21 +22165,11 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _react = __webpack_require__(5);
 	
@@ -22117,142 +22181,143 @@
 	
 	var _util = __webpack_require__(172);
 	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
 	function noop() {}
 	
-	var TweenOneGroup = (function (_Component) {
+	var TweenOneGroup = function (_Component) {
 	  _inherits(TweenOneGroup, _Component);
 	
 	  function TweenOneGroup() {
-	    var _this = this;
-	
 	    _classCallCheck(this, TweenOneGroup);
 	
-	    _get(Object.getPrototypeOf(TweenOneGroup.prototype), 'constructor', this).apply(this, arguments);
-	    this.keysToEnter = [];
-	    this.keysToLeave = [];
-	    this.onEnterBool = false;
+	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
+	
+	    _this.keysToEnter = [];
+	    _this.keysToLeave = [];
+	    _this.onEnterBool = false;
 	    // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
-	    var children = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
+	    var children = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(_this.props));
 	    children.forEach(function (child) {
 	      if (!child || !child.key) {
 	        return;
 	      }
 	      _this.keysToEnter.push(child.key);
 	    });
-	    this.originalChildren = children;
-	    this.state = {
+	    _this.originalChildren = children;
+	    _this.state = {
 	      children: children
 	    };
 	    ['getChildrenToRender', 'getCoverAnimation', 'onChange'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
+	    return _this;
 	  }
 	
-	  _createClass(TweenOneGroup, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.onEnterBool = true;
-	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(nextProps) {
-	      var _this2 = this;
+	  TweenOneGroup.prototype.componentDidMount = function componentDidMount() {
+	    this.onEnterBool = true;
+	  };
 	
-	      var nextChildren = (0, _util.toArrayChildren)(nextProps.children);
-	      var currentChildren = this.originalChildren;
-	      var newChildren = (0, _util.mergeChildren)(currentChildren, nextChildren);
+	  TweenOneGroup.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    var _this2 = this;
 	
-	      this.keysToEnter = [];
-	      this.keysToLeave = [];
-	      nextChildren.forEach(function (c) {
-	        if (!c) {
-	          return;
-	        }
-	        var key = c.key;
-	        var hasPrev = (0, _util.findChildInChildrenByKey)(currentChildren, key);
-	        if (!hasPrev && key) {
-	          _this2.keysToEnter.push(key);
-	        }
-	      });
+	    var nextChildren = (0, _util.toArrayChildren)(nextProps.children);
+	    var currentChildren = this.originalChildren;
+	    var newChildren = (0, _util.mergeChildren)(currentChildren, nextChildren);
 	
-	      currentChildren.forEach(function (c) {
-	        if (!c) {
-	          return;
-	        }
-	        var key = c.key;
-	        var hasNext = (0, _util.findChildInChildrenByKey)(nextChildren, key);
-	        if (!hasNext && key) {
-	          _this2.keysToLeave.push(key);
-	        }
-	      });
-	      this.setState({
-	        children: newChildren
-	      });
-	    }
-	  }, {
-	    key: 'componentDidUpdate',
-	    value: function componentDidUpdate() {
-	      this.originalChildren = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
-	    }
-	  }, {
-	    key: 'onChange',
-	    value: function onChange(animation, key, type, obj) {
-	      var length = (0, _util.dataToArray)(animation).length;
-	      if (obj.index === length - 1 && obj.mode === 'onComplete') {
-	        if (type === 'leave') {
-	          var children = this.state.children.filter(function (child) {
-	            return child.key !== key;
-	          });
-	          this.setState({
-	            children: children
-	          });
-	        }
-	        var _obj = { key: key, type: type };
-	        this.props.onEnd(_obj);
+	    this.keysToEnter = [];
+	    this.keysToLeave = [];
+	    nextChildren.forEach(function (c) {
+	      if (!c) {
+	        return;
 	      }
-	    }
-	  }, {
-	    key: 'getCoverAnimation',
-	    value: function getCoverAnimation(child, i, type) {
-	      var animation = type === 'leave' ? this.props.leave : this.props.enter;
-	      var onChange = this.onChange.bind(this, animation, child.key, type);
-	      return _react2['default'].createElement(_TweenOne2['default'], _extends({}, child.props, {
-	        key: child.key,
-	        component: child.type,
-	        animation: (0, _util.transformArguments)(animation, child.key, i),
-	        onChange: onChange
-	      }));
-	    }
-	  }, {
-	    key: 'getChildrenToRender',
-	    value: function getChildrenToRender(children) {
-	      var _this3 = this;
+	      var key = c.key;
+	      var hasPrev = (0, _util.findChildInChildrenByKey)(currentChildren, key);
+	      if (!hasPrev && key) {
+	        _this2.keysToEnter.push(key);
+	      }
+	    });
 	
-	      return children.map(function (child, i) {
-	        if (!child || !child.key) {
-	          return child;
-	        }
-	        var key = child.key;
-	        if (_this3.keysToLeave.indexOf(key) >= 0) {
-	          return _this3.getCoverAnimation(child, i, 'leave');
-	        }
-	        var appear = (0, _util.transformArguments)(_this3.props.appear, key, i);
-	        if (appear || _this3.onEnterBool) {
-	          return _this3.getCoverAnimation(child, i, 'enter');
-	        }
-	        return child.type === _TweenOne2['default'] ? (0, _react.createElement)(child.props.component, _extends({}, child.props, { key: child.key })) : child;
-	      });
+	    currentChildren.forEach(function (c) {
+	      if (!c) {
+	        return;
+	      }
+	      var key = c.key;
+	      var hasNext = (0, _util.findChildInChildrenByKey)(nextChildren, key);
+	      if (!hasNext && key) {
+	        _this2.keysToLeave.push(key);
+	      }
+	    });
+	    this.setState({
+	      children: newChildren
+	    });
+	  };
+	
+	  TweenOneGroup.prototype.componentDidUpdate = function componentDidUpdate() {
+	    this.originalChildren = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
+	  };
+	
+	  TweenOneGroup.prototype.onChange = function onChange(animation, key, type, obj) {
+	    var length = (0, _util.dataToArray)(animation).length;
+	    if (obj.index === length - 1 && obj.mode === 'onComplete') {
+	      if (type === 'leave') {
+	        var children = this.state.children.filter(function (child) {
+	          return child.key !== key;
+	        });
+	        this.setState({
+	          children: children
+	        });
+	      }
+	      var _obj = { key: key, type: type };
+	      this.props.onEnd(_obj);
 	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var childrenToRender = this.getChildrenToRender(this.state.children);
-	      return (0, _react.createElement)(this.props.component, this.props, childrenToRender);
-	    }
-	  }]);
+	  };
+	
+	  TweenOneGroup.prototype.getCoverAnimation = function getCoverAnimation(child, i, type) {
+	    var animation = type === 'leave' ? this.props.leave : this.props.enter;
+	    var onChange = this.onChange.bind(this, animation, child.key, type);
+	    return _react2.default.createElement(_TweenOne2.default, _extends({}, child.props, {
+	      key: child.key,
+	      component: child.type,
+	      animation: (0, _util.transformArguments)(animation, child.key, i),
+	      onChange: onChange
+	    }));
+	  };
+	
+	  TweenOneGroup.prototype.getChildrenToRender = function getChildrenToRender(children) {
+	    var _this3 = this;
+	
+	    return children.map(function (child, i) {
+	      if (!child || !child.key) {
+	        return child;
+	      }
+	      var key = child.key;
+	      if (_this3.keysToLeave.indexOf(key) >= 0) {
+	        return _this3.getCoverAnimation(child, i, 'leave');
+	      }
+	      var appear = (0, _util.transformArguments)(_this3.props.appear, key, i);
+	      if (appear || _this3.onEnterBool) {
+	        return _this3.getCoverAnimation(child, i, 'enter');
+	      }
+	      return child.type === _TweenOne2.default ? (0, _react.createElement)(child.props.component, _extends({}, child.props, { key: child.key })) : child;
+	    });
+	  };
+	
+	  TweenOneGroup.prototype.render = function render() {
+	    var childrenToRender = this.getChildrenToRender(this.state.children);
+	    return (0, _react.createElement)(this.props.component, this.props, childrenToRender);
+	  };
 	
 	  return TweenOneGroup;
-	})(_react.Component);
+	}(_react.Component);
 	
 	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
 	var objectOrArrayOrFunc = _react.PropTypes.oneOfType([objectOrArray, _react.PropTypes.func]);
@@ -22274,7 +22339,7 @@
 	  leave: { x: -50, opacity: 0 },
 	  onEnd: noop
 	};
-	exports['default'] = TweenOneGroup;
+	exports.default = TweenOneGroup;
 	module.exports = exports['default'];
 
 /***/ }

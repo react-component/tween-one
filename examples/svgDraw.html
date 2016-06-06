@@ -2,12 +2,12 @@
 <html>
 
 <head>
-  <title>svgDraw.js - example - rc-tween-one@0.6.0</title>
+  <title>svgDraw.js - example - rc-tween-one@0.6.1</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
+  <link href="https://a.alipayobjects.com/normalize.css/3.0.1/normalize.css" rel="stylesheet"/>
   <style>
     .highlight pre {
       padding: .8em 1em;
@@ -252,19 +252,19 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
   <script src="https://a.alipayobjects.com/??es5-shim/4.0.5/es5-shim.js,es5-shim/4.0.5/es5-sham.js,html5shiv/3.7.2/src/html5shiv.js"></script>
   <![endif]-->
   
+  
 </head>
 
 <body>
-<div class="container">
-  <div class="header">
-    <h1>rc-tween-one@0.6.0</h1>
+  <div class="container">
+    <div class="header">
+      <h1>rc-tween-one@0.6.1</h1>
 
-    <p>tween-one anim component for react</p>
-  </div>
-  <div class="example" id="__react-content"></div>
-  <script src="common.js?nowrap"></script>
-  <script src="svgDraw.js?nowrap"></script>
-  <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
+      <p>tween-one anim component for react</p>
+    </div>
+    <div class="example" id="__react-content"></div>
+
+    <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
 <span class="hljs-keyword">import</span> SvgDrawPlugin <span class="hljs-keyword">from</span> <span class="hljs-string">'../src/plugin/SvgDrawPlugin'</span>;
@@ -296,10 +296,13 @@ Tween.plugins.push(SvgDrawPlugin);
         <span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>当前参数：{this.state.tweenData}<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">svg</span> <span class="hljs-attribute">width</span>=<span class="hljs-value">"100%"</span> <span class="hljs-attribute">height</span>=<span class="hljs-value">"600"</span> <span class="hljs-attribute">version</span>=<span class="hljs-value">"1.2"</span> <span class="hljs-attribute">xmlns</span>=<span class="hljs-value">"http://www.w3.org/2000/svg"</span>&gt;</span>
           <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
-            <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">style:</span> { <span class="hljs-attribute">SVGDraw:</span> <span class="hljs-attribute">this.state.tweenData</span> }, <span class="hljs-attribute">duration:</span> <span class="hljs-attribute">1000</span>}}
+            <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">style:</span> { <span class="hljs-attribute">SVGDraw:</span> <span class="hljs-attribute">this.state.tweenData</span> }, <span class="hljs-attribute">duration:</span> <span class="hljs-attribute">1000</span> }}
             <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">fill:</span> '<span class="hljs-attribute">none</span>', <span class="hljs-attribute">strokeWidth:</span> <span class="hljs-attribute">20</span>, <span class="hljs-attribute">stroke:</span> '#<span class="hljs-attribute">000fff</span>' }}
             <span class="hljs-attribute">component</span>=<span class="hljs-value">"path"</span>
-            <span class="hljs-attribute">d</span>=<span class="hljs-value">"M9.13,99.99c0,0,18.53-41.58,49.91-65.11c30-22.5,65.81-24.88,77.39-24.88c33.87,0,57.55,11.71,77.05,28.47c23.09,19.85,40.33,46.79,61.71,69.77c24.09,25.89,53.44,46.75,102.37,46.75c22.23,0,40.62-2.83,55.84-7.43c27.97-8.45,44.21-22.88,54.78-36.7c14.35-18.75,16.43-36.37,16.43-36.37"</span>
+            <span class="hljs-attribute">d</span>=<span class="hljs-value">"M9.13,99.99c0,0,18.53-41.58,49.91-65.11c30-22.5,65.81-24.88,77.39-24.88c33.87,
+            0,57.55,11.71,77.05,28.47c23.09,19.85,40.33,46.79,61.71,69.77c24.09,25.89,53.44,
+            46.75,102.37,46.75c22.23,0,40.62-2.83,55.84-7.43c27.97-8.45,44.21-22.88,
+            54.78-36.7c14.35-18.75,16.43-36.37,16.43-36.37"</span>
             <span class="hljs-attribute">attr</span>=<span class="hljs-value">"attr"</span>
           /&gt;</span>
         <span class="hljs-tag">&lt;/<span class="hljs-title">svg</span>&gt;</span>
@@ -308,13 +311,16 @@ Tween.plugins.push(SvgDrawPlugin);
 }
 ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Demo</span> /&gt;</span>, document.getElementById('__react-content'));
 </span></code></pre></div>
-</div>
-<a href="https://github.com/react-component/tween-one">
-  <img style="position: absolute; top: 0; right: 0; border: 0;"
-       src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
-       alt="Fork me on GitHub"
-       data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
-</a>
+  </div>
+  <a href="https://github.com/react-component/tween-one">
+    <img style="position: absolute; top: 0; right: 0; border: 0;"
+         src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
+         alt="Fork me on GitHub"
+         data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+  </a>
+  
+  <script src="common.js?nowrap"></script>
+  <script src="svgDraw.js?nowrap"></script>
 </body>
 
 </html>

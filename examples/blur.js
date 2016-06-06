@@ -13,16 +13,6 @@ webpackJsonp([2],{
 
 	'use strict';
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
 	var _rcTweenOne = __webpack_require__(2);
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
@@ -35,39 +25,48 @@ webpackJsonp([2],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var Demo = (function (_React$Component) {
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
+	var Demo = function (_React$Component) {
 	  _inherits(Demo, _React$Component);
 	
 	  function Demo() {
 	    _classCallCheck(this, Demo);
 	
-	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
+	    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
 	  }
 	
-	  _createClass(Demo, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
+	  Demo.prototype.render = function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
 	        'div',
 	        null,
-	        _react2['default'].createElement(
-	          'div',
-	          null,
-	          'filter 里的滤镜，\'grayScale\', \'sepia\', \'hueRotate\', \'invert\', \'brightness\', \'contrast\', \'blur\''
-	        ),
-	        _react2['default'].createElement(
-	          _rcTweenOne2['default'],
-	          { animation: { blur: '10px', sepia: '100%', duration: 2000 }, style: { filter: 'blur(30px)' } },
-	          _react2['default'].createElement('img', { width: '500', src: 'https://t.alipayobjects.com/images/T1CFtgXb0jXXXXXXXX.jpg' })
-	        )
-	      );
-	    }
-	  }]);
+	        'filter 里的滤镜，\'grayScale\', \'sepia\', \'hueRotate\', \'invert\', \'brightness\', \'contrast\', \'blur\''
+	      ),
+	      _react2.default.createElement(
+	        _rcTweenOne2.default,
+	        { animation: { blur: '10px', sepia: '100%', duration: 2000 },
+	          style: { filter: 'blur(30px)' }
+	        },
+	        _react2.default.createElement('img', { width: '500', src: 'https://t.alipayobjects.com/images/T1CFtgXb0jXXXXXXXX.jpg' })
+	      )
+	    );
+	  };
 	
 	  return Demo;
-	})(_react2['default'].Component);
+	}(_react2.default.Component);
 	
-	_reactDom2['default'].render(_react2['default'].createElement(Demo, null), document.getElementById('__react-content'));
+	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
 /***/ }
 

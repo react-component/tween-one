@@ -13,7 +13,7 @@ webpackJsonp([18],{
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	var SvgDrawPlugin = function SvgDrawPlugin(target, vars) {
@@ -112,7 +112,7 @@ webpackJsonp([18],{
 	    t.style.strokeDashoffset = -((this.vars.start + this.start.strokeDashoffset) * r - this.start.strokeDashoffset);
 	  }
 	};
-	exports['default'] = SvgDrawPlugin;
+	exports.default = SvgDrawPlugin;
 	module.exports = exports['default'];
 
 /***/ },
@@ -121,16 +121,6 @@ webpackJsonp([18],{
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _rcTweenOne = __webpack_require__(2);
 	
@@ -144,99 +134,109 @@ webpackJsonp([18],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _srcPluginSvgDrawPlugin = __webpack_require__(202);
+	var _SvgDrawPlugin = __webpack_require__(202);
 	
-	var _srcPluginSvgDrawPlugin2 = _interopRequireDefault(_srcPluginSvgDrawPlugin);
+	var _SvgDrawPlugin2 = _interopRequireDefault(_SvgDrawPlugin);
 	
-	_rcTweenOne2['default'].plugins.push(_srcPluginSvgDrawPlugin2['default']);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
+	_rcTweenOne2.default.plugins.push(_SvgDrawPlugin2.default);
 	
 	var dataStartArr = ['100%', '30 450', '50% 50%', '30% 400', '50 30%', 0];
 	var i = 0;
 	
-	var Demo = (function (_React$Component) {
+	var Demo = function (_React$Component) {
 	  _inherits(Demo, _React$Component);
 	
 	  function Demo() {
 	    _classCallCheck(this, Demo);
 	
-	    _get(Object.getPrototypeOf(Demo.prototype), 'constructor', this).apply(this, arguments);
-	    this.state = {
+	    var _this = _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+	
+	    _this.state = {
 	      tweenData: '50 30%'
 	    };
+	    return _this;
 	  }
 	
-	  _createClass(Demo, [{
-	    key: 'onClick',
-	    value: function onClick() {
-	      var tweenData = dataStartArr[i];
-	      this.setState({
-	        tweenData: tweenData
-	      });
-	      i++;
-	      i = i >= dataStartArr.length ? 0 : i;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
+	  Demo.prototype.onClick = function onClick() {
+	    var tweenData = dataStartArr[i];
+	    this.setState({
+	      tweenData: tweenData
+	    });
+	    i++;
+	    i = i >= dataStartArr.length ? 0 : i;
+	  };
+	
+	  Demo.prototype.render = function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
+	        'button',
+	        { onClick: this.onClick.bind(this) },
+	        '点击切换'
+	      ),
+	      _react2.default.createElement(
+	        'p',
 	        null,
-	        _react2['default'].createElement(
-	          'button',
-	          { onClick: this.onClick.bind(this) },
-	          '点击切换'
-	        ),
-	        _react2['default'].createElement(
-	          'p',
-	          null,
-	          '当前参数：',
-	          this.state.tweenData
-	        ),
-	        _react2['default'].createElement(
-	          'svg',
-	          { width: '100%', height: '600', version: '1.2', xmlns: 'http://www.w3.org/2000/svg' },
-	          _react2['default'].createElement(_rcTweenOne2['default'], {
-	            animation: { style: { SVGDraw: this.state.tweenData }, duration: 1000 },
-	            style: { fill: '#fff000', strokeWidth: 5, stroke: '#000fff', transform: 'translate(10px, 10px)' },
-	            width: '100',
-	            height: '100',
-	            component: 'rect'
-	          }),
-	          _react2['default'].createElement(_rcTweenOne2['default'], {
-	            animation: { style: { SVGDraw: this.state.tweenData }, duration: 1000 },
-	            style: { fill: '#fff000', strokeWidth: 5, stroke: '#000fff' },
-	            component: 'polygon',
-	            points: '120,10 200,10 230,110 150,110',
-	            attr: 'attr'
-	          }),
-	          _react2['default'].createElement(_rcTweenOne2['default'], {
-	            animation: { style: { SVGDraw: this.state.tweenData }, duration: 1000 },
-	            style: { fill: '#fff000', strokeWidth: 5, stroke: '#000fff' },
-	            component: 'circle',
-	            cx: '300', cy: '55', r: '50',
-	            attr: 'attr'
-	          }),
-	          _react2['default'].createElement(_rcTweenOne2['default'], {
-	            animation: { SVGDraw: this.state.tweenData, duration: 1000 },
-	            style: { fill: '#fff000', strokeWidth: 5, stroke: '#000fff' },
-	            component: 'ellipse',
-	            cx: '500', cy: '55', rx: '100', ry: '50'
-	          }),
-	          _react2['default'].createElement(_rcTweenOne2['default'], {
-	            animation: { SVGDraw: this.state.tweenData, duration: 1000 },
-	            style: { fill: '#fff000', strokeWidth: 5, stroke: '#000fff' },
-	            component: 'line',
-	            x1: '0', y1: '150', x2: '500', y2: '150'
-	          })
-	        )
-	      );
-	    }
-	  }]);
+	        '当前参数：',
+	        this.state.tweenData
+	      ),
+	      _react2.default.createElement(
+	        'svg',
+	        { width: '100%', height: '600', version: '1.2', xmlns: 'http://www.w3.org/2000/svg' },
+	        _react2.default.createElement(_rcTweenOne2.default, {
+	          animation: { style: { SVGDraw: this.state.tweenData }, duration: 1000 },
+	          style: { fill: '#fff000', strokeWidth: 5,
+	            stroke: '#000fff', transform: 'translate(10px, 10px)'
+	          },
+	          width: '100',
+	          height: '100',
+	          component: 'rect'
+	        }),
+	        _react2.default.createElement(_rcTweenOne2.default, {
+	          animation: { style: { SVGDraw: this.state.tweenData }, duration: 1000 },
+	          style: { fill: '#fff000', strokeWidth: 5, stroke: '#000fff' },
+	          component: 'polygon',
+	          points: '120,10 200,10 230,110 150,110',
+	          attr: 'attr'
+	        }),
+	        _react2.default.createElement(_rcTweenOne2.default, {
+	          animation: { style: { SVGDraw: this.state.tweenData }, duration: 1000 },
+	          style: { fill: '#fff000', strokeWidth: 5, stroke: '#000fff' },
+	          component: 'circle',
+	          cx: '300', cy: '55', r: '50',
+	          attr: 'attr'
+	        }),
+	        _react2.default.createElement(_rcTweenOne2.default, {
+	          animation: { SVGDraw: this.state.tweenData, duration: 1000 },
+	          style: { fill: '#fff000', strokeWidth: 5, stroke: '#000fff' },
+	          component: 'ellipse',
+	          cx: '500', cy: '55', rx: '100', ry: '50'
+	        }),
+	        _react2.default.createElement(_rcTweenOne2.default, {
+	          animation: { SVGDraw: this.state.tweenData, duration: 1000 },
+	          style: { fill: '#fff000', strokeWidth: 5, stroke: '#000fff' },
+	          component: 'line',
+	          x1: '0', y1: '150', x2: '500', y2: '150'
+	        })
+	      )
+	    );
+	  };
 	
 	  return Demo;
-	})(_react2['default'].Component);
+	}(_react2.default.Component);
 	
-	_reactDom2['default'].render(_react2['default'].createElement(Demo, null), document.getElementById('__react-content'));
+	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
 /***/ }
 
