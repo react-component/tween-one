@@ -21694,7 +21694,8 @@
 	    data: {},
 	    dataType: {},
 	    dataUnit: {},
-	    dataCount: {}
+	    dataCount: {},
+	    dataSplitStr: {}
 	  };
 	  if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
 	    data.data[key] = (0, _styleUtils.parseColor)(vars);
@@ -21702,6 +21703,10 @@
 	  } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
 	    data.data[key] = (0, _styleUtils.parseShadow)(vars);
 	    data.dataType[key] = 'shadow';
+	  } else if (vars.split(/[\s+|,]/).length > 1) {
+	    data.data[key] = vars.split(/[\s+|,]/);
+	    data.dataSplitStr[key] = vars.replace(/[^\s+|,]/g, '');
+	    data.dataType[key] = 'string';
 	  } else {
 	    data.data[key] = vars;
 	    data.dataType[key] = 'other';
@@ -21731,6 +21736,7 @@
 	  this.propsData.dataType = {};
 	  this.propsData.dataUnit = {};
 	  this.propsData.dataCount = {};
+	  this.propsData.dataSplitStr = {};
 	  Object.keys(this.vars).forEach(function (_key) {
 	    if (_key in _plugins2.default) {
 	      _this.propsData.data[_key] = new _plugins2.default[_key](_this.target, _this.vars[_key]);
@@ -21742,27 +21748,30 @@
 	    _this.propsData.dataType[key] = _data.dataType[key];
 	    _this.propsData.dataUnit[key] = _data.dataUnit[key];
 	    _this.propsData.dataCount[key] = _data.dataCount[key];
+	    if (_data.dataSplitStr[key]) {
+	      _this.propsData.dataSplitStr[key] = _data.dataSplitStr[key];
+	    }
 	  });
 	};
-	p.convertToMarks = function (style, num, unit) {
+	p.convertToMarks = function (style, num, unit, isOrigin) {
 	  var horiz = /(?:Left|Right|Width)/i.test(style);
 	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
 	  var pix = void 0;
 	  if (unit === '%') {
-	    pix = parseFloat(num) * 100 / (horiz ? t.clientWidth : t.clientHeight);
+	    pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
 	  } else {
 	    // em rem
 	    pix = parseFloat(num) / 16;
 	  }
 	  return pix;
 	};
-	p.convertToMarksArray = function (unit, data, i) {
+	p.convertToMarksArray = function (unit, key, data, i) {
 	  var startUnit = data.toString().replace(/[^a-z|%]/g, '');
 	  var endUnit = unit[i];
 	  if (startUnit === endUnit) {
 	    return parseFloat(data);
 	  }
-	  return this.convertToMarks('shadow', data, endUnit);
+	  return this.convertToMarks('array', data, endUnit, key === 'transformOrigin' && !i);
 	};
 	p.getAnimStart = function () {
 	  var _this2 = this;
@@ -21804,7 +21813,12 @@
 	    } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
 	      startData = (0, _styleUtils.parseShadow)(startData);
 	      endUnit = _this2.propsData.dataUnit[key];
-	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit));
+	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit, key));
+	      style[cssName] = startData;
+	    } else if (Array.isArray(_this2.propsData.data[key])) {
+	      startData = startData.split(/[\s+|,]/);
+	      endUnit = _this2.propsData.dataUnit[key];
+	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit, key));
 	      style[cssName] = startData;
 	    } else {
 	      // 计算单位， em rem % px;
@@ -21934,6 +21948,9 @@
 	    } else if (Array.isArray(endVars)) {
 	      var _type = _this4.propsData.dataType[key];
 	      tween.style[key] = _this4.setArrayRatio(ratio, startVars, endVars, unit, _type);
+	      if (_type === 'string') {
+	        tween.style[key] = tween.style[key].join(_this4.propsData.dataSplitStr[key]);
+	      }
 	      return;
 	    }
 	    var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
