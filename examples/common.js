@@ -21755,7 +21755,7 @@
 	};
 	p.convertToMarks = function (style, num, unit, isOrigin) {
 	  var horiz = /(?:Left|Right|Width)/i.test(style);
-	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
+	  var t = style.indexOf('border') !== -1 || style === 'transformOrigin' ? this.target : this.target.parentNode || document.body;
 	  var pix = void 0;
 	  if (unit === '%') {
 	    pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
@@ -21771,7 +21771,7 @@
 	  if (startUnit === endUnit) {
 	    return parseFloat(data);
 	  }
-	  return this.convertToMarks('array', data, endUnit, key === 'transformOrigin' && !i);
+	  return this.convertToMarks(key, data, endUnit, key === 'transformOrigin' && !i);
 	};
 	p.getAnimStart = function () {
 	  var _this2 = this;
