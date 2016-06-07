@@ -87,7 +87,8 @@ p.setDefaultData = function () {
 };
 p.convertToMarks = function (style, num, unit, isOrigin) {
   const horiz = /(?:Left|Right|Width)/i.test(style);
-  const t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
+  const t = style.indexOf('border') !== -1 || style === 'transformOrigin' ?
+    this.target : this.target.parentNode || document.body;
   let pix;
   if (unit === '%') {
     pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
@@ -103,7 +104,7 @@ p.convertToMarksArray = function (unit, key, data, i) {
   if (startUnit === endUnit) {
     return parseFloat(data);
   }
-  return this.convertToMarks('array', data, endUnit, key === 'transformOrigin' && !i);
+  return this.convertToMarks(key, data, endUnit, key === 'transformOrigin' && !i);
 };
 p.getAnimStart = function () {
   const computedStyle = this.getComputedStyle();
