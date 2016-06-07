@@ -33,6 +33,7 @@ p.getTweenData = function (key, vars) {
     dataType: {},
     dataUnit: {},
     dataCount: {},
+    dataSplitStr: {},
   };
   if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
     data.data[key] = parseColor(vars);
@@ -40,6 +41,10 @@ p.getTweenData = function (key, vars) {
   } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
     data.data[key] = parseShadow(vars);
     data.dataType[key] = 'shadow';
+  } else if (vars.split(/[\s+|,]/).length > 1) {
+    data.data[key] = vars.split(/[\s+|,]/);
+    data.dataSplitStr[key] = vars.replace(/[^\s+|,]/g, '');
+    data.dataType[key] = 'string';
   } else {
     data.data[key] = vars;
     data.dataType[key] = 'other';
@@ -63,6 +68,7 @@ p.setDefaultData = function () {
   this.propsData.dataType = {};
   this.propsData.dataUnit = {};
   this.propsData.dataCount = {};
+  this.propsData.dataSplitStr = {};
   Object.keys(this.vars).forEach(_key => {
     if (_key in _plugin) {
       this.propsData.data[_key] = new _plugin[_key](this.target, this.vars[_key]);
@@ -74,27 +80,30 @@ p.setDefaultData = function () {
     this.propsData.dataType[key] = _data.dataType[key];
     this.propsData.dataUnit[key] = _data.dataUnit[key];
     this.propsData.dataCount[key] = _data.dataCount[key];
+    if (_data.dataSplitStr[key]) {
+      this.propsData.dataSplitStr[key] = _data.dataSplitStr[key];
+    }
   });
 };
-p.convertToMarks = function (style, num, unit) {
+p.convertToMarks = function (style, num, unit, isOrigin) {
   const horiz = /(?:Left|Right|Width)/i.test(style);
   const t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
   let pix;
   if (unit === '%') {
-    pix = parseFloat(num) * 100 / (horiz ? t.clientWidth : t.clientHeight);
+    pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
   } else {
     // em rem
     pix = parseFloat(num) / 16;
   }
   return pix;
 };
-p.convertToMarksArray = function (unit, data, i) {
+p.convertToMarksArray = function (unit, key, data, i) {
   const startUnit = data.toString().replace(/[^a-z|%]/g, '');
   const endUnit = unit[i];
   if (startUnit === endUnit) {
     return parseFloat(data);
   }
-  return this.convertToMarks('shadow', data, endUnit);
+  return this.convertToMarks('array', data, endUnit, key === 'transformOrigin' && !i);
 };
 p.getAnimStart = function () {
   const computedStyle = this.getComputedStyle();
@@ -134,7 +143,12 @@ p.getAnimStart = function () {
     } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
       startData = parseShadow(startData);
       endUnit = this.propsData.dataUnit[key];
-      startData = startData.map(this.convertToMarksArray.bind(this, endUnit));
+      startData = startData.map(this.convertToMarksArray.bind(this, endUnit, key));
+      style[cssName] = startData;
+    } else if (Array.isArray(this.propsData.data[key])) {
+      startData = startData.split(/[\s+|,]/);
+      endUnit = this.propsData.dataUnit[key];
+      startData = startData.map(this.convertToMarksArray.bind(this, endUnit, key));
       style[cssName] = startData;
     } else {
       // 计算单位， em rem % px;
@@ -262,6 +276,9 @@ p.setRatio = function (ratio, tween) {
     } else if (Array.isArray(endVars)) {
       const _type = this.propsData.dataType[key];
       tween.style[key] = this.setArrayRatio(ratio, startVars, endVars, unit, _type);
+      if (_type === 'string') {
+        tween.style[key] = tween.style[key].join(this.propsData.dataSplitStr[key]);
+      }
       return;
     }
     let styleUnit = stylesToCss(key, 0);

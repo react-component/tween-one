@@ -12,7 +12,7 @@ class Demo extends React.Component {
   }
 
   render() {
-    return (<Tween animation={{ translateX: '500px' }}
+    return (<Tween animation={{ translateX: '500px', transformOrigin: '30% 60%' }}
       onChange={this.bbb.bind(this)}
       style={{ opacity: 1, height: 100, transform: 'translate(50px,30px)' }}
     >
