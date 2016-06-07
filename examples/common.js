@@ -21703,7 +21703,7 @@
 	  } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
 	    data.data[key] = (0, _styleUtils.parseShadow)(vars);
 	    data.dataType[key] = 'shadow';
-	  } else if (vars.split(/[\s+|,]/).length > 1) {
+	  } else if (typeof vars === 'string' && vars.split(/[\s+|,]/).length > 1) {
 	    data.data[key] = vars.split(/[\s+|,]/);
 	    data.dataSplitStr[key] = vars.replace(/[^\s+|,]/g, '');
 	    data.dataType[key] = 'string';
