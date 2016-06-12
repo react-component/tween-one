@@ -56,7 +56,8 @@ p.setRatio = function (ratio, tween) {
   });
   let vars = ratio === 1 ? this.vars : tween[this.key].join();
   vars = ratio === 0 ? this.start : vars;
-
-  this.target.setAttribute(this.key, vars);
+  if (vars) {
+    this.target.setAttribute(this.key, vars);
+  }
 };
 export default SvgPlugin;
