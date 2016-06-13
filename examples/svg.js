@@ -19,8 +19,6 @@ class Demo extends React.Component {
           }}
           style={{ fill: '#fff000', storkeWidth: 1, stroke: '#000fff' }}
           component="path"
-          d="M294.863,134.137c0,0,49.599-76.923,126.082,0s-55.142,
-          119.658-55.142,119.658S161.53,149.521,294.863,134.137z"
           attr="attr"
         />
       </svg>);

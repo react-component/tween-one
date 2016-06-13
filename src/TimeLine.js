@@ -284,7 +284,9 @@ p.resetDefaultStyle = function () {
     return item;
   });
   Object.keys(this.startDefaultData).forEach(key => {
-    this.target.setAttribute(key, this.startDefaultData[key]);
+    if (!(key in defaultData({}, 0))) {
+      this.target.setAttribute(key, this.startDefaultData[key]);
+    }
   });
 };
 
