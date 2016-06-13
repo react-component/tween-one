@@ -21078,14 +21078,15 @@
 	
 	var _StylePlugin2 = _interopRequireDefault(_StylePlugin);
 	
+	var _styleUtils = __webpack_require__(173);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	/* eslint-disable func-names */
+	var DEFAULT_EASING = 'easeInOutQuad'; /* eslint-disable func-names */
 	/**
 	 * Created by jljsj on 16/1/27.
 	 */
 	
-	var DEFAULT_EASING = 'easeInOutQuad';
 	var DEFAULT_DURATION = 450;
 	var DEFAULT_DELAY = 0;
 	function noop() {}
@@ -21175,11 +21176,13 @@
 	        var _data = item[_key];
 	        if (_key in _plugins2.default) {
 	          tweenData.vars[_key] = new _plugins2.default[_key](_this2.target, _data, tweenData.type);
+	        } else if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
+	          tweenData.vars[_key] = { type: 'color', vars: (0, _styleUtils.parseColor)(_data) };
 	        } else if (typeof _data === 'number' || _data.split(/[,|\s]/g).length <= 1) {
 	          var vars = parseFloat(_data);
 	          var unit = _data.toString().replace(/[^a-z|%]/g, '');
 	          var count = _data.toString().replace(/[^+|=|-]/g, '');
-	          tweenData.vars[_key] = { type: 0, unit: unit, vars: vars, count: count };
+	          tweenData.vars[_key] = { unit: unit, vars: vars, count: count };
 	        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugins2.default) {
 	          /*
 	           * SVG 情况如下：
@@ -21246,7 +21249,11 @@
 	    if (_this3.attr === 'attr') {
 	      // 除了d和这points外的标签动画；
 	      var data = _this3.target.getAttribute(_key) || 0;
-	      if (parseFloat(data) || data === 0) {
+	      if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
+	        data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
+	        data = (0, _styleUtils.parseColor)(data);
+	        start[_key] = data;
+	      } else if (parseFloat(data) || data === 0) {
 	        var unit = data.toString().replace(/[^a-z|%]/g, '');
 	        start[_key] = unit !== item[_key].unit ? _this3.convertToPixels(_key, parseFloat(data), unit) : parseFloat(data);
 	      }
@@ -21284,6 +21291,15 @@
 	      if (!endVars.type) {
 	        data = endVars.unit.charAt(1) === '=' ? startVars + endVars.vars * ratio + endVars.unit : (endVars.vars - startVars) * ratio + startVars + endVars.unit;
 	        _this5.target.setAttribute(_key, data);
+	      } else if (endVars.type === 'color') {
+	        if (endVars.vars.length === 3 && startVars.length === 4) {
+	          endVars.vars[3] = 1;
+	        }
+	        data = endVars.vars.map(function (_endData, _i) {
+	          var startData = startVars[_i] || 0;
+	          return (_endData - startData) * ratio + startData;
+	        });
+	        _this5.target.setAttribute(_key, (0, _styleUtils.getColor)(data));
 	      }
 	    }
 	  });
@@ -21370,7 +21386,9 @@
 	    return item;
 	  });
 	  Object.keys(this.startDefaultData).forEach(function (key) {
-	    _this7.target.setAttribute(key, _this7.startDefaultData[key]);
+	    if (!(key in defaultData({}, 0))) {
+	      _this7.target.setAttribute(key, _this7.startDefaultData[key]);
+	    }
 	  });
 	};
 	
@@ -21697,10 +21715,10 @@
 	    dataCount: {},
 	    dataSplitStr: {}
 	  };
-	  if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
+	  if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
 	    data.data[key] = (0, _styleUtils.parseColor)(vars);
 	    data.dataType[key] = 'color';
-	  } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
+	  } else if (key.match(/shadow/i)) {
 	    data.data[key] = (0, _styleUtils.parseShadow)(vars);
 	    data.dataType[key] = 'shadow';
 	  } else if (typeof vars === 'string' && vars.split(/[\s+|,]/).length > 1) {
@@ -21808,9 +21826,10 @@
 	        startData = _this2.convertToMarks(key, startData, endUnit);
 	      }
 	      style[key] = parseFloat(startData);
-	    } else if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
+	    } else if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
+	      startData = !startData && key === 'stroke' ? 'rgba(255, 255, 255, 0)' : startData;
 	      style[cssName] = (0, _styleUtils.parseColor)(startData);
-	    } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
+	    } else if (key.match(/shadow/i)) {
 	      startData = (0, _styleUtils.parseShadow)(startData);
 	      endUnit = _this2.propsData.dataUnit[key];
 	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit, key));
@@ -21887,9 +21906,12 @@
 	  });
 	};
 	p.setArrayRatio = function (ratio, start, vars, unit, type) {
+	  if (type === 'color' && start.length === 4 && vars.length === 3) {
+	    vars[3] = 1;
+	  }
 	  var _vars = vars.map(function (endData, i) {
 	    var startData = start[i] || 0;
-	    return (endData - startData) * ratio + startData + unit[i];
+	    return (endData - startData) * ratio + startData + (unit[i] || 0);
 	  });
 	  if (type === 'color') {
 	    return (0, _styleUtils.getColor)(_vars);
