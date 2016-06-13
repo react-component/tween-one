@@ -6,6 +6,10 @@ import assign from 'object-assign';
 import easingTypes from 'tween-functions';
 import _plugin from './plugins';
 import StylePlugin from './plugin/StylePlugin';
+import {
+  getColor,
+  parseColor,
+} from 'style-utils';
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
 const DEFAULT_DELAY = 0;
@@ -93,11 +97,13 @@ p.setDefaultData = function (_vars) {
         const _data = item[_key];
         if (_key in _plugin) {
           tweenData.vars[_key] = new _plugin[_key](this.target, _data, tweenData.type);
+        } else if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
+          tweenData.vars[_key] = { type: 'color', vars: parseColor(_data) };
         } else if (typeof _data === 'number' || _data.split(/[,|\s]/g).length <= 1) {
           const vars = parseFloat(_data);
           const unit = _data.toString().replace(/[^a-z|%]/g, '');
           const count = _data.toString().replace(/[^+|=|-]/g, '');
-          tweenData.vars[_key] = { type: 0, unit, vars, count };
+          tweenData.vars[_key] = { unit, vars, count };
         } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugin) {
           /*
            * SVG 情况如下：
@@ -161,8 +167,12 @@ p.getAnimStartData = function (item) {
     }
     if (this.attr === 'attr') {
       // 除了d和这points外的标签动画；
-      const data = this.target.getAttribute(_key) || 0;
-      if (parseFloat(data) || data === 0) {
+      let data = this.target.getAttribute(_key) || 0;
+      if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
+        data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
+        data = parseColor(data);
+        start[_key] = data;
+      } else if (parseFloat(data) || data === 0) {
         const unit = data.toString().replace(/[^a-z|%]/g, '');
         start[_key] = unit !== item[_key].unit ?
           this.convertToPixels(_key, parseFloat(data), unit) : parseFloat(data);
@@ -199,6 +209,15 @@ p.setRatio = function (ratio, endData, i) {
         data = endVars.unit.charAt(1) === '=' ? startVars + endVars.vars * ratio + endVars.unit :
         (endVars.vars - startVars) * ratio + startVars + endVars.unit;
         this.target.setAttribute(_key, data);
+      } else if (endVars.type === 'color') {
+        if (endVars.vars.length === 3 && startVars.length === 4) {
+          endVars.vars[3] = 1;
+        }
+        data = endVars.vars.map((_endData, _i) => {
+          const startData = startVars[_i] || 0;
+          return (_endData - startData) * ratio + startData;
+        });
+        this.target.setAttribute(_key, getColor(data));
       }
     }
   });

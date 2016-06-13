@@ -35,10 +35,10 @@ p.getTweenData = function (key, vars) {
     dataCount: {},
     dataSplitStr: {},
   };
-  if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
+  if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
     data.data[key] = parseColor(vars);
     data.dataType[key] = 'color';
-  } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
+  } else if (key.match(/shadow/i)) {
     data.data[key] = parseShadow(vars);
     data.dataType[key] = 'shadow';
   } else if (typeof vars === 'string' && vars.split(/[\s+|,]/).length > 1) {
@@ -139,9 +139,10 @@ p.getAnimStart = function () {
         startData = this.convertToMarks(key, startData, endUnit);
       }
       style[key] = parseFloat(startData);
-    } else if (key.indexOf('color') >= 0 || key.indexOf('Color') >= 0) {
+    } else if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
+      startData = !startData && key === 'stroke' ? 'rgba(255, 255, 255, 0)' : startData;
       style[cssName] = parseColor(startData);
-    } else if (key.indexOf('shadow') >= 0 || key.indexOf('Shadow') >= 0) {
+    } else if (key.match(/shadow/i)) {
       startData = parseShadow(startData);
       endUnit = this.propsData.dataUnit[key];
       startData = startData.map(this.convertToMarksArray.bind(this, endUnit, key));
@@ -217,9 +218,12 @@ p.setAnimData = function (data) {
   });
 };
 p.setArrayRatio = function (ratio, start, vars, unit, type) {
+  if (type === 'color' && start.length === 4 && vars.length === 3) {
+    vars[3] = 1;
+  }
   const _vars = vars.map((endData, i) => {
     const startData = start[i] || 0;
-    return (endData - startData) * ratio + startData + unit[i];
+    return (endData - startData) * ratio + startData + (unit[i] || 0);
   });
   if (type === 'color') {
     return getColor(_vars);
