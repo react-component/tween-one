@@ -41,9 +41,9 @@ p.getTweenData = function (key, vars) {
   } else if (key.match(/shadow/i)) {
     data.data[key] = parseShadow(vars);
     data.dataType[key] = 'shadow';
-  } else if (typeof vars === 'string' && vars.split(/[\s+|,]/).length > 1) {
+  } else if (typeof vars === 'string' && vars.split(/[\s|,]/).length > 1) {
     data.data[key] = vars.split(/[\s+|,]/);
-    data.dataSplitStr[key] = vars.replace(/[^\s+|,]/g, '');
+    data.dataSplitStr[key] = vars.replace(/[^\s|,]/g, '');
     data.dataType[key] = 'string';
   } else {
     data.data[key] = vars;
@@ -148,7 +148,7 @@ p.getAnimStart = function () {
       startData = startData.map(this.convertToMarksArray.bind(this, endUnit, key));
       style[cssName] = startData;
     } else if (Array.isArray(this.propsData.data[key])) {
-      startData = startData.split(/[\s+|,]/);
+      startData = startData.split(/[\s|,]/);
       endUnit = this.propsData.dataUnit[key];
       startData = startData.map(this.convertToMarksArray.bind(this, endUnit, key));
       style[cssName] = startData;

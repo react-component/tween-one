@@ -167,7 +167,8 @@ p.getAnimStartData = function (item) {
     }
     if (this.attr === 'attr') {
       // 除了d和这points外的标签动画；
-      let data = this.target.getAttribute(_key) || 0;
+      const attribute = this.target.getAttribute(_key);
+      let data = attribute === 'null' || !attribute ? 0 : attribute;
       if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
         data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
         data = parseColor(data);
@@ -244,7 +245,7 @@ p.render = function () {
       this.start[i] = this.getAnimStartData(item.vars);
       // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
       let st = progressTime / (item.duration + fromDelay) > 1 ? 1 :
-        (progressTime / (item.duration + fromDelay));
+        (progressTime / (item.duration + fromDelay)) || 0;
       st = st < 0 ? 0 : st;
       this.setRatio(item.type === 'from' ? 1 - st : st, item, i);
     }
