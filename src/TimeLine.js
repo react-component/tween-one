@@ -173,7 +173,7 @@ p.getAnimStartData = function (item) {
         data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
         data = parseColor(data);
         start[_key] = data;
-      } else if (parseFloat(data) || data === 0) {
+      } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
         const unit = data.toString().replace(/[^a-z|%]/g, '');
         start[_key] = unit !== item[_key].unit ?
           this.convertToPixels(_key, parseFloat(data), unit) : parseFloat(data);
@@ -245,7 +245,7 @@ p.render = function () {
       this.start[i] = this.getAnimStartData(item.vars);
       // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
       let st = progressTime / (item.duration + fromDelay) > 1 ? 1 :
-        (progressTime / (item.duration + fromDelay)) || 0;
+      (progressTime / (item.duration + fromDelay)) || 0;
       st = st < 0 ? 0 : st;
       this.setRatio(item.type === 'from' ? 1 - st : st, item, i);
     }

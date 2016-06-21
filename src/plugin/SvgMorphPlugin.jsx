@@ -54,7 +54,7 @@ p.setRatio = function (ratio, tween) {
     }
     return this.key === 'd' ? `${name}${t.join(',')}` : t.join(',');
   });
-  let vars = ratio === 1 ? this.vars : tween[this.key].join();
+  let vars = ratio === 1 ? this.vars : tween[this.key].join('');
   vars = ratio === 0 ? this.start : vars;
   if (vars) {
     this.target.setAttribute(this.key, vars);
