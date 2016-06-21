@@ -145,7 +145,7 @@ webpackJsonp([16],{
 	    }
 	    return _this.key === 'd' ? '' + name + t.join(',') : t.join(',');
 	  });
-	  var vars = ratio === 1 ? this.vars : tween[this.key].join();
+	  var vars = ratio === 1 ? this.vars : tween[this.key].join('');
 	  vars = ratio === 0 ? this.start : vars;
 	  if (vars) {
 	    this.target.setAttribute(this.key, vars);

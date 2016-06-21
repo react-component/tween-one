@@ -21254,7 +21254,7 @@
 	        data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
 	        data = (0, _styleUtils.parseColor)(data);
 	        start[_key] = data;
-	      } else if (parseFloat(data) || data === 0) {
+	      } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
 	        var unit = data.toString().replace(/[^a-z|%]/g, '');
 	        start[_key] = unit !== item[_key].unit ? _this3.convertToPixels(_key, parseFloat(data), unit) : parseFloat(data);
 	      }
@@ -22336,9 +22336,9 @@
 	  TweenOneGroup.prototype.getCoverAnimation = function getCoverAnimation(child, i, type) {
 	    var animation = type === 'leave' ? this.props.leave : this.props.enter;
 	    var onChange = this.onChange.bind(this, animation, child.key, type);
-	    var className = '';
+	    var className = child.props.className || '';
 	    if (!this.enterAnimEnd) {
-	      className = ((child.props.className || '') + ' ' + (type === 'leave' ? this.props.animatingClassName[1] : this.props.animatingClassName[0])).trim();
+	      className = (className + ' ' + (type === 'leave' ? this.props.animatingClassName[1] : this.props.animatingClassName[0])).trim();
 	    }
 	    return _react2.default.createElement(_TweenOne2.default, _extends({}, child.props, {
 	      key: child.key,
