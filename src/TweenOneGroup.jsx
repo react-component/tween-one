@@ -128,12 +128,12 @@ class TweenOneGroup extends Component {
         return this.getCoverAnimation(child, i, 'leave');
       }
       const appear = transformArguments(this.props.appear, key, i);
-      if (appear || this.onEnterBool) {
-        return this.getCoverAnimation(child, i, 'enter');
+      if (this.keysToEnter.indexOf(key) >= 0) {
+        if (appear || this.onEnterBool) {
+          return this.getCoverAnimation(child, i, 'enter');
+        }
       }
-      return child.type === TweenOne
-        ? createElement(child.props.component, { ...child.props, key: child.key })
-        : child;
+      return child;
     });
   }
 
