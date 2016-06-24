@@ -101,12 +101,16 @@ class TweenOneGroup extends Component {
   }
 
   getCoverAnimation(child, i, type) {
-    const animation = type === 'leave' ? this.props.leave : this.props.enter;
-    const onChange = this.onChange.bind(this, animation, child.key, type);
+    let animation;
+    let onChange;
     let className = child.props.className || '';
-    if (!this.enterAnimEnd) {
-      className = `${className} ${type === 'leave' ?
-        this.props.animatingClassName[1] : this.props.animatingClassName[0]}`.trim();
+    if (type) {
+      animation = type === 'leave' ? this.props.leave : this.props.enter;
+      onChange = this.onChange.bind(this, animation, child.key, type);
+      if (!this.enterAnimEnd) {
+        className = `${className} ${type === 'leave' ?
+          this.props.animatingClassName[1] : this.props.animatingClassName[0]}`.trim();
+      }
     }
     return (<TweenOne
       {...child.props}
@@ -133,7 +137,7 @@ class TweenOneGroup extends Component {
           return this.getCoverAnimation(child, i, 'enter');
         }
       }
-      return child;
+      return this.getCoverAnimation(child, i);
     });
   }
 
