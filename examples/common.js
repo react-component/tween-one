@@ -22361,10 +22361,12 @@
 	        return _this3.getCoverAnimation(child, i, 'leave');
 	      }
 	      var appear = (0, _util.transformArguments)(_this3.props.appear, key, i);
-	      if (appear || _this3.onEnterBool) {
-	        return _this3.getCoverAnimation(child, i, 'enter');
+	      if (_this3.keysToEnter.indexOf(key) >= 0) {
+	        if (appear || _this3.onEnterBool) {
+	          return _this3.getCoverAnimation(child, i, 'enter');
+	        }
 	      }
-	      return child.type === _TweenOne2.default ? (0, _react.createElement)(child.props.component, _extends({}, child.props, { key: child.key })) : child;
+	      return child;
 	    });
 	  };
 	
