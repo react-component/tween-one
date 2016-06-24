@@ -22334,11 +22334,15 @@
 	  };
 	
 	  TweenOneGroup.prototype.getCoverAnimation = function getCoverAnimation(child, i, type) {
-	    var animation = type === 'leave' ? this.props.leave : this.props.enter;
-	    var onChange = this.onChange.bind(this, animation, child.key, type);
+	    var animation = void 0;
+	    var onChange = void 0;
 	    var className = child.props.className || '';
-	    if (!this.enterAnimEnd) {
-	      className = (className + ' ' + (type === 'leave' ? this.props.animatingClassName[1] : this.props.animatingClassName[0])).trim();
+	    if (type) {
+	      animation = type === 'leave' ? this.props.leave : this.props.enter;
+	      onChange = this.onChange.bind(this, animation, child.key, type);
+	      if (!this.enterAnimEnd) {
+	        className = (className + ' ' + (type === 'leave' ? this.props.animatingClassName[1] : this.props.animatingClassName[0])).trim();
+	      }
 	    }
 	    return _react2.default.createElement(_TweenOne2.default, _extends({}, child.props, {
 	      key: child.key,
@@ -22366,7 +22370,7 @@
 	          return _this3.getCoverAnimation(child, i, 'enter');
 	        }
 	      }
-	      return child;
+	      return _this3.getCoverAnimation(child, i);
 	    });
 	  };
 	
