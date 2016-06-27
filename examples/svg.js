@@ -14,7 +14,7 @@ class Demo extends React.Component {
       <svg width="100%" height="600" version="1.2" xmlns="http://www.w3.org/2000/svg">
         <Tween
           animation={{
-            d: 'M294.863,134.137c0,0,49.599-76.923,26.082,0,' +
+            d: 'M294.863,134.137c0,0,49.599-76.923,26.082,0' +
             's-55.142,119.658-55.142,19.658S161.53,19.521,294.863,34.137z',
           }}
           style={{ fill: '#fff000', storkeWidth: 1, stroke: '#000fff' }}
