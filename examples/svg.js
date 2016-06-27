@@ -56,7 +56,7 @@ webpackJsonp([16],{
 	      { width: '100%', height: '600', version: '1.2', xmlns: 'http://www.w3.org/2000/svg' },
 	      _react2.default.createElement(_rcTweenOne2.default, {
 	        animation: {
-	          d: 'M294.863,134.137c0,0,49.599-76.923,26.082,0,' + 's-55.142,119.658-55.142,19.658S161.53,19.521,294.863,34.137z'
+	          d: 'M294.863,134.137c0,0,49.599-76.923,26.082,0' + 's-55.142,119.658-55.142,19.658S161.53,19.521,294.863,34.137z'
 	        },
 	        style: { fill: '#fff000', storkeWidth: 1, stroke: '#000fff' },
 	        component: 'path',
@@ -145,7 +145,7 @@ webpackJsonp([16],{
 	    }
 	    return _this.key === 'd' ? '' + name + t.join(',') : t.join(',');
 	  });
-	  var vars = ratio === 1 ? this.vars : tween[this.key].join('');
+	  var vars = ratio === 1 ? this.vars : tween[this.key].join(' ');
 	  vars = ratio === 0 ? this.start : vars;
 	  if (vars) {
 	    this.target.setAttribute(this.key, vars);
