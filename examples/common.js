@@ -22257,7 +22257,6 @@
 	      }
 	      _this.keysToEnter.push(child.key);
 	    });
-	    _this.originalChildren = children;
 	    _this.state = {
 	      children: children
 	    };
@@ -22275,7 +22274,7 @@
 	    var _this2 = this;
 	
 	    var nextChildren = (0, _util.toArrayChildren)(nextProps.children);
-	    var currentChildren = this.originalChildren;
+	    var currentChildren = this.state.children;
 	    var newChildren = (0, _util.mergeChildren)(currentChildren, nextChildren);
 	
 	    this.keysToEnter = [];
@@ -22307,10 +22306,6 @@
 	    this.setState({
 	      children: newChildren
 	    });
-	  };
-	
-	  TweenOneGroup.prototype.componentDidUpdate = function componentDidUpdate() {
-	    this.originalChildren = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(this.props));
 	  };
 	
 	  TweenOneGroup.prototype.onChange = function onChange(animation, key, type, obj) {
@@ -22376,6 +22371,9 @@
 	
 	  TweenOneGroup.prototype.render = function render() {
 	    var childrenToRender = this.getChildrenToRender(this.state.children);
+	    if (!this.props.component) {
+	      return childrenToRender[0] || null;
+	    }
 	    return (0, _react.createElement)(this.props.component, this.props, childrenToRender);
 	  };
 	
