@@ -27,7 +27,6 @@ class TweenOneGroup extends Component {
       }
       this.keysToEnter.push(child.key);
     });
-    this.originalChildren = children;
     this.state = {
       children,
     };
@@ -44,7 +43,7 @@ class TweenOneGroup extends Component {
 
   componentWillReceiveProps(nextProps) {
     const nextChildren = toArrayChildren(nextProps.children);
-    const currentChildren = this.originalChildren;
+    const currentChildren = this.state.children;
     const newChildren = mergeChildren(currentChildren, nextChildren);
 
     this.keysToEnter = [];
@@ -76,10 +75,6 @@ class TweenOneGroup extends Component {
     this.setState({
       children: newChildren,
     });
-  }
-
-  componentDidUpdate() {
-    this.originalChildren = toArrayChildren(getChildrenFromProps(this.props));
   }
 
   onChange(animation, key, type, obj) {
@@ -143,6 +138,9 @@ class TweenOneGroup extends Component {
 
   render() {
     const childrenToRender = this.getChildrenToRender(this.state.children);
+    if (!this.props.component) {
+      return childrenToRender[0] || null;
+    }
     return createElement(this.props.component, this.props, childrenToRender);
   }
 }
