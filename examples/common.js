@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		24:0
+/******/ 		25:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"fromDelay","9":"group","10":"groupAbsolute","11":"gsapWritten","12":"moment","13":"repeat","14":"shadow","15":"simple","16":"svg","17":"svgDraw","18":"svgDrawShape","19":"svgPoints","20":"timeline","21":"update","22":"updateStyle","23":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"fromDelay","9":"group","10":"groupAbsolute","11":"gsapWritten","12":"moment","13":"repeat","14":"shadow","15":"shadowInset","16":"simple","17":"svg","18":"svgDraw","19":"svgDrawShape","20":"svgPoints","21":"timeline","22":"update","23":"updateStyle","24":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -20811,20 +20811,29 @@
 	  if (!v) {
 	    return [0, 0, 0, 0, 0, 0, 0];
 	  }
+	  var inset = void 0;
 	  if (v.indexOf('rgb') >= 0) {
 	    var t = v.match(/rgb+(?:a)?\((.*)\)/);
-	    var s = v.replace(t[0], '').trim().split(' ');
-	    var c = t[1].replace(/\s/g, '').split(',');
+	    var s = v.replace(t[0], '').trim().split(/\s+/);
+	    inset = s.indexOf('inset');
+	    if (inset >= 0) {
+	      s.splice(inset, 1);
+	    }
+	    var c = t[1].replace(/\s+/g, '').split(',');
 	    if (c.length === 3) {
 	      c.push(1);
 	    }
-	    return s.concat(c);
+	    return s.concat(c, inset >= 0 ? ['inset'] : []);
 	  }
-	  var vArr = v.split(' ');
-	  var color = parseColor(vArr[3]);
+	  var vArr = v.split(/\s+/);
+	  inset = vArr.indexOf('inset');
+	  if (inset >= 0) {
+	    vArr.splice(inset, 1);
+	  }
+	  var color = parseColor(vArr[vArr.length - 1]);
 	  color[3] = typeof color[3] === 'number' ? color[3] : 1;
-	  vArr = vArr.splice(0, 3);
-	  return vArr.concat(color);
+	  vArr = vArr.splice(0, vArr.length - 1);
+	  return vArr.concat(color, inset >= 0 ? ['inset'] : []);
 	}
 	
 	function getColor(v) {
@@ -21700,7 +21709,7 @@
 	  this.type = type;
 	  this.propsData = {};
 	  this.setDefaultData();
-	}; /* eslint-disable func-names */
+	}; /* eslint-disable func-names, no-console */
 	
 	var p = StylePlugin.prototype = {
 	  name: 'style'
@@ -21739,12 +21748,13 @@
 	    });
 	
 	    data.data[key] = data.data[key].map(function (_item) {
-	      return parseFloat(_item);
+	      return !parseFloat(_item) && parseFloat(_item) !== 0 ? _item : parseFloat(_item);
 	    });
 	  } else {
 	    data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
 	    data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
-	    data.data[key] = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
+	    var d = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
+	    data.data[key] = !d && d !== 0 ? data.data[key] : d;
 	  }
 	  return data;
 	};
@@ -21778,9 +21788,11 @@
 	  var pix = void 0;
 	  if (unit === '%') {
 	    pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
-	  } else {
+	  } else if (unit && unit.match(/em/i)) {
 	    // em rem
 	    pix = parseFloat(num) / 16;
+	  } else {
+	    pix = parseFloat(num);
 	  }
 	  return pix;
 	};
@@ -21789,6 +21801,8 @@
 	  var endUnit = unit[i];
 	  if (startUnit === endUnit) {
 	    return parseFloat(data);
+	  } else if (!parseFloat(data) && parseFloat(data) !== 0) {
+	    return data;
 	  }
 	  return this.convertToMarks(key, data, endUnit, key === 'transformOrigin' && !i);
 	};
@@ -21910,17 +21924,38 @@
 	  if (type === 'color' && start.length === 4 && vars.length === 3) {
 	    vars[3] = 1;
 	  }
+	  var startInset = start.indexOf('inset');
+	  var endInset = vars.indexOf('inset');
+	  if (startInset >= 0 && endInset === -1 || endInset >= 0 && startInset === -1) {
+	    throw console.error('Error: "box-shadow" inset have to exist');
+	  }
+	  var length = endInset ? 9 : 8;
+	  if (start.length === length && vars.length === length - 1) {
+	    vars.splice(3, 0, 0);
+	    unit.splice(3, 0, '');
+	  } else if (vars.length === length && start.length === length - 1) {
+	    start.splice(3, 0, 0);
+	  }
 	  var _vars = vars.map(function (endData, i) {
 	    var startData = start[i] || 0;
+	    if (typeof endData === 'string') {
+	      return endData;
+	    }
 	    return (endData - startData) * ratio + startData + (unit[i] || 0);
 	  });
 	  if (type === 'color') {
 	    return (0, _styleUtils.getColor)(_vars);
 	  } else if (type === 'shadow') {
-	    var s = _vars.slice(0, 3);
-	    var c = _vars.slice(3, _vars.length);
+	    var l = _vars.length === length ? 4 : 3;
+	    var s = _vars.slice(0, l).map(function (item) {
+	      if (typeof item === 'number') {
+	        return item + 'px';
+	      }
+	      return item;
+	    });
+	    var c = _vars.slice(l, endInset ? _vars.length - 1 : _vars.length);
 	    var color = (0, _styleUtils.getColor)(c);
-	    return s.join(' ') + ' ' + color;
+	    return (s.join(' ') + ' ' + color + ' ' + (endInset ? 'inset' : '')).trim();
 	  }
 	  return _vars;
 	};
@@ -21979,11 +22014,15 @@
 	    var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
 	    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
 	    unit = unit || (_styleUtils2.default.filter.indexOf(key) >= 0 ? '' : styleUnit);
-	    if (count.charAt(1) === '=') {
-	      tween.style[key] = startVars + endVars * ratio + unit;
-	      return;
+	    if (typeof endVars === 'string') {
+	      tween.style[key] = endVars;
+	    } else {
+	      if (count.charAt(1) === '=') {
+	        tween.style[key] = startVars + endVars * ratio + unit;
+	        return;
+	      }
+	      tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
 	    }
-	    tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
 	  });
 	  this.setAnimData(tween.style);
 	};

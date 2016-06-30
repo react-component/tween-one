@@ -1,14 +1,14 @@
-webpackJsonp([24],{
+webpackJsonp([15],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(210);
+	module.exports = __webpack_require__(198);
 
 
 /***/ },
 
-/***/ 210:
+/***/ 198:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47,8 +47,8 @@ webpackJsonp([24],{
 	  Demo.prototype.render = function render() {
 	    return _react2.default.createElement(
 	      _rcTweenOne2.default,
-	      {
-	        animation: [{ opacity: 1, duration: 1000 }, { x: 300, duration: 1000 }, { translateX: '100px', repeat: -1, duration: 1000, yoyo: true }], style: { opacity: 0 }
+	      { animation: { boxShadow: '0 0 0 #000 inset' },
+	        style: { opacity: 1, height: 100, boxShadow: 'rgba(0, 0, 0, 1) 10px 10px 10px 0px inset' }
 	      },
 	      _react2.default.createElement(
 	        'div',
@@ -66,4 +66,4 @@ webpackJsonp([24],{
 /***/ }
 
 });
-//# sourceMappingURL=yoyo.js.map
+//# sourceMappingURL=shadowInset.js.map
