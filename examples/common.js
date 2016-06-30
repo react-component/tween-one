@@ -22155,7 +22155,7 @@
 	      }
 	      return item;
 	    });
-	    var c = _vars.slice(l, endInset ? _vars.length - 1 : _vars.length);
+	    var c = _vars.slice(l, endInset >= 0 ? _vars.length - 1 : _vars.length);
 	    var color = (0, _styleUtils.getColor)(c);
 	    return (s.join(' ') + ' ' + color + ' ' + (endInset >= 0 ? 'inset' : '')).trim();
 	  }
