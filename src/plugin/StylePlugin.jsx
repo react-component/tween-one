@@ -259,7 +259,7 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
     });
     const c = _vars.slice(l, endInset ? _vars.length - 1 : _vars.length);
     const color = getColor(c);
-    return `${s.join(' ')} ${color} ${endInset ? 'inset' : ''}`.trim();
+    return `${s.join(' ')} ${color} ${endInset >= 0 ? 'inset' : ''}`.trim();
   }
   return _vars;
 };
