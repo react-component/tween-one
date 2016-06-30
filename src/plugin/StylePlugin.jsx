@@ -257,7 +257,7 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
       }
       return item;
     });
-    const c = _vars.slice(l, endInset ? _vars.length - 1 : _vars.length);
+    const c = _vars.slice(l, endInset >= 0 ? _vars.length - 1 : _vars.length);
     const color = getColor(c);
     return `${s.join(' ')} ${color} ${endInset >= 0 ? 'inset' : ''}`.trim();
   }
