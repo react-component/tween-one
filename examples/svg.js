@@ -21,7 +21,7 @@ webpackJsonp([17],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(37);
+	var _reactDom = __webpack_require__(42);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -509,10 +509,10 @@ webpackJsonp([17],{
 	          nx = d.x * 2 - d.bx; // And reflect the previous
 	          ny = d.y * 2 - d.by; // command's control point relative to the current point.
 	        } else {
-	            // or some else or nothing
-	            nx = d.x;
-	            ny = d.y;
-	          }
+	          // or some else or nothing
+	          nx = d.x;
+	          ny = d.y;
+	        }
 	        path = ["C", nx, ny].concat(path.slice(1));
 	        break;
 	      case "T":
@@ -521,10 +521,10 @@ webpackJsonp([17],{
 	          d.qx = d.x * 2 - d.qx; // And make a reflection similar
 	          d.qy = d.y * 2 - d.qy; // to case "S".
 	        } else {
-	            // or something else or nothing
-	            d.qx = d.x;
-	            d.qy = d.y;
-	          }
+	          // or something else or nothing
+	          d.qx = d.x;
+	          d.qy = d.y;
+	        }
 	        path = ["C"].concat(q2c(d.x, d.y, d.qx, d.qy, path[1], path[2]));
 	        break;
 	      case "Q":

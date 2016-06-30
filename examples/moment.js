@@ -21,7 +21,7 @@ webpackJsonp([12],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(37);
+	var _reactDom = __webpack_require__(42);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -47,8 +47,6 @@ webpackJsonp([12],{
 	      moment: 2500 };
 	    return _this;
 	  }
-	
-	  // 初始值
 	
 	  Demo.prototype.componentDidMount = function componentDidMount() {
 	    var _this2 = this;
