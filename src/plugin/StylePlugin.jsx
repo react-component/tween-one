@@ -55,11 +55,14 @@ p.getTweenData = function (key, vars) {
     data.dataCount[key] = data.data[key]
       .map(_item => _item.toString().replace(/[^+|=|-]/g, ''));
 
-    data.data[key] = data.data[key].map(_item => parseFloat(_item));
+    data.data[key] = data.data[key].map(_item =>
+      !parseFloat(_item) && parseFloat(_item) !== 0 ? _item : parseFloat(_item)
+    );
   } else {
     data.dataUnit[key] = data.data[key].toString().replace(/[^a-z|%]/g, '');
     data.dataCount[key] = data.data[key].toString().replace(/[^+|=|-]/g, '');
-    data.data[key] = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
+    const d = parseFloat(data.data[key].toString().replace(/[a-z|%|=]/g, ''));
+    data.data[key] = !d && d !== 0 ? data.data[key] : d;
   }
   return data;
 };
@@ -92,9 +95,11 @@ p.convertToMarks = function (style, num, unit, isOrigin) {
   let pix;
   if (unit === '%') {
     pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
-  } else {
+  } else if (unit && unit.match(/em/i)) {
     // em rem
     pix = parseFloat(num) / 16;
+  } else {
+    pix = parseFloat(num);
   }
   return pix;
 };
@@ -103,6 +108,8 @@ p.convertToMarksArray = function (unit, key, data, i) {
   const endUnit = unit[i];
   if (startUnit === endUnit) {
     return parseFloat(data);
+  } else if (!parseFloat(data) && parseFloat(data) !== 0) {
+    return data;
   }
   return this.convertToMarks(key, data, endUnit, key === 'transformOrigin' && !i);
 };
@@ -221,17 +228,38 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
   if (type === 'color' && start.length === 4 && vars.length === 3) {
     vars[3] = 1;
   }
+  const startInset = start.indexOf('inset');
+  const endInset = vars.indexOf('inset');
+  if (startInset >= 0 && endInset === -1 || endInset >= 0 && startInset === -1) {
+    throw console.error('Error: "box-shadow" inset have to exist');
+  }
+  const length = endInset ? 9 : 8;
+  if (start.length === length && vars.length === length - 1) {
+    vars.splice(3, 0, 0);
+    unit.splice(3, 0, '');
+  } else if (vars.length === length && start.length === length - 1) {
+    start.splice(3, 0, 0);
+  }
   const _vars = vars.map((endData, i) => {
     const startData = start[i] || 0;
+    if (typeof endData === 'string') {
+      return endData;
+    }
     return (endData - startData) * ratio + startData + (unit[i] || 0);
   });
   if (type === 'color') {
     return getColor(_vars);
   } else if (type === 'shadow') {
-    const s = _vars.slice(0, 3);
-    const c = _vars.slice(3, _vars.length);
+    const l = _vars.length === length ? 4 : 3;
+    const s = _vars.slice(0, l).map(item => {
+      if (typeof item === 'number') {
+        return `${item}px`;
+      }
+      return item;
+    });
+    const c = _vars.slice(l, endInset ? _vars.length - 1 : _vars.length);
     const color = getColor(c);
-    return `${s.join(' ')} ${color}`;
+    return `${s.join(' ')} ${color} ${endInset ? 'inset' : ''}`.trim();
   }
   return _vars;
 };
@@ -289,11 +317,15 @@ p.setRatio = function (ratio, tween) {
     let styleUnit = stylesToCss(key, 0);
     styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
     unit = unit || (cssList.filter.indexOf(key) >= 0 ? '' : styleUnit);
-    if (count.charAt(1) === '=') {
-      tween.style[key] = startVars + endVars * ratio + unit;
-      return;
+    if (typeof endVars === 'string') {
+      tween.style[key] = endVars;
+    } else {
+      if (count.charAt(1) === '=') {
+        tween.style[key] = startVars + endVars * ratio + unit;
+        return;
+      }
+      tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
     }
-    tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
   });
   this.setAnimData(tween.style);
 };
