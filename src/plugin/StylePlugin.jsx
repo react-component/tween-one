@@ -1,4 +1,4 @@
-/* eslint-disable func-names */
+/* eslint-disable func-names, no-console */
 import cssList, {
   checkStyleName,
   getGsapType,
