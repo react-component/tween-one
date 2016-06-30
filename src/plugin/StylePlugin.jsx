@@ -228,9 +228,10 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
   if (type === 'color' && start.length === 4 && vars.length === 3) {
     vars[3] = 1;
   }
-  const startInset = start.indexOf('inset');
-  const endInset = vars.indexOf('inset');
-  if (startInset >= 0 && endInset === -1 || endInset >= 0 && startInset === -1) {
+  const startInset = start.indexOf('inset') >= 0;
+  // 操，indexOf 改了我三次，发了三个版本，我是有多粗心啊。。。
+  const endInset = vars.indexOf('inset') >= 0;
+  if (startInset && !endInset || endInset && !startInset) {
     throw console.error('Error: "box-shadow" inset have to exist');
   }
   const length = endInset ? 9 : 8;
@@ -257,9 +258,9 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
       }
       return item;
     });
-    const c = _vars.slice(l, endInset >= 0 ? _vars.length - 1 : _vars.length);
+    const c = _vars.slice(l, endInset ? _vars.length - 1 : _vars.length);
     const color = getColor(c);
-    return `${s.join(' ')} ${color} ${endInset >= 0 ? 'inset' : ''}`.trim();
+    return `${s.join(' ')} ${color} ${endInset ? 'inset' : ''}`.trim();
   }
   return _vars;
 };
