@@ -242,7 +242,8 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
     start.splice(3, 0, 0);
   }
   const _vars = vars.map((endData, i) => {
-    const startData = start[i] || 0;
+    const startIsAlpha = type === 'color' && i === 3 && !start[i] ? 1 : 0;
+    const startData = typeof start[i] === 'number' ? start[i] : startIsAlpha;
     if (typeof endData === 'string') {
       return endData;
     }
