@@ -332,6 +332,10 @@
 	        }
 	      }
 	    }
+	    props.component = typeof props.component === 'function' ? this.props.componentReplace : props.component;
+	    if (!props.component) {
+	      delete props.component;
+	    }
 	    return _react2.default.createElement(this.props.component, props);
 	  };
 	
@@ -342,6 +346,7 @@
 	
 	TweenOne.propTypes = {
 	  component: _react.PropTypes.any,
+	  componentReplace: _react.PropTypes.string,
 	  animation: objectOrArray,
 	  children: _react.PropTypes.any,
 	  style: _react.PropTypes.object,
@@ -21025,6 +21030,7 @@
 	    if (c.length === 3) {
 	      c.push(1);
 	    }
+	    console.log(v)
 	    return s.concat(c, inset >= 0 ? ['inset'] : []);
 	  }
 	  var vArr = v.split(/\s+/);
@@ -22140,7 +22146,8 @@
 	    start.splice(3, 0, 0);
 	  }
 	  var _vars = vars.map(function (endData, i) {
-	    var startData = start[i] || 0;
+	    var startIsAlpha = type === 'color' && i === 3 && !start[i] ? 1 : 0;
+	    var startData = typeof start[i] === 'number' ? start[i] : startIsAlpha;
 	    if (typeof endData === 'string') {
 	      return endData;
 	    }
