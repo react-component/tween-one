@@ -96,7 +96,8 @@ React.render(<TweenOneGroup>
 | onChange   | func           | null    | when the animation change called, callback({ moment, item, tween, index, mode}) |
 | moment     | number         | null    | set the current frame    |
 | attr       | string         | `style` | `style` or `attr`, `attr` is tag attribute. when morph SVG must be `attr`.  |
-| component  | string         | `div`   | component tag  |
+| component  | string / React.Element  | `div`   | component tag  |
+| componentReplace  | string         | null`   | component is React.Element, componentReplace tag   |
 
 
 ### animation = { }

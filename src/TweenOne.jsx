@@ -161,6 +161,11 @@ class TweenOne extends Component {
         }
       }
     }
+    props.component = typeof props.component === 'function' ?
+      this.props.componentReplace : props.component;
+    if (!props.component) {
+      delete props.component;
+    }
     return React.createElement(this.props.component, props);
   }
 }
@@ -169,6 +174,7 @@ const objectOrArray = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
 
 TweenOne.propTypes = {
   component: PropTypes.any,
+  componentReplace: PropTypes.string,
   animation: objectOrArray,
   children: PropTypes.any,
   style: PropTypes.object,
