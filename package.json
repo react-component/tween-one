@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "0.6.19",
+  "version": "0.6.20",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
@@ -42,9 +42,9 @@
     "expect.js": "0.3.x",
     "pre-commit": "1.x",
     "rc-tools": "5.x",
-    "react": "^15.0.2",
-    "react-addons-test-utils": "^15.0.2",
-    "react-dom": "^15.0.2"
+    "react": "^15.2.0",
+    "react-addons-test-utils": "^15.2.0",
+    "react-dom": "^15.2.0"
   },
   "pre-commit": [
     "lint"

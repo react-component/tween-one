@@ -151,6 +151,15 @@ class TweenOne extends Component {
 
   render() {
     const props = assign({}, this.props);
+    [
+      'animation',
+      'component',
+      'reverseDelay',
+      'attr',
+      'paused',
+      'reverse',
+      'moment',
+    ].forEach(key => delete props[key]);
     props.style = assign({}, this.props.style);
     for (const p in props.style) {
       if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
