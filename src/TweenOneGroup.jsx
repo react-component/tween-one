@@ -141,7 +141,16 @@ class TweenOneGroup extends Component {
     if (!this.props.component) {
       return childrenToRender[0] || null;
     }
-    return createElement(this.props.component, this.props, childrenToRender);
+    const componentProps = { ...this.props };
+    [
+      'component',
+      'appear',
+      'enter',
+      'leave',
+      'animatingClassName',
+      'onEnd',
+    ].forEach(key => delete componentProps[key]);
+    return createElement(this.props.component, componentProps, childrenToRender);
   }
 }
 
