@@ -3,12 +3,12 @@ webpackJsonp([17],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(200);
+	module.exports = __webpack_require__(202);
 
 
 /***/ },
 
-/***/ 200:
+/***/ 202:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21,11 +21,11 @@ webpackJsonp([17],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(42);
+	var _reactDom = __webpack_require__(37);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _SvgMorphPlugin = __webpack_require__(201);
+	var _SvgMorphPlugin = __webpack_require__(203);
 	
 	var _SvgMorphPlugin2 = _interopRequireDefault(_SvgMorphPlugin);
 	
@@ -73,7 +73,7 @@ webpackJsonp([17],{
 
 /***/ },
 
-/***/ 201:
+/***/ 203:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -82,7 +82,7 @@ webpackJsonp([17],{
 	  value: true
 	});
 	
-	var _snapsvglite = __webpack_require__(202);
+	var _snapsvglite = __webpack_require__(204);
 	
 	var SvgPlugin = function SvgPlugin(target, vars, key) {
 	  this.target = target;
@@ -156,7 +156,7 @@ webpackJsonp([17],{
 
 /***/ },
 
-/***/ 202:
+/***/ 204:
 /***/ function(module, exports) {
 
 	"use strict";
