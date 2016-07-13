@@ -22609,9 +22609,10 @@
 	    }
 	  });
 	};
-	p.convertToMarks = function (style, num, unit, isOrigin) {
+	p.convertToMarks = function (style, num, unit, isOrigin, fixed) {
 	  var horiz = /(?:Left|Right|Width)/i.test(style);
 	  var t = style.indexOf('border') !== -1 || style === 'transformOrigin' ? this.target : this.target.parentNode || document.body;
+	  t = fixed ? document.body : t;
 	  var pix = void 0;
 	  if (unit === '%') {
 	    pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
@@ -22641,6 +22642,7 @@
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var cssName = (0, _styleUtils.isConvert)(key);
 	    var startData = computedStyle[cssName];
+	    var fixed = computedStyle.position === 'fixed';
 	    if (!startData || startData === 'none' || startData === 'auto') {
 	      startData = '';
 	    }
@@ -22665,7 +22667,7 @@
 	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
 	      endUnit = _this2.propsData.dataUnit[key];
 	      if (endUnit !== startUnit) {
-	        startData = _this2.convertToMarks(key, startData, endUnit);
+	        startData = _this2.convertToMarks(key, startData, endUnit, null, fixed);
 	      }
 	      style[key] = parseFloat(startData);
 	    } else if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
@@ -22686,7 +22688,7 @@
 	      endUnit = _this2.propsData.dataUnit[cssName];
 	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
 	      if (endUnit && (endUnit !== startUnit || endUnit !== 'px')) {
-	        startData = _this2.convertToMarks(cssName, startData, endUnit);
+	        startData = _this2.convertToMarks(cssName, startData, endUnit, null, fixed);
 	      }
 	      style[cssName] = parseFloat(startData || 0);
 	    }
