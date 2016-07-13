@@ -88,10 +88,11 @@ p.setDefaultData = function () {
     }
   });
 };
-p.convertToMarks = function (style, num, unit, isOrigin) {
+p.convertToMarks = function (style, num, unit, isOrigin, fixed) {
   const horiz = /(?:Left|Right|Width)/i.test(style);
-  const t = style.indexOf('border') !== -1 || style === 'transformOrigin' ?
+  let t = style.indexOf('border') !== -1 || style === 'transformOrigin' ?
     this.target : this.target.parentNode || document.body;
+  t = fixed ? document.body : t;
   let pix;
   if (unit === '%') {
     pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
@@ -119,6 +120,7 @@ p.getAnimStart = function () {
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
     let startData = computedStyle[cssName];
+    const fixed = computedStyle.position === 'fixed';
     if (!startData || startData === 'none' || startData === 'auto') {
       startData = '';
     }
@@ -143,7 +145,7 @@ p.getAnimStart = function () {
       startUnit = startData.toString().replace(/[^a-z|%]/g, '');
       endUnit = this.propsData.dataUnit[key];
       if (endUnit !== startUnit) {
-        startData = this.convertToMarks(key, startData, endUnit);
+        startData = this.convertToMarks(key, startData, endUnit, null, fixed);
       }
       style[key] = parseFloat(startData);
     } else if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
@@ -164,7 +166,7 @@ p.getAnimStart = function () {
       endUnit = this.propsData.dataUnit[cssName];
       startUnit = startData.toString().replace(/[^a-z|%]/g, '');
       if (endUnit && (endUnit !== startUnit || endUnit !== 'px')) {
-        startData = this.convertToMarks(cssName, startData, endUnit);
+        startData = this.convertToMarks(cssName, startData, endUnit, null, fixed);
       }
       style[cssName] = parseFloat(startData || 0);
     }
