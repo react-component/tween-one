@@ -84,6 +84,7 @@ class TweenOne extends Component {
         this.cancelRequestAnimationFrame();
       } else {
         if (nextProps.reverse && nextProps.reverseDelay) {
+          this.cancelRequestAnimationFrame();
           ticker.timeout(this.restart, nextProps.reverseDelay);
         } else {
           this.restart();
@@ -128,7 +129,7 @@ class TweenOne extends Component {
     }
     moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
-    if (moment < this.moment) {
+    if (moment < this.moment && !this.props.reverse) {
       this.timeLine.resetDefaultStyle();
     }
     this.moment = moment;
