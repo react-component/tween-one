@@ -236,7 +236,7 @@
 	    // 如果 animation 不同， 从0开始播放
 	    if (!equal) {
 	      this.cancelRequestAnimationFrame();
-	      if (!styleEqual || nextProps.resetStyleBool) {
+	      if ((!styleEqual || nextProps.resetStyleBool) && this.timeLine) {
 	        this.timeLine.resetDefaultStyle();
 	      }
 	      this.setState({
@@ -249,7 +249,9 @@
 	      // 如果 animation 相同，，style 不同，从当前时间开放。
 	      if (this.rafID !== -1) {
 	        this.cancelRequestAnimationFrame();
-	        this.timeLine.resetDefaultStyle();
+	        if (this.timeLine) {
+	          this.timeLine.resetDefaultStyle();
+	        }
 	        this.setState({
 	          startMoment: this.timeLine.progressTime,
 	          startFrame: _ticker2.default.frame
