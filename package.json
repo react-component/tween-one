@@ -52,7 +52,7 @@
   "dependencies": {
     "object-assign": "~4.1.0",
     "raf": "~3.2.0",
-    "style-utils": "~0.1.5",
+    "style-utils": "~0.1.6",
     "tween-functions": "~1.2.0"
   }
 }
