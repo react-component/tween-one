@@ -38,15 +38,6 @@ class TweenOne extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const newStyle = nextProps.style;
-    const styleEqual = objectEqual(this.props.style, newStyle);
-    // 如果在动画时,改变了 style 将改变 timeLine 的初始值;
-    if (!styleEqual) {
-      if (this.rafID !== -1) {
-        this.start(nextProps);
-      }
-    }
-
     // 跳帧事件 moment;
     const newMoment = nextProps.moment;
     if (typeof newMoment === 'number' && newMoment !== this.moment) {
@@ -71,12 +62,31 @@ class TweenOne extends Component {
     const newAnimation = nextProps.animation;
     const currentAnimation = this.props.animation;
     const equal = objectEqual(currentAnimation, newAnimation);
+    const styleEqual = objectEqual(this.props.style, nextProps.style);
+    // 如果 animation 不同， 从0开始播放
     if (!equal) {
+      this.cancelRequestAnimationFrame();
+      if (!styleEqual || nextProps.resetStyleBool) {
+        this.timeLine.resetDefaultStyle();
+      }
       this.setState({
+        startMoment: 0,
         startFrame: ticker.frame,
       }, () => {
         this.start(nextProps);
       });
+    } else if (!styleEqual) {
+      // 如果 animation 相同，，style 不同，从当前时间开放。
+      if (this.rafID !== -1) {
+        this.cancelRequestAnimationFrame();
+        this.timeLine.resetDefaultStyle();
+        this.setState({
+          startMoment: this.timeLine.progressTime,
+          startFrame: ticker.frame,
+        }, () => {
+          this.start(nextProps);
+        });
+      }
     }
     // 暂停倒放
     if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
@@ -117,8 +127,9 @@ class TweenOne extends Component {
   play() {
     this.cancelRequestAnimationFrame();
     this.rafID = `tween${Date.now()}-${tickerIdNum}`;
-    this.raf();
     ticker.wake(this.rafID, this.raf);
+    // 预先注册 raf, 初始动画数值。
+    this.raf();
     tickerIdNum++;
   }
 
@@ -135,6 +146,8 @@ class TweenOne extends Component {
     this.moment = moment;
     this.timeLine.onChange = this.props.onChange;
     this.timeLine.frame(moment);
+    // 注册完设 true
+    this.timeLine.register = true;
   }
 
   raf() {
@@ -160,6 +173,7 @@ class TweenOne extends Component {
       'paused',
       'reverse',
       'moment',
+      'resetStyleBool',
     ].forEach(key => delete props[key]);
     props.style = assign({}, this.props.style);
     for (const p in props.style) {
@@ -194,6 +208,7 @@ TweenOne.propTypes = {
   moment: PropTypes.number,
   attr: PropTypes.string,
   onChange: PropTypes.func,
+  resetStyleBool: PropTypes.bool,
 };
 
 TweenOne.defaultProps = {

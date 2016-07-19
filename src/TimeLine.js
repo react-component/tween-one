@@ -80,6 +80,7 @@ const timeLine = function (target, toData, attr) {
   this.tween = {};
   // 每帧的时间;
   this.perFrame = Math.round(1000 / 60);
+  this.register = false;
   // 设置默认动画数据;
   this.setDefaultData(data);
 };
@@ -231,7 +232,7 @@ p.render = function () {
     let repeatNum = Math.ceil((this.progressTime - initTime) /
         (item.duration + item.repeatDelay)) - 1;
     repeatNum = repeatNum < 0 ? 0 : repeatNum;
-    repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
+    // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
     if (item.repeat) {
       if (item.repeat || item.repeat <= repeatNum) {
         initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
@@ -255,7 +256,9 @@ p.render = function () {
       // 重新开始, 在第一秒触发时调用;
       item.onRepeat();
     }
-    if (progressTime + fromDelay >= 0 && progressTime < this.perFrame && repeatNum <= 0) {
+    if (progressTime + fromDelay >= 0 &&
+      progressTime < this.perFrame && repeatNum <= 0 &&
+      !this.register) {
       item.mode = 'onStart';
       this.setRatio(item.type === 'from' ? 1 : 0, item, i);
       item.onStart();
@@ -283,6 +286,7 @@ p.render = function () {
         tween: this.tween,
         index: i,
         mode: item.mode,
+        target: this.target,
       });
     }
   });
