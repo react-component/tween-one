@@ -23231,7 +23231,7 @@
 	      onChange = this.onChange.bind(this, animation, child.key, type);
 	    }
 	    if (child.key in this.isTween && this.isTween[child.key].type === type) {
-	      return _react2.default.cloneElement(this.isTween[child.key].children, _extends({}, child.props));
+	      return _react2.default.cloneElement(this.isTween[child.key].children, _extends({}, child.props, { key: child.key }));
 	    }
 	    var children = _react2.default.createElement(_TweenOne2.default, _extends({}, child.props, {
 	      key: child.key,
