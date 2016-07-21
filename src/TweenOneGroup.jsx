@@ -111,7 +111,8 @@ class TweenOneGroup extends Component {
       onChange = this.onChange.bind(this, animation, child.key, type);
     }
     if (child.key in this.isTween && this.isTween[child.key].type === type) {
-      return React.cloneElement(this.isTween[child.key].children, { ...child.props });
+      return React.cloneElement(this.isTween[child.key].children,
+        { ...child.props, key: child.key });
     }
     const children = (<TweenOne
       {...child.props}
