@@ -88,8 +88,10 @@ class TweenOneGroup extends Component {
       let children;
       if (type === 'enter') {
         children = this.state.children;
+        this.keysToEnter.splice(this.keysToEnter.indexOf(key), 1);
       } else {
         children = this.state.children.filter(child => key !== child.key);
+        this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
       }
       tag.className = tag.className
         .replace(animatingClassName[type === 'enter' ? 0 : 1], '').trim();
@@ -120,7 +122,7 @@ class TweenOneGroup extends Component {
       component={child.type}
       animation={transformArguments(animation, child.key, i)}
       onChange={onChange}
-      resetStyleBool
+      resetStyleBool={child.key in this.isTween}
     />);
     this.isTween[child.key] = this.isTween[child.key] || {};
     this.isTween[child.key].type = type;
