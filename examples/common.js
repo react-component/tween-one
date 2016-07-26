@@ -23207,17 +23207,19 @@
 	      var children = void 0;
 	      if (type === 'enter') {
 	        children = this.state.children;
+	        this.keysToEnter.splice(this.keysToEnter.indexOf(key), 1);
 	      } else {
 	        children = this.state.children.filter(function (child) {
 	          return key !== child.key;
 	        });
+	        this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
 	      }
 	      tag.className = tag.className.replace(animatingClassName[type === 'enter' ? 0 : 1], '').trim();
+	      delete this.isTween[key];
 	      this.setState({
 	        children: children
 	      });
 	      var _obj = { key: key, type: type };
-	      delete this.isTween[key];
 	      this.props.onEnd(_obj);
 	    }
 	  };
@@ -23230,19 +23232,16 @@
 	      animation = type === 'leave' ? this.props.leave : this.props.enter;
 	      onChange = this.onChange.bind(this, animation, child.key, type);
 	    }
-	    if (child.key in this.isTween && this.isTween[child.key].type === type) {
-	      return _react2.default.cloneElement(this.isTween[child.key].children, _extends({}, child.props, { key: child.key }));
-	    }
 	    var children = _react2.default.createElement(_TweenOne2.default, _extends({}, child.props, {
 	      key: child.key,
 	      component: child.type,
 	      animation: (0, _util.transformArguments)(animation, child.key, i),
 	      onChange: onChange,
-	      resetStyleBool: true
+	      resetStyleBool: child.key in this.isTween
 	    }));
-	    this.isTween[child.key] = this.isTween[child.key] || {};
-	    this.isTween[child.key].type = type;
-	    this.isTween[child.key].children = children;
+	    if (this.keysToEnter.concat(this.keysToLeave).indexOf(child.key) >= 0) {
+	      this.isTween[child.key] = true;
+	    }
 	    return children;
 	  };
 	
