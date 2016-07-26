@@ -95,11 +95,11 @@ class TweenOneGroup extends Component {
       }
       tag.className = tag.className
         .replace(animatingClassName[type === 'enter' ? 0 : 1], '').trim();
+      delete this.isTween[key];
       this.setState({
         children,
       });
       const _obj = { key, type };
-      delete this.isTween[key];
       this.props.onEnd(_obj);
     }
   }
@@ -112,10 +112,6 @@ class TweenOneGroup extends Component {
       animation = type === 'leave' ? this.props.leave : this.props.enter;
       onChange = this.onChange.bind(this, animation, child.key, type);
     }
-    if (child.key in this.isTween && this.isTween[child.key].type === type) {
-      return React.cloneElement(this.isTween[child.key].children,
-        { ...child.props, key: child.key });
-    }
     const children = (<TweenOne
       {...child.props}
       key={child.key}
@@ -124,9 +120,9 @@ class TweenOneGroup extends Component {
       onChange={onChange}
       resetStyleBool={child.key in this.isTween}
     />);
-    this.isTween[child.key] = this.isTween[child.key] || {};
-    this.isTween[child.key].type = type;
-    this.isTween[child.key].children = children;
+    if (this.keysToEnter.concat(this.keysToLeave).indexOf(child.key) >= 0) {
+      this.isTween[child.key] = true;
+    }
     return children;
   }
 
