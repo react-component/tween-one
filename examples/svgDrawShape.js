@@ -194,7 +194,7 @@ webpackJsonp([20],{
 	      ),
 	      _react2.default.createElement(
 	        'svg',
-	        { width: '100%', height: '600', version: '1.2', xmlns: 'http://www.w3.org/2000/svg' },
+	        { width: '100%', height: '600', version: '1.2' },
 	        _react2.default.createElement(_rcTweenOne2.default, {
 	          animation: { style: { SVGDraw: this.state.tweenData }, duration: 1000 },
 	          style: { fill: '#fff000', strokeWidth: 5,

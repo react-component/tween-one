@@ -300,10 +300,10 @@
 	
 	  TweenOne.prototype.play = function play() {
 	    this.cancelRequestAnimationFrame();
-	    this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
-	    _ticker2.default.wake(this.rafID, this.raf);
 	    // 预先注册 raf, 初始动画数值。
 	    this.raf();
+	    this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
+	    _ticker2.default.wake(this.rafID, this.raf);
 	    tickerIdNum++;
 	  };
 	
@@ -320,8 +320,6 @@
 	    this.moment = moment;
 	    this.timeLine.onChange = this.props.onChange;
 	    this.timeLine.frame(moment);
-	    // 注册完设 true
-	    this.timeLine.register = true;
 	  };
 	
 	  TweenOne.prototype.raf = function raf() {
@@ -22190,18 +22188,19 @@
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
-	    if (progressTime + fromDelay >= 0 && progressTime < _this6.perFrame && repeatNum <= 0 && !_this6.register) {
-	      item.mode = 'onStart';
+	    if (progressTime + fromDelay >= 0 && repeatNum <= 0 && progressTime === 0) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
-	      item.onStart();
-	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
+	      return;
+	    }
+	    if (progressTime >= item.duration && item.mode !== 'onComplete') {
 	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
 	      if (item.mode !== 'reset') {
 	        item.onComplete();
 	      }
 	      item.mode = 'onComplete';
+	      _this6.register = false;
 	    } else if (progressTime >= 0 && progressTime < item.duration) {
-	      item.mode = 'onUpdate';
+	      item.mode = !_this6.register ? 'onStart' : 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > item.duration ? item.duration : progressTime;
 	      var ratio = _tweenFunctions2.default[item.ease](progressTime, 0, 1, item.duration);
@@ -22209,7 +22208,12 @@
 	        ratio = _tweenFunctions2.default[item.ease](progressTime, 1, 0, item.duration);
 	      }
 	      _this6.setRatio(ratio, item, i);
-	      item.onUpdate(ratio);
+	      if (!_this6.register) {
+	        item.onStart();
+	      } else {
+	        item.onUpdate(ratio);
+	      }
+	      _this6.register = true;
 	    }
 	    if (progressTime >= 0 && progressTime < item.duration + _this6.perFrame) {
 	      _this6.onChange({
