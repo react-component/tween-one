@@ -70,7 +70,7 @@ class TweenOne extends Component {
         this.timeLine.resetDefaultStyle();
       }
       this.setState({
-        startMoment: 0,
+        startMoment: perFrame, // 设置 perFrame 为开始时就播放一帧动画, 不是从原点开始, 鼠标跟随使用
         startFrame: ticker.frame,
       }, () => {
         this.start(nextProps);
