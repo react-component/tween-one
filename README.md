@@ -114,7 +114,7 @@ React.render(<TweenOneGroup>
 | repeat     | number         | 0       | animate repeat, To repeat indefinitely, use  -1 |
 | repeatDelay| number         | 0       | repeat start delay |
 | yoyo       | boolean        | false   | if `true`, every other repeat cycle will run in the opposite direction so that the tween appears to go back and forth (forward then backward).  |
-| ease       | string         | `easeInOutQuad` | animate ease. [refer](http://easings.net/zh-cn#)  |
+| ease       | string         | `easeInOutQuad` | animate ease. [refer](http://easings.net/en)  |
 | bezier     | object         | null    | bezier curve animate |
 | onStart    | func           | null    | A function that should be called when the tween begins  |
 | onUpdate   | func           | null    | A function that should be called every time the animate updates  |
