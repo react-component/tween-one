@@ -1,14 +1,14 @@
-webpackJsonp([8],{
+webpackJsonp([7],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(192);
+	module.exports = __webpack_require__(191);
 
 
 /***/ },
 
-/***/ 192:
+/***/ 191:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41,24 +41,35 @@ webpackJsonp([8],{
 	  function Demo() {
 	    _classCallCheck(this, Demo);
 	
-	    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+	
+	    _this.mouseMove = function (e) {
+	      var x = e.clientX;
+	      _this.setState({
+	        animation: { x: x, duration: 1000, ease: 'easeOutQuad' }
+	      });
+	    };
+	
+	    _this.state = {
+	      animation: {}
+	    };
+	    return _this;
 	  }
+	
+	  Demo.prototype.componentDidMount = function componentDidMount() {
+	    window.addEventListener('mousemove', this.mouseMove);
+	  };
 	
 	  Demo.prototype.render = function render() {
 	    return _react2.default.createElement(
-	      'div',
-	      { style: { position: 'relative', height: 500 } },
+	      _rcTweenOne2.default,
+	      { animation: this.state.animation,
+	        style: { height: 100 }
+	      },
 	      _react2.default.createElement(
-	        _rcTweenOne2.default,
-	        {
-	          animation: [{ x: 200, y: '+=300', blur: '10px', type: 'from', duration: 500 }, { x: 400, y: 0 }],
-	          style: { opacity: 1, width: 100, transform: 'translateY(100px)' }
-	        },
-	        _react2.default.createElement(
-	          'div',
-	          null,
-	          '执行动效'
-	        )
+	        'div',
+	        null,
+	        '执行动效'
 	      )
 	    );
 	  };
@@ -71,4 +82,4 @@ webpackJsonp([8],{
 /***/ }
 
 });
-//# sourceMappingURL=from.js.map
+//# sourceMappingURL=followMouse.js.map

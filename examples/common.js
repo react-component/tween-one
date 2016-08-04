@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		25:0
+/******/ 		26:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"from","8":"fromDelay","9":"group","10":"groupAbsolute","11":"gsapWritten","12":"moment","13":"repeat","14":"shadow","15":"shadowInset","16":"simple","17":"svg","18":"svgDraw","19":"svgDrawShape","20":"svgPoints","21":"timeline","22":"update","23":"updateStyle","24":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"followMouse","8":"from","9":"fromDelay","10":"group","11":"groupAbsolute","12":"gsapWritten","13":"moment","14":"repeat","15":"shadow","16":"shadowInset","17":"simple","18":"svg","19":"svgDraw","20":"svgDrawShape","21":"svgPoints","22":"timeline","23":"update","24":"updateStyle","25":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -240,7 +240,7 @@
 	        this.timeLine.resetDefaultStyle();
 	      }
 	      this.setState({
-	        startMoment: 0,
+	        startMoment: perFrame, // 设置 perFrame 为开始时就播放一帧动画, 不是从原点开始, 鼠标跟随使用
 	        startFrame: _ticker2.default.frame
 	      }, function () {
 	        _this2.start(nextProps);
