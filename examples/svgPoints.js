@@ -11,7 +11,7 @@ class Demo extends React.Component {
 
   render() {
     return (
-      <svg width="100%" height="600" version="1.2" xmlns="http://www.w3.org/2000/svg">
+      <svg width="100%" height="600" version="1.2">
         <Tween
           animation={[
             { points: '300,10 500,200 120,230 450,220 0,20' },

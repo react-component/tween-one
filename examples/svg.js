@@ -11,7 +11,7 @@ class Demo extends React.Component {
 
   render() {
     return (
-      <svg width="100%" height="600" version="1.2" xmlns="http://www.w3.org/2000/svg">
+      <svg width="100%" height="600" version="1.2">
         <Tween
           animation={{
             d: 'M294.863,134.137c0,0,49.599-76.923,26.082,0' +

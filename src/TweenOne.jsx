@@ -128,10 +128,10 @@ class TweenOne extends Component {
 
   play() {
     this.cancelRequestAnimationFrame();
-    this.rafID = `tween${Date.now()}-${tickerIdNum}`;
-    ticker.wake(this.rafID, this.raf);
     // 预先注册 raf, 初始动画数值。
     this.raf();
+    this.rafID = `tween${Date.now()}-${tickerIdNum}`;
+    ticker.wake(this.rafID, this.raf);
     tickerIdNum++;
   }
 
@@ -148,8 +148,6 @@ class TweenOne extends Component {
     this.moment = moment;
     this.timeLine.onChange = this.props.onChange;
     this.timeLine.frame(moment);
-    // 注册完设 true
-    this.timeLine.register = true;
   }
 
   raf() {

@@ -28,7 +28,7 @@ class Demo extends React.Component {
       <div>
         <button onClick={this.onClick.bind(this)}>点击切换</button>
         <p>当前参数：{this.state.tweenData}</p>
-        <svg width="100%" height="600" version="1.2" xmlns="http://www.w3.org/2000/svg">
+        <svg width="100%" height="600" version="1.2">
           <Tween
             animation={{ style: { SVGDraw: this.state.tweenData }, duration: 1000 }}
             style={{ fill: 'none', strokeWidth: 20, stroke: '#000fff' }}

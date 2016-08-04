@@ -256,20 +256,19 @@ p.render = function () {
       // 重新开始, 在第一秒触发时调用;
       item.onRepeat();
     }
-    if (progressTime + fromDelay >= 0 &&
-      progressTime < this.perFrame && repeatNum <= 0 &&
-      !this.register) {
-      item.mode = 'onStart';
+    if (progressTime + fromDelay >= 0 && repeatNum <= 0 && progressTime === 0) {
       this.setRatio(item.type === 'from' ? 1 : 0, item, i);
-      item.onStart();
-    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
+      return;
+    }
+    if (progressTime >= item.duration && item.mode !== 'onComplete') {
       this.setRatio(item.type === 'from' || (repeatNum % 2 && item.yoyo) ? 0 : 1, item, i);
       if (item.mode !== 'reset') {
         item.onComplete();
       }
       item.mode = 'onComplete';
+      this.register = false;
     } else if (progressTime >= 0 && progressTime < item.duration) {
-      item.mode = 'onUpdate';
+      item.mode = !this.register ? 'onStart' : 'onUpdate';
       progressTime = progressTime < 0 ? 0 : progressTime;
       progressTime = progressTime > item.duration ? item.duration : progressTime;
       let ratio = easingTypes[item.ease](progressTime, 0, 1, item.duration);
@@ -277,7 +276,12 @@ p.render = function () {
         ratio = easingTypes[item.ease](progressTime, 1, 0, item.duration);
       }
       this.setRatio(ratio, item, i);
-      item.onUpdate(ratio);
+      if (!this.register) {
+        item.onStart();
+      } else {
+        item.onUpdate(ratio);
+      }
+      this.register = true;
     }
     if (progressTime >= 0 && progressTime < item.duration + this.perFrame) {
       this.onChange({
