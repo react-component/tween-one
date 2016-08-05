@@ -22008,7 +22008,6 @@
 	  this.tween = {};
 	  // 每帧的时间;
 	  this.perFrame = Math.round(1000 / 60);
-	  this.register = false;
 	  // 设置默认动画数据;
 	  this.setDefaultData(data);
 	};
@@ -22176,31 +22175,29 @@
 	    // 设置 start
 	    var delay = item.delay >= 0 ? item.delay : -item.delay;
 	    var fromDelay = item.type === 'from' ? delay : 0;
-	    if (progressTime + fromDelay >= 0 && !_this6.start[i]) {
+	    if (progressTime + fromDelay > -_this6.perFrame && !_this6.start[i]) {
 	      _this6.start[i] = _this6.getAnimStartData(item.vars);
 	      // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
 	      var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : progressTime / (item.duration + fromDelay) || 0;
 	      st = st < 0 ? 0 : st;
 	      _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
+	      return;
 	    }
 	    // onRepeat 处理
 	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
-	    if (progressTime + fromDelay >= 0 && repeatNum <= 0 && progressTime === 0) {
+	    if (progressTime <= 0 && progressTime > -_this6.perFrame) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
-	      return;
-	    }
-	    if (progressTime >= item.duration && item.mode !== 'onComplete') {
+	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
 	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
 	      if (item.mode !== 'reset') {
 	        item.onComplete();
 	      }
 	      item.mode = 'onComplete';
-	      _this6.register = false;
-	    } else if (progressTime >= 0 && progressTime < item.duration) {
-	      item.mode = !_this6.register ? 'onStart' : 'onUpdate';
+	    } else if (progressTime > 0 && progressTime < item.duration) {
+	      item.mode = progressTime <= _this6.perFrame ? 'onStart' : 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > item.duration ? item.duration : progressTime;
 	      var ratio = _tweenFunctions2.default[item.ease](progressTime, 0, 1, item.duration);
@@ -22208,14 +22205,13 @@
 	        ratio = _tweenFunctions2.default[item.ease](progressTime, 1, 0, item.duration);
 	      }
 	      _this6.setRatio(ratio, item, i);
-	      if (!_this6.register) {
+	      if (progressTime <= _this6.perFrame) {
 	        item.onStart();
 	      } else {
 	        item.onUpdate(ratio);
 	      }
-	      _this6.register = true;
 	    }
-	    if (progressTime >= 0 && progressTime < item.duration + _this6.perFrame) {
+	    if (progressTime > 0 && progressTime < item.duration + _this6.perFrame) {
 	      _this6.onChange({
 	        moment: _this6.progressTime,
 	        item: item,
