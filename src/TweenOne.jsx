@@ -18,11 +18,11 @@ class TweenOne extends Component {
     super(...arguments);
     this.rafID = -1;
     this.moment = this.props.moment || 0;
-    this.state = {
-      startMoment: this.props.moment,
-      startFrame: ticker.frame,
-      paused: this.props.paused,
-    };
+    this.startMoment = this.props.moment;
+    this.startFrame = ticker.frame;
+    this.paused = this.props.paused;
+    this.reverse = this.props.reverse;
+    this.onChange = this.props.onChange;
     [
       'raf',
       'frame',
@@ -38,25 +38,23 @@ class TweenOne extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    this.onChange = nextProps.onChange;
     // 跳帧事件 moment;
     const newMoment = nextProps.moment;
     if (typeof newMoment === 'number' && newMoment !== this.moment) {
-      this.setState({
-        startMoment: newMoment,
-        startFrame: ticker.frame,
-      }, () => {
-        if (this.rafID === -1 && !nextProps.paused) {
-          this.timeLine.resetAnimData();
-          const style = nextProps.style;
-          this.dom.setAttribute('style', '');
-          Object.keys(style).forEach(key => {
-            this.dom.style[key] = stylesToCss(key, style[key]);
-          });
-          this.play();
-        } else {
-          this.raf();
-        }
-      });
+      this.startMoment = newMoment;
+      this.startFrame = ticker.frame;
+      if (this.rafID === -1 && !nextProps.paused) {
+        this.timeLine.resetAnimData();
+        const style = nextProps.style;
+        this.dom.setAttribute('style', '');
+        Object.keys(style).forEach(key => {
+          this.dom.style[key] = stylesToCss(key, style[key]);
+        });
+        this.play();
+      } else {
+        this.raf();
+      }
     }
     // 动画处理
     const newAnimation = nextProps.animation;
@@ -69,12 +67,9 @@ class TweenOne extends Component {
       if ((!styleEqual || nextProps.resetStyleBool) && this.timeLine) {
         this.timeLine.resetDefaultStyle();
       }
-      this.setState({
-        startMoment: perFrame, // 设置 perFrame 为开始时就播放一帧动画, 不是从原点开始, 鼠标跟随使用
-        startFrame: ticker.frame,
-      }, () => {
-        this.start(nextProps);
-      });
+      this.startMoment = perFrame - 1;// 设置 perFrame 为开始时就播放一帧动画, 不是从原点开始, 鼠标跟随使用
+      this.startFrame = ticker.frame;
+      this.start(nextProps);
     } else if (!styleEqual) {
       // 如果 animation 相同，，style 不同，从当前时间开放。
       if (this.rafID !== -1) {
@@ -82,20 +77,19 @@ class TweenOne extends Component {
         if (this.timeLine) {
           this.timeLine.resetDefaultStyle();
         }
-        this.setState({
-          startMoment: this.timeLine.progressTime,
-          startFrame: ticker.frame,
-        }, () => {
-          this.start(nextProps);
-        });
+        this.startMoment = this.timeLine.progressTime;
+        this.startFrame = ticker.frame;
+        this.start(nextProps);
       }
     }
     // 暂停倒放
-    if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
-      if (nextProps.paused) {
+    if (this.paused !== nextProps.paused || this.reverse !== nextProps.reverse) {
+      this.paused = nextProps.paused;
+      this.reverse = nextProps.reverse;
+      if (this.paused) {
         this.cancelRequestAnimationFrame();
       } else {
-        if (nextProps.reverse && nextProps.reverseDelay) {
+        if (this.reverse && nextProps.reverseDelay) {
           this.cancelRequestAnimationFrame();
           ticker.timeout(this.restart, nextProps.reverseDelay);
         } else {
@@ -110,17 +104,16 @@ class TweenOne extends Component {
   }
 
   restart() {
-    this.setState({
-      startMoment: this.timeLine.progressTime,
-      startFrame: ticker.frame,
-    }, () => {
-      this.play();
-    });
+    this.startMoment = this.timeLine.progressTime;
+    this.startFrame = ticker.frame;
+    this.play();
   }
 
   start(props) {
     if (props.animation && Object.keys(props.animation).length) {
-      this.timeLine = new TimeLine(this.dom, dataToArray(props.animation), this.props.attr);
+      this.timeLine = new TimeLine(this.dom, dataToArray(props.animation), props.attr);
+      // 预先注册 raf, 初始动画数值。
+      this.raf();
       // 开始动画
       this.play();
     }
@@ -128,32 +121,33 @@ class TweenOne extends Component {
 
   play() {
     this.cancelRequestAnimationFrame();
-    // 预先注册 raf, 初始动画数值。
-    this.raf();
+    if (this.paused) {
+      return;
+    }
     this.rafID = `tween${Date.now()}-${tickerIdNum}`;
     ticker.wake(this.rafID, this.raf);
     tickerIdNum++;
   }
 
   frame() {
-    let moment = (ticker.frame - this.state.startFrame) * perFrame + (this.state.startMoment || 0);
-    if (this.props.reverse) {
-      moment = (this.state.startMoment || 0) - (ticker.frame - this.state.startFrame) * perFrame;
+    let moment = (ticker.frame - this.startFrame) * perFrame + (this.startMoment || 0);
+    if (this.reverse) {
+      moment = (this.startMoment || 0) - (ticker.frame - this.startFrame) * perFrame;
     }
     moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
-    if (moment < this.moment && !this.props.reverse) {
+    if (moment < this.moment && !this.reverse) {
       this.timeLine.resetDefaultStyle();
     }
     this.moment = moment;
-    this.timeLine.onChange = this.props.onChange;
+    this.timeLine.onChange = this.onChange;
     this.timeLine.frame(moment);
   }
 
   raf() {
     this.frame();
-    if ((this.moment >= this.timeLine.totalTime && !this.props.reverse)
-      || this.props.paused || (this.props.reverse && this.moment === 0)) {
+    if ((this.moment >= this.timeLine.totalTime && !this.reverse)
+      || this.paused || (this.reverse && this.moment === 0)) {
       return this.cancelRequestAnimationFrame();
     }
   }

@@ -80,6 +80,8 @@ const timeLine = function (target, toData, attr) {
   this.tween = {};
   // 每帧的时间;
   this.perFrame = Math.round(1000 / 60);
+  // 注册，第一次进入执行注册
+  this.register = false;
   // 设置默认动画数据;
   this.setDefaultData(data);
 };
@@ -243,12 +245,15 @@ p.render = function () {
     const fromDelay = item.type === 'from' ? delay : 0;
     if (progressTime + fromDelay > -this.perFrame && !this.start[i]) {
       this.start[i] = this.getAnimStartData(item.vars);
-      // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-      let st = progressTime / (item.duration + fromDelay) > 1 ? 1 :
-      (progressTime / (item.duration + fromDelay)) || 0;
-      st = st < 0 ? 0 : st;
-      this.setRatio(item.type === 'from' ? 1 - st : st, item, i);
-      return;
+      if (!this.register) {
+        this.register = true;
+        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
+        let st = progressTime / (item.duration + fromDelay) > 1 ? 1 :
+        (progressTime / (item.duration + fromDelay)) || 0;
+        st = st < 0 ? 0 : st;
+        this.setRatio(item.type === 'from' ? 1 - st : st, item, i);
+        return;
+      }
     }
     // onRepeat 处理
     if (item.repeat && repeatNum > 0
@@ -256,7 +261,7 @@ p.render = function () {
       // 重新开始, 在第一秒触发时调用;
       item.onRepeat();
     }
-    if (progressTime <= 0 && progressTime > -this.perFrame) {
+    if (progressTime < 0 && progressTime > -this.perFrame) {
       this.setRatio(item.type === 'from' ? 1 : 0, item, i);
     } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
       this.setRatio(item.type === 'from' || (repeatNum % 2 && item.yoyo) ? 0 : 1, item, i);
@@ -264,8 +269,8 @@ p.render = function () {
         item.onComplete();
       }
       item.mode = 'onComplete';
-    } else if (progressTime > 0 && progressTime < item.duration) {
-      item.mode = progressTime <= this.perFrame ? 'onStart' : 'onUpdate';
+    } else if (progressTime >= 0 && progressTime < item.duration) {
+      item.mode = progressTime < this.perFrame ? 'onStart' : 'onUpdate';
       progressTime = progressTime < 0 ? 0 : progressTime;
       progressTime = progressTime > item.duration ? item.duration : progressTime;
       let ratio = easingTypes[item.ease](progressTime, 0, 1, item.duration);
@@ -279,7 +284,7 @@ p.render = function () {
         item.onUpdate(ratio);
       }
     }
-    if (progressTime > 0 && progressTime < item.duration + this.perFrame) {
+    if (progressTime >= 0 && progressTime < item.duration + this.perFrame) {
       this.onChange({
         moment: this.progressTime,
         item,
