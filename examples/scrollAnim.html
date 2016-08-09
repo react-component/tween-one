@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>svg.js - example - rc-tween-one@0.8.0</title>
+  <title>scrollAnim.js - example - rc-tween-one@0.8.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -267,8 +267,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
-<span class="hljs-keyword">import</span> SvgMorphPlugin <span class="hljs-keyword">from</span> <span class="hljs-string">'../src/plugin/SvgMorphPlugin'</span>;
-Tween.plugins.push(SvgMorphPlugin);
+<span class="hljs-keyword">import</span> ScrollOverPack <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-scroll-anim/lib/ScrollOverPack'</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
   constructor() {
@@ -276,20 +275,30 @@ Tween.plugins.push(SvgMorphPlugin);
   }
 
   render() {
-    <span class="hljs-keyword">return</span> (
-      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">svg</span> <span class="hljs-attribute">width</span>=<span class="hljs-value">"100%"</span> <span class="hljs-attribute">height</span>=<span class="hljs-value">"600"</span> <span class="hljs-attribute">version</span>=<span class="hljs-value">"1.2"</span>&gt;</span>
+    <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">height:</span> <span class="hljs-attribute">800</span> }}&gt;</span>往下滚动<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">ScrollOverPack</span>
+        <span class="hljs-attribute">hideProps</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">1:</span> { <span class="hljs-attribute">reverse:</span> <span class="hljs-attribute">true</span> }, <span class="hljs-attribute">2:</span> { <span class="hljs-attribute">reverse:</span> <span class="hljs-attribute">true</span> } }}
+        <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">height:</span> <span class="hljs-attribute">800</span> }}
+      &gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
-          <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span>
-            <span class="hljs-attribute">d:</span> '<span class="hljs-attribute">M294.863</span>,<span class="hljs-attribute">134.137c0</span>,<span class="hljs-attribute">0</span>,<span class="hljs-attribute">49.599-76.923</span>,<span class="hljs-attribute">26.082</span>,<span class="hljs-attribute">0</span>' +
-            '<span class="hljs-attribute">s-55.142</span>,<span class="hljs-attribute">119.658-55.142</span>,<span class="hljs-attribute">19.658S161.53</span>,<span class="hljs-attribute">19.521</span>,<span class="hljs-attribute">294.863</span>,<span class="hljs-attribute">34.137z</span>',
-          }}
-          <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">fill:</span> '#<span class="hljs-attribute">fff000</span>', <span class="hljs-attribute">storkeWidth:</span> <span class="hljs-attribute">1</span>, <span class="hljs-attribute">stroke:</span> '#<span class="hljs-attribute">000fff</span>' }}
-          <span class="hljs-attribute">component</span>=<span class="hljs-value">"path"</span>
-          <span class="hljs-attribute">d</span>=<span class="hljs-value">"M294.863,134.137c0,0,49.599-76.923,126.082,0s-55.142,
-          119.658-55.142,119.658S161.53,149.521,294.863,134.137z"</span>
-          <span class="hljs-attribute">attr</span>=<span class="hljs-value">"attr"</span>
-        /&gt;</span>
-      <span class="hljs-tag">&lt;/<span class="hljs-title">svg</span>&gt;</span>)</span>;
+          <span class="hljs-attribute">key</span>=<span class="hljs-value">"1"</span>
+          <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">y:</span> <span class="hljs-attribute">30</span>, <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">from</span>', <span class="hljs-attribute">ease:</span> '<span class="hljs-attribute">easeOutQuart</span>', <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span> }}
+          <span class="hljs-attribute">reverseDelay</span>=<span class="hljs-value">{200}</span>
+          <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">background:</span> '#<span class="hljs-attribute">fff000</span>' }}
+        &gt;</span>
+          执行动画
+        <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
+          <span class="hljs-attribute">key</span>=<span class="hljs-value">"2"</span>
+          <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">y:</span> <span class="hljs-attribute">30</span>, <span class="hljs-attribute">delay:</span> <span class="hljs-attribute">100</span>, <span class="hljs-attribute">ease:</span> '<span class="hljs-attribute">easeOutQuart</span>', <span class="hljs-attribute">type:</span> '<span class="hljs-attribute">from</span>', <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">0</span> }}
+          <span class="hljs-attribute">reverseDelay</span>=<span class="hljs-value">{100}</span>
+          <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">background:</span> '#<span class="hljs-attribute">000fff</span>' }}
+        &gt;</span>
+          执行动画
+        <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">ScrollOverPack</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
   }
 }
 ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Demo</span> /&gt;</span>, document.getElementById('__react-content'));
@@ -303,7 +312,7 @@ ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-t
   </a>
   
   <script src="common.js?nowrap"></script>
-  <script src="svg.js?nowrap"></script>
+  <script src="scrollAnim.js?nowrap"></script>
 </body>
 
 </html>

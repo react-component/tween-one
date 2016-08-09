@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		26:0
+/******/ 		27:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"followMouse","8":"from","9":"fromDelay","10":"group","11":"groupAbsolute","12":"gsapWritten","13":"moment","14":"repeat","15":"shadow","16":"shadowInset","17":"simple","18":"svg","19":"svgDraw","20":"svgDrawShape","21":"svgPoints","22":"timeline","23":"update","24":"updateStyle","25":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"followMouse","8":"from","9":"fromDelay","10":"group","11":"groupAbsolute","12":"gsapWritten","13":"moment","14":"repeat","15":"scrollAnim","16":"shadow","17":"shadowInset","18":"simple","19":"svg","20":"svgDraw","21":"svgDrawShape","22":"svgPoints","23":"timeline","24":"update","25":"updateStyle","26":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -187,11 +187,11 @@
 	
 	    _this.rafID = -1;
 	    _this.moment = _this.props.moment || 0;
-	    _this.state = {
-	      startMoment: _this.props.moment,
-	      startFrame: _ticker2.default.frame,
-	      paused: _this.props.paused
-	    };
+	    _this.startMoment = _this.props.moment;
+	    _this.startFrame = _ticker2.default.frame;
+	    _this.paused = _this.props.paused;
+	    _this.reverse = _this.props.reverse;
+	    _this.onChange = _this.props.onChange;
 	    ['raf', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
 	      return _this[method] = _this[method].bind(_this);
 	    });
@@ -206,27 +206,25 @@
 	  TweenOne.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
 	    var _this2 = this;
 	
+	    this.onChange = nextProps.onChange;
 	    // 跳帧事件 moment;
 	    var newMoment = nextProps.moment;
 	    if (typeof newMoment === 'number' && newMoment !== this.moment) {
-	      this.setState({
-	        startMoment: newMoment,
-	        startFrame: _ticker2.default.frame
-	      }, function () {
-	        if (_this2.rafID === -1 && !nextProps.paused) {
-	          (function () {
-	            _this2.timeLine.resetAnimData();
-	            var style = nextProps.style;
-	            _this2.dom.setAttribute('style', '');
-	            Object.keys(style).forEach(function (key) {
-	              _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
-	            });
-	            _this2.play();
-	          })();
-	        } else {
-	          _this2.raf();
-	        }
-	      });
+	      this.startMoment = newMoment;
+	      this.startFrame = _ticker2.default.frame;
+	      if (this.rafID === -1 && !nextProps.paused) {
+	        (function () {
+	          _this2.timeLine.resetAnimData();
+	          var style = nextProps.style;
+	          _this2.dom.setAttribute('style', '');
+	          Object.keys(style).forEach(function (key) {
+	            _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
+	          });
+	          _this2.play();
+	        })();
+	      } else {
+	        this.raf();
+	      }
 	    }
 	    // 动画处理
 	    var newAnimation = nextProps.animation;
@@ -239,12 +237,9 @@
 	      if ((!styleEqual || nextProps.resetStyleBool) && this.timeLine) {
 	        this.timeLine.resetDefaultStyle();
 	      }
-	      this.setState({
-	        startMoment: perFrame, // 设置 perFrame 为开始时就播放一帧动画, 不是从原点开始, 鼠标跟随使用
-	        startFrame: _ticker2.default.frame
-	      }, function () {
-	        _this2.start(nextProps);
-	      });
+	      this.startMoment = perFrame - 1; // 设置 perFrame 为开始时就播放一帧动画, 不是从原点开始, 鼠标跟随使用
+	      this.startFrame = _ticker2.default.frame;
+	      this.start(nextProps);
 	    } else if (!styleEqual) {
 	      // 如果 animation 相同，，style 不同，从当前时间开放。
 	      if (this.rafID !== -1) {
@@ -252,20 +247,19 @@
 	        if (this.timeLine) {
 	          this.timeLine.resetDefaultStyle();
 	        }
-	        this.setState({
-	          startMoment: this.timeLine.progressTime,
-	          startFrame: _ticker2.default.frame
-	        }, function () {
-	          _this2.start(nextProps);
-	        });
+	        this.startMoment = this.timeLine.progressTime;
+	        this.startFrame = _ticker2.default.frame;
+	        this.start(nextProps);
 	      }
 	    }
 	    // 暂停倒放
-	    if (this.props.paused !== nextProps.paused || this.props.reverse !== nextProps.reverse) {
-	      if (nextProps.paused) {
+	    if (this.paused !== nextProps.paused || this.reverse !== nextProps.reverse) {
+	      this.paused = nextProps.paused;
+	      this.reverse = nextProps.reverse;
+	      if (this.paused) {
 	        this.cancelRequestAnimationFrame();
 	      } else {
-	        if (nextProps.reverse && nextProps.reverseDelay) {
+	        if (this.reverse && nextProps.reverseDelay) {
 	          this.cancelRequestAnimationFrame();
 	          _ticker2.default.timeout(this.restart, nextProps.reverseDelay);
 	        } else {
@@ -280,19 +274,16 @@
 	  };
 	
 	  TweenOne.prototype.restart = function restart() {
-	    var _this3 = this;
-	
-	    this.setState({
-	      startMoment: this.timeLine.progressTime,
-	      startFrame: _ticker2.default.frame
-	    }, function () {
-	      _this3.play();
-	    });
+	    this.startMoment = this.timeLine.progressTime;
+	    this.startFrame = _ticker2.default.frame;
+	    this.play();
 	  };
 	
 	  TweenOne.prototype.start = function start(props) {
 	    if (props.animation && Object.keys(props.animation).length) {
-	      this.timeLine = new _TimeLine2.default(this.dom, (0, _util.dataToArray)(props.animation), this.props.attr);
+	      this.timeLine = new _TimeLine2.default(this.dom, (0, _util.dataToArray)(props.animation), props.attr);
+	      // 预先注册 raf, 初始动画数值。
+	      this.raf();
 	      // 开始动画
 	      this.play();
 	    }
@@ -300,31 +291,32 @@
 	
 	  TweenOne.prototype.play = function play() {
 	    this.cancelRequestAnimationFrame();
-	    // 预先注册 raf, 初始动画数值。
-	    this.raf();
+	    if (this.paused) {
+	      return;
+	    }
 	    this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
 	    _ticker2.default.wake(this.rafID, this.raf);
 	    tickerIdNum++;
 	  };
 	
 	  TweenOne.prototype.frame = function frame() {
-	    var moment = (_ticker2.default.frame - this.state.startFrame) * perFrame + (this.state.startMoment || 0);
-	    if (this.props.reverse) {
-	      moment = (this.state.startMoment || 0) - (_ticker2.default.frame - this.state.startFrame) * perFrame;
+	    var moment = (_ticker2.default.frame - this.startFrame) * perFrame + (this.startMoment || 0);
+	    if (this.reverse) {
+	      moment = (this.startMoment || 0) - (_ticker2.default.frame - this.startFrame) * perFrame;
 	    }
 	    moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
 	    moment = moment <= 0 ? 0 : moment;
-	    if (moment < this.moment && !this.props.reverse) {
+	    if (moment < this.moment && !this.reverse) {
 	      this.timeLine.resetDefaultStyle();
 	    }
 	    this.moment = moment;
-	    this.timeLine.onChange = this.props.onChange;
+	    this.timeLine.onChange = this.onChange;
 	    this.timeLine.frame(moment);
 	  };
 	
 	  TweenOne.prototype.raf = function raf() {
 	    this.frame();
-	    if (this.moment >= this.timeLine.totalTime && !this.props.reverse || this.props.paused || this.props.reverse && this.moment === 0) {
+	    if (this.moment >= this.timeLine.totalTime && !this.reverse || this.paused || this.reverse && this.moment === 0) {
 	      return this.cancelRequestAnimationFrame();
 	    }
 	  };
@@ -22008,6 +22000,8 @@
 	  this.tween = {};
 	  // 每帧的时间;
 	  this.perFrame = Math.round(1000 / 60);
+	  // 注册，第一次进入执行注册
+	  this.register = false;
 	  // 设置默认动画数据;
 	  this.setDefaultData(data);
 	};
@@ -22177,18 +22171,21 @@
 	    var fromDelay = item.type === 'from' ? delay : 0;
 	    if (progressTime + fromDelay > -_this6.perFrame && !_this6.start[i]) {
 	      _this6.start[i] = _this6.getAnimStartData(item.vars);
-	      // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-	      var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : progressTime / (item.duration + fromDelay) || 0;
-	      st = st < 0 ? 0 : st;
-	      _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
-	      return;
+	      if (!_this6.register) {
+	        _this6.register = true;
+	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
+	        var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : progressTime / (item.duration + fromDelay) || 0;
+	        st = st < 0 ? 0 : st;
+	        _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
+	        return;
+	      }
 	    }
 	    // onRepeat 处理
 	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
-	    if (progressTime <= 0 && progressTime > -_this6.perFrame) {
+	    if (progressTime < 0 && progressTime > -_this6.perFrame) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
 	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
 	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
@@ -22196,8 +22193,8 @@
 	        item.onComplete();
 	      }
 	      item.mode = 'onComplete';
-	    } else if (progressTime > 0 && progressTime < item.duration) {
-	      item.mode = progressTime <= _this6.perFrame ? 'onStart' : 'onUpdate';
+	    } else if (progressTime >= 0 && progressTime < item.duration) {
+	      item.mode = progressTime < _this6.perFrame ? 'onStart' : 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > item.duration ? item.duration : progressTime;
 	      var ratio = _tweenFunctions2.default[item.ease](progressTime, 0, 1, item.duration);
@@ -22211,7 +22208,7 @@
 	        item.onUpdate(ratio);
 	      }
 	    }
-	    if (progressTime > 0 && progressTime < item.duration + _this6.perFrame) {
+	    if (progressTime >= 0 && progressTime < item.duration + _this6.perFrame) {
 	      _this6.onChange({
 	        moment: _this6.progressTime,
 	        item: item,
