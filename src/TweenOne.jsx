@@ -34,7 +34,7 @@ class TweenOne extends Component {
 
   componentDidMount() {
     this.dom = ReactDom.findDOMNode(this);
-    this.start(this.props);
+    this.start();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -61,25 +61,25 @@ class TweenOne extends Component {
     const currentAnimation = this.props.animation;
     const equal = objectEqual(currentAnimation, newAnimation);
     const styleEqual = objectEqual(this.props.style, nextProps.style);
-    // 如果 animation 不同， 从0开始播放
+    // 如果 animation 不同， 重新动画
+    this.restartAnim = false;
     if (!equal) {
       this.cancelRequestAnimationFrame();
-      if ((!styleEqual || nextProps.resetStyleBool) && this.timeLine) {
+      if (nextProps.resetStyleBool && this.timeLine) {
         this.timeLine.resetDefaultStyle();
       }
-      this.startMoment = perFrame - 1;// 设置 perFrame 为开始时就播放一帧动画, 不是从原点开始, 鼠标跟随使用
+      this.startMoment = perFrame - 1;// 设置 perFrame 为开始时就播放一帧动画, 不是从0开始, 鼠标跟随使用
       this.startFrame = ticker.frame;
-      this.start(nextProps);
+      this.restartAnim = true;
+      // this.start(nextProps);
     } else if (!styleEqual) {
       // 如果 animation 相同，，style 不同，从当前时间开放。
       if (this.rafID !== -1) {
         this.cancelRequestAnimationFrame();
-        if (this.timeLine) {
-          this.timeLine.resetDefaultStyle();
-        }
         this.startMoment = this.timeLine.progressTime;
         this.startFrame = ticker.frame;
-        this.start(nextProps);
+        this.restartAnim = true;
+        // this.start(nextProps);
       }
     }
     // 暂停倒放
@@ -99,6 +99,13 @@ class TweenOne extends Component {
     }
   }
 
+  componentDidUpdate() {
+    // 样式更新了后再执行动画；
+    if (this.restartAnim) {
+      this.start();
+    }
+  }
+
   componentWillUnmount() {
     this.cancelRequestAnimationFrame();
   }
@@ -109,7 +116,8 @@ class TweenOne extends Component {
     this.play();
   }
 
-  start(props) {
+  start() {
+    const props = this.props;
     if (props.animation && Object.keys(props.animation).length) {
       this.timeLine = new TimeLine(this.dom, dataToArray(props.animation), props.attr);
       // 预先注册 raf, 初始动画数值。
