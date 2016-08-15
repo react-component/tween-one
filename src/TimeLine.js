@@ -248,9 +248,8 @@ p.render = function () {
       if (!this.register) {
         this.register = true;
         // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-        let st = progressTime / (item.duration + fromDelay) > 1 ? 1 :
-        (progressTime / (item.duration + fromDelay)) || 0;
-        st = st < 0 ? 0 : st;
+        const st = progressTime / (item.duration + fromDelay) > 1 ? 1 :
+          easingTypes[item.ease](progressTime < 0 ? 0 : progressTime, 0, 1, item.duration);
         this.setRatio(item.type === 'from' ? 1 - st : st, item, i);
         return;
       }
