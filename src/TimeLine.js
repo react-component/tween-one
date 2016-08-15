@@ -260,7 +260,7 @@ p.render = function () {
       // 重新开始, 在第一秒触发时调用;
       item.onRepeat();
     }
-    if (progressTime < 0 && progressTime > -this.perFrame) {
+    if (progressTime < 0 && progressTime + fromDelay > -this.perFrame) {
       this.setRatio(item.type === 'from' ? 1 : 0, item, i);
     } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
       this.setRatio(item.type === 'from' || (repeatNum % 2 && item.yoyo) ? 0 : 1, item, i);
