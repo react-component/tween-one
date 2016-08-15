@@ -22182,8 +22182,7 @@
 	      if (!_this6.register) {
 	        _this6.register = true;
 	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-	        var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : progressTime / (item.duration + fromDelay) || 0;
-	        st = st < 0 ? 0 : st;
+	        var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : _tweenFunctions2.default[item.ease](progressTime < 0 ? 0 : progressTime, 0, 1, item.duration);
 	        _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
 	        return;
 	      }
@@ -22193,7 +22192,7 @@
 	      // 重新开始, 在第一秒触发时调用;
 	      item.onRepeat();
 	    }
-	    if (progressTime < 0 && progressTime > -_this6.perFrame) {
+	    if (progressTime < 0 && progressTime + fromDelay > -_this6.perFrame) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
 	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
 	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
