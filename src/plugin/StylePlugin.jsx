@@ -89,7 +89,7 @@ p.setDefaultData = function () {
   });
 };
 p.convertToMarks = function (style, num, unit, isOrigin, fixed) {
-  const horiz = /(?:Left|Right|Width)/i.test(style);
+  const horiz = /(?:Left|Right|Width|X)/i.test(style);
   let t = style.indexOf('border') !== -1 || style === 'transformOrigin' ?
     this.target : this.target.parentNode || document.body;
   t = fixed ? document.body : t;
@@ -135,7 +135,13 @@ p.getAnimStart = function () {
     } else if (cssName === 'transform') {
       this.transform = checkStyleName('transform');
       startData = computedStyle[this.transform];
+      endUnit = this.propsData.dataUnit[key];
       transform = getTransform(startData);
+      if (endUnit === '%') {
+        const percent = key === 'translateX' ? 'xPercent' : 'yPercent';
+        transform[percent] = this.convertToMarks(key, transform[key], '%');
+        transform[key] = 0;
+      }
       style.transform = transform;
     } else if (cssName === 'filter') {
       this.filterName = checkStyleName('filter');
@@ -162,11 +168,24 @@ p.getAnimStart = function () {
       startData = startData.map(this.convertToMarksArray.bind(this, endUnit, key));
       style[cssName] = startData;
     } else {
-      // 计算单位， em rem % px;
+      // 计算单位
       endUnit = this.propsData.dataUnit[cssName];
       startUnit = startData.toString().replace(/[^a-z|%]/g, '');
-      if (endUnit && (endUnit !== startUnit || endUnit !== 'px')) {
-        startData = this.convertToMarks(cssName, startData, endUnit, null, fixed);
+      if (endUnit !== startUnit) {
+        if (startUnit === '%') {
+          const node = document.createElement('div');
+          node.style.cssText = `border:0 solid red;position: ${
+            computedStyle.position}line-height:0;`;
+          const horiz = /(?:Left|Right|Width)/i.test(cssName);
+          node.style[horiz ? 'width' : 'height'] = startData;
+          node.style[cssName] = 0;
+          const parentNode = (this.target.parentNode || document.body);
+          parentNode.appendChild(node);
+          startData = parseFloat(node[horiz ? 'offsetWidth' : 'offsetHeight']);
+          parentNode.removeChild(node);
+        } else if (endUnit && endUnit !== 'px') {
+          startData = this.convertToMarks(cssName, startData, endUnit, null, fixed);
+        }
       }
       style[cssName] = parseFloat(startData || 0);
     }
@@ -275,7 +294,7 @@ p.setRatio = function (ratio, tween) {
   }
   Object.keys(this.propsData.data).forEach(key => {
     const _isTransform = isTransform(key) === 'transform';
-    const startVars = _isTransform ? this.start.transform[key] : this.start[key];
+    let startVars = _isTransform ? this.start.transform[key] : this.start[key];
     const endVars = this.propsData.data[key];
     let unit = this.propsData.dataUnit[key];
     const count = this.propsData.dataCount[key];
@@ -285,12 +304,12 @@ p.setRatio = function (ratio, tween) {
     } else if (_isTransform) {
       if (unit === '%' || unit === 'em' || unit === 'rem') {
         const pName = key === 'translateX' ? 'xPercent' : 'yPercent';
-        const data = key === 'translateX' ?
-          this.start.transform.translateX : this.start.transform.translateY;
+        startVars = this.start.transform[pName];
         if (count.charAt(1) === '=') {
-          tween.style.transform[key] = data - data * ratio;
+          tween.style.transform[pName] = (startVars + endVars * ratio) + unit;
+          return;
         }
-        tween.style.transform[pName] = endVars * ratio + unit;
+        tween.style.transform[pName] = ((endVars - startVars) * ratio + startVars) + unit;
         return;
       } else if (key === 'scale') {
         const xStart = this.start.transform.scaleX;
