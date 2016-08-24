@@ -149,17 +149,6 @@ p.convertToMarks = function (style, num, unit) {
   }
   return pix;
 };
-p.convertToPixels = function (style, num, unit) {
-  const horiz = /(?:Left|Right|Width)/i.test(style);
-  const t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
-  let pix;
-  if (unit === '%') {
-    pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
-  } else {
-    pix = parseFloat(num) * 16;
-  }
-  return pix;
-};
 p.getAnimStartData = function (item) {
   const start = {};
   Object.keys(item).forEach(_key => {
@@ -178,7 +167,7 @@ p.getAnimStartData = function (item) {
       } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
         const unit = data.toString().replace(/[^a-z|%]/g, '');
         start[_key] = unit !== item[_key].unit ?
-          this.convertToPixels(_key, parseFloat(data), unit) : parseFloat(data);
+          this.convertToMarks(_key, parseFloat(data), unit) : parseFloat(data);
       }
       // start[_key] = data;
       return;
