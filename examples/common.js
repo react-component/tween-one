@@ -22633,7 +22633,7 @@
 	  });
 	};
 	p.convertToMarks = function (style, num, unit, isOrigin, fixed) {
-	  var horiz = /(?:Left|Right|Width)/i.test(style);
+	  var horiz = /(?:Left|Right|Width|X)/i.test(style);
 	  var t = style.indexOf('border') !== -1 || style === 'transformOrigin' ? this.target : this.target.parentNode || document.body;
 	  t = fixed ? document.body : t;
 	  var pix = void 0;
@@ -22680,7 +22680,13 @@
 	    } else if (cssName === 'transform') {
 	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
 	      startData = computedStyle[_this2.transform];
+	      endUnit = _this2.propsData.dataUnit[key];
 	      transform = (0, _styleUtils.getTransform)(startData);
+	      if (endUnit === '%') {
+	        var percent = key === 'translateX' ? 'xPercent' : 'yPercent';
+	        transform[percent] = _this2.convertToMarks(key, transform[key], '%');
+	        transform[key] = 0;
+	      }
 	      style.transform = transform;
 	    } else if (cssName === 'filter') {
 	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter');
@@ -22707,11 +22713,23 @@
 	      startData = startData.map(_this2.convertToMarksArray.bind(_this2, endUnit, key));
 	      style[cssName] = startData;
 	    } else {
-	      // 计算单位， em rem % px;
+	      // 计算单位
 	      endUnit = _this2.propsData.dataUnit[cssName];
 	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
-	      if (endUnit && (endUnit !== startUnit || endUnit !== 'px')) {
-	        startData = _this2.convertToMarks(cssName, startData, endUnit, null, fixed);
+	      if (endUnit !== startUnit) {
+	        if (startUnit === '%') {
+	          var node = document.createElement('div');
+	          node.style.cssText = 'border:0 solid red;position: ' + computedStyle.position + 'line-height:0;';
+	          var horiz = /(?:Left|Right|Width)/i.test(cssName);
+	          node.style[horiz ? 'width' : 'height'] = startData;
+	          node.style[cssName] = 0;
+	          var parentNode = _this2.target.parentNode || document.body;
+	          parentNode.appendChild(node);
+	          startData = parseFloat(node[horiz ? 'offsetWidth' : 'offsetHeight']);
+	          parentNode.removeChild(node);
+	        } else if (endUnit && endUnit !== 'px') {
+	          startData = _this2.convertToMarks(cssName, startData, endUnit, null, fixed);
+	        }
 	      }
 	      style[cssName] = parseFloat(startData || 0);
 	    }
@@ -22833,11 +22851,12 @@
 	    } else if (_isTransform) {
 	      if (unit === '%' || unit === 'em' || unit === 'rem') {
 	        var pName = key === 'translateX' ? 'xPercent' : 'yPercent';
-	        var data = key === 'translateX' ? _this4.start.transform.translateX : _this4.start.transform.translateY;
+	        startVars = _this4.start.transform[pName];
 	        if (count.charAt(1) === '=') {
-	          tween.style.transform[key] = data - data * ratio;
+	          tween.style.transform[pName] = startVars + endVars * ratio + unit;
+	          return;
 	        }
-	        tween.style.transform[pName] = endVars * ratio + unit;
+	        tween.style.transform[pName] = (endVars - startVars) * ratio + startVars + unit;
 	        return;
 	      } else if (key === 'scale') {
 	        var xStart = _this4.start.transform.scaleX;
