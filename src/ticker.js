@@ -8,12 +8,12 @@ const Ticker = function () {
 const p = Ticker.prototype = {
   tickFnObject: {},
   id: -1,
-  autoSleep: 120,
   frame: 0,
   perFrame: Math.round(1000 / 60),
   getTime: Date.now || (() =>
     new Date().getTime()),
   elapsed: 0,
+  skipFrameMax: 100,
 };
 p.wake = function (key, fn) {
   this.tickFnObject[key] = fn;
@@ -28,6 +28,7 @@ p.clear = function (key) {
 p.sleep = function () {
   requestAnimationFrame.cancel(this.id);
   this.id = -1;
+  this.frame = 0;
 };
 const ticker = new Ticker;
 p.tick = function (a) {
@@ -39,11 +40,11 @@ p.tick = function (a) {
       obj[key](a);
     }
   });
-  // 如果 object 里没对象了，自动睡眠；
+  // 如果 object 里没对象了，自动杀掉；
   if (!Object.keys(obj).length) {
     return ticker.sleep();
   }
-  if (ticker.id === 1) {
+  if (ticker.elapsed > ticker.skipFrameMax || !ticker.frame) {
     ticker.frame++;
   } else {
     // 太卡。跳帧处理。保证时间的正确；
