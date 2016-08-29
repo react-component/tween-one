@@ -117,6 +117,7 @@ p.convertToMarksArray = function (unit, key, data, i) {
 p.getAnimStart = function () {
   const computedStyle = this.getComputedStyle();
   const style = {};
+  this.supports3D = checkStyleName('perspective');
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
     let startData = computedStyle[cssName];
@@ -130,6 +131,8 @@ p.getAnimStart = function () {
     if (key in _plugin) {
       if (key === 'bezier') {
         this.transform = checkStyleName('transform');
+        startData = computedStyle[this.transform];
+        style.transform = getTransform(startData);
       }
       this.propsData.data[key].getAnimStart();
     } else if (cssName === 'transform') {
@@ -193,23 +196,24 @@ p.getAnimStart = function () {
   this.start = style;
   return style;
 };
-p.setAnimData = function (data) {
+p.setAnimData = function (data, ratio) {
   const style = this.target.style;
   Object.keys(data).forEach(_key => {
     if (_key === 'transform') {
       const t = data[_key];
-      const perspective = t.perspective;
-      const angle = t.rotate;
-      const rotateX = t.rotateX;
-      const rotateY = t.rotateY;
-      const sx = t.scaleX;
-      const sy = t.scaleY;
-      const sz = t.scaleZ;
-      const skx = t.skewX;
-      const sky = t.skewY;
-      const translateX = t.translateX;
-      const translateY = t.translateY;
-      const translateZ = t.translateZ;
+      const start = this.start.transform || {};
+      const perspective = typeof t.perspective === 'number' ? t.perspective : start.perspective;
+      const angle = typeof t.rotate === 'number' ? t.rotate : start.rotate;
+      const rotateX = typeof t.rotateX === 'number' ? t.rotateX : start.rotateX;
+      const rotateY = typeof t.rotateY === 'number' ? t.rotateY : start.rotateY;
+      const sx = typeof t.scaleX === 'number' ? t.scaleX : start.scaleX;
+      const sy = typeof t.scaleY === 'number' ? t.scaleY : start.scaleY;
+      const sz = typeof t.scaleZ === 'number' ? t.scaleZ : start.scaleZ;
+      const skx = typeof t.skewX === 'number' ? t.skewX : start.skewX;
+      const sky = typeof t.skewY === 'number' ? t.skewY : start.skewY;
+      const translateX = typeof t.translateX === 'number' ? t.translateX : start.translateX;
+      const translateY = typeof t.translateY === 'number' ? t.translateY : start.translateY;
+      const translateZ = (typeof t.translateZ === 'number' ? t.translateZ : start.tranlateZ) || 0;
       const xPercent = t.xPercent || 0;
       const yPercent = t.yPercent || 0;
       const percent = `${(xPercent || yPercent) ? `translate(${xPercent},${yPercent})` : ''}`;
@@ -217,10 +221,16 @@ p.setAnimData = function (data) {
       const an = angle ? `rotate(${angle}deg)` : '';
       let ss;
       if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
-        const matrix = `1,0,0,1,${translateX},${translateY}`;
+        if (!this.supports3D || ratio >= 1) {
+          const matrix = `1,0,0,1,${translateX},${translateY}`;
+          ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
+          // IE 9 没 3d;
+          style[this.transform] = `${percent} matrix(${matrix}) ${an} ${ss} ${sk}`.trim();
+          return;
+        }
         ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
-        // IE 9 没 3d;
-        style[this.transform] = `${percent} matrix(${matrix}) ${an} ${ss} ${sk}`.trim();
+        style[this.transform] = `${percent} translate3d(${translateX}px,${
+          translateY}px,${translateZ}px) ${an} ${ss} ${sk}`.trim();
         return;
       }
       ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
@@ -290,7 +300,7 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
 p.setRatio = function (ratio, tween) {
   tween.style = tween.style || {};
   if (this.start.transform) {
-    tween.style.transform = assign({}, this.start.transform, tween.style.transform || {});
+    tween.style.transform = tween.style.transform || {};
   }
   Object.keys(this.propsData.data).forEach(key => {
     const _isTransform = isTransform(key) === 'transform';
@@ -350,6 +360,6 @@ p.setRatio = function (ratio, tween) {
       tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
     }
   });
-  this.setAnimData(tween.style);
+  this.setAnimData(tween.style, ratio);
 };
 export default StylePlugin;

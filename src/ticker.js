@@ -4,16 +4,21 @@ import requestAnimationFrame from 'raf';
 
 const Ticker = function () {
 };
+
 const p = Ticker.prototype = {
   tickFnObject: {},
   id: -1,
   autoSleep: 120,
   frame: 0,
   perFrame: Math.round(1000 / 60),
+  getTime: Date.now || (() =>
+    new Date().getTime()),
+  elapsed: 0,
 };
 p.wake = function (key, fn) {
   this.tickFnObject[key] = fn;
   if (this.id === -1) {
+    this.lastUpdate = this.getTime();
     this.id = requestAnimationFrame(this.tick);
   }
 };
@@ -26,6 +31,8 @@ p.sleep = function () {
 };
 const ticker = new Ticker;
 p.tick = function (a) {
+  ticker.elapsed = ticker.getTime() - ticker.lastUpdate;
+  ticker.lastUpdate += ticker.elapsed;
   const obj = ticker.tickFnObject;
   Object.keys(obj).forEach(key => {
     if (obj[key]) {
@@ -36,7 +43,12 @@ p.tick = function (a) {
   if (!Object.keys(obj).length) {
     return ticker.sleep();
   }
-  ticker.frame++;
+  if (ticker.id === 1) {
+    ticker.frame++;
+  } else {
+    // 太卡。跳帧处理。保证时间的正确；
+    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
+  }
   ticker.id = requestAnimationFrame(ticker.tick);
 };
 let timeoutIdNumber = 0;
