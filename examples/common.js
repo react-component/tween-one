@@ -21578,9 +21578,10 @@
 	    return p;
 	  }
 	  var _p = p.charAt(0).toUpperCase() + p.substr(1);
-	  return '' + (a.filter(function (key) {
+	  var prefixCss = a.filter(function (key) {
 	    return '' + key + _p in document.body.style;
-	  })[0] || '') + _p;
+	  });
+	  return prefixCss[0] ? '' + prefixCss[0] + _p : null;
 	}
 	
 	function getGsapType(_p) {
@@ -22079,17 +22080,6 @@
 	  }
 	  return pix;
 	};
-	p.convertToPixels = function (style, num, unit) {
-	  var horiz = /(?:Left|Right|Width)/i.test(style);
-	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
-	  var pix = void 0;
-	  if (unit === '%') {
-	    pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
-	  } else {
-	    pix = parseFloat(num) * 16;
-	  }
-	  return pix;
-	};
 	p.getAnimStartData = function (item) {
 	  var _this3 = this;
 	
@@ -22109,7 +22099,7 @@
 	        start[_key] = data;
 	      } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
 	        var unit = data.toString().replace(/[^a-z|%]/g, '');
-	        start[_key] = unit !== item[_key].unit ? _this3.convertToPixels(_key, parseFloat(data), unit) : parseFloat(data);
+	        start[_key] = unit !== item[_key].unit ? _this3.convertToMarks(_key, parseFloat(data), unit) : parseFloat(data);
 	      }
 	      // start[_key] = data;
 	      return;
@@ -22662,6 +22652,7 @@
 	
 	  var computedStyle = this.getComputedStyle();
 	  var style = {};
+	  this.supports3D = (0, _styleUtils.checkStyleName)('perspective');
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var cssName = (0, _styleUtils.isConvert)(key);
 	    var startData = computedStyle[cssName];
@@ -22675,6 +22666,8 @@
 	    if (key in _plugins2.default) {
 	      if (key === 'bezier') {
 	        _this2.transform = (0, _styleUtils.checkStyleName)('transform');
+	        startData = computedStyle[_this2.transform];
+	        style.transform = (0, _styleUtils.getTransform)(startData);
 	      }
 	      _this2.propsData.data[key].getAnimStart();
 	    } else if (cssName === 'transform') {
@@ -22737,25 +22730,26 @@
 	  this.start = style;
 	  return style;
 	};
-	p.setAnimData = function (data) {
+	p.setAnimData = function (data, ratio) {
 	  var _this3 = this;
 	
 	  var style = this.target.style;
 	  Object.keys(data).forEach(function (_key) {
 	    if (_key === 'transform') {
 	      var t = data[_key];
-	      var perspective = t.perspective;
-	      var angle = t.rotate;
-	      var rotateX = t.rotateX;
-	      var rotateY = t.rotateY;
-	      var sx = t.scaleX;
-	      var sy = t.scaleY;
-	      var sz = t.scaleZ;
-	      var skx = t.skewX;
-	      var sky = t.skewY;
-	      var translateX = t.translateX;
-	      var translateY = t.translateY;
-	      var translateZ = t.translateZ;
+	      var start = _this3.start.transform || {};
+	      var perspective = typeof t.perspective === 'number' ? t.perspective : start.perspective;
+	      var angle = typeof t.rotate === 'number' ? t.rotate : start.rotate;
+	      var rotateX = typeof t.rotateX === 'number' ? t.rotateX : start.rotateX;
+	      var rotateY = typeof t.rotateY === 'number' ? t.rotateY : start.rotateY;
+	      var sx = typeof t.scaleX === 'number' ? t.scaleX : start.scaleX;
+	      var sy = typeof t.scaleY === 'number' ? t.scaleY : start.scaleY;
+	      var sz = typeof t.scaleZ === 'number' ? t.scaleZ : start.scaleZ;
+	      var skx = typeof t.skewX === 'number' ? t.skewX : start.skewX;
+	      var sky = typeof t.skewY === 'number' ? t.skewY : start.skewY;
+	      var translateX = typeof t.translateX === 'number' ? t.translateX : start.translateX;
+	      var translateY = typeof t.translateY === 'number' ? t.translateY : start.translateY;
+	      var translateZ = (typeof t.translateZ === 'number' ? t.translateZ : start.tranlateZ) || 0;
 	      var xPercent = t.xPercent || 0;
 	      var yPercent = t.yPercent || 0;
 	      var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
@@ -22763,10 +22757,15 @@
 	      var an = angle ? 'rotate(' + angle + 'deg)' : '';
 	      var ss = void 0;
 	      if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
-	        var matrix = '1,0,0,1,' + translateX + ',' + translateY;
+	        if (!_this3.supports3D || ratio >= 1) {
+	          var matrix = '1,0,0,1,' + translateX + ',' + translateY;
+	          ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
+	          // IE 9 没 3d;
+	          style[_this3.transform] = (percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk).trim();
+	          return;
+	        }
 	        ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-	        // IE 9 没 3d;
-	        style[_this3.transform] = (percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk).trim();
+	        style[_this3.transform] = (percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + an + ' ' + ss + ' ' + sk).trim();
 	        return;
 	      }
 	      ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
@@ -22837,7 +22836,7 @@
 	
 	  tween.style = tween.style || {};
 	  if (this.start.transform) {
-	    tween.style.transform = (0, _objectAssign2.default)({}, this.start.transform, tween.style.transform || {});
+	    tween.style.transform = tween.style.transform || {};
 	  }
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
@@ -22897,7 +22896,7 @@
 	      tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
 	    }
 	  });
-	  this.setAnimData(tween.style);
+	  this.setAnimData(tween.style, ratio);
 	};
 	exports.default = StylePlugin;
 	module.exports = exports['default'];
@@ -22920,16 +22919,22 @@
 	
 	var Ticker = function Ticker() {}; /* eslint-disable func-names */
 	
+	
 	var p = Ticker.prototype = {
 	  tickFnObject: {},
 	  id: -1,
 	  autoSleep: 120,
 	  frame: 0,
-	  perFrame: Math.round(1000 / 60)
+	  perFrame: Math.round(1000 / 60),
+	  getTime: Date.now || function () {
+	    return new Date().getTime();
+	  },
+	  elapsed: 0
 	};
 	p.wake = function (key, fn) {
 	  this.tickFnObject[key] = fn;
 	  if (this.id === -1) {
+	    this.lastUpdate = this.getTime();
 	    this.id = (0, _raf2.default)(this.tick);
 	  }
 	};
@@ -22942,6 +22947,8 @@
 	};
 	var ticker = new Ticker();
 	p.tick = function (a) {
+	  ticker.elapsed = ticker.getTime() - ticker.lastUpdate;
+	  ticker.lastUpdate += ticker.elapsed;
 	  var obj = ticker.tickFnObject;
 	  Object.keys(obj).forEach(function (key) {
 	    if (obj[key]) {
@@ -22952,7 +22959,12 @@
 	  if (!Object.keys(obj).length) {
 	    return ticker.sleep();
 	  }
-	  ticker.frame++;
+	  if (ticker.id === 1) {
+	    ticker.frame++;
+	  } else {
+	    // 太卡。跳帧处理。保证时间的正确；
+	    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
+	  }
 	  ticker.id = (0, _raf2.default)(ticker.tick);
 	};
 	var timeoutIdNumber = 0;
