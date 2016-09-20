@@ -7,6 +7,7 @@ const SvgDrawPlugin = function (target, vars) {
 };
 SvgDrawPlugin.prototype = {
   name: 'SVGDraw',
+  useStyle: 'stroke-dasharray, stroke-dashoffset',
   setVars(vars) {
     const _vars = { start: 0 };
     if (typeof vars === 'number') {

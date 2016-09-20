@@ -104,11 +104,12 @@ p.getAnimStart = function () {
   const style = {};
   this.supports3D = checkStyleName('perspective');
   this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange ||
-    computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
+  computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
-    this.willChange = this.willChange.replace(key, '');
-    this.willChange = this.willChange === '' ? key : `${key}, ${this.willChange}`;
+    const willStyle = key in _plugin ? this.propsData.data[key].useStyle || key : key;
+    this.willChange = this.willChange.replace(willStyle, '');
+    this.willChange = this.willChange === '' ? willStyle : `${willStyle}, ${this.willChange}`;
     let startData = computedStyle[cssName];
     const fixed = computedStyle.position === 'fixed';
     if (!startData || startData === 'none' || startData === 'auto') {
@@ -271,7 +272,11 @@ p.setRatio = function (ratio, tween) {
     const count = this.propsData.dataCount[key];
     if (key in _plugin) {
       this.propsData.data[key].setRatio(ratio, tween);
-      style[this.transform] = this.getTransformValue(tween.style.transform, ratio);
+      if (key === 'bezier') {
+        style[this.transform] = this.getTransformValue(tween.style.transform, ratio);
+      } else {
+        Object.keys(tween.style).forEach(css => style[css] = tween.style[css]);
+      }
       return;
     } else if (_isTransform) {
       if (unit && unit.match(/%|vw|vh|em|rem/i)) {
