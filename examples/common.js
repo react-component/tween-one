@@ -22643,7 +22643,8 @@
 	  this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange || computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var cssName = (0, _styleUtils.isConvert)(key);
-	    var willStyle = key in _plugins2.default ? _this2.propsData.data[key].useStyle || key : key;
+	    var willStyle = key in _plugins2.default ? _this2.propsData.data[key].useStyle || cssName : cssName;
+	    willStyle = willStyle === 'transformOrigin' ? 'transform-origin' : willStyle;
 	    _this2.willChange = _this2.willChange.replace(willStyle, '');
 	    _this2.willChange = _this2.willChange === '' ? willStyle : willStyle + ', ' + _this2.willChange;
 	    var startData = computedStyle[cssName];
@@ -22792,12 +22793,12 @@
 	  if (this.start.transform) {
 	    tween.style.transform = tween.style.transform || _extends({}, this.start.transform);
 	  }
-	  if (ratio === 1) {
-	    tween.style.willChange = null;
-	  } else if (ratio === 0) {
-	    tween.style.willChange = this.willChange;
-	  }
 	  var style = this.target.style;
+	  if (ratio === 1) {
+	    style.willChange = null;
+	  } else if (ratio === 0) {
+	    style.willChange = this.willChange;
+	  }
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
 	    var startVars = _isTransform ? _this3.start.transform[key] : _this3.start[key];
