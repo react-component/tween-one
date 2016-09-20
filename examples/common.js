@@ -133,6 +133,8 @@
 	  value: true
 	});
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var _react = __webpack_require__(5);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -140,10 +142,6 @@
 	var _reactDom = __webpack_require__(37);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	var _objectAssign = __webpack_require__(8);
-	
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
 	var _util = __webpack_require__(174);
 	
@@ -174,8 +172,6 @@
 	function noop() {}
 	
 	var perFrame = Math.round(1000 / 60);
-	
-	var tickerIdNum = 0;
 	
 	var TweenOne = function (_Component) {
 	  _inherits(TweenOne, _Component);
@@ -302,9 +298,7 @@
 	    if (this.paused) {
 	      return;
 	    }
-	    this.rafID = 'tween' + Date.now() + '-' + tickerIdNum;
-	    _ticker2.default.wake(this.rafID, this.raf);
-	    tickerIdNum++;
+	    this.rafID = _ticker2.default.add(this.raf);
 	  };
 	
 	  TweenOne.prototype.frame = function frame() {
@@ -335,20 +329,18 @@
 	  };
 	
 	  TweenOne.prototype.render = function render() {
-	    var props = (0, _objectAssign2.default)({}, this.props);
+	    var props = _extends({}, this.props);
 	    ['animation', 'component', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool'].forEach(function (key) {
 	      return delete props[key];
 	    });
-	    props.style = (0, _objectAssign2.default)({}, this.props.style);
-	    for (var p in props.style) {
-	      if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
-	        // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
-	        var transformArr = ['Webkit', 'Moz', 'Ms', 'ms'];
-	        for (var i = 0; i < transformArr.length; i++) {
-	          props.style[transformArr[i] + 'Filter'] = props.style[p];
-	        }
+	    props.style = _extends({}, this.props.style);
+	    Object.keys(props.style).forEach(function (p) {
+	      if (p.match(/filter/i)) {
+	        ['Webkit', 'Moz', 'Ms', 'ms'].forEach(function (prefix) {
+	          return props.style[prefix + 'Filter'] = props.style[p];
+	        });
 	      }
-	    }
+	    });
 	    props.component = typeof props.component === 'function' ? this.props.componentReplace : props.component;
 	    if (!props.component) {
 	      delete props.component;
@@ -21320,6 +21312,7 @@
 	exports.mergeChildren = mergeChildren;
 	exports.transformArguments = transformArguments;
 	exports.getChildrenFromProps = getChildrenFromProps;
+	exports.startConvertToEndUnit = startConvertToEndUnit;
 	
 	var _react = __webpack_require__(5);
 	
@@ -21477,6 +21470,35 @@
 	
 	function getChildrenFromProps(props) {
 	  return props && props.children;
+	}
+	
+	function startConvertToEndUnit(target, style, num, unit, dataUnit, fixed, isOriginWidth) {
+	  var horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
+	  var t = style.indexOf('border') !== -1 ? target : target.parentNode || document.body;
+	  t = fixed ? document.body : t;
+	  var pix = void 0;
+	
+	  if (unit === '%') {
+	    pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
+	  } else if (unit === 'vw') {
+	    pix = parseFloat(num) * document.body.clientWidth / 100;
+	  } else if (unit === 'vh') {
+	    pix = parseFloat(num) * document.body.clientHeight / 100;
+	  } else if (unit && unit.match(/em/i)) {
+	    pix = parseFloat(num) * 16;
+	  } else {
+	    pix = parseFloat(num);
+	  }
+	  if (dataUnit === '%') {
+	    pix = pix * 100 / (horiz ? t.clientWidth : t.clientHeight);
+	  } else if (dataUnit === 'vw') {
+	    pix = parseFloat(num) / document.body.clientWidth * 100;
+	  } else if (dataUnit === 'vh') {
+	    pix = parseFloat(num) / document.body.clientHeight * 100;
+	  } else if (dataUnit && dataUnit.match(/em/i)) {
+	    pix = parseFloat(num) / 16;
+	  }
+	  return pix;
 	}
 
 /***/ },
@@ -21704,6 +21726,7 @@
 	    return item;
 	  });
 	  var startData = {};
+	
 	  filter.forEach(function (item) {
 	    var dataArr = item.split('(');
 	    startData[dataArr[0]] = dataArr[1];
@@ -21914,9 +21937,11 @@
 	  value: true
 	});
 	
-	var _objectAssign = __webpack_require__(8);
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* eslint-disable func-names */
+	/**
+	 * Created by jljsj on 16/1/27.
+	 */
 	
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 	
 	var _tweenFunctions = __webpack_require__(177);
 	
@@ -21932,13 +21957,11 @@
 	
 	var _styleUtils = __webpack_require__(175);
 	
+	var _util = __webpack_require__(174);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var DEFAULT_EASING = 'easeInOutQuad'; /* eslint-disable func-names */
-	/**
-	 * Created by jljsj on 16/1/27.
-	 */
-	
+	var DEFAULT_EASING = 'easeInOutQuad';
 	var DEFAULT_DURATION = 450;
 	var DEFAULT_DELAY = 0;
 	function noop() {}
@@ -21978,7 +22001,7 @@
 	  this.startDefaultData = {};
 	  var data = [];
 	  toData.forEach(function (d, i) {
-	    var _d = (0, _objectAssign2.default)({}, d);
+	    var _d = _extends({}, d);
 	    if (_this.attr === 'style') {
 	      data[i] = {};
 	      Object.keys(_d).forEach(function (key) {
@@ -21995,7 +22018,7 @@
 	          throw new Error('Style should be the object.');
 	        }
 	        if (key === 'bezier') {
-	          _d.style = (0, _objectAssign2.default)(_d.style || {}, { bezier: _d[key] });
+	          _d.style = _extends({}, _d.style, { bezier: _d[key] });
 	          delete _d[key];
 	          _this.startDefaultData.style = _this.target.getAttribute('style');
 	        } else {
@@ -22038,14 +22061,6 @@
 	          var count = _data.toString().replace(/[^+|=|-]/g, '');
 	          tweenData.vars[_key] = { unit: unit, vars: vars, count: count };
 	        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugins2.default) {
-	          /*
-	           * SVG 情况如下：
-	           * points: ***,*** ***,***
-	           * - split(' ') => ['***,***','***,**'] split(',') => [[***,***],[***,***]];
-	           * - array 里的 array.trim(',') => array.join(' ');
-	           * d: M*** *** L*** ** C*** *** *** *** *** *** Z || M***,***L***,***Z
-	           * - split(/[a-z]/i).filter(item => item), unit: split(/\d+[0-9|\s]+\s/)
-	           */
 	          tweenData.vars[_key] = new _plugins2.default.SVGMorph(_this2.target, _data, _key);
 	        }
 	      }
@@ -22068,18 +22083,6 @@
 	  this.totalTime = repeatMax ? Number.MAX_VALUE : now;
 	  this.defaultData = data;
 	};
-	p.convertToMarks = function (style, num, unit) {
-	  var horiz = /(?:Left|Right|Width)/i.test(style);
-	  var t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
-	  var pix = void 0;
-	  if (unit === '%') {
-	    pix = parseFloat(num) * 100 / (horiz ? t.clientWidth : t.clientHeight);
-	  } else {
-	    // em rem
-	    pix = parseFloat(num) / 16;
-	  }
-	  return pix;
-	};
 	p.getAnimStartData = function (item) {
 	  var _this3 = this;
 	
@@ -22099,7 +22102,7 @@
 	        start[_key] = data;
 	      } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
 	        var unit = data.toString().replace(/[^a-z|%]/g, '');
-	        start[_key] = unit !== item[_key].unit ? _this3.convertToMarks(_key, parseFloat(data), unit) : parseFloat(data);
+	        start[_key] = unit !== item[_key].unit ? (0, _util.startConvertToEndUnit)(_this3.target, _key, parseFloat(data), unit, item[_key].unit) : parseFloat(data);
 	      }
 	      // start[_key] = data;
 	      return;
@@ -22118,7 +22121,6 @@
 	    _this4.target[key] = data[key];
 	  });
 	};
-	
 	p.setRatio = function (ratio, endData, i) {
 	  var _this5 = this;
 	
@@ -22529,13 +22531,14 @@
 	  value: true
 	});
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* eslint-disable func-names, no-console */
+	
+	
 	var _styleUtils = __webpack_require__(175);
 	
 	var _styleUtils2 = _interopRequireDefault(_styleUtils);
 	
-	var _objectAssign = __webpack_require__(8);
-	
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+	var _util = __webpack_require__(174);
 	
 	var _plugins = __webpack_require__(178);
 	
@@ -22549,8 +22552,7 @@
 	  this.type = type;
 	  this.propsData = {};
 	  this.setDefaultData();
-	}; /* eslint-disable func-names, no-console */
-	
+	};
 	var p = StylePlugin.prototype = {
 	  name: 'style'
 	};
@@ -22565,7 +22567,7 @@
 	    dataCount: {},
 	    dataSplitStr: {}
 	  };
-	  if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
+	  if (key.match(/colo|fill|storker/i)) {
 	    data.data[key] = (0, _styleUtils.parseColor)(vars);
 	    data.dataType[key] = 'color';
 	  } else if (key.match(/shadow/i)) {
@@ -22622,21 +22624,6 @@
 	    }
 	  });
 	};
-	p.convertToMarks = function (style, num, unit, isOrigin, fixed) {
-	  var horiz = /(?:Left|Right|Width|X)/i.test(style);
-	  var t = style.indexOf('border') !== -1 || style === 'transformOrigin' ? this.target : this.target.parentNode || document.body;
-	  t = fixed ? document.body : t;
-	  var pix = void 0;
-	  if (unit === '%') {
-	    pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
-	  } else if (unit && unit.match(/em/i)) {
-	    // em rem
-	    pix = parseFloat(num) / 16;
-	  } else {
-	    pix = parseFloat(num);
-	  }
-	  return pix;
-	};
 	p.convertToMarksArray = function (unit, key, data, i) {
 	  var startUnit = data.toString().replace(/[^a-z|%]/g, '');
 	  var endUnit = unit[i];
@@ -22645,7 +22632,7 @@
 	  } else if (!parseFloat(data) && parseFloat(data) !== 0) {
 	    return data;
 	  }
-	  return this.convertToMarks(key, data, endUnit, key === 'transformOrigin' && !i);
+	  return (0, _util.startConvertToEndUnit)(this.target, key, data, startUnit, endUnit, null, key === 'transformOrigin' && !i);
 	};
 	p.getAnimStart = function () {
 	  var _this2 = this;
@@ -22653,8 +22640,11 @@
 	  var computedStyle = this.getComputedStyle();
 	  var style = {};
 	  this.supports3D = (0, _styleUtils.checkStyleName)('perspective');
+	  this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange || computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var cssName = (0, _styleUtils.isConvert)(key);
+	    _this2.willChange = _this2.willChange.replace(key, '');
+	    _this2.willChange = _this2.willChange === '' ? key : key + ', ' + _this2.willChange;
 	    var startData = computedStyle[cssName];
 	    var fixed = computedStyle.position === 'fixed';
 	    if (!startData || startData === 'none' || startData === 'auto') {
@@ -22675,24 +22665,24 @@
 	      startData = computedStyle[_this2.transform];
 	      endUnit = _this2.propsData.dataUnit[key];
 	      transform = (0, _styleUtils.getTransform)(startData);
-	      if (endUnit === '%') {
+	      if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
 	        var percent = key === 'translateX' ? 'xPercent' : 'yPercent';
-	        transform[percent] = _this2.convertToMarks(key, transform[key], '%');
+	        transform[percent] = (0, _util.startConvertToEndUnit)(_this2.target, key, transform[key], null, endUnit);
 	        transform[key] = 0;
 	      }
 	      style.transform = transform;
 	    } else if (cssName === 'filter') {
-	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter');
+	      _this2.filterName = (0, _styleUtils.checkStyleName)('filter') || 'filter';
 	      startData = computedStyle[_this2.filterName];
-	      _this2.filterObject = (0, _objectAssign2.default)(_this2.filterObject || {}, (0, _styleUtils.splitFilterToObject)(startData));
+	      _this2.filterObject = _extends({}, _this2.filterObject, (0, _styleUtils.splitFilterToObject)(startData));
 	      startData = _this2.filterObject[key] || 0;
 	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
 	      endUnit = _this2.propsData.dataUnit[key];
 	      if (endUnit !== startUnit) {
-	        startData = _this2.convertToMarks(key, startData, endUnit, null, fixed);
+	        startData = (0, _util.startConvertToEndUnit)(_this2.target, cssName, parseFloat(startData), startUnit, endUnit, fixed);
 	      }
 	      style[key] = parseFloat(startData);
-	    } else if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
+	    } else if (key.match(/color|fill|stroke/i)) {
 	      startData = !startData && key === 'stroke' ? 'rgba(255, 255, 255, 0)' : startData;
 	      style[cssName] = (0, _styleUtils.parseColor)(startData);
 	    } else if (key.match(/shadow/i)) {
@@ -22710,19 +22700,7 @@
 	      endUnit = _this2.propsData.dataUnit[cssName];
 	      startUnit = startData.toString().replace(/[^a-z|%]/g, '');
 	      if (endUnit !== startUnit) {
-	        if (startUnit === '%') {
-	          var node = document.createElement('div');
-	          node.style.cssText = 'border:0 solid red;position: ' + computedStyle.position + 'line-height:0;';
-	          var horiz = /(?:Left|Right|Width)/i.test(cssName);
-	          node.style[horiz ? 'width' : 'height'] = startData;
-	          node.style[cssName] = 0;
-	          var parentNode = _this2.target.parentNode || document.body;
-	          parentNode.appendChild(node);
-	          startData = parseFloat(node[horiz ? 'offsetWidth' : 'offsetHeight']);
-	          parentNode.removeChild(node);
-	        } else if (endUnit && endUnit !== 'px') {
-	          startData = _this2.convertToMarks(cssName, startData, endUnit, null, fixed);
-	        }
+	        startData = (0, _util.startConvertToEndUnit)(_this2.target, cssName, parseFloat(startData), startUnit, endUnit, fixed);
 	      }
 	      style[cssName] = parseFloat(startData || 0);
 	    }
@@ -22730,71 +22708,46 @@
 	  this.start = style;
 	  return style;
 	};
-	p.setAnimData = function (data, ratio) {
-	  var _this3 = this;
-	
-	  var style = this.target.style;
-	  Object.keys(data).forEach(function (_key) {
-	    if (_key === 'transform') {
-	      var t = data[_key];
-	      var start = _this3.start.transform || {};
-	      var perspective = typeof t.perspective === 'number' ? t.perspective : start.perspective;
-	      var angle = typeof t.rotate === 'number' ? t.rotate : start.rotate;
-	      var rotateX = typeof t.rotateX === 'number' ? t.rotateX : start.rotateX;
-	      var rotateY = typeof t.rotateY === 'number' ? t.rotateY : start.rotateY;
-	      var sx = typeof t.scaleX === 'number' ? t.scaleX : start.scaleX;
-	      var sy = typeof t.scaleY === 'number' ? t.scaleY : start.scaleY;
-	      var sz = typeof t.scaleZ === 'number' ? t.scaleZ : start.scaleZ;
-	      var skx = typeof t.skewX === 'number' ? t.skewX : start.skewX;
-	      var sky = typeof t.skewY === 'number' ? t.skewY : start.skewY;
-	      var translateX = typeof t.translateX === 'number' ? t.translateX : start.translateX;
-	      var translateY = typeof t.translateY === 'number' ? t.translateY : start.translateY;
-	      var translateZ = (typeof t.translateZ === 'number' ? t.translateZ : start.tranlateZ) || 0;
-	      var xPercent = t.xPercent || 0;
-	      var yPercent = t.yPercent || 0;
-	      var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
-	      var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
-	      var an = angle ? 'rotate(' + angle + 'deg)' : '';
-	      var ss = void 0;
-	      if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
-	        if (!_this3.supports3D || ratio >= 1) {
-	          var matrix = '1,0,0,1,' + translateX + ',' + translateY;
-	          ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-	          // IE 9 没 3d;
-	          style[_this3.transform] = (percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk).trim();
-	          return;
-	        }
-	        ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-	        style[_this3.transform] = (percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + an + ' ' + ss + ' ' + sk).trim();
-	        return;
-	      }
-	      ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
-	      var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
-	      var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
-	      var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	      style[_this3.transform] = (per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
-	      return;
-	    } else if (_styleUtils2.default.filter.indexOf(_key) >= 0) {
-	      if (!_this3.filterObject) {
-	        return;
-	      }
-	      _this3.filterObject[_key] = data[_key];
-	      var filterStyle = '';
-	      Object.keys(_this3.filterObject).forEach(function (filterKey) {
-	        filterStyle += ' ' + filterKey + '(' + _this3.filterObject[filterKey] + ')';
-	      });
-	      style[_this3.filterName] = filterStyle.trim();
-	      return;
+	p.getTransformValue = function (t, ratio) {
+	  var perspective = t.perspective;
+	  var angle = t.rotate;
+	  var rotateX = t.rotateX;
+	  var rotateY = t.rotateY;
+	  var sx = t.scaleX;
+	  var sy = t.scaleY;
+	  var sz = t.scaleZ;
+	  var skx = t.skewX;
+	  var sky = t.skewY;
+	  var translateX = t.translateX;
+	  var translateY = t.translateY;
+	  var translateZ = t.translateZ || 0;
+	  var xPercent = t.xPercent || 0;
+	  var yPercent = t.yPercent || 0;
+	  var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
+	  var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
+	  var an = angle ? 'rotate(' + angle + 'deg)' : '';
+	  var ss = void 0;
+	  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
+	    if (!this.supports3D || ratio >= 1) {
+	      var matrix = '1,0,0,1,' + translateX + ',' + translateY;
+	      ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
+	      // IE 9 没 3d;
+	      return percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk;
 	    }
-	    style[_key] = data[_key];
-	  });
+	    ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
+	    return percent + ' translate(' + translateX + 'px,' + translateY + 'px) ' + an + ' ' + ss + ' ' + sk;
+	  }
+	  ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
+	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
+	  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
+	  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
+	  return per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
 	};
 	p.setArrayRatio = function (ratio, start, vars, unit, type) {
 	  if (type === 'color' && start.length === 4 && vars.length === 3) {
 	    vars[3] = 1;
 	  }
 	  var startInset = start.indexOf('inset') >= 0;
-	  // 操，indexOf 改了我三次，发了三个版本，我是有多粗心啊。。。
 	  var endInset = vars.indexOf('inset') >= 0;
 	  if (startInset && !endInset || endInset && !startInset) {
 	    throw console.error('Error: "box-shadow" inset have to exist');
@@ -22832,71 +22785,89 @@
 	};
 	
 	p.setRatio = function (ratio, tween) {
-	  var _this4 = this;
+	  var _this3 = this;
 	
 	  tween.style = tween.style || {};
 	  if (this.start.transform) {
-	    tween.style.transform = tween.style.transform || {};
+	    tween.style.transform = tween.style.transform || _extends({}, this.start.transform);
 	  }
+	  if (ratio === 1) {
+	    tween.style.willChange = null;
+	  } else if (ratio === 0) {
+	    tween.style.willChange = this.willChange;
+	  }
+	  var style = this.target.style;
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
-	    var startVars = _isTransform ? _this4.start.transform[key] : _this4.start[key];
-	    var endVars = _this4.propsData.data[key];
-	    var unit = _this4.propsData.dataUnit[key];
-	    var count = _this4.propsData.dataCount[key];
+	    var startVars = _isTransform ? _this3.start.transform[key] : _this3.start[key];
+	    var endVars = _this3.propsData.data[key];
+	    var unit = _this3.propsData.dataUnit[key];
+	    var count = _this3.propsData.dataCount[key];
 	    if (key in _plugins2.default) {
-	      _this4.propsData.data[key].setRatio(ratio, tween);
+	      _this3.propsData.data[key].setRatio(ratio, tween);
+	      style[_this3.transform] = _this3.getTransformValue(tween.style.transform, ratio);
 	      return;
 	    } else if (_isTransform) {
-	      if (unit === '%' || unit === 'em' || unit === 'rem') {
+	      if (unit && unit.match(/%|vw|vh|em|rem/i)) {
 	        var pName = key === 'translateX' ? 'xPercent' : 'yPercent';
-	        startVars = _this4.start.transform[pName];
+	        startVars = _this3.start.transform[pName];
 	        if (count.charAt(1) === '=') {
 	          tween.style.transform[pName] = startVars + endVars * ratio + unit;
-	          return;
+	        } else {
+	          tween.style.transform[pName] = (endVars - startVars) * ratio + startVars + unit;
 	        }
-	        tween.style.transform[pName] = (endVars - startVars) * ratio + startVars + unit;
-	        return;
 	      } else if (key === 'scale') {
-	        var xStart = _this4.start.transform.scaleX;
-	        var yStart = _this4.start.transform.scaleY;
+	        var xStart = _this3.start.transform.scaleX;
+	        var yStart = _this3.start.transform.scaleY;
 	        if (count.charAt(1) === '=') {
 	          tween.style.transform.scaleX = xStart + endVars * ratio;
 	          tween.style.transform.scaleY = yStart + endVars * ratio;
-	          return;
+	        } else {
+	          tween.style.transform.scaleX = (endVars - xStart) * ratio + xStart;
+	          tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
 	        }
-	        tween.style.transform.scaleX = (endVars - xStart) * ratio + xStart;
-	        tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
-	        return;
 	      }
 	      if (count.charAt(1) === '=') {
 	        tween.style.transform[key] = startVars + endVars * ratio;
-	        return;
+	      } else {
+	        tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
 	      }
-	      tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
+	      style[_this3.transform] = _this3.getTransformValue(tween.style.transform, ratio);
 	      return;
 	    } else if (Array.isArray(endVars)) {
-	      var _type = _this4.propsData.dataType[key];
-	      tween.style[key] = _this4.setArrayRatio(ratio, startVars, endVars, unit, _type);
+	      var _type = _this3.propsData.dataType[key];
+	      tween.style[key] = _this3.setArrayRatio(ratio, startVars, endVars, unit, _type);
 	      if (_type === 'string') {
-	        tween.style[key] = tween.style[key].join(_this4.propsData.dataSplitStr[key]);
+	        tween.style[key] = tween.style[key].join(_this3.propsData.dataSplitStr[key]);
 	      }
-	      return;
-	    }
-	    var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
-	    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
-	    unit = unit || (_styleUtils2.default.filter.indexOf(key) >= 0 ? '' : styleUnit);
-	    if (typeof endVars === 'string') {
-	      tween.style[key] = endVars;
 	    } else {
-	      if (count.charAt(1) === '=') {
-	        tween.style[key] = startVars + endVars * ratio + unit;
+	      var styleUnit = (0, _styleUtils.stylesToCss)(key, 0);
+	      styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
+	      unit = unit || (_styleUtils2.default.filter.indexOf(key) >= 0 ? '' : styleUnit);
+	      if (typeof endVars === 'string') {
+	        tween.style[key] = endVars;
+	      } else {
+	        if (count.charAt(1) === '=') {
+	          tween.style[key] = startVars + endVars * ratio + unit;
+	        } else {
+	          tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
+	        }
+	      }
+	    }
+	    if (_styleUtils2.default.filter.indexOf(key) >= 0) {
+	      if (!_this3.filterObject) {
 	        return;
 	      }
-	      tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
+	      _this3.filterObject[key] = tween.style[key];
+	      var filterStyle = '';
+	      Object.keys(_this3.filterObject).forEach(function (filterKey) {
+	        filterStyle += ' ' + filterKey + '(' + _this3.filterObject[filterKey] + ')';
+	      });
+	      style[_this3.filterName] = filterStyle.trim();
+	      return;
 	    }
+	    style[key] = tween.style[key];
 	  });
-	  this.setAnimData(tween.style, ratio);
 	};
 	exports.default = StylePlugin;
 	module.exports = exports['default'];
@@ -22923,18 +22894,25 @@
 	var p = Ticker.prototype = {
 	  tickFnObject: {},
 	  id: -1,
+	  tweenId: 0,
 	  frame: 0,
 	  perFrame: Math.round(1000 / 60),
 	  getTime: Date.now || function () {
 	    return new Date().getTime();
 	  },
 	  elapsed: 0,
-	  skipFrameMax: 100
+	  lastUpdate: 0,
+	  skipFrameMax: 166
+	};
+	p.add = function (fn) {
+	  var key = 'tweenOne' + this.tweenId;
+	  this.tweenId++;
+	  this.wake(key, fn);
+	  return key;
 	};
 	p.wake = function (key, fn) {
 	  this.tickFnObject[key] = fn;
 	  if (this.id === -1) {
-	    this.lastUpdate = this.getTime();
 	    this.id = (0, _raf2.default)(this.tick);
 	  }
 	};
@@ -22948,8 +22926,8 @@
 	};
 	var ticker = new Ticker();
 	p.tick = function (a) {
-	  ticker.elapsed = ticker.getTime() - ticker.lastUpdate;
-	  ticker.lastUpdate += ticker.elapsed;
+	  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : ticker.perFrame;
+	  ticker.lastUpdate = ticker.lastUpdate ? ticker.lastUpdate + ticker.elapsed : ticker.getTime() + ticker.elapsed;
 	  var obj = ticker.tickFnObject;
 	  Object.keys(obj).forEach(function (key) {
 	    if (obj[key]) {
@@ -22963,7 +22941,6 @@
 	  if (ticker.elapsed > ticker.skipFrameMax || !ticker.frame) {
 	    ticker.frame++;
 	  } else {
-	    // 太卡。跳帧处理。保证时间的正确；
 	    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
 	  }
 	  ticker.id = (0, _raf2.default)(ticker.tick);
