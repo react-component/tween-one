@@ -103,7 +103,8 @@ p.getAnimStart = function () {
   const computedStyle = this.getComputedStyle();
   const style = {};
   this.supports3D = checkStyleName('perspective');
-  this.willChange = computedStyle.willChange === 'auto' ? '' : computedStyle.willChange;
+  this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange ||
+    computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
     this.willChange = this.willChange.replace(key, '');
