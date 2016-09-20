@@ -107,7 +107,8 @@ p.getAnimStart = function () {
   computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
-    const willStyle = key in _plugin ? this.propsData.data[key].useStyle || key : key;
+    let willStyle = key in _plugin ? this.propsData.data[key].useStyle || cssName : cssName;
+    willStyle = willStyle === 'transformOrigin' ? 'transform-origin' : willStyle;
     this.willChange = this.willChange.replace(willStyle, '');
     this.willChange = this.willChange === '' ? willStyle : `${willStyle}, ${this.willChange}`;
     let startData = computedStyle[cssName];
@@ -258,12 +259,12 @@ p.setRatio = function (ratio, tween) {
   if (this.start.transform) {
     tween.style.transform = tween.style.transform || { ...this.start.transform };
   }
-  if (ratio === 1) {
-    tween.style.willChange = null;
-  } else if (ratio === 0) {
-    tween.style.willChange = this.willChange;
-  }
   const style = this.target.style;
+  if (ratio === 1) {
+    style.willChange = null;
+  } else if (ratio === 0) {
+    style.willChange = this.willChange;
+  }
   Object.keys(this.propsData.data).forEach(key => {
     const _isTransform = isTransform(key) === 'transform';
     let startVars = _isTransform ? this.start.transform[key] : this.start[key];
