@@ -22643,8 +22643,9 @@
 	  this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange || computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var cssName = (0, _styleUtils.isConvert)(key);
-	    _this2.willChange = _this2.willChange.replace(key, '');
-	    _this2.willChange = _this2.willChange === '' ? key : key + ', ' + _this2.willChange;
+	    var willStyle = key in _plugins2.default ? _this2.propsData.data[key].useStyle || key : key;
+	    _this2.willChange = _this2.willChange.replace(willStyle, '');
+	    _this2.willChange = _this2.willChange === '' ? willStyle : willStyle + ', ' + _this2.willChange;
 	    var startData = computedStyle[cssName];
 	    var fixed = computedStyle.position === 'fixed';
 	    if (!startData || startData === 'none' || startData === 'auto') {
@@ -22805,7 +22806,13 @@
 	    var count = _this3.propsData.dataCount[key];
 	    if (key in _plugins2.default) {
 	      _this3.propsData.data[key].setRatio(ratio, tween);
-	      style[_this3.transform] = _this3.getTransformValue(tween.style.transform, ratio);
+	      if (key === 'bezier') {
+	        style[_this3.transform] = _this3.getTransformValue(tween.style.transform, ratio);
+	      } else {
+	        Object.keys(tween.style).forEach(function (css) {
+	          return style[css] = tween.style[css];
+	        });
+	      }
 	      return;
 	    } else if (_isTransform) {
 	      if (unit && unit.match(/%|vw|vh|em|rem/i)) {

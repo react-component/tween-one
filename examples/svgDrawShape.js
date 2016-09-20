@@ -25,6 +25,7 @@ webpackJsonp([21],{
 	};
 	SvgDrawPlugin.prototype = {
 	  name: 'SVGDraw',
+	  useStyle: 'stroke-dasharray, stroke-dashoffset',
 	  setVars: function setVars(vars) {
 	    var _vars = { start: 0 };
 	    if (typeof vars === 'number') {
