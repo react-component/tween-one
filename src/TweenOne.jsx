@@ -1,6 +1,5 @@
 import React, { PropTypes, Component } from 'react';
 import ReactDom from 'react-dom';
-import assign from 'object-assign';
 import { dataToArray, objectEqual } from './util';
 import { stylesToCss } from 'style-utils';
 import TimeLine from './TimeLine';
@@ -12,7 +11,6 @@ function noop() {
 
 const perFrame = Math.round(1000 / 60);
 
-let tickerIdNum = 0;
 class TweenOne extends Component {
   constructor() {
     super(...arguments);
@@ -132,9 +130,7 @@ class TweenOne extends Component {
     if (this.paused) {
       return;
     }
-    this.rafID = `tween${Date.now()}-${tickerIdNum}`;
-    ticker.wake(this.rafID, this.raf);
-    tickerIdNum++;
+    this.rafID = ticker.add(this.raf);
   }
 
   frame() {
@@ -166,7 +162,7 @@ class TweenOne extends Component {
   }
 
   render() {
-    const props = assign({}, this.props);
+    const props = { ...this.props };
     [
       'animation',
       'component',
@@ -177,16 +173,13 @@ class TweenOne extends Component {
       'moment',
       'resetStyleBool',
     ].forEach(key => delete props[key]);
-    props.style = assign({}, this.props.style);
-    for (const p in props.style) {
-      if (p.indexOf('filter') >= 0 || p.indexOf('Filter') >= 0) {
-        // ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix=> style[`${prefix}Filter`] = style[p]);
-        const transformArr = ['Webkit', 'Moz', 'Ms', 'ms'];
-        for (let i = 0; i < transformArr.length; i++) {
-          props.style[`${transformArr[i]}Filter`] = props.style[p];
-        }
+    props.style = { ...this.props.style };
+    Object.keys(props.style).forEach(p => {
+      if (p.match(/filter/i)) {
+        ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix =>
+          props.style[`${prefix}Filter`] = props.style[p]);
       }
-    }
+    });
     props.component = typeof props.component === 'function' ?
       this.props.componentReplace : props.component;
     if (!props.component) {

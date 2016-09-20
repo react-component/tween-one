@@ -2,7 +2,6 @@
 /**
  * Created by jljsj on 16/1/27.
  */
-import assign from 'object-assign';
 import easingTypes from 'tween-functions';
 import _plugin from './plugins';
 import StylePlugin from './plugin/StylePlugin';
@@ -10,6 +9,7 @@ import {
   getColor,
   parseColor,
 } from 'style-utils';
+import { startConvertToEndUnit } from './util.js';
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
 const DEFAULT_DELAY = 0;
@@ -49,7 +49,7 @@ const timeLine = function (target, toData, attr) {
   this.startDefaultData = {};
   const data = [];
   toData.forEach((d, i) => {
-    const _d = assign({}, d);
+    const _d = { ...d };
     if (this.attr === 'style') {
       data[i] = {};
       Object.keys(_d).forEach(key => {
@@ -66,7 +66,7 @@ const timeLine = function (target, toData, attr) {
           throw new Error('Style should be the object.');
         }
         if (key === 'bezier') {
-          _d.style = assign(_d.style || {}, { bezier: _d[key] });
+          _d.style = { ..._d.style, bezier: _d[key] };
           delete _d[key];
           this.startDefaultData.style = this.target.getAttribute('style');
         } else {
@@ -107,14 +107,6 @@ p.setDefaultData = function (_vars) {
           const count = _data.toString().replace(/[^+|=|-]/g, '');
           tweenData.vars[_key] = { unit, vars, count };
         } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugin) {
-          /*
-           * SVG 情况如下：
-           * points: ***,*** ***,***
-           * - split(' ') => ['***,***','***,**'] split(',') => [[***,***],[***,***]];
-           * - array 里的 array.trim(',') => array.join(' ');
-           * d: M*** *** L*** ** C*** *** *** *** *** *** Z || M***,***L***,***Z
-           * - split(/[a-z]/i).filter(item => item), unit: split(/\d+[0-9|\s]+\s/)
-           */
           tweenData.vars[_key] = new _plugin.SVGMorph(this.target, _data, _key);
         }
       }
@@ -137,18 +129,6 @@ p.setDefaultData = function (_vars) {
   this.totalTime = repeatMax ? Number.MAX_VALUE : now;
   this.defaultData = data;
 };
-p.convertToMarks = function (style, num, unit) {
-  const horiz = /(?:Left|Right|Width)/i.test(style);
-  const t = style.indexOf('border') !== -1 ? this.target : this.target.parentNode || document.body;
-  let pix;
-  if (unit === '%') {
-    pix = parseFloat(num) * 100 / (horiz ? t.clientWidth : t.clientHeight);
-  } else {
-    // em rem
-    pix = parseFloat(num) / 16;
-  }
-  return pix;
-};
 p.getAnimStartData = function (item) {
   const start = {};
   Object.keys(item).forEach(_key => {
@@ -167,7 +147,8 @@ p.getAnimStartData = function (item) {
       } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
         const unit = data.toString().replace(/[^a-z|%]/g, '');
         start[_key] = unit !== item[_key].unit ?
-          this.convertToMarks(_key, parseFloat(data), unit) : parseFloat(data);
+          startConvertToEndUnit(this.target, _key, parseFloat(data), unit, item[_key].unit)
+          : parseFloat(data);
       }
       // start[_key] = data;
       return;
@@ -184,8 +165,6 @@ p.setAnimData = function (data) {
     this.target[key] = data[key];
   });
 };
-
-
 p.setRatio = function (ratio, endData, i) {
   Object.keys(endData.vars).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {

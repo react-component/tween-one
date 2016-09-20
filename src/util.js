@@ -151,3 +151,32 @@ export function transformArguments(arg, key, i) {
 export function getChildrenFromProps(props) {
   return props && props.children;
 }
+
+export function startConvertToEndUnit(target, style, num, unit, dataUnit, fixed, isOriginWidth) {
+  const horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
+  let t = style.indexOf('border') !== -1 ? target : target.parentNode || document.body;
+  t = fixed ? document.body : t;
+  let pix;
+
+  if (unit === '%') {
+    pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
+  } else if (unit === 'vw') {
+    pix = parseFloat(num) * document.body.clientWidth / 100;
+  } else if (unit === 'vh') {
+    pix = parseFloat(num) * document.body.clientHeight / 100;
+  } else if (unit && unit.match(/em/i)) {
+    pix = parseFloat(num) * 16;
+  } else {
+    pix = parseFloat(num);
+  }
+  if (dataUnit === '%') {
+    pix = pix * 100 / (horiz ? t.clientWidth : t.clientHeight);
+  } else if (dataUnit === 'vw') {
+    pix = parseFloat(num) / document.body.clientWidth * 100;
+  } else if (dataUnit === 'vh') {
+    pix = parseFloat(num) / document.body.clientHeight * 100;
+  } else if (dataUnit && dataUnit.match(/em/i)) {
+    pix = parseFloat(num) / 16;
+  }
+  return pix;
+}

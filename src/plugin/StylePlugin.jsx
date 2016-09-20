@@ -11,7 +11,7 @@ import cssList, {
   getTransform,
   stylesToCss,
 } from 'style-utils';
-import assign from 'object-assign';
+import { startConvertToEndUnit } from '../util.js';
 import _plugin from '../plugins';
 
 const StylePlugin = function (target, vars, type) {
@@ -35,7 +35,7 @@ p.getTweenData = function (key, vars) {
     dataCount: {},
     dataSplitStr: {},
   };
-  if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
+  if (key.match(/colo|fill|storker/i)) {
     data.data[key] = parseColor(vars);
     data.dataType[key] = 'color';
   } else if (key.match(/shadow/i)) {
@@ -88,22 +88,6 @@ p.setDefaultData = function () {
     }
   });
 };
-p.convertToMarks = function (style, num, unit, isOrigin, fixed) {
-  const horiz = /(?:Left|Right|Width|X)/i.test(style);
-  let t = style.indexOf('border') !== -1 || style === 'transformOrigin' ?
-    this.target : this.target.parentNode || document.body;
-  t = fixed ? document.body : t;
-  let pix;
-  if (unit === '%') {
-    pix = parseFloat(num) * 100 / (horiz || isOrigin ? t.clientWidth : t.clientHeight);
-  } else if (unit && unit.match(/em/i)) {
-    // em rem
-    pix = parseFloat(num) / 16;
-  } else {
-    pix = parseFloat(num);
-  }
-  return pix;
-};
 p.convertToMarksArray = function (unit, key, data, i) {
   const startUnit = data.toString().replace(/[^a-z|%]/g, '');
   const endUnit = unit[i];
@@ -112,14 +96,18 @@ p.convertToMarksArray = function (unit, key, data, i) {
   } else if (!parseFloat(data) && parseFloat(data) !== 0) {
     return data;
   }
-  return this.convertToMarks(key, data, endUnit, key === 'transformOrigin' && !i);
+  return startConvertToEndUnit(this.target, key, data,
+    startUnit, endUnit, null, key === 'transformOrigin' && !i);
 };
 p.getAnimStart = function () {
   const computedStyle = this.getComputedStyle();
   const style = {};
   this.supports3D = checkStyleName('perspective');
+  this.willChange = computedStyle.willChange === 'auto' ? '' : computedStyle.willChange;
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
+    this.willChange = this.willChange.replace(key, '');
+    this.willChange = this.willChange === '' ? key : `${key}, ${this.willChange}`;
     let startData = computedStyle[cssName];
     const fixed = computedStyle.position === 'fixed';
     if (!startData || startData === 'none' || startData === 'auto') {
@@ -140,24 +128,25 @@ p.getAnimStart = function () {
       startData = computedStyle[this.transform];
       endUnit = this.propsData.dataUnit[key];
       transform = getTransform(startData);
-      if (endUnit === '%') {
+      if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
         const percent = key === 'translateX' ? 'xPercent' : 'yPercent';
-        transform[percent] = this.convertToMarks(key, transform[key], '%');
+        transform[percent] = startConvertToEndUnit(this.target, key, transform[key], null, endUnit);
         transform[key] = 0;
       }
       style.transform = transform;
     } else if (cssName === 'filter') {
-      this.filterName = checkStyleName('filter');
+      this.filterName = checkStyleName('filter') || 'filter';
       startData = computedStyle[this.filterName];
-      this.filterObject = assign(this.filterObject || {}, splitFilterToObject(startData));
+      this.filterObject = { ...this.filterObject, ...splitFilterToObject(startData) };
       startData = this.filterObject[key] || 0;
       startUnit = startData.toString().replace(/[^a-z|%]/g, '');
       endUnit = this.propsData.dataUnit[key];
       if (endUnit !== startUnit) {
-        startData = this.convertToMarks(key, startData, endUnit, null, fixed);
+        startData = startConvertToEndUnit(this.target, cssName,
+          parseFloat(startData), startUnit, endUnit, fixed);
       }
       style[key] = parseFloat(startData);
-    } else if (key.match(/color/i) || key === 'fill' || key === 'stroke') {
+    } else if (key.match(/color|fill|stroke/i)) {
       startData = !startData && key === 'stroke' ? 'rgba(255, 255, 255, 0)' : startData;
       style[cssName] = parseColor(startData);
     } else if (key.match(/shadow/i)) {
@@ -175,20 +164,8 @@ p.getAnimStart = function () {
       endUnit = this.propsData.dataUnit[cssName];
       startUnit = startData.toString().replace(/[^a-z|%]/g, '');
       if (endUnit !== startUnit) {
-        if (startUnit === '%') {
-          const node = document.createElement('div');
-          node.style.cssText = `border:0 solid red;position: ${
-            computedStyle.position}line-height:0;`;
-          const horiz = /(?:Left|Right|Width)/i.test(cssName);
-          node.style[horiz ? 'width' : 'height'] = startData;
-          node.style[cssName] = 0;
-          const parentNode = (this.target.parentNode || document.body);
-          parentNode.appendChild(node);
-          startData = parseFloat(node[horiz ? 'offsetWidth' : 'offsetHeight']);
-          parentNode.removeChild(node);
-        } else if (endUnit && endUnit !== 'px') {
-          startData = this.convertToMarks(cssName, startData, endUnit, null, fixed);
-        }
+        startData = startConvertToEndUnit(this.target, cssName,
+          parseFloat(startData), startUnit, endUnit, fixed);
       }
       style[cssName] = parseFloat(startData || 0);
     }
@@ -196,71 +173,48 @@ p.getAnimStart = function () {
   this.start = style;
   return style;
 };
-p.setAnimData = function (data, ratio) {
-  const style = this.target.style;
-  Object.keys(data).forEach(_key => {
-    if (_key === 'transform') {
-      const t = data[_key];
-      const start = this.start.transform || {};
-      const perspective = typeof t.perspective === 'number' ? t.perspective : start.perspective;
-      const angle = typeof t.rotate === 'number' ? t.rotate : start.rotate;
-      const rotateX = typeof t.rotateX === 'number' ? t.rotateX : start.rotateX;
-      const rotateY = typeof t.rotateY === 'number' ? t.rotateY : start.rotateY;
-      const sx = typeof t.scaleX === 'number' ? t.scaleX : start.scaleX;
-      const sy = typeof t.scaleY === 'number' ? t.scaleY : start.scaleY;
-      const sz = typeof t.scaleZ === 'number' ? t.scaleZ : start.scaleZ;
-      const skx = typeof t.skewX === 'number' ? t.skewX : start.skewX;
-      const sky = typeof t.skewY === 'number' ? t.skewY : start.skewY;
-      const translateX = typeof t.translateX === 'number' ? t.translateX : start.translateX;
-      const translateY = typeof t.translateY === 'number' ? t.translateY : start.translateY;
-      const translateZ = (typeof t.translateZ === 'number' ? t.translateZ : start.tranlateZ) || 0;
-      const xPercent = t.xPercent || 0;
-      const yPercent = t.yPercent || 0;
-      const percent = `${(xPercent || yPercent) ? `translate(${xPercent},${yPercent})` : ''}`;
-      const sk = skx || sky ? `skew(${skx}deg,${sky}deg)` : '';
-      const an = angle ? `rotate(${angle}deg)` : '';
-      let ss;
-      if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
-        if (!this.supports3D || ratio >= 1) {
-          const matrix = `1,0,0,1,${translateX},${translateY}`;
-          ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
-          // IE 9 没 3d;
-          style[this.transform] = `${percent} matrix(${matrix}) ${an} ${ss} ${sk}`.trim();
-          return;
-        }
-        ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
-        style[this.transform] = `${percent} translate3d(${translateX}px,${
-          translateY}px,${translateZ}px) ${an} ${ss} ${sk}`.trim();
-        return;
-      }
-      ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
-      const rX = rotateX ? `rotateX(${rotateX}deg)` : '';
-      const rY = rotateY ? `rotateY(${rotateY}deg)` : '';
-      const per = perspective ? `perspective(${perspective}px)` : '';
-      style[this.transform] = `${per} ${percent} translate3d(${translateX}px,${
-        translateY}px,${translateZ}px) ${ss} ${an} ${rX} ${rY} ${sk}`.trim();
-      return;
-    } else if (cssList.filter.indexOf(_key) >= 0) {
-      if (!this.filterObject) {
-        return;
-      }
-      this.filterObject[_key] = data[_key];
-      let filterStyle = '';
-      Object.keys(this.filterObject).forEach(filterKey => {
-        filterStyle += ` ${filterKey}(${this.filterObject[filterKey]})`;
-      });
-      style[this.filterName] = filterStyle.trim();
-      return;
+p.getTransformValue = function (t, ratio) {
+  const perspective = t.perspective;
+  const angle = t.rotate;
+  const rotateX = t.rotateX;
+  const rotateY = t.rotateY;
+  const sx = t.scaleX;
+  const sy = t.scaleY;
+  const sz = t.scaleZ;
+  const skx = t.skewX;
+  const sky = t.skewY;
+  const translateX = t.translateX;
+  const translateY = t.translateY;
+  const translateZ = t.translateZ || 0;
+  const xPercent = t.xPercent || 0;
+  const yPercent = t.yPercent || 0;
+  const percent = `${(xPercent || yPercent) ? `translate(${xPercent},${yPercent})` : ''}`;
+  const sk = skx || sky ? `skew(${skx}deg,${sky}deg)` : '';
+  const an = angle ? `rotate(${angle}deg)` : '';
+  let ss;
+  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
+    if (!this.supports3D || ratio >= 1) {
+      const matrix = `1,0,0,1,${translateX},${translateY}`;
+      ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
+      // IE 9 没 3d;
+      return `${percent} matrix(${matrix}) ${an} ${ss} ${sk}`;
     }
-    style[_key] = data[_key];
-  });
+    ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
+    return `${percent} translate(${translateX}px,${
+      translateY}px) ${an} ${ss} ${sk}`;
+  }
+  ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
+  const rX = rotateX ? `rotateX(${rotateX}deg)` : '';
+  const rY = rotateY ? `rotateY(${rotateY}deg)` : '';
+  const per = perspective ? `perspective(${perspective}px)` : '';
+  return `${per} ${percent} translate3d(${translateX}px,${
+    translateY}px,${translateZ}px) ${ss} ${an} ${rX} ${rY} ${sk}`;
 };
 p.setArrayRatio = function (ratio, start, vars, unit, type) {
   if (type === 'color' && start.length === 4 && vars.length === 3) {
     vars[3] = 1;
   }
   const startInset = start.indexOf('inset') >= 0;
-  // 操，indexOf 改了我三次，发了三个版本，我是有多粗心啊。。。
   const endInset = vars.indexOf('inset') >= 0;
   if (startInset && !endInset || endInset && !startInset) {
     throw console.error('Error: "box-shadow" inset have to exist');
@@ -300,8 +254,14 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
 p.setRatio = function (ratio, tween) {
   tween.style = tween.style || {};
   if (this.start.transform) {
-    tween.style.transform = tween.style.transform || {};
+    tween.style.transform = tween.style.transform || { ...this.start.transform };
   }
+  if (ratio === 1) {
+    tween.style.willChange = null;
+  } else if (ratio === 0) {
+    tween.style.willChange = this.willChange;
+  }
+  const style = this.target.style;
   Object.keys(this.propsData.data).forEach(key => {
     const _isTransform = isTransform(key) === 'transform';
     let startVars = _isTransform ? this.start.transform[key] : this.start[key];
@@ -310,34 +270,34 @@ p.setRatio = function (ratio, tween) {
     const count = this.propsData.dataCount[key];
     if (key in _plugin) {
       this.propsData.data[key].setRatio(ratio, tween);
+      style[this.transform] = this.getTransformValue(tween.style.transform, ratio);
       return;
     } else if (_isTransform) {
-      if (unit === '%' || unit === 'em' || unit === 'rem') {
+      if (unit && unit.match(/%|vw|vh|em|rem/i)) {
         const pName = key === 'translateX' ? 'xPercent' : 'yPercent';
         startVars = this.start.transform[pName];
         if (count.charAt(1) === '=') {
           tween.style.transform[pName] = (startVars + endVars * ratio) + unit;
-          return;
+        } else {
+          tween.style.transform[pName] = ((endVars - startVars) * ratio + startVars) + unit;
         }
-        tween.style.transform[pName] = ((endVars - startVars) * ratio + startVars) + unit;
-        return;
       } else if (key === 'scale') {
         const xStart = this.start.transform.scaleX;
         const yStart = this.start.transform.scaleY;
         if (count.charAt(1) === '=') {
           tween.style.transform.scaleX = xStart + endVars * ratio;
           tween.style.transform.scaleY = yStart + endVars * ratio;
-          return;
+        } else {
+          tween.style.transform.scaleX = (endVars - xStart) * ratio + xStart;
+          tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
         }
-        tween.style.transform.scaleX = (endVars - xStart) * ratio + xStart;
-        tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
-        return;
       }
       if (count.charAt(1) === '=') {
         tween.style.transform[key] = startVars + endVars * ratio;
-        return;
+      } else {
+        tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
       }
-      tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
+      style[this.transform] = this.getTransformValue(tween.style.transform, ratio);
       return;
     } else if (Array.isArray(endVars)) {
       const _type = this.propsData.dataType[key];
@@ -345,21 +305,33 @@ p.setRatio = function (ratio, tween) {
       if (_type === 'string') {
         tween.style[key] = tween.style[key].join(this.propsData.dataSplitStr[key]);
       }
-      return;
-    }
-    let styleUnit = stylesToCss(key, 0);
-    styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
-    unit = unit || (cssList.filter.indexOf(key) >= 0 ? '' : styleUnit);
-    if (typeof endVars === 'string') {
-      tween.style[key] = endVars;
     } else {
-      if (count.charAt(1) === '=') {
-        tween.style[key] = startVars + endVars * ratio + unit;
+      let styleUnit = stylesToCss(key, 0);
+      styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
+      unit = unit || (cssList.filter.indexOf(key) >= 0 ? '' : styleUnit);
+      if (typeof endVars === 'string') {
+        tween.style[key] = endVars;
+      } else {
+        if (count.charAt(1) === '=') {
+          tween.style[key] = startVars + endVars * ratio + unit;
+        } else {
+          tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
+        }
+      }
+    }
+    if (cssList.filter.indexOf(key) >= 0) {
+      if (!this.filterObject) {
         return;
       }
-      tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
+      this.filterObject[key] = tween.style[key];
+      let filterStyle = '';
+      Object.keys(this.filterObject).forEach(filterKey => {
+        filterStyle += ` ${filterKey}(${this.filterObject[filterKey]})`;
+      });
+      style[this.filterName] = filterStyle.trim();
+      return;
     }
+    style[key] = tween.style[key];
   });
-  this.setAnimData(tween.style, ratio);
 };
 export default StylePlugin;

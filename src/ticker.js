@@ -8,17 +8,24 @@ const Ticker = function () {
 const p = Ticker.prototype = {
   tickFnObject: {},
   id: -1,
+  tweenId: 0,
   frame: 0,
   perFrame: Math.round(1000 / 60),
   getTime: Date.now || (() =>
     new Date().getTime()),
   elapsed: 0,
-  skipFrameMax: 100,
+  lastUpdate: 0,
+  skipFrameMax: 166,
+};
+p.add = function (fn) {
+  const key = `tweenOne${this.tweenId}`;
+  this.tweenId++;
+  this.wake(key, fn);
+  return key;
 };
 p.wake = function (key, fn) {
   this.tickFnObject[key] = fn;
   if (this.id === -1) {
-    this.lastUpdate = this.getTime();
     this.id = requestAnimationFrame(this.tick);
   }
 };
@@ -32,8 +39,9 @@ p.sleep = function () {
 };
 const ticker = new Ticker;
 p.tick = function (a) {
-  ticker.elapsed = ticker.getTime() - ticker.lastUpdate;
-  ticker.lastUpdate += ticker.elapsed;
+  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : ticker.perFrame;
+  ticker.lastUpdate = ticker.lastUpdate
+    ? ticker.lastUpdate + ticker.elapsed : ticker.getTime() + ticker.elapsed;
   const obj = ticker.tickFnObject;
   Object.keys(obj).forEach(key => {
     if (obj[key]) {
@@ -47,7 +55,6 @@ p.tick = function (a) {
   if (ticker.elapsed > ticker.skipFrameMax || !ticker.frame) {
     ticker.frame++;
   } else {
-    // 太卡。跳帧处理。保证时间的正确；
     ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
   }
   ticker.id = requestAnimationFrame(ticker.tick);
