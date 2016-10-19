@@ -22794,9 +22794,9 @@
 	    tween.style.transform = tween.style.transform || _extends({}, this.start.transform);
 	  }
 	  var style = this.target.style;
-	  if (ratio === 1) {
+	  if (ratio === (this.type === 'from' ? 0 : 1)) {
 	    style.willChange = null;
-	  } else if (ratio === 0) {
+	  } else if (ratio === (this.type === 'from' ? 1 : 0)) {
 	    style.willChange = this.willChange;
 	  }
 	  Object.keys(this.propsData.data).forEach(function (key) {
