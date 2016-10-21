@@ -207,7 +207,8 @@ p.render = function () {
         initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
       }
     }
-    let progressTime = this.progressTime - initTime;
+    //  精度损失，只取小数点后10位。
+    let progressTime = parseFloat((this.progressTime - initTime).toFixed(10));
     // 设置 start
     const delay = item.delay >= 0 ? item.delay : -item.delay;
     const fromDelay = item.type === 'from' ? delay : 0;
