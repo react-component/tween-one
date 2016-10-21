@@ -197,14 +197,15 @@ p.setRatio = function (ratio, endData, i) {
 p.render = function () {
   this.defaultData.forEach((item, i) => {
     let initTime = item.initTime;
+    const duration = parseFloat(item.duration.toFixed(10));
     // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
     let repeatNum = Math.ceil((this.progressTime - initTime) /
-        (item.duration + item.repeatDelay)) - 1;
+        (duration + item.repeatDelay)) - 1;
     repeatNum = repeatNum < 0 ? 0 : repeatNum;
     // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
     if (item.repeat) {
       if (item.repeat || item.repeat <= repeatNum) {
-        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
+        initTime = initTime + repeatNum * (duration + item.repeatDelay);
       }
     }
     //  精度损失，只取小数点后10位。
@@ -217,8 +218,8 @@ p.render = function () {
       if (!this.register) {
         this.register = true;
         // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-        const st = progressTime / (item.duration + fromDelay) > 1 ? 1 :
-          easingTypes[item.ease](progressTime < 0 ? 0 : progressTime, 0, 1, item.duration);
+        const st = progressTime / (duration + fromDelay) > 1 ? 1 :
+          easingTypes[item.ease](progressTime < 0 ? 0 : progressTime, 0, 1, duration);
         this.setRatio(item.type === 'from' ? 1 - st : st, item, i);
         return;
       }
@@ -231,19 +232,19 @@ p.render = function () {
     }
     if (progressTime < 0 && progressTime + fromDelay > -this.perFrame) {
       this.setRatio(item.type === 'from' ? 1 : 0, item, i);
-    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
+    } else if (progressTime >= duration && item.mode !== 'onComplete') {
       this.setRatio(item.type === 'from' || (repeatNum % 2 && item.yoyo) ? 0 : 1, item, i);
       if (item.mode !== 'reset') {
         item.onComplete();
       }
       item.mode = 'onComplete';
-    } else if (progressTime >= 0 && progressTime < item.duration) {
+    } else if (progressTime >= 0 && progressTime < duration) {
       item.mode = progressTime < this.perFrame ? 'onStart' : 'onUpdate';
       progressTime = progressTime < 0 ? 0 : progressTime;
-      progressTime = progressTime > item.duration ? item.duration : progressTime;
-      let ratio = easingTypes[item.ease](progressTime, 0, 1, item.duration);
+      progressTime = progressTime > duration ? duration : progressTime;
+      let ratio = easingTypes[item.ease](progressTime, 0, 1, duration);
       if (item.yoyo && repeatNum % 2 || item.type === 'from') {
-        ratio = easingTypes[item.ease](progressTime, 1, 0, item.duration);
+        ratio = easingTypes[item.ease](progressTime, 1, 0, duration);
       }
       this.setRatio(ratio, item, i);
       if (progressTime <= this.perFrame) {
@@ -252,7 +253,7 @@ p.render = function () {
         item.onUpdate(ratio);
       }
     }
-    if (progressTime >= 0 && progressTime < item.duration + this.perFrame) {
+    if (progressTime >= 0 && progressTime < duration + this.perFrame) {
       this.onChange({
         moment: this.progressTime,
         item,
