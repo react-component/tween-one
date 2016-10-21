@@ -22165,7 +22165,8 @@
 	        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
 	      }
 	    }
-	    var progressTime = _this6.progressTime - initTime;
+	    //  精度损失，只取小数点后10位。
+	    var progressTime = parseFloat((_this6.progressTime - initTime).toFixed(10));
 	    // 设置 start
 	    var delay = item.delay >= 0 ? item.delay : -item.delay;
 	    var fromDelay = item.type === 'from' ? delay : 0;
