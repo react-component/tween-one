@@ -22156,13 +22156,14 @@
 	
 	  this.defaultData.forEach(function (item, i) {
 	    var initTime = item.initTime;
+	    var duration = parseFloat(item.duration.toFixed(10));
 	    // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-	    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (item.duration + item.repeatDelay)) - 1;
+	    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (duration + item.repeatDelay)) - 1;
 	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
 	    // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
 	    if (item.repeat) {
 	      if (item.repeat || item.repeat <= repeatNum) {
-	        initTime = initTime + repeatNum * (item.duration + item.repeatDelay);
+	        initTime = initTime + repeatNum * (duration + item.repeatDelay);
 	      }
 	    }
 	    //  精度损失，只取小数点后10位。
@@ -22175,7 +22176,7 @@
 	      if (!_this6.register) {
 	        _this6.register = true;
 	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-	        var st = progressTime / (item.duration + fromDelay) > 1 ? 1 : _tweenFunctions2.default[item.ease](progressTime < 0 ? 0 : progressTime, 0, 1, item.duration);
+	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : _tweenFunctions2.default[item.ease](progressTime < 0 ? 0 : progressTime, 0, 1, duration);
 	        _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
 	        return;
 	      }
@@ -22187,19 +22188,19 @@
 	    }
 	    if (progressTime < 0 && progressTime + fromDelay > -_this6.perFrame) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
-	    } else if (progressTime >= item.duration && item.mode !== 'onComplete') {
+	    } else if (progressTime >= duration && item.mode !== 'onComplete') {
 	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
 	      if (item.mode !== 'reset') {
 	        item.onComplete();
 	      }
 	      item.mode = 'onComplete';
-	    } else if (progressTime >= 0 && progressTime < item.duration) {
+	    } else if (progressTime >= 0 && progressTime < duration) {
 	      item.mode = progressTime < _this6.perFrame ? 'onStart' : 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
-	      progressTime = progressTime > item.duration ? item.duration : progressTime;
-	      var ratio = _tweenFunctions2.default[item.ease](progressTime, 0, 1, item.duration);
+	      progressTime = progressTime > duration ? duration : progressTime;
+	      var ratio = _tweenFunctions2.default[item.ease](progressTime, 0, 1, duration);
 	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
-	        ratio = _tweenFunctions2.default[item.ease](progressTime, 1, 0, item.duration);
+	        ratio = _tweenFunctions2.default[item.ease](progressTime, 1, 0, duration);
 	      }
 	      _this6.setRatio(ratio, item, i);
 	      if (progressTime <= _this6.perFrame) {
@@ -22208,7 +22209,7 @@
 	        item.onUpdate(ratio);
 	      }
 	    }
-	    if (progressTime >= 0 && progressTime < item.duration + _this6.perFrame) {
+	    if (progressTime >= 0 && progressTime < duration + _this6.perFrame) {
 	      _this6.onChange({
 	        moment: _this6.progressTime,
 	        item: item,
