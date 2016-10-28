@@ -16,7 +16,7 @@ class TweenOne extends Component {
     super(...arguments);
     this.rafID = -1;
     this.moment = this.props.moment || 0;
-    this.startMoment = this.props.moment;
+    this.startMoment = this.props.moment || perFrame - 1;
     this.startFrame = ticker.frame;
     this.paused = this.props.paused;
     this.reverse = this.props.reverse;
@@ -112,7 +112,7 @@ class TweenOne extends Component {
     if (props.animation && Object.keys(props.animation).length) {
       this.timeLine = new TimeLine(this.dom, dataToArray(props.animation), props.attr);
       // 预先注册 raf, 初始动画数值。
-      this.raf();
+      this.raf(0, true);
       // 开始动画
       this.play();
     }
@@ -126,8 +126,8 @@ class TweenOne extends Component {
     this.rafID = ticker.add(this.raf);
   }
 
-  frame = () => {
-    let moment = (ticker.frame - this.startFrame) * perFrame + (this.startMoment || 0);
+  frame = (register) => {
+    let moment = (ticker.frame - this.startFrame) * perFrame + (!register && this.startMoment || 0);
     if (this.reverse) {
       moment = (this.startMoment || 0) - (ticker.frame - this.startFrame) * perFrame;
     }
@@ -141,8 +141,8 @@ class TweenOne extends Component {
     this.timeLine.frame(moment);
   }
 
-  raf = () => {
-    this.frame();
+  raf = (date, register) => {
+    this.frame(register);
     if ((this.moment >= this.timeLine.totalTime && !this.reverse)
       || this.paused || (this.reverse && this.moment === 0)) {
       return this.cancelRequestAnimationFrame();

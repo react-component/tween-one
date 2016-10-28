@@ -125,7 +125,8 @@ class TweenOneGroup extends Component {
       const key = child.key;
       if (this.keysToLeave.indexOf(key) >= 0) {
         return this.getCoverAnimation(child, i, 'leave');
-      } else if (this.keysToEnter.indexOf(key) >= 0) {
+      } else if ((this.keysToEnter.indexOf(key) >= 0) ||
+        (this.isTween[child.key] && this.keysToLeave.indexOf(key) === -1)) {
         return this.getCoverAnimation(child, i, 'enter');
       } else if (!this.onEnterBool) {
         return this.getCoverAnimation(child, i, 'appear');
