@@ -116,10 +116,10 @@ React.render(<TweenOneGroup>
 | yoyo       | boolean        | false   | if `true`, every other repeat cycle will run in the opposite direction so that the tween appears to go back and forth (forward then backward).  |
 | ease       | string         | `easeInOutQuad` | animate ease. [refer](http://easings.net/en)  |
 | bezier     | object         | null    | bezier curve animate |
-| onStart    | func           | null    | A function that should be called when the tween begins  |
-| onUpdate   | func           | null    | A function that should be called every time the animate updates  |
-| onComplete | func           | null    | A function that should be called when the animate has completed  |
-| onRepeat   | func           | null    | A function that should be called each time the animate repeats  |
+| onStart    | func           | null    | A function that should be called when the tween begins, callback(e), e: { index, target }  |
+| onUpdate   | func           | null    | A function that should be called every time the animate updates, callback(e), e: { index, target,  ratio }   |
+| onComplete | func           | null    | A function that should be called when the animate has completed, callback(e), e: { index, target }  |
+| onRepeat   | func           | null    | A function that should be called each time the animate repeats, callback(e), e: { index, target }  |
 
 
 
@@ -157,4 +157,5 @@ svg polygon or path values: polygon is points, path is d; [demo](http://react-co
 | leave     | object / array / func | `{ x: 30, opacity: 0 }` | leave anim twee-one data. when array is tween-one timeline, func refer to queue-anim  |
 | onEnd     |  func          | -    | one animation end callback |
 | animatingClassName | array | `['tween-one-entering', 'tween-one-leaving']` | className to every element of animating |
+| resetStyleBool   |  boolean   | true  | whether to animation reset the style every time |
 | component | 	React.Element/String | div  |  component tag  | 

@@ -21,13 +21,6 @@ class TweenOne extends Component {
     this.paused = this.props.paused;
     this.reverse = this.props.reverse;
     this.onChange = this.props.onChange;
-    [
-      'raf',
-      'frame',
-      'start',
-      'play',
-      'restart',
-    ].forEach((method) => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
@@ -108,13 +101,13 @@ class TweenOne extends Component {
     this.cancelRequestAnimationFrame();
   }
 
-  restart() {
+  restart = () => {
     this.startMoment = this.timeLine.progressTime;
     this.startFrame = ticker.frame;
     this.play();
   }
 
-  start() {
+  start = () => {
     const props = this.props;
     if (props.animation && Object.keys(props.animation).length) {
       this.timeLine = new TimeLine(this.dom, dataToArray(props.animation), props.attr);
@@ -125,7 +118,7 @@ class TweenOne extends Component {
     }
   }
 
-  play() {
+  play = () => {
     this.cancelRequestAnimationFrame();
     if (this.paused) {
       return;
@@ -133,7 +126,7 @@ class TweenOne extends Component {
     this.rafID = ticker.add(this.raf);
   }
 
-  frame() {
+  frame = () => {
     let moment = (ticker.frame - this.startFrame) * perFrame + (this.startMoment || 0);
     if (this.reverse) {
       moment = (this.startMoment || 0) - (ticker.frame - this.startFrame) * perFrame;
@@ -148,7 +141,7 @@ class TweenOne extends Component {
     this.timeLine.frame(moment);
   }
 
-  raf() {
+  raf = () => {
     this.frame();
     if ((this.moment >= this.timeLine.totalTime && !this.reverse)
       || this.paused || (this.reverse && this.moment === 0)) {
@@ -156,7 +149,7 @@ class TweenOne extends Component {
     }
   }
 
-  cancelRequestAnimationFrame() {
+  cancelRequestAnimationFrame = () => {
     ticker.clear(this.rafID);
     this.rafID = -1;
   }

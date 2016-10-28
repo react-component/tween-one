@@ -224,18 +224,22 @@ p.render = function () {
         return;
       }
     }
+    const e = {
+      index: i,
+      target: this.target,
+    };
     // onRepeat 处理
     if (item.repeat && repeatNum > 0
       && progressTime + fromDelay >= 0 && progressTime < this.perFrame) {
       // 重新开始, 在第一秒触发时调用;
-      item.onRepeat();
+      item.onRepeat(e);
     }
     if (progressTime < 0 && progressTime + fromDelay > -this.perFrame) {
       this.setRatio(item.type === 'from' ? 1 : 0, item, i);
     } else if (progressTime >= duration && item.mode !== 'onComplete') {
       this.setRatio(item.type === 'from' || (repeatNum % 2 && item.yoyo) ? 0 : 1, item, i);
       if (item.mode !== 'reset') {
-        item.onComplete();
+        item.onComplete(e);
       }
       item.mode = 'onComplete';
     } else if (progressTime >= 0 && progressTime < duration) {
@@ -248,19 +252,16 @@ p.render = function () {
       }
       this.setRatio(ratio, item, i);
       if (progressTime <= this.perFrame) {
-        item.onStart();
+        item.onStart(e);
       } else {
-        item.onUpdate(ratio);
+        item.onUpdate({ ratio, ...e });
       }
     }
     if (progressTime >= 0 && progressTime < duration + this.perFrame) {
       this.onChange({
         moment: this.progressTime,
-        item,
-        tween: this.tween,
-        index: i,
         mode: item.mode,
-        target: this.target,
+        ...e,
       });
     }
   });
