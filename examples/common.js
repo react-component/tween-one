@@ -192,7 +192,7 @@
 	      if (props.animation && Object.keys(props.animation).length) {
 	        _this.timeLine = new _TimeLine2.default(_this.dom, (0, _util.dataToArray)(props.animation), props.attr);
 	        // 预先注册 raf, 初始动画数值。
-	        _this.raf();
+	        _this.raf(0, true);
 	        // 开始动画
 	        _this.play();
 	      }
@@ -206,8 +206,8 @@
 	      _this.rafID = _ticker2.default.add(_this.raf);
 	    };
 	
-	    _this.frame = function () {
-	      var moment = (_ticker2.default.frame - _this.startFrame) * perFrame + (_this.startMoment || 0);
+	    _this.frame = function (register) {
+	      var moment = (_ticker2.default.frame - _this.startFrame) * perFrame + (!register && _this.startMoment || 0);
 	      if (_this.reverse) {
 	        moment = (_this.startMoment || 0) - (_ticker2.default.frame - _this.startFrame) * perFrame;
 	      }
@@ -221,8 +221,8 @@
 	      _this.timeLine.frame(moment);
 	    };
 	
-	    _this.raf = function () {
-	      _this.frame();
+	    _this.raf = function (date, register) {
+	      _this.frame(register);
 	      if (_this.moment >= _this.timeLine.totalTime && !_this.reverse || _this.paused || _this.reverse && _this.moment === 0) {
 	        return _this.cancelRequestAnimationFrame();
 	      }
@@ -235,7 +235,7 @@
 	
 	    _this.rafID = -1;
 	    _this.moment = _this.props.moment || 0;
-	    _this.startMoment = _this.props.moment;
+	    _this.startMoment = _this.props.moment || perFrame - 1;
 	    _this.startFrame = _ticker2.default.frame;
 	    _this.paused = _this.props.paused;
 	    _this.reverse = _this.props.reverse;
@@ -23285,7 +23285,7 @@
 	      var key = child.key;
 	      if (_this3.keysToLeave.indexOf(key) >= 0) {
 	        return _this3.getCoverAnimation(child, i, 'leave');
-	      } else if (_this3.keysToEnter.indexOf(key) >= 0) {
+	      } else if (_this3.keysToEnter.indexOf(key) >= 0 || _this3.isTween[child.key] && _this3.keysToLeave.indexOf(key) === -1) {
 	        return _this3.getCoverAnimation(child, i, 'enter');
 	      } else if (!_this3.onEnterBool) {
 	        return _this3.getCoverAnimation(child, i, 'appear');
