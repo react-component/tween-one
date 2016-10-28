@@ -181,6 +181,58 @@
 	
 	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
 	
+	    _this.restart = function () {
+	      _this.startMoment = _this.timeLine.progressTime;
+	      _this.startFrame = _ticker2.default.frame;
+	      _this.play();
+	    };
+	
+	    _this.start = function () {
+	      var props = _this.props;
+	      if (props.animation && Object.keys(props.animation).length) {
+	        _this.timeLine = new _TimeLine2.default(_this.dom, (0, _util.dataToArray)(props.animation), props.attr);
+	        // 预先注册 raf, 初始动画数值。
+	        _this.raf();
+	        // 开始动画
+	        _this.play();
+	      }
+	    };
+	
+	    _this.play = function () {
+	      _this.cancelRequestAnimationFrame();
+	      if (_this.paused) {
+	        return;
+	      }
+	      _this.rafID = _ticker2.default.add(_this.raf);
+	    };
+	
+	    _this.frame = function () {
+	      var moment = (_ticker2.default.frame - _this.startFrame) * perFrame + (_this.startMoment || 0);
+	      if (_this.reverse) {
+	        moment = (_this.startMoment || 0) - (_ticker2.default.frame - _this.startFrame) * perFrame;
+	      }
+	      moment = moment > _this.timeLine.totalTime ? _this.timeLine.totalTime : moment;
+	      moment = moment <= 0 ? 0 : moment;
+	      if (moment < _this.moment && !_this.reverse) {
+	        _this.timeLine.resetDefaultStyle();
+	      }
+	      _this.moment = moment;
+	      _this.timeLine.onChange = _this.onChange;
+	      _this.timeLine.frame(moment);
+	    };
+	
+	    _this.raf = function () {
+	      _this.frame();
+	      if (_this.moment >= _this.timeLine.totalTime && !_this.reverse || _this.paused || _this.reverse && _this.moment === 0) {
+	        return _this.cancelRequestAnimationFrame();
+	      }
+	    };
+	
+	    _this.cancelRequestAnimationFrame = function () {
+	      _ticker2.default.clear(_this.rafID);
+	      _this.rafID = -1;
+	    };
+	
 	    _this.rafID = -1;
 	    _this.moment = _this.props.moment || 0;
 	    _this.startMoment = _this.props.moment;
@@ -188,9 +240,6 @@
 	    _this.paused = _this.props.paused;
 	    _this.reverse = _this.props.reverse;
 	    _this.onChange = _this.props.onChange;
-	    ['raf', 'frame', 'start', 'play', 'restart'].forEach(function (method) {
-	      return _this[method] = _this[method].bind(_this);
-	    });
 	    return _this;
 	  }
 	
@@ -274,58 +323,6 @@
 	
 	  TweenOne.prototype.componentWillUnmount = function componentWillUnmount() {
 	    this.cancelRequestAnimationFrame();
-	  };
-	
-	  TweenOne.prototype.restart = function restart() {
-	    this.startMoment = this.timeLine.progressTime;
-	    this.startFrame = _ticker2.default.frame;
-	    this.play();
-	  };
-	
-	  TweenOne.prototype.start = function start() {
-	    var props = this.props;
-	    if (props.animation && Object.keys(props.animation).length) {
-	      this.timeLine = new _TimeLine2.default(this.dom, (0, _util.dataToArray)(props.animation), props.attr);
-	      // 预先注册 raf, 初始动画数值。
-	      this.raf();
-	      // 开始动画
-	      this.play();
-	    }
-	  };
-	
-	  TweenOne.prototype.play = function play() {
-	    this.cancelRequestAnimationFrame();
-	    if (this.paused) {
-	      return;
-	    }
-	    this.rafID = _ticker2.default.add(this.raf);
-	  };
-	
-	  TweenOne.prototype.frame = function frame() {
-	    var moment = (_ticker2.default.frame - this.startFrame) * perFrame + (this.startMoment || 0);
-	    if (this.reverse) {
-	      moment = (this.startMoment || 0) - (_ticker2.default.frame - this.startFrame) * perFrame;
-	    }
-	    moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
-	    moment = moment <= 0 ? 0 : moment;
-	    if (moment < this.moment && !this.reverse) {
-	      this.timeLine.resetDefaultStyle();
-	    }
-	    this.moment = moment;
-	    this.timeLine.onChange = this.onChange;
-	    this.timeLine.frame(moment);
-	  };
-	
-	  TweenOne.prototype.raf = function raf() {
-	    this.frame();
-	    if (this.moment >= this.timeLine.totalTime && !this.reverse || this.paused || this.reverse && this.moment === 0) {
-	      return this.cancelRequestAnimationFrame();
-	    }
-	  };
-	
-	  TweenOne.prototype.cancelRequestAnimationFrame = function cancelRequestAnimationFrame() {
-	    _ticker2.default.clear(this.rafID);
-	    this.rafID = -1;
 	  };
 	
 	  TweenOne.prototype.render = function render() {
@@ -21420,6 +21417,7 @@
 	  // the combined list
 	  var nextChildrenPending = {};
 	  var pendingChildren = [];
+	  var followChildrenKey = void 0;
 	  prev.forEach(function (c) {
 	    if (!c) {
 	      return;
@@ -21429,10 +21427,14 @@
 	        nextChildrenPending[c.key] = pendingChildren;
 	        pendingChildren = [];
 	      }
+	      followChildrenKey = c.key;
 	    } else if (c.key) {
 	      pendingChildren.push(c);
 	    }
 	  });
+	  if (!followChildrenKey) {
+	    ret = ret.concat(pendingChildren);
+	  }
 	
 	  next.forEach(function (c) {
 	    if (!c) {
@@ -21442,13 +21444,8 @@
 	      ret = ret.concat(nextChildrenPending[c.key]);
 	    }
 	    ret.push(c);
-	  });
-	
-	  // 保持原有的顺序
-	  pendingChildren.forEach(function (c) {
-	    var originIndex = prev.indexOf(c);
-	    if (originIndex >= 0) {
-	      ret.splice(originIndex, 0, c);
+	    if (c.key === followChildrenKey) {
+	      ret = ret.concat(pendingChildren);
 	    }
 	  });
 	
@@ -22181,17 +22178,21 @@
 	        return;
 	      }
 	    }
+	    var e = {
+	      index: i,
+	      target: _this6.target
+	    };
 	    // onRepeat 处理
 	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
 	      // 重新开始, 在第一秒触发时调用;
-	      item.onRepeat();
+	      item.onRepeat(e);
 	    }
 	    if (progressTime < 0 && progressTime + fromDelay > -_this6.perFrame) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
 	    } else if (progressTime >= duration && item.mode !== 'onComplete') {
 	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
 	      if (item.mode !== 'reset') {
-	        item.onComplete();
+	        item.onComplete(e);
 	      }
 	      item.mode = 'onComplete';
 	    } else if (progressTime >= 0 && progressTime < duration) {
@@ -22204,20 +22205,16 @@
 	      }
 	      _this6.setRatio(ratio, item, i);
 	      if (progressTime <= _this6.perFrame) {
-	        item.onStart();
+	        item.onStart(e);
 	      } else {
-	        item.onUpdate(ratio);
+	        item.onUpdate(_extends({ ratio: ratio }, e));
 	      }
 	    }
 	    if (progressTime >= 0 && progressTime < duration + _this6.perFrame) {
-	      _this6.onChange({
+	      _this6.onChange(_extends({
 	        moment: _this6.progressTime,
-	        item: item,
-	        tween: _this6.tween,
-	        index: i,
-	        mode: item.mode,
-	        target: _this6.target
-	      });
+	        mode: item.mode
+	      }, e));
 	    }
 	  });
 	};
@@ -23157,24 +23154,17 @@
 	
 	    var _this = _possibleConstructorReturn(this, _Component.apply(this, arguments));
 	
+	    _initialiseProps.call(_this);
+	
 	    _this.keysToEnter = [];
 	    _this.keysToLeave = [];
 	    _this.onEnterBool = false;
 	    _this.isTween = {};
 	    // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
 	    var children = (0, _util.toArrayChildren)((0, _util.getChildrenFromProps)(_this.props));
-	    children.forEach(function (child) {
-	      if (!child || !child.key) {
-	        return;
-	      }
-	      _this.keysToEnter.push(child.key);
-	    });
 	    _this.state = {
 	      children: children
 	    };
-	    ['getChildrenToRender', 'getCoverAnimation', 'onChange'].forEach(function (method) {
-	      return _this[method] = _this[method].bind(_this);
-	    });
 	    return _this;
 	  }
 	
@@ -23186,7 +23176,7 @@
 	    var _this2 = this;
 	
 	    var nextChildren = (0, _util.toArrayChildren)(nextProps.children);
-	    var currentChildren = this.state.children;
+	    var currentChildren = (0, _util.toArrayChildren)(this.state.children);
 	    var newChildren = (0, _util.mergeChildren)(currentChildren, nextChildren);
 	
 	    this.keysToEnter = [];
@@ -23217,79 +23207,13 @@
 	    });
 	  };
 	
-	  TweenOneGroup.prototype.onChange = function onChange(animation, key, type, obj) {
-	    var length = (0, _util.dataToArray)(animation).length;
-	    var animatingClassName = this.props.animatingClassName;
-	    var tag = obj.target;
-	    if (obj.mode === 'onStart') {
-	      tag.className = tag.className.replace(animatingClassName[type === 'enter' ? 1 : 0], '').trim();
-	      if (tag.className.indexOf(animatingClassName[type === 'enter' ? 0 : 1]) === -1) {
-	        tag.className = (tag.className + ' ' + animatingClassName[type === 'enter' ? 0 : 1]).trim();
-	      }
-	    } else if (obj.index === length - 1 && obj.mode === 'onComplete') {
-	      var children = void 0;
-	      if (type === 'enter') {
-	        children = this.state.children;
-	        this.keysToEnter.splice(this.keysToEnter.indexOf(key), 1);
-	      } else {
-	        children = this.state.children.filter(function (child) {
-	          return key !== child.key;
-	        });
-	        this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
-	      }
-	      tag.className = tag.className.replace(animatingClassName[type === 'enter' ? 0 : 1], '').trim();
-	      delete this.isTween[key];
-	      this.setState({
-	        children: children
-	      });
-	      var _obj = { key: key, type: type };
-	      this.props.onEnd(_obj);
-	    }
-	  };
-	
-	  TweenOneGroup.prototype.getCoverAnimation = function getCoverAnimation(child, i, type) {
-	    var animation = void 0;
-	    var onChange = void 0;
-	    var appear = (0, _util.transformArguments)(this.props.appear, child.key, i);
-	    if (appear || this.onEnterBool) {
-	      animation = type === 'leave' ? this.props.leave : this.props.enter;
-	      onChange = this.onChange.bind(this, animation, child.key, type);
-	    }
-	    var children = _react2.default.createElement(_TweenOne2.default, _extends({}, child.props, {
-	      key: child.key,
-	      component: child.type,
-	      animation: (0, _util.transformArguments)(animation, child.key, i),
-	      onChange: onChange,
-	      resetStyleBool: child.key in this.isTween
-	    }));
-	    if (this.keysToEnter.concat(this.keysToLeave).indexOf(child.key) >= 0) {
-	      this.isTween[child.key] = true;
-	    }
-	    return children;
-	  };
-	
-	  TweenOneGroup.prototype.getChildrenToRender = function getChildrenToRender(children) {
-	    var _this3 = this;
-	
-	    return children.map(function (child, i) {
-	      if (!child || !child.key) {
-	        return child;
-	      }
-	      var key = child.key;
-	      if (_this3.keysToLeave.indexOf(key) >= 0) {
-	        return _this3.getCoverAnimation(child, i, 'leave');
-	      }
-	      return _this3.getCoverAnimation(child, i, 'enter');
-	    });
-	  };
-	
 	  TweenOneGroup.prototype.render = function render() {
 	    var childrenToRender = this.getChildrenToRender(this.state.children);
 	    if (!this.props.component) {
 	      return childrenToRender[0] || null;
 	    }
 	    var componentProps = _extends({}, this.props);
-	    ['component', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd'].forEach(function (key) {
+	    ['component', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd', 'resetStyleBool'].forEach(function (key) {
 	      return delete componentProps[key];
 	    });
 	    return (0, _react.createElement)(this.props.component, componentProps, childrenToRender);
@@ -23297,6 +23221,79 @@
 	
 	  return TweenOneGroup;
 	}(_react.Component);
+	
+	var _initialiseProps = function _initialiseProps() {
+	  var _this3 = this;
+	
+	  this.onChange = function (animation, key, type, obj) {
+	    var length = (0, _util.dataToArray)(animation).length;
+	    var animatingClassName = _this3.props.animatingClassName;
+	    var tag = obj.target;
+	    var isEnter = type === 'enter' || type === 'appear';
+	    if (obj.mode === 'onStart') {
+	      tag.className = tag.className.replace(animatingClassName[isEnter ? 1 : 0], '').trim();
+	      if (tag.className.indexOf(animatingClassName[isEnter ? 0 : 1]) === -1) {
+	        tag.className = (tag.className + ' ' + animatingClassName[isEnter ? 0 : 1]).trim();
+	      }
+	    } else if (obj.index === length - 1 && obj.mode === 'onComplete') {
+	      var children = _this3.state.children;
+	      if (type === 'enter') {
+	        _this3.keysToEnter.splice(_this3.keysToEnter.indexOf(key), 1);
+	      } else if (type === 'leave') {
+	        children = _this3.state.children.filter(function (child) {
+	          return key !== child.key;
+	        });
+	        _this3.keysToLeave.splice(_this3.keysToLeave.indexOf(key), 1);
+	      }
+	      tag.className = tag.className.replace(animatingClassName[isEnter ? 0 : 1], '').trim();
+	      delete _this3.isTween[key];
+	      _this3.setState({
+	        children: children
+	      });
+	      var _obj = { key: key, type: type };
+	      _this3.props.onEnd(_obj);
+	    }
+	  };
+	
+	  this.getCoverAnimation = function (child, i, type) {
+	    var animation = void 0;
+	    var onChange = void 0;
+	    animation = type === 'leave' ? _this3.props.leave : _this3.props.enter;
+	    if (type === 'appear') {
+	      var appear = (0, _util.transformArguments)(_this3.props.appear, child.key, i);
+	      animation = appear && _this3.props.enter || null;
+	    }
+	    onChange = _this3.onChange.bind(_this3, animation, child.key, type);
+	    var children = _react2.default.createElement(_TweenOne2.default, _extends({}, child.props, {
+	      key: child.key,
+	      component: child.type,
+	      animation: (0, _util.transformArguments)(animation, child.key, i),
+	      onChange: onChange,
+	      resetStyleBool: _this3.props.resetStyleBool
+	    }));
+	    if (_this3.keysToEnter.concat(_this3.keysToLeave).indexOf(child.key) >= 0 || !_this3.onEnterBool && animation) {
+	      _this3.isTween[child.key] = type;
+	    }
+	    return children;
+	  };
+	
+	  this.getChildrenToRender = function (children) {
+	    return children.map(function (child, i) {
+	      if (!child || !child.key) {
+	        return child;
+	      }
+	      var key = child.key;
+	      if (_this3.keysToLeave.indexOf(key) >= 0) {
+	        return _this3.getCoverAnimation(child, i, 'leave');
+	      } else if (_this3.keysToEnter.indexOf(key) >= 0) {
+	        return _this3.getCoverAnimation(child, i, 'enter');
+	      } else if (!_this3.onEnterBool) {
+	        return _this3.getCoverAnimation(child, i, 'appear');
+	      }
+	      return _this3.isTween[child.key] && _this3.getCoverAnimation(child, i, _this3.isTween[child.key]) || _react2.default.createElement(_TweenOne2.default, _extends({}, child.props, { component: child.type, key: child.key }));
+	    });
+	  };
+	};
 	
 	var objectOrArray = _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.array]);
 	var objectOrArrayOrFunc = _react.PropTypes.oneOfType([objectOrArray, _react.PropTypes.func]);
@@ -23309,7 +23306,8 @@
 	  enter: objectOrArrayOrFunc,
 	  leave: objectOrArrayOrFunc,
 	  animatingClassName: _react.PropTypes.array,
-	  onEnd: _react.PropTypes.func
+	  onEnd: _react.PropTypes.func,
+	  resetStyleBool: _react.PropTypes.bool
 	};
 	
 	TweenOneGroup.defaultProps = {
@@ -23318,7 +23316,8 @@
 	  animatingClassName: ['tween-one-entering', 'tween-one-leaving'],
 	  enter: { x: 50, opacity: 0, type: 'from' },
 	  leave: { x: -50, opacity: 0 },
-	  onEnd: noop
+	  onEnd: noop,
+	  resetStyleBool: true
 	};
 	exports.default = TweenOneGroup;
 	module.exports = exports['default'];
