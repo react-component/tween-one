@@ -210,7 +210,7 @@ describe('rc-tween-one', () => {
         y = xy[0].split(',')[1];
         expect(getFloat(x)).to.above(80).below(120);
         expect(getFloat(y)).to.above(40).below(60);
-        expect(getFloat(rotate)).to.above(-10).below(10);
+        expect(getFloat(rotate)).to.above(-15).below(15);
         console.log(`x:${x}, y: ${y}, rotate:${rotate}`);
         setTimeout(() => {
           transform = child.style[checkStyleName('transform')];
