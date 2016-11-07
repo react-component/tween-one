@@ -114,7 +114,7 @@ React.render(<TweenOneGroup>
 | repeat     | number         | 0       | animate repeat, To repeat indefinitely, use  -1 |
 | repeatDelay| number         | 0       | repeat start delay |
 | yoyo       | boolean        | false   | if `true`, every other repeat cycle will run in the opposite direction so that the tween appears to go back and forth (forward then backward).  |
-| ease       | string         | `easeInOutQuad` | animate ease. [refer](http://easings.net/en)  |
+| ease       | string / func         | `easeInOutQuad` | animate ease. [refer](http://easings.net/en)  |
 | bezier     | object         | null    | bezier curve animate |
 | onStart    | func           | null    | A function that should be called when the tween begins, callback(e), e: { index, target }  |
 | onUpdate   | func           | null    | A function that should be called every time the animate updates, callback(e), e: { index, target,  ratio }   |
@@ -122,6 +122,16 @@ React.render(<TweenOneGroup>
 | onRepeat   | func           | null    | A function that should be called each time the animate repeats, callback(e), e: { index, target }  |
 
 
+### ease: function
+
+path easing;
+
+```jsx
+
+const path = 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0';
+const ease = Tween.easing.path(path);
+
+```
 
 ### animation =[ ] is timeline
 
@@ -146,6 +156,14 @@ SVGDraw = string or number;
 ### SvgMorphPlugin
 
 svg polygon or path values: polygon is points, path is d; [demo](http://react-component.github.io/tween-one/examples/svg.html)
+
+### PathPlugin
+
+path = string or object;
+
+string: `animation={{ path: 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0' }}`,  default:  x, y, rotate;
+
+object: `animation={{ path: { x: path, y: path, rotate: path } }}`, can be controlled from their own needs.
 
 
 ## TweenOneGroup

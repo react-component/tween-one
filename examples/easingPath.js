@@ -1,8 +1,6 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
-import PathPlugin from '../src/plugin/PathPlugin';
-Tween.plugins.push(PathPlugin);
 
 class Demo extends React.Component {
   constructor() {
