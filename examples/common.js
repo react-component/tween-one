@@ -30,7 +30,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		27:0
+/******/ 		29:0
 /******/ 	};
 /******/
 /******/ 	// The require function
@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"followMouse","8":"from","9":"fromDelay","10":"group","11":"groupAbsolute","12":"gsapWritten","13":"moment","14":"repeat","15":"scrollAnim","16":"shadow","17":"shadowInset","18":"simple","19":"svg","20":"svgDraw","21":"svgDrawShape","22":"svgPoints","23":"timeline","24":"update","25":"updateStyle","26":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"easingPath","8":"followMouse","9":"from","10":"fromDelay","11":"group","12":"groupAbsolute","13":"gsapWritten","14":"moment","15":"path","16":"repeat","17":"scrollAnim","18":"shadow","19":"shadowInset","20":"simple","21":"svg","22":"svgDraw","23":"svgDrawShape","24":"svgPoints","25":"timeline","26":"update","27":"updateStyle","28":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -120,7 +120,8 @@
 	'use strict';
 	
 	var TweenOne = __webpack_require__(4);
-	TweenOne.TweenOneGroup = __webpack_require__(183);
+	TweenOne.TweenOneGroup = __webpack_require__(184);
+	TweenOne.easing = __webpack_require__(177);
 	module.exports = TweenOne;
 
 /***/ },
@@ -151,11 +152,11 @@
 	
 	var _TimeLine2 = _interopRequireDefault(_TimeLine);
 	
-	var _plugins = __webpack_require__(178);
+	var _plugins = __webpack_require__(179);
 	
 	var _plugins2 = _interopRequireDefault(_plugins);
 	
-	var _ticker = __webpack_require__(180);
+	var _ticker = __webpack_require__(181);
 	
 	var _ticker2 = _interopRequireDefault(_ticker);
 	
@@ -21310,6 +21311,9 @@
 	exports.transformArguments = transformArguments;
 	exports.getChildrenFromProps = getChildrenFromProps;
 	exports.startConvertToEndUnit = startConvertToEndUnit;
+	exports.parsePath = parsePath;
+	exports.closeEnough = closeEnough;
+	exports.getTransformValue = getTransformValue;
 	
 	var _react = __webpack_require__(5);
 	
@@ -21496,6 +21500,60 @@
 	    pix = parseFloat(num) / 16;
 	  }
 	  return pix;
+	}
+	
+	function parsePath(path) {
+	  if (typeof path === 'string') {
+	    if (path.charAt(0).match(/m/i)) {
+	      var domPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+	      domPath.setAttributeNS(null, 'd', path);
+	      return domPath;
+	    }
+	    return document.querySelector(path);
+	  } else if (path.style) {
+	    return path;
+	  }
+	  throw new Error('Error while parsing the path');
+	}
+	
+	function closeEnough(num1, num2, eps) {
+	  return Math.abs(num1 - num2) < eps;
+	}
+	
+	function getTransformValue(t, ratio, supports3D) {
+	  var perspective = t.perspective;
+	  var angle = t.rotate;
+	  var rotateX = t.rotateX;
+	  var rotateY = t.rotateY;
+	  var sx = t.scaleX;
+	  var sy = t.scaleY;
+	  var sz = t.scaleZ;
+	  var skx = t.skewX;
+	  var sky = t.skewY;
+	  var translateX = t.translateX;
+	  var translateY = t.translateY;
+	  var translateZ = t.translateZ || 0;
+	  var xPercent = t.xPercent || 0;
+	  var yPercent = t.yPercent || 0;
+	  var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
+	  var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
+	  var an = angle ? 'rotate(' + angle + 'deg)' : '';
+	  var ss = void 0;
+	  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
+	    if (!supports3D || ratio >= 1) {
+	      var matrix = '1,0,0,1,' + translateX + ',' + translateY;
+	      ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
+	      // IE 9 没 3d;
+	      return percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk;
+	    }
+	    ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
+	    return percent + ' translate(' + translateX + 'px,' + translateY + 'px) ' + an + ' ' + ss + ' ' + sk;
+	  }
+	  ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
+	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
+	  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
+	  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
+	  return per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
 	}
 
 /***/ },
@@ -21940,15 +21998,15 @@
 	 */
 	
 	
-	var _tweenFunctions = __webpack_require__(177);
+	var _easing = __webpack_require__(177);
 	
-	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
+	var _easing2 = _interopRequireDefault(_easing);
 	
-	var _plugins = __webpack_require__(178);
+	var _plugins = __webpack_require__(179);
 	
 	var _plugins2 = _interopRequireDefault(_plugins);
 	
-	var _StylePlugin = __webpack_require__(179);
+	var _StylePlugin = __webpack_require__(180);
 	
 	var _StylePlugin2 = _interopRequireDefault(_StylePlugin);
 	
@@ -21968,7 +22026,7 @@
 	  return {
 	    duration: vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION,
 	    delay: vars.delay || DEFAULT_DELAY,
-	    ease: vars.ease || DEFAULT_EASING,
+	    ease: typeof vars.ease === 'function' ? vars.ease : _easing2.default[vars.ease || DEFAULT_EASING],
 	    onUpdate: vars.onUpdate || noop,
 	    onComplete: vars.onComplete || noop,
 	    onStart: vars.onStart || noop,
@@ -22173,7 +22231,7 @@
 	      if (!_this6.register) {
 	        _this6.register = true;
 	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : _tweenFunctions2.default[item.ease](progressTime < 0 ? 0 : progressTime, 0, 1, duration);
+	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : item.ease(progressTime < 0 ? 0 : progressTime, 0, 1, duration);
 	        _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
 	        return;
 	      }
@@ -22190,7 +22248,7 @@
 	    if (progressTime < 0 && progressTime + fromDelay > -_this6.perFrame) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
 	    } else if (progressTime >= duration && item.mode !== 'onComplete') {
-	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? 0 : 1, item, i);
+	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? item.ease(0, 0, 1, duration) : item.ease(duration, 0, 1, duration), item, i);
 	      if (item.mode !== 'reset') {
 	        item.onComplete(e);
 	      }
@@ -22199,9 +22257,9 @@
 	      item.mode = progressTime < _this6.perFrame ? 'onStart' : 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > duration ? duration : progressTime;
-	      var ratio = _tweenFunctions2.default[item.ease](progressTime, 0, 1, duration);
+	      var ratio = item.ease(progressTime, 0, 1, duration);
 	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
-	        ratio = _tweenFunctions2.default[item.ease](progressTime, 1, 0, duration);
+	        ratio = item.ease(progressTime, 1, 0, duration);
 	      }
 	      _this6.setRatio(ratio, item, i);
 	      if (progressTime <= _this6.perFrame) {
@@ -22249,6 +22307,48 @@
 
 /***/ },
 /* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _tweenFunctions = __webpack_require__(178);
+	
+	var _tweenFunctions2 = _interopRequireDefault(_tweenFunctions);
+	
+	var _util = __webpack_require__(174);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	_tweenFunctions2.default.path = function (_path, _param) {
+	  var param = _param || {};
+	  var pathNode = (0, _util.parsePath)(_path);
+	  var pathLength = pathNode.getTotalLength();
+	  var rect = param.rect || 100; // path 的大小，100 * 100，
+	  var lengthPixel = param.lengthPixel || 1500; // 线上取点像素，默认分为 1024段。。
+	  var points = [];
+	  for (var i = 0; i < lengthPixel; i++) {
+	    points.push(pathNode.getPointAtLength(pathLength / lengthPixel * i));
+	  }
+	  return function (t, b, _c, d) {
+	    var p = _tweenFunctions2.default.linear(t, b, _c, d);
+	    var timePointX = rect * p; // X 轴的百分比;
+	    // 取出 x 轴百分比上的点;
+	    var point = points.filter(function (item) {
+	      return item.x >= timePointX;
+	    })[0] || pathNode.getPointAtLength(p * pathLength);
+	    return 1 - point.y / rect;
+	  };
+	};
+	
+	exports.default = _tweenFunctions2.default;
+	module.exports = exports['default'];
+
+/***/ },
+/* 178 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22503,7 +22603,7 @@
 
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22521,7 +22621,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22539,7 +22639,7 @@
 	
 	var _util = __webpack_require__(174);
 	
-	var _plugins = __webpack_require__(178);
+	var _plugins = __webpack_require__(179);
 	
 	var _plugins2 = _interopRequireDefault(_plugins);
 	
@@ -22709,41 +22809,6 @@
 	  this.start = style;
 	  return style;
 	};
-	p.getTransformValue = function (t, ratio) {
-	  var perspective = t.perspective;
-	  var angle = t.rotate;
-	  var rotateX = t.rotateX;
-	  var rotateY = t.rotateY;
-	  var sx = t.scaleX;
-	  var sy = t.scaleY;
-	  var sz = t.scaleZ;
-	  var skx = t.skewX;
-	  var sky = t.skewY;
-	  var translateX = t.translateX;
-	  var translateY = t.translateY;
-	  var translateZ = t.translateZ || 0;
-	  var xPercent = t.xPercent || 0;
-	  var yPercent = t.yPercent || 0;
-	  var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
-	  var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
-	  var an = angle ? 'rotate(' + angle + 'deg)' : '';
-	  var ss = void 0;
-	  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
-	    if (!this.supports3D || ratio >= 1) {
-	      var matrix = '1,0,0,1,' + translateX + ',' + translateY;
-	      ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-	      // IE 9 没 3d;
-	      return percent + ' matrix(' + matrix + ') ' + an + ' ' + ss + ' ' + sk;
-	    }
-	    ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-	    return percent + ' translate(' + translateX + 'px,' + translateY + 'px) ' + an + ' ' + ss + ' ' + sk;
-	  }
-	  ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
-	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
-	  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
-	  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	  return per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
-	};
 	p.setArrayRatio = function (ratio, start, vars, unit, type) {
 	  if (type === 'color' && start.length === 4 && vars.length === 3) {
 	    vars[3] = 1;
@@ -22807,7 +22872,7 @@
 	    if (key in _plugins2.default) {
 	      _this3.propsData.data[key].setRatio(ratio, tween);
 	      if (key === 'bezier') {
-	        style[_this3.transform] = _this3.getTransformValue(tween.style.transform, ratio);
+	        style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, ratio, _this3.supports3D);
 	      } else {
 	        Object.keys(tween.style).forEach(function (css) {
 	          return style[css] = tween.style[css];
@@ -22839,7 +22904,7 @@
 	      } else {
 	        tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
 	      }
-	      style[_this3.transform] = _this3.getTransformValue(tween.style.transform, ratio);
+	      style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, ratio, _this3.supports3D);
 	      return;
 	    } else if (Array.isArray(endVars)) {
 	      var _type = _this3.propsData.dataType[key];
@@ -22880,7 +22945,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22889,7 +22954,7 @@
 	  value: true
 	});
 	
-	var _raf = __webpack_require__(181);
+	var _raf = __webpack_require__(182);
 	
 	var _raf2 = _interopRequireDefault(_raf);
 	
@@ -22995,10 +23060,10 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(182)
+	/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(183)
 	  , root = typeof window === 'undefined' ? global : window
 	  , vendors = ['moz', 'webkit']
 	  , suffix = 'AnimationFrame'
@@ -23074,7 +23139,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
@@ -23113,7 +23178,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

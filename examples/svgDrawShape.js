@@ -1,14 +1,14 @@
-webpackJsonp([21],{
+webpackJsonp([23],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(213);
+	module.exports = __webpack_require__(217);
 
 
 /***/ },
 
-/***/ 212:
+/***/ 216:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -81,7 +81,6 @@ webpackJsonp([21],{
 	    return Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (3 * ry + rx)));
 	  },
 	  getAnimStart: function getAnimStart() {
-	    // console.log(this.target.getTotalLength(), this.target.getBBox())
 	    var computedStyle = this.getComputedStyle();
 	    switch (this.tagName) {
 	      case 'rect':
@@ -119,7 +118,7 @@ webpackJsonp([21],{
 
 /***/ },
 
-/***/ 213:
+/***/ 217:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -136,7 +135,7 @@ webpackJsonp([21],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _SvgDrawPlugin = __webpack_require__(212);
+	var _SvgDrawPlugin = __webpack_require__(216);
 	
 	var _SvgDrawPlugin2 = _interopRequireDefault(_SvgDrawPlugin);
 	

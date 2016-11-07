@@ -1,14 +1,14 @@
-webpackJsonp([3],{
+webpackJsonp([7],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(188);
+	module.exports = __webpack_require__(192);
 
 
 /***/ },
 
-/***/ 188:
+/***/ 192:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41,45 +41,30 @@ webpackJsonp([3],{
 	  function Demo() {
 	    _classCallCheck(this, Demo);
 	
-	    var _this = _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
-	
-	    _this.state = {
-	      tweenData: { translateX: '100px', duration: 3000 },
-	      childTweenData: { translateY: 200, duration: 1000 }
-	    };
-	    return _this;
+	    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
 	  }
 	
-	  Demo.prototype.componentDidMount = function componentDidMount() {
-	    var _this2 = this;
-	
-	    setTimeout(function () {
-	      _this2.setState({
-	        tweenData: { opacity: 0.5, marginTop: 100, duration: 1000 }
-	      });
-	    }, 1000);
-	    setTimeout(function () {
-	      _this2.setState({
-	        childTweenData: [{ translateY: 100 }, { rotateY: 180, duration: 1000 }, { rotateY: 0, duration: 1000 }, { delay: -800, translateY: 0 }]
-	      });
-	    }, 2000);
-	  };
-	
 	  Demo.prototype.render = function render() {
+	    var p = 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0';
 	    return _react2.default.createElement(
-	      _rcTweenOne2.default,
-	      { animation: this.state.tweenData,
-	        style: { height: 300, width: 60, textAlign: 'center' }
-	      },
-	      _react2.default.createElement(
-	        'div',
-	        null,
-	        '大面包'
-	      ),
+	      'div',
+	      null,
 	      _react2.default.createElement(
 	        _rcTweenOne2.default,
-	        { animation: this.state.childTweenData, key: 'tween' },
-	        '小馒头'
+	        {
+	          animation: { duration: 2000, x: 500, ease: _rcTweenOne2.default.easing.path(p) },
+	          style: { opacity: 1, height: 100, transform: 'translate(50px,30px)' }
+	        },
+	        _react2.default.createElement(
+	          'div',
+	          null,
+	          '执行动效'
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'svg',
+	        null,
+	        _react2.default.createElement('path', { fill: 'none', stroke: '#000', d: p })
 	      )
 	    );
 	  };
@@ -92,4 +77,4 @@ webpackJsonp([3],{
 /***/ }
 
 });
-//# sourceMappingURL=childrenUpdate.js.map
+//# sourceMappingURL=easingPath.js.map
