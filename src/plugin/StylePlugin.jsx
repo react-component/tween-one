@@ -11,7 +11,7 @@ import cssList, {
   getTransform,
   stylesToCss,
 } from 'style-utils';
-import { startConvertToEndUnit } from '../util.js';
+import { startConvertToEndUnit, getTransformValue } from '../util.js';
 import _plugin from '../plugins';
 
 const StylePlugin = function (target, vars, type) {
@@ -176,43 +176,6 @@ p.getAnimStart = function () {
   this.start = style;
   return style;
 };
-p.getTransformValue = function (t, ratio) {
-  const perspective = t.perspective;
-  const angle = t.rotate;
-  const rotateX = t.rotateX;
-  const rotateY = t.rotateY;
-  const sx = t.scaleX;
-  const sy = t.scaleY;
-  const sz = t.scaleZ;
-  const skx = t.skewX;
-  const sky = t.skewY;
-  const translateX = t.translateX;
-  const translateY = t.translateY;
-  const translateZ = t.translateZ || 0;
-  const xPercent = t.xPercent || 0;
-  const yPercent = t.yPercent || 0;
-  const percent = `${(xPercent || yPercent) ? `translate(${xPercent},${yPercent})` : ''}`;
-  const sk = skx || sky ? `skew(${skx}deg,${sky}deg)` : '';
-  const an = angle ? `rotate(${angle}deg)` : '';
-  let ss;
-  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
-    if (!this.supports3D || ratio >= 1) {
-      const matrix = `1,0,0,1,${translateX},${translateY}`;
-      ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
-      // IE 9 没 3d;
-      return `${percent} matrix(${matrix}) ${an} ${ss} ${sk}`;
-    }
-    ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
-    return `${percent} translate(${translateX}px,${
-      translateY}px) ${an} ${ss} ${sk}`;
-  }
-  ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
-  const rX = rotateX ? `rotateX(${rotateX}deg)` : '';
-  const rY = rotateY ? `rotateY(${rotateY}deg)` : '';
-  const per = perspective ? `perspective(${perspective}px)` : '';
-  return `${per} ${percent} translate3d(${translateX}px,${
-    translateY}px,${translateZ}px) ${ss} ${an} ${rX} ${rY} ${sk}`;
-};
 p.setArrayRatio = function (ratio, start, vars, unit, type) {
   if (type === 'color' && start.length === 4 && vars.length === 3) {
     vars[3] = 1;
@@ -274,7 +237,7 @@ p.setRatio = function (ratio, tween) {
     if (key in _plugin) {
       this.propsData.data[key].setRatio(ratio, tween);
       if (key === 'bezier') {
-        style[this.transform] = this.getTransformValue(tween.style.transform, ratio);
+        style[this.transform] = getTransformValue(tween.style.transform, ratio, this.supports3D);
       } else {
         Object.keys(tween.style).forEach(css => style[css] = tween.style[css]);
       }
@@ -304,7 +267,7 @@ p.setRatio = function (ratio, tween) {
       } else {
         tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
       }
-      style[this.transform] = this.getTransformValue(tween.style.transform, ratio);
+      style[this.transform] = getTransformValue(tween.style.transform, ratio, this.supports3D);
       return;
     } else if (Array.isArray(endVars)) {
       const _type = this.propsData.dataType[key];

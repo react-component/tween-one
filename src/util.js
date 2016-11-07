@@ -180,3 +180,60 @@ export function startConvertToEndUnit(target, style, num, unit, dataUnit, fixed,
   }
   return pix;
 }
+
+export function parsePath(path) {
+  if (typeof path === 'string') {
+    if (path.charAt(0).match(/m/i)) {
+      const domPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      domPath.setAttributeNS(null, 'd', path);
+      return domPath;
+    }
+    return document.querySelector(path);
+  } else if (path.style) {
+    return path;
+  }
+  throw new Error('Error while parsing the path');
+}
+
+export function closeEnough(num1, num2, eps) {
+  return Math.abs(num1 - num2) < eps;
+}
+
+
+export function getTransformValue(t, ratio, supports3D) {
+  const perspective = t.perspective;
+  const angle = t.rotate;
+  const rotateX = t.rotateX;
+  const rotateY = t.rotateY;
+  const sx = t.scaleX;
+  const sy = t.scaleY;
+  const sz = t.scaleZ;
+  const skx = t.skewX;
+  const sky = t.skewY;
+  const translateX = t.translateX;
+  const translateY = t.translateY;
+  const translateZ = t.translateZ || 0;
+  const xPercent = t.xPercent || 0;
+  const yPercent = t.yPercent || 0;
+  const percent = `${(xPercent || yPercent) ? `translate(${xPercent},${yPercent})` : ''}`;
+  const sk = skx || sky ? `skew(${skx}deg,${sky}deg)` : '';
+  const an = angle ? `rotate(${angle}deg)` : '';
+  let ss;
+  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
+    if (!supports3D || ratio >= 1) {
+      const matrix = `1,0,0,1,${translateX},${translateY}`;
+      ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
+      // IE 9 没 3d;
+      return `${percent} matrix(${matrix}) ${an} ${ss} ${sk}`;
+    }
+    ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
+    return `${percent} translate(${translateX}px,${
+      translateY}px) ${an} ${ss} ${sk}`;
+  }
+  ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
+  const rX = rotateX ? `rotateX(${rotateX}deg)` : '';
+  const rY = rotateY ? `rotateY(${rotateY}deg)` : '';
+  const per = perspective ? `perspective(${perspective}px)` : '';
+  return `${per} ${percent} translate3d(${translateX}px,${
+    translateY}px,${translateZ}px) ${ss} ${an} ${rX} ${rY} ${sk}`;
+}

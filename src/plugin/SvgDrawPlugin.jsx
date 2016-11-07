@@ -61,7 +61,6 @@ SvgDrawPlugin.prototype = {
     return Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (3 * ry + rx)));
   },
   getAnimStart() {
-    // console.log(this.target.getTotalLength(), this.target.getBBox())
     const computedStyle = this.getComputedStyle();
     switch (this.tagName) {
       case 'rect':
