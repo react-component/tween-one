@@ -21346,6 +21346,7 @@
 	  if (!obj1 || !obj2) {
 	    return false;
 	  }
+	  // animation 写在标签上的进行判断是否相等， 判断每个参数的值;
 	  var equalBool = true;
 	  if (Array.isArray(obj1) && Array.isArray(obj2)) {
 	    for (var i = 0; i < obj1.length; i++) {
@@ -21355,6 +21356,10 @@
 	        if (currentObj[p] !== nextObj[p]) {
 	          if (_typeof(currentObj[p]) === 'object' && _typeof(nextObj[p]) === 'object') {
 	            equalBool = objectEqual(currentObj[p], nextObj[p]);
+	          } else if (typeof currentObj[p] === 'function' && typeof nextObj[p] === 'function') {
+	            if (currentObj[p].name !== nextObj[p].name) {
+	              equalBool = false;
+	            }
 	          } else {
 	            equalBool = false;
 	            return false;
@@ -22036,7 +22041,7 @@
 	    yoyo: vars.yoyo || false,
 	    type: vars.type || 'to',
 	    initTime: now,
-	    appearTo: vars.appearTo || null
+	    appearTo: typeof vars.appearTo === 'number' ? vars.appearTo : null
 	  };
 	}
 	
@@ -22358,14 +22363,13 @@
 	  for (var i = 0; i < lengthPixel; i++) {
 	    points.push(pathNode.getPointAtLength(pathLength / lengthPixel * i));
 	  }
-	  return function (t, b, _c, d) {
+	  return function path(t, b, _c, d) {
 	    var p = _tweenFunctions2.default.linear(t, b, _c, d);
 	    var timePointX = rect * p; // X 轴的百分比;
 	    // 取出 x 轴百分比上的点;
 	    var point = points.filter(function (item) {
 	      return item.x >= timePointX;
 	    })[0] || pathNode.getPointAtLength(p * pathLength);
-	    // console.log(1 - (point.y / rect))
 	    return 1 - point.y / rect;
 	  };
 	};

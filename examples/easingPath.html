@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>easingPath.js - example - rc-tween-one@0.11.3</title>
+  <title>easingPath.js - example - rc-tween-one@0.11.4</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -258,7 +258,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-tween-one@0.11.3</h1>
+      <h1>rc-tween-one@0.11.4</h1>
 
       <p>tween-one anim component for react</p>
     </div>
@@ -268,36 +268,39 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
 
+<span class="hljs-keyword">const</span> p1 = <span class="hljs-string">'M0,100 L25,100 C34,20 40,0 100,0'</span>;
+<span class="hljs-keyword">const</span> p = <span class="hljs-string">'M0,100 C5,120 25,130 25,100 C30,60 40,75 58,90 C69,98.5 83,99.5 100,100'</span>;
+<span class="hljs-keyword">const</span> t = Tween.easing.path(p);
+<span class="hljs-keyword">const</span> t1 = Tween.easing.path(p1);
+<span class="hljs-keyword">const</span> anim = [
+  {
+    repeatDelay: <span class="hljs-number">1000</span>,
+    duration: <span class="hljs-number">1000</span>,
+    scaleX: <span class="hljs-number">0</span>,
+    scaleY: <span class="hljs-number">2</span>,
+    repeat: -<span class="hljs-number">1</span>,
+    yoyo: <span class="hljs-literal">true</span>,
+    ease: t,
+  },
+  {
+    repeatDelay: <span class="hljs-number">1000</span>,
+    duration: <span class="hljs-number">1000</span>,
+    y: -<span class="hljs-number">30</span>,
+    appearTo: <span class="hljs-number">0</span>,
+    repeat: -<span class="hljs-number">1</span>,
+    yoyo: <span class="hljs-literal">true</span>,
+    ease: t1,
+  },
+];
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
   constructor() {
     <span class="hljs-keyword">super</span>(...arguments);
   }
 
   render() {
-    <span class="hljs-keyword">const</span> p1 = <span class="hljs-string">'M0,100 L25,100 C34,20 40,0 100,0'</span>;
-    <span class="hljs-keyword">const</span> p = <span class="hljs-string">'M0,100 C5,120 25,130 25,100 C30,60 40,75 58,90 C69,98.5 83,99.5 100,100'</span>;
     <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">height:</span> <span class="hljs-attribute">300</span> }}&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
-        <span class="hljs-attribute">animation</span>=<span class="hljs-value">{[</span>
-          {
-            <span class="hljs-attribute">repeatDelay:</span> <span class="hljs-attribute">1000</span>,
-            <span class="hljs-attribute">duration:</span> <span class="hljs-attribute">1000</span>,
-            <span class="hljs-attribute">scaleX:</span> <span class="hljs-attribute">0</span>,
-            <span class="hljs-attribute">scaleY:</span> <span class="hljs-attribute">2</span>,
-            <span class="hljs-attribute">repeat:</span> <span class="hljs-attribute">-1</span>,
-            <span class="hljs-attribute">yoyo:</span> <span class="hljs-attribute">true</span>,
-            <span class="hljs-attribute">ease:</span> <span class="hljs-attribute">Tween.easing.path</span>(<span class="hljs-attribute">p</span>),
-          },
-          {
-            <span class="hljs-attribute">repeatDelay:</span> <span class="hljs-attribute">1000</span>,
-            <span class="hljs-attribute">duration:</span> <span class="hljs-attribute">1000</span>,
-            <span class="hljs-attribute">y:</span> <span class="hljs-attribute">-30</span>,
-            <span class="hljs-attribute">appearTo:</span> <span class="hljs-attribute">0</span>,
-            <span class="hljs-attribute">repeat:</span> <span class="hljs-attribute">-1</span>,
-            <span class="hljs-attribute">yoyo:</span> <span class="hljs-attribute">true</span>,
-            <span class="hljs-attribute">ease:</span> <span class="hljs-attribute">Tween.easing.path</span>(<span class="hljs-attribute">p1</span>),
-          },
-        ]}
+        <span class="hljs-attribute">animation</span>=<span class="hljs-value">{anim}</span>
         <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
           <span class="hljs-attribute">position:</span> '<span class="hljs-attribute">absolute</span>',
           <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">1</span>,
@@ -308,7 +311,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
           <span class="hljs-attribute">transformOrigin:</span> '<span class="hljs-attribute">center</span> <span class="hljs-attribute">bottom</span>',
         }}
       /&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">width:</span> <span class="hljs-attribute">100</span>, <span class="hljs-attribute">height:</span> <span class="hljs-attribute">100</span>, <span class="hljs-attribute">background:</span> '#<span class="hljs-attribute">fff000</span>', <span class="hljs-attribute">position:</span> '<span class="hljs-attribute">absolute</span>' }}/&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">width:</span> <span class="hljs-attribute">100</span>, <span class="hljs-attribute">height:</span> <span class="hljs-attribute">100</span>, <span class="hljs-attribute">background:</span> '#<span class="hljs-attribute">fff000</span>', <span class="hljs-attribute">position:</span> '<span class="hljs-attribute">absolute</span>' }} /&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">svg</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">position:</span> '<span class="hljs-attribute">absolute</span>' }}&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">path</span> <span class="hljs-attribute">fill</span>=<span class="hljs-value">"none"</span> <span class="hljs-attribute">stroke</span>=<span class="hljs-value">"#000"</span> <span class="hljs-attribute">d</span>=<span class="hljs-value">{p}</span> /&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">path</span> <span class="hljs-attribute">d</span>=<span class="hljs-value">{p1}</span> <span class="hljs-attribute">fill</span>=<span class="hljs-value">"none"</span> <span class="hljs-attribute">stroke</span>=<span class="hljs-value">"#000"</span> /&gt;</span>

@@ -35,6 +35,28 @@ webpackJsonp([7],{
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 	
+	var p1 = 'M0,100 L25,100 C34,20 40,0 100,0';
+	var p = 'M0,100 C5,120 25,130 25,100 C30,60 40,75 58,90 C69,98.5 83,99.5 100,100';
+	var t = _rcTweenOne2.default.easing.path(p);
+	var t1 = _rcTweenOne2.default.easing.path(p1);
+	var anim = [{
+	  repeatDelay: 1000,
+	  duration: 1000,
+	  scaleX: 0,
+	  scaleY: 2,
+	  repeat: -1,
+	  yoyo: true,
+	  ease: t
+	}, {
+	  repeatDelay: 1000,
+	  duration: 1000,
+	  y: -30,
+	  appearTo: 0,
+	  repeat: -1,
+	  yoyo: true,
+	  ease: t1
+	}];
+	
 	var Demo = function (_React$Component) {
 	  _inherits(Demo, _React$Component);
 	
@@ -45,29 +67,11 @@ webpackJsonp([7],{
 	  }
 	
 	  Demo.prototype.render = function render() {
-	    var p1 = 'M0,100 L25,100 C34,20 40,0 100,0';
-	    var p = 'M0,100 C5,120 25,130 25,100 C30,60 40,75 58,90 C69,98.5 83,99.5 100,100';
 	    return _react2.default.createElement(
 	      'div',
 	      { style: { height: 300 } },
 	      _react2.default.createElement(_rcTweenOne2.default, {
-	        animation: [{
-	          repeatDelay: 1000,
-	          duration: 1000,
-	          scaleX: 0,
-	          scaleY: 2,
-	          repeat: -1,
-	          yoyo: true,
-	          ease: _rcTweenOne2.default.easing.path(p)
-	        }, {
-	          repeatDelay: 1000,
-	          duration: 1000,
-	          y: -30,
-	          appearTo: 0,
-	          repeat: -1,
-	          yoyo: true,
-	          ease: _rcTweenOne2.default.easing.path(p1)
-	        }],
+	        animation: anim,
 	        style: {
 	          position: 'absolute',
 	          opacity: 1,
