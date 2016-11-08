@@ -8,8 +8,8 @@ class Demo extends React.Component {
   }
 
   render() {
-    const p1 = 'M0,100 L25,100 C26,75 20,0 100,0';
-    const p = 'M0,100 C5,120 25,130 25,100 C30,60 40,75 58,90 C70,98 75,100 100,100';
+    const p1 = 'M0,100 L25,100 C34,20 40,0 100,0';
+    const p = 'M0,100 C5,120 25,130 25,100 C30,60 40,75 58,90 C69,98.5 83,99.5 100,100';
     return (<div style={{ height: 300 }}>
       <Tween
         animation={[
@@ -25,7 +25,7 @@ class Demo extends React.Component {
           {
             repeatDelay: 1000,
             duration: 1000,
-            y: -20,
+            y: -30,
             appearTo: 0,
             repeat: -1,
             yoyo: true,
