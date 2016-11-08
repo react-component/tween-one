@@ -11,7 +11,7 @@ easingTypes.path = (_path, _param) => {
   for (let i = 0; i < lengthPixel; i++) {
     points.push(pathNode.getPointAtLength((pathLength / lengthPixel) * i));
   }
-  return function (t, b, _c, d) {
+  return function path(t, b, _c, d) {
     const p = easingTypes.linear(t, b, _c, d);
     const timePointX = rect * p; // X 轴的百分比;
     // 取出 x 轴百分比上的点;

@@ -31,7 +31,7 @@ function defaultData(vars, now) {
     yoyo: vars.yoyo || false,
     type: vars.type || 'to',
     initTime: now,
-    appearTo: vars.appearTo || null,
+    appearTo: typeof vars.appearTo === 'number' ? vars.appearTo : null,
   };
 }
 
