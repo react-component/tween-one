@@ -31,6 +31,7 @@ function defaultData(vars, now) {
     yoyo: vars.yoyo || false,
     type: vars.type || 'to',
     initTime: now,
+    appearTo: vars.appearTo || null,
   };
 }
 
@@ -93,8 +94,15 @@ p.setDefaultData = function (_vars) {
   let now = 0;
   let repeatMax = false;
   const data = _vars.map(item => {
-    now += item.delay || 0;// 加上延时，在没有播放过时；
-    const tweenData = defaultData(item, now);
+    const appearToBool = typeof item.appearTo === 'number';
+    // 加上延时，在没有播放过时；
+    // !appearToBool && (now += item.delay || 0);
+    if (!appearToBool) {
+      now += item.delay || 0;
+    }
+    const appearToTime = (item.appearTo || 0) + (item.delay || 0);
+    // 获取默认数据
+    const tweenData = defaultData(item, appearToBool ? appearToTime : now);
     tweenData.vars = {};
     Object.keys(item).forEach(_key => {
       if (!(_key in tweenData)) {
@@ -119,11 +127,20 @@ p.setDefaultData = function (_vars) {
     if (tweenData.repeat === -1) {
       repeatMax = true;
     }
-    if (tweenData.delay < -tweenData.duration) {
-      // 如果延时小于 负时间时,,不加,再减回延时;
-      now -= tweenData.delay;
+    const repeat = tweenData.repeat === -1 ? 0 : tweenData.repeat;
+    if (appearToBool) {
+      // 如果有 appearTo 且这条时间比 now 大时，，总时间用这条；
+      const appearNow = item.appearTo + (item.delay || 0) +
+        tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
+      now = appearNow >= now ? appearNow : now;
     } else {
-      now += tweenData.duration * (tweenData.repeat + 1) + tweenData.repeatDelay * tweenData.repeat;
+      if (tweenData.delay < -tweenData.duration) {
+        // 如果延时小于 负时间时,,不加,再减回延时;
+        now -= tweenData.delay;
+      } else {
+        // repeat 为 -1 只记录一次。不能跟 reverse 同时使用;
+        now += tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
+      }
     }
     tweenData.mode = '';
     return tweenData;
@@ -205,11 +222,16 @@ p.render = function () {
         (duration + item.repeatDelay)) - 1;
     repeatNum = repeatNum < 0 ? 0 : repeatNum;
     // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
+    if (repeatNum >= item.repeat && item.repeat !== -1) {
+      return;
+    }
     if (item.repeat) {
       if (item.repeat || item.repeat <= repeatNum) {
         initTime = initTime + repeatNum * (duration + item.repeatDelay);
       }
     }
+    const startData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 1 : 0;
+    const endData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 0 : 1;
     //  精度损失，只取小数点后10位。
     let progressTime = parseFloat((this.progressTime - initTime).toFixed(10));
     // 设置 start
@@ -221,10 +243,11 @@ p.render = function () {
         this.register = true;
         // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
         // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
-        const s = delay ? 0 : item.ease(this.tinyNum, 0, 1, this.tinyNum);
-        const ss = duration ? item.ease(progressTime < 0 ? 0 : progressTime, 0, 1, duration) : s;
+        const s = delay ? 0 : item.ease(this.tinyNum, startData, endData, this.tinyNum);
+        const ss = duration ?
+          item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration) : s;
         const st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
-        this.setRatio(item.type === 'from' ? 1 - st : st, item, i);
+        this.setRatio(st, item, i);
         return;
       }
     }
@@ -241,14 +264,8 @@ p.render = function () {
     if (progressTime < 0 && progressTime + fromDelay > -this.perFrame) {
       this.setRatio(item.type === 'from' ? 1 : 0, item, i);
     } else if (progressTime >= duration && item.mode !== 'onComplete') {
-      let compRatio;
-      if (item.type === 'from' || (repeatNum % 2 && item.yoyo)) {
-        compRatio = duration ? item.ease(0, 0, 1, duration) : 0;
-      } else {
-        // 不直接为1是为补 path 缓动;
-        compRatio = duration ? item.ease(duration, 0, 1, duration) :
-          item.ease(this.tinyNum, 0, 1, this.tinyNum);
-      }
+      const compRatio = duration ? item.ease(duration, startData, endData, duration) :
+        item.ease(this.tinyNum, startData, endData, this.tinyNum);
       this.setRatio(compRatio, item, i);
       if (item.mode !== 'reset') {
         item.onComplete(e);
@@ -258,10 +275,7 @@ p.render = function () {
       item.mode = progressTime < this.perFrame ? 'onStart' : 'onUpdate';
       progressTime = progressTime < 0 ? 0 : progressTime;
       progressTime = progressTime > duration ? duration : progressTime;
-      let ratio = item.ease(progressTime, 0, 1, duration);
-      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
-        ratio = item.ease(progressTime, 1, 0, duration);
-      }
+      const ratio = item.ease(progressTime, startData, endData, duration);
       this.setRatio(ratio, item, i);
       if (progressTime <= this.perFrame) {
         item.onStart(e);

@@ -6,7 +6,7 @@ easingTypes.path = (_path, _param) => {
   const pathNode = parsePath(_path);
   const pathLength = pathNode.getTotalLength();
   const rect = param.rect || 100;// path 的大小，100 * 100，
-  const lengthPixel = param.lengthPixel || 1500; // 线上取点像素，默认分为 1024段。。
+  const lengthPixel = param.lengthPixel || 1500; // 线上取点像素，默认分为 1500 段。。
   const points = [];
   for (let i = 0; i < lengthPixel; i++) {
     points.push(pathNode.getPointAtLength((pathLength / lengthPixel) * i));
@@ -18,6 +18,7 @@ easingTypes.path = (_path, _param) => {
     const point = points.filter((item) =>
         item.x >= timePointX
       )[0] || pathNode.getPointAtLength(p * pathLength);
+    // console.log(1 - (point.y / rect))
     return 1 - (point.y / rect);
   };
 };

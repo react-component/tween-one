@@ -121,6 +121,7 @@ React.render(<TweenOneGroup>
 | onComplete | func           | null    | A function that should be called when the animate has completed, callback(e), e: { index, target }  |
 | onRepeat   | func           | null    | A function that should be called each time the animate repeats, callback(e), e: { index, target }  |
 
+> Cannot be used at the same time `reverse` and `repeat: -1`.
 
 ### ease: function
 
