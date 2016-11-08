@@ -82,6 +82,8 @@ const timeLine = function (target, toData, attr) {
   this.perFrame = Math.round(1000 / 60);
   // 注册，第一次进入执行注册
   this.register = false;
+  // 缓动最小值;
+  this.tinyNum = 0.0000000001;
   // 设置默认动画数据;
   this.setDefaultData(data);
 };
@@ -218,8 +220,10 @@ p.render = function () {
       if (!this.register) {
         this.register = true;
         // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-        const st = progressTime / (duration + fromDelay) > 1 ? 1 :
-          item.ease(progressTime < 0 ? 0 : progressTime, 0, 1, duration);
+        // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
+        const s = delay ? 0 : item.ease(this.tinyNum, 0, 1, this.tinyNum);
+        const ss = duration ? item.ease(progressTime < 0 ? 0 : progressTime, 0, 1, duration) : s;
+        const st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
         this.setRatio(item.type === 'from' ? 1 - st : st, item, i);
         return;
       }
@@ -237,8 +241,15 @@ p.render = function () {
     if (progressTime < 0 && progressTime + fromDelay > -this.perFrame) {
       this.setRatio(item.type === 'from' ? 1 : 0, item, i);
     } else if (progressTime >= duration && item.mode !== 'onComplete') {
-      this.setRatio(item.type === 'from' || (repeatNum % 2 && item.yoyo) ?
-        item.ease(0, 0, 1, duration) : item.ease(duration, 0, 1, duration), item, i);
+      let compRatio;
+      if (item.type === 'from' || (repeatNum % 2 && item.yoyo)) {
+        compRatio = duration ? item.ease(0, 0, 1, duration) : 0;
+      } else {
+        // 不直接为1是为补 path 缓动;
+        compRatio = duration ? item.ease(duration, 0, 1, duration) :
+          item.ease(this.tinyNum, 0, 1, this.tinyNum);
+      }
+      this.setRatio(compRatio, item, i);
       if (item.mode !== 'reset') {
         item.onComplete(e);
       }

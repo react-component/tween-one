@@ -111,10 +111,10 @@ class TweenOne extends Component {
     const props = this.props;
     if (props.animation && Object.keys(props.animation).length) {
       this.timeLine = new TimeLine(this.dom, dataToArray(props.animation), props.attr);
-      // 预先注册 raf, 初始动画数值。
-      this.raf(0, true);
       // 开始动画
       this.play();
+      // 预先注册 raf, 初始动画数值。
+      this.raf(0, true);
     }
   }
 
