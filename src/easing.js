@@ -18,7 +18,6 @@ easingTypes.path = (_path, _param) => {
     const point = points.filter((item) =>
         item.x >= timePointX
       )[0] || pathNode.getPointAtLength(p * pathLength);
-    // console.log(1 - (point.y / rect))
     return 1 - (point.y / rect);
   };
 };
