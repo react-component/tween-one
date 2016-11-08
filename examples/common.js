@@ -22234,10 +22234,10 @@
 	    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (duration + item.repeatDelay)) - 1;
 	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
 	    // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
-	    if (repeatNum >= item.repeat && item.repeat !== -1) {
-	      return;
-	    }
 	    if (item.repeat) {
+	      if (repeatNum >= item.repeat && item.repeat !== -1) {
+	        return;
+	      }
 	      if (item.repeat || item.repeat <= repeatNum) {
 	        initTime = initTime + repeatNum * (duration + item.repeatDelay);
 	      }
@@ -22266,6 +22266,7 @@
 	      index: i,
 	      target: _this6.target
 	    };
+	
 	    // onRepeat 处理
 	    if (item.repeat && repeatNum > 0 && progressTime + fromDelay >= 0 && progressTime < _this6.perFrame) {
 	      // 重新开始, 在第一秒触发时调用;
