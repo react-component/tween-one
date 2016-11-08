@@ -22035,7 +22035,8 @@
 	    repeatDelay: vars.repeatDelay || 0,
 	    yoyo: vars.yoyo || false,
 	    type: vars.type || 'to',
-	    initTime: now
+	    initTime: now,
+	    appearTo: vars.appearTo || null
 	  };
 	}
 	
@@ -22102,8 +22103,15 @@
 	  var now = 0;
 	  var repeatMax = false;
 	  var data = _vars.map(function (item) {
-	    now += item.delay || 0; // 加上延时，在没有播放过时；
-	    var tweenData = defaultData(item, now);
+	    var appearToBool = typeof item.appearTo === 'number';
+	    // 加上延时，在没有播放过时；
+	    // !appearToBool && (now += item.delay || 0);
+	    if (!appearToBool) {
+	      now += item.delay || 0;
+	    }
+	    var appearToTime = (item.appearTo || 0) + (item.delay || 0);
+	    // 获取默认数据
+	    var tweenData = defaultData(item, appearToBool ? appearToTime : now);
 	    tweenData.vars = {};
 	    Object.keys(item).forEach(function (_key) {
 	      if (!(_key in tweenData)) {
@@ -22128,11 +22136,19 @@
 	    if (tweenData.repeat === -1) {
 	      repeatMax = true;
 	    }
-	    if (tweenData.delay < -tweenData.duration) {
-	      // 如果延时小于 负时间时,,不加,再减回延时;
-	      now -= tweenData.delay;
+	    var repeat = tweenData.repeat === -1 ? 0 : tweenData.repeat;
+	    if (appearToBool) {
+	      // 如果有 appearTo 且这条时间比 now 大时，，总时间用这条；
+	      var appearNow = item.appearTo + (item.delay || 0) + tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
+	      now = appearNow >= now ? appearNow : now;
 	    } else {
-	      now += tweenData.duration * (tweenData.repeat + 1) + tweenData.repeatDelay * tweenData.repeat;
+	      if (tweenData.delay < -tweenData.duration) {
+	        // 如果延时小于 负时间时,,不加,再减回延时;
+	        now -= tweenData.delay;
+	      } else {
+	        // repeat 为 -1 只记录一次。不能跟 reverse 同时使用;
+	        now += tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
+	      }
 	    }
 	    tweenData.mode = '';
 	    return tweenData;
@@ -22218,11 +22234,16 @@
 	    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (duration + item.repeatDelay)) - 1;
 	    repeatNum = repeatNum < 0 ? 0 : repeatNum;
 	    // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
+	    if (repeatNum >= item.repeat && item.repeat !== -1) {
+	      return;
+	    }
 	    if (item.repeat) {
 	      if (item.repeat || item.repeat <= repeatNum) {
 	        initTime = initTime + repeatNum * (duration + item.repeatDelay);
 	      }
 	    }
+	    var startData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 1 : 0;
+	    var endData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 0 : 1;
 	    //  精度损失，只取小数点后10位。
 	    var progressTime = parseFloat((_this6.progressTime - initTime).toFixed(10));
 	    // 设置 start
@@ -22234,10 +22255,10 @@
 	        _this6.register = true;
 	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
 	        // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
-	        var s = delay ? 0 : item.ease(_this6.tinyNum, 0, 1, _this6.tinyNum);
-	        var ss = duration ? item.ease(progressTime < 0 ? 0 : progressTime, 0, 1, duration) : s;
+	        var s = delay ? 0 : item.ease(_this6.tinyNum, startData, endData, _this6.tinyNum);
+	        var ss = duration ? item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration) : s;
 	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
-	        _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
+	        _this6.setRatio(st, item, i);
 	        return;
 	      }
 	    }
@@ -22253,13 +22274,7 @@
 	    if (progressTime < 0 && progressTime + fromDelay > -_this6.perFrame) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
 	    } else if (progressTime >= duration && item.mode !== 'onComplete') {
-	      var compRatio = void 0;
-	      if (item.type === 'from' || repeatNum % 2 && item.yoyo) {
-	        compRatio = duration ? item.ease(0, 0, 1, duration) : 0;
-	      } else {
-	        // 不直接为1是为补 path 缓动;
-	        compRatio = duration ? item.ease(duration, 0, 1, duration) : item.ease(_this6.tinyNum, 0, 1, _this6.tinyNum);
-	      }
+	      var compRatio = duration ? item.ease(duration, startData, endData, duration) : item.ease(_this6.tinyNum, startData, endData, _this6.tinyNum);
 	      _this6.setRatio(compRatio, item, i);
 	      if (item.mode !== 'reset') {
 	        item.onComplete(e);
@@ -22269,10 +22284,7 @@
 	      item.mode = progressTime < _this6.perFrame ? 'onStart' : 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > duration ? duration : progressTime;
-	      var ratio = item.ease(progressTime, 0, 1, duration);
-	      if (item.yoyo && repeatNum % 2 || item.type === 'from') {
-	        ratio = item.ease(progressTime, 1, 0, duration);
-	      }
+	      var ratio = item.ease(progressTime, startData, endData, duration);
 	      _this6.setRatio(ratio, item, i);
 	      if (progressTime <= _this6.perFrame) {
 	        item.onStart(e);
@@ -22340,7 +22352,7 @@
 	  var pathNode = (0, _util.parsePath)(_path);
 	  var pathLength = pathNode.getTotalLength();
 	  var rect = param.rect || 100; // path 的大小，100 * 100，
-	  var lengthPixel = param.lengthPixel || 1500; // 线上取点像素，默认分为 1024段。。
+	  var lengthPixel = param.lengthPixel || 1500; // 线上取点像素，默认分为 1500 段。。
 	  var points = [];
 	  for (var i = 0; i < lengthPixel; i++) {
 	    points.push(pathNode.getPointAtLength(pathLength / lengthPixel * i));
@@ -22352,6 +22364,7 @@
 	    var point = points.filter(function (item) {
 	      return item.x >= timePointX;
 	    })[0] || pathNode.getPointAtLength(p * pathLength);
+	    // console.log(1 - (point.y / rect))
 	    return 1 - point.y / rect;
 	  };
 	};

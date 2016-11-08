@@ -45,26 +45,45 @@ webpackJsonp([7],{
 	  }
 	
 	  Demo.prototype.render = function render() {
-	    var p = 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0';
+	    var p1 = 'M0,100 L25,100 C34,20 40,0 100,0';
+	    var p = 'M0,100 C5,120 25,130 25,100 C30,60 40,75 58,90 C69,98.5 83,99.5 100,100';
 	    return _react2.default.createElement(
 	      'div',
-	      null,
-	      _react2.default.createElement(
-	        _rcTweenOne2.default,
-	        {
-	          animation: { duration: 2000, x: 500, ease: _rcTweenOne2.default.easing.path(p) },
-	          style: { opacity: 1, height: 100, transform: 'translate(50px,30px)' }
-	        },
-	        _react2.default.createElement(
-	          'div',
-	          null,
-	          '执行动效'
-	        )
-	      ),
+	      { style: { height: 300 } },
+	      _react2.default.createElement(_rcTweenOne2.default, {
+	        animation: [{
+	          repeatDelay: 1000,
+	          duration: 1000,
+	          scaleX: 0,
+	          scaleY: 2,
+	          repeat: -1,
+	          yoyo: true,
+	          ease: _rcTweenOne2.default.easing.path(p)
+	        }, {
+	          repeatDelay: 1000,
+	          duration: 1000,
+	          y: -30,
+	          appearTo: 0,
+	          repeat: -1,
+	          yoyo: true,
+	          ease: _rcTweenOne2.default.easing.path(p1)
+	        }],
+	        style: {
+	          position: 'absolute',
+	          opacity: 1,
+	          height: 50,
+	          width: 50,
+	          transform: 'translate(150px,150px)',
+	          background: '#000',
+	          transformOrigin: 'center bottom'
+	        }
+	      }),
+	      _react2.default.createElement('div', { style: { width: 100, height: 100, background: '#fff000', position: 'absolute' } }),
 	      _react2.default.createElement(
 	        'svg',
-	        null,
-	        _react2.default.createElement('path', { fill: 'none', stroke: '#000', d: p })
+	        { style: { position: 'absolute' } },
+	        _react2.default.createElement('path', { fill: 'none', stroke: '#000', d: p }),
+	        _react2.default.createElement('path', { d: p1, fill: 'none', stroke: '#000' })
 	      )
 	    );
 	  };
