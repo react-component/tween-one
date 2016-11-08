@@ -192,10 +192,10 @@
 	      var props = _this.props;
 	      if (props.animation && Object.keys(props.animation).length) {
 	        _this.timeLine = new _TimeLine2.default(_this.dom, (0, _util.dataToArray)(props.animation), props.attr);
-	        // 预先注册 raf, 初始动画数值。
-	        _this.raf(0, true);
 	        // 开始动画
 	        _this.play();
+	        // 预先注册 raf, 初始动画数值。
+	        _this.raf(0, true);
 	      }
 	    };
 	
@@ -22089,6 +22089,8 @@
 	  this.perFrame = Math.round(1000 / 60);
 	  // 注册，第一次进入执行注册
 	  this.register = false;
+	  // 缓动最小值;
+	  this.tinyNum = 0.0000000001;
 	  // 设置默认动画数据;
 	  this.setDefaultData(data);
 	};
@@ -22231,7 +22233,10 @@
 	      if (!_this6.register) {
 	        _this6.register = true;
 	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : item.ease(progressTime < 0 ? 0 : progressTime, 0, 1, duration);
+	        // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
+	        var s = delay ? 0 : item.ease(_this6.tinyNum, 0, 1, _this6.tinyNum);
+	        var ss = duration ? item.ease(progressTime < 0 ? 0 : progressTime, 0, 1, duration) : s;
+	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
 	        _this6.setRatio(item.type === 'from' ? 1 - st : st, item, i);
 	        return;
 	      }
@@ -22248,7 +22253,14 @@
 	    if (progressTime < 0 && progressTime + fromDelay > -_this6.perFrame) {
 	      _this6.setRatio(item.type === 'from' ? 1 : 0, item, i);
 	    } else if (progressTime >= duration && item.mode !== 'onComplete') {
-	      _this6.setRatio(item.type === 'from' || repeatNum % 2 && item.yoyo ? item.ease(0, 0, 1, duration) : item.ease(duration, 0, 1, duration), item, i);
+	      var compRatio = void 0;
+	      if (item.type === 'from' || repeatNum % 2 && item.yoyo) {
+	        compRatio = duration ? item.ease(0, 0, 1, duration) : 0;
+	      } else {
+	        // 不直接为1是为补 path 缓动;
+	        compRatio = duration ? item.ease(duration, 0, 1, duration) : item.ease(_this6.tinyNum, 0, 1, _this6.tinyNum);
+	      }
+	      _this6.setRatio(compRatio, item, i);
 	      if (item.mode !== 'reset') {
 	        item.onComplete(e);
 	      }
