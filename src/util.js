@@ -230,7 +230,7 @@ export function getTransformValue(t, ratio, supports3D) {
       // IE 9 没 3d;
       return createMatrix ? createMatrix(transform) : transform;
     }
-    return t;
+    return transform;
   }
   ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
   const rX = rotateX ? `rotateX(${rotateX}deg)` : '';

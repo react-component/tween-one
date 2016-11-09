@@ -223,7 +223,7 @@ p.render = function () {
     repeatNum = repeatNum < 0 ? 0 : repeatNum;
     // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
     if (item.repeat) {
-      if (repeatNum >= item.repeat && item.repeat !== -1) {
+      if (item.repeat < repeatNum && item.repeat !== -1) {
         return;
       }
       if (item.repeat || item.repeat <= repeatNum) {

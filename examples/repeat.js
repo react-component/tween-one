@@ -10,8 +10,8 @@ class Demo extends React.Component {
     return (<Tween
       animation={{
         opacity: 1,
-        translateX: '100px',
-        repeat: 3,
+        x: '100px',
+        repeat: 1,
         repeatDelay: 1000,
         duration: 1000,
       }}

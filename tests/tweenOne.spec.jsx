@@ -215,13 +215,11 @@ describe('rc-tween-one', () => {
         setTimeout(() => {
           transform = child.style[checkStyleName('transform')];
           xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-          rotate = xy[1];
           x = xy[0].split(',')[4];
           y = xy[0].split(',')[5];
           expect(getFloat(x)).to.be(200);
           expect(getFloat(y)).to.be(0);
-          expect(getFloat(rotate)).to.above(-45.0001).below(-44.999);
-          console.log(`x:${x}, y: ${y}, rotate:${rotate}`);
+          console.log(`x:${x}, y: ${y}`);
           done();
         }, 530);
       }, 470);
