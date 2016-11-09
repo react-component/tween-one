@@ -1,27 +1,27 @@
-webpackJsonp([14],{
+webpackJsonp([14,29],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(200);
+	module.exports = __webpack_require__(202);
 
 
 /***/ },
 
-/***/ 200:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 202:
+/***/ function(module, exports) {
 
 	'use strict';
 	
-	var _rcTweenOne = __webpack_require__(2);
+	var _rcTweenOne = require('rc-tween-one');
 	
 	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
 	
-	var _react = __webpack_require__(5);
+	var _react = require('react');
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(37);
+	var _reactDom = require('react-dom');
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -65,7 +65,7 @@ webpackJsonp([14],{
 	      _react2.default.createElement(
 	        'div',
 	        null,
-	        'moment初始为2500,所以第一个时间已过,而且第二个已播了2000'
+	        'moment\u521D\u59CB\u4E3A2500,\u6240\u4EE5\u7B2C\u4E00\u4E2A\u65F6\u95F4\u5DF2\u8FC7,\u800C\u4E14\u7B2C\u4E8C\u4E2A\u5DF2\u64AD\u4E862000'
 	      ),
 	      _react2.default.createElement(
 	        _rcTweenOne2.default,
@@ -77,7 +77,7 @@ webpackJsonp([14],{
 	        _react2.default.createElement(
 	          'div',
 	          null,
-	          '执行动效'
+	          '\u6267\u884C\u52A8\u6548'
 	        )
 	      )
 	    );
