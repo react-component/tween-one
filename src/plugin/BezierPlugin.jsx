@@ -365,6 +365,7 @@ const Bezier = function(target, vars) {
 };
 Bezier.prototype = {
   name: 'bezier',
+  useStyle: 'transform',
   getDefaultData(obj) {
     return {
       type: obj.type || 'soft',

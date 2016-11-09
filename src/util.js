@@ -1,4 +1,7 @@
 import React from 'react';
+import {
+  createMatrix,
+} from 'style-utils';
 
 export function toArrayChildren(children) {
   const ret = [];
@@ -200,11 +203,6 @@ export function parsePath(path) {
   throw new Error('Error while parsing the path');
 }
 
-export function closeEnough(num1, num2, eps) {
-  return Math.abs(num1 - num2) < eps;
-}
-
-
 export function getTransformValue(t, ratio, supports3D) {
   const perspective = t.perspective;
   const angle = t.rotate;
@@ -224,16 +222,15 @@ export function getTransformValue(t, ratio, supports3D) {
   const sk = skx || sky ? `skew(${skx}deg,${sky}deg)` : '';
   const an = angle ? `rotate(${angle}deg)` : '';
   let ss;
-  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1) {
-    if (!supports3D || ratio >= 1) {
-      const matrix = `1,0,0,1,${translateX},${translateY}`;
-      ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
-      // IE 9 没 3d;
-      return `${percent} matrix(${matrix}) ${an} ${ss} ${sk}`;
-    }
+  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1 || !supports3D) {
     ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
-    return `${percent} translate(${translateX}px,${
+    const transform = `${percent} translate(${translateX}px,${
       translateY}px) ${an} ${ss} ${sk}`;
+    if (ratio >= 1) {
+      // IE 9 没 3d;
+      return createMatrix ? createMatrix(transform) : transform;
+    }
+    return t;
   }
   ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
   const rX = rotateX ? `rotateX(${rotateX}deg)` : '';

@@ -225,7 +225,7 @@ p.setRatio = function (ratio, tween) {
   const style = this.target.style;
   if (ratio === (this.type === 'from' ? 0 : 1)) {
     style.willChange = null;
-  } else if (ratio === (this.type === 'from' ? 1 : 0)) {
+  } else {
     style.willChange = this.willChange;
   }
   Object.keys(this.propsData.data).forEach(key => {

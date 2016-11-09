@@ -15,6 +15,7 @@ const PathPlugin = function (target, vars) {
 
 PathPlugin.prototype = {
   name: 'path',
+  useStyle: 'transform',
   getComputedStyle() {
     return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
   },
@@ -26,7 +27,6 @@ PathPlugin.prototype = {
   getAnimStart() {
     const computedStyle = this.getComputedStyle();
     const transform = getTransform(computedStyle[checkStyleName('transform')]);
-    this.willChange = 'transform';
     this.start = transform;
     this.data = { ...transform };
   },
