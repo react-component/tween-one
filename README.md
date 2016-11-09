@@ -82,6 +82,8 @@ React.render(<TweenOneGroup>
 
 ## API
 
+<a href='https://motion.ant.design/api/tween-one' target='_blank'>中文文档</a>
+
 > version >= 0.6.x support SVG;
 
 
