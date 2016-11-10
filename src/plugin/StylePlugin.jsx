@@ -123,14 +123,14 @@ p.getAnimStart = function () {
       if (key === 'bezier') {
         this.transform = checkStyleName('transform');
         startData = computedStyle[this.transform];
-        style.transform = getTransform(startData);
+        style.transform = style.transform || getTransform(startData);
       }
       this.propsData.data[key].getAnimStart();
     } else if (cssName === 'transform') {
       this.transform = checkStyleName('transform');
       startData = computedStyle[this.transform];
       endUnit = this.propsData.dataUnit[key];
-      transform = getTransform(startData);
+      transform = style.transform || getTransform(startData);
       if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
         const percent = key === 'translateX' ? 'xPercent' : 'yPercent';
         transform[percent] = startConvertToEndUnit(this.target, key, transform[key], null, endUnit);

@@ -213,22 +213,24 @@ export function getTransformValue(t, ratio, supports3D) {
   const sz = t.scaleZ;
   const skx = t.skewX;
   const sky = t.skewY;
-  const translateX = t.translateX;
-  const translateY = t.translateY;
-  const translateZ = t.translateZ || 0;
   const xPercent = t.xPercent || 0;
   const yPercent = t.yPercent || 0;
-  const percent = `${(xPercent || yPercent) ? `translate(${xPercent},${yPercent})` : ''}`;
+  const translateX = xPercent ? 0 : t.translateX;
+  const translateY = yPercent ? 0 : t.translateY;
+  const translateZ = t.translateZ || 0;
+  const percent = xPercent || yPercent ? `translate(${xPercent || `${
+    translateX}px`},${yPercent || `${translateY}px`})` : '';
   const sk = skx || sky ? `skew(${skx}deg,${sky}deg)` : '';
   const an = angle ? `rotate(${angle}deg)` : '';
   let ss;
   if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1 || !supports3D) {
     ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
-    const transform = `${percent} translate(${translateX}px,${
-      translateY}px) ${an} ${ss} ${sk}`;
+    const translate = percent || `translate(${translateX}px,${
+      translateY}px)`;
+    const transform = `${translate} ${an} ${ss} ${sk}`;
     if (ratio >= 1) {
       // IE 9 没 3d;
-      return createMatrix ? createMatrix(transform) : transform;
+      return createMatrix && !percent ? createMatrix(transform) : transform;
     }
     return transform;
   }
@@ -236,6 +238,6 @@ export function getTransformValue(t, ratio, supports3D) {
   const rX = rotateX ? `rotateX(${rotateX}deg)` : '';
   const rY = rotateY ? `rotateY(${rotateY}deg)` : '';
   const per = perspective ? `perspective(${perspective}px)` : '';
-  return `${per} ${percent} translate3d(${translateX}px,${
-    translateY}px,${translateZ}px) ${ss} ${an} ${rX} ${rY} ${sk}`;
+  return `${per} ${percent} translate3d(0,0,${
+    translateZ}px) ${ss} ${an} ${rX} ${rY} ${sk}`;
 }
