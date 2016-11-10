@@ -21897,21 +21897,22 @@ webpackJsonp([22,29],[
 	  var sz = t.scaleZ;
 	  var skx = t.skewX;
 	  var sky = t.skewY;
-	  var translateX = t.translateX;
-	  var translateY = t.translateY;
-	  var translateZ = t.translateZ || 0;
 	  var xPercent = t.xPercent || 0;
 	  var yPercent = t.yPercent || 0;
-	  var percent = '' + (xPercent || yPercent ? 'translate(' + xPercent + ',' + yPercent + ')' : '');
+	  var translateX = xPercent ? 0 : t.translateX;
+	  var translateY = yPercent ? 0 : t.translateY;
+	  var translateZ = t.translateZ || 0;
+	  var percent = xPercent || yPercent ? 'translate(' + (xPercent || translateX + 'px') + ',' + (yPercent || translateY + 'px') + ')' : '';
 	  var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
 	  var an = angle ? 'rotate(' + angle + 'deg)' : '';
 	  var ss = void 0;
 	  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1 || !supports3D) {
 	    ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-	    var transform = percent + ' translate(' + translateX + 'px,' + translateY + 'px) ' + an + ' ' + ss + ' ' + sk;
+	    var translate = percent || 'translate(' + translateX + 'px,' + translateY + 'px)';
+	    var transform = translate + ' ' + an + ' ' + ss + ' ' + sk;
 	    if (ratio >= 1) {
 	      // IE 9 没 3d;
-	      return _styleUtils.createMatrix ? (0, _styleUtils.createMatrix)(transform) : transform;
+	      return _styleUtils.createMatrix && !percent ? (0, _styleUtils.createMatrix)(transform) : transform;
 	    }
 	    return transform;
 	  }
@@ -21919,7 +21920,7 @@ webpackJsonp([22,29],[
 	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
 	  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
 	  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	  return per + ' ' + percent + ' translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
+	  return per + ' ' + percent + ' translate3d(0,0,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
 	}
 
 /***/ },
@@ -23148,14 +23149,14 @@ webpackJsonp([22,29],[
 	      if (key === 'bezier') {
 	        _this2.transform = (0, _styleUtils.checkStyleName)('transform');
 	        startData = computedStyle[_this2.transform];
-	        style.transform = (0, _styleUtils.getTransform)(startData);
+	        style.transform = style.transform || (0, _styleUtils.getTransform)(startData);
 	      }
 	      _this2.propsData.data[key].getAnimStart();
 	    } else if (cssName === 'transform') {
 	      _this2.transform = (0, _styleUtils.checkStyleName)('transform');
 	      startData = computedStyle[_this2.transform];
 	      endUnit = _this2.propsData.dataUnit[key];
-	      transform = (0, _styleUtils.getTransform)(startData);
+	      transform = style.transform || (0, _styleUtils.getTransform)(startData);
 	      if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
 	        var percent = key === 'translateX' ? 'xPercent' : 'yPercent';
 	        transform[percent] = (0, _util.startConvertToEndUnit)(_this2.target, key, transform[key], null, endUnit);
