@@ -212,7 +212,8 @@ webpackJsonp([0,29],[
 	    };
 	
 	    _this.frame = function (register) {
-	      var moment = (_ticker2.default.frame - _this.startFrame) * perFrame + (!register && _this.startMoment || 0);
+	      var startMoment = register ? 0 : _this.startMoment;
+	      var moment = (_ticker2.default.frame - _this.startFrame) * perFrame + startMoment;
 	      if (_this.reverse) {
 	        moment = (_this.startMoment || 0) - (_ticker2.default.frame - _this.startFrame) * perFrame;
 	      }
@@ -240,7 +241,7 @@ webpackJsonp([0,29],[
 	
 	    _this.rafID = -1;
 	    _this.moment = _this.props.moment || 0;
-	    _this.startMoment = _this.props.moment || perFrame - 1;
+	    _this.startMoment = _this.props.moment || perFrame;
 	    _this.startFrame = _ticker2.default.frame;
 	    _this.paused = _this.props.paused;
 	    _this.reverse = _this.props.reverse;
@@ -288,7 +289,7 @@ webpackJsonp([0,29],[
 	      if (nextProps.resetStyleBool && this.timeLine) {
 	        this.timeLine.resetDefaultStyle();
 	      }
-	      this.startMoment = perFrame - 1; // 设置 perFrame 为开始时就播放一帧动画, 不是从0开始, 鼠标跟随使用
+	      this.startMoment = perFrame;
 	      this.startFrame = _ticker2.default.frame;
 	      this.restartAnim = true;
 	      // this.start(nextProps);
@@ -23481,8 +23482,14 @@ webpackJsonp([0,29],[
 	};
 	var ticker = new Ticker();
 	p.tick = function (a) {
-	  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : ticker.perFrame;
+	  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : 0;
 	  ticker.lastUpdate = ticker.lastUpdate ? ticker.lastUpdate + ticker.elapsed : ticker.getTime() + ticker.elapsed;
+	  ticker.time = (ticker.lastUpdate - ticker.startTime) / 1000;
+	  // 小于 10 不刷新，，减少刷亲率；
+	  if (ticker.elapsed < 10) {
+	    ticker.id = (0, _raf2.default)(ticker.tick);
+	    return;
+	  }
 	  var obj = ticker.tickFnObject;
 	  Object.keys(obj).forEach(function (key) {
 	    if (obj[key]) {
@@ -23491,7 +23498,8 @@ webpackJsonp([0,29],[
 	  });
 	  // 如果 object 里没对象了，自动杀掉；
 	  if (!Object.keys(obj).length) {
-	    return ticker.sleep();
+	    ticker.sleep();
+	    return;
 	  }
 	  if (ticker.elapsed > ticker.skipFrameMax || !ticker.frame) {
 	    ticker.frame++;
@@ -23510,7 +23518,8 @@ webpackJsonp([0,29],[
 	  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
 	  var startFrame = this.frame;
 	  this.wake(timeoutID, function () {
-	    var moment = (_this.frame - startFrame) * _this.perFrame;
+	    // 跟 tween-one 的开始统一用 perFrame;
+	    var moment = (_this.frame - startFrame) * _this.perFrame + _this.perFrame;
 	    if (moment >= (time || 0)) {
 	      _this.clear(timeoutID);
 	      fn();
@@ -23530,7 +23539,7 @@ webpackJsonp([0,29],[
 	  var intervalID = 'interval' + Date.now() + '-' + intervalIdNumber;
 	  var starFrame = this.frame;
 	  this.wake(intervalID, function () {
-	    var moment = (_this2.frame - starFrame) * _this2.perFrame;
+	    var moment = (_this2.frame - starFrame) * _this2.perFrame + _this2.perFrame;
 	    if (moment >= (time || 0)) {
 	      starFrame = _this2.frame;
 	      fn();
@@ -23555,6 +23564,7 @@ webpackJsonp([0,29],[
 	
 	for(var i = 0; !raf && i < vendors.length; i++) {
 	  raf = root[vendors[i] + 'Request' + suffix]
+	
 	  caf = root[vendors[i] + 'Cancel' + suffix]
 	      || root[vendors[i] + 'CancelRequest' + suffix]
 	}
