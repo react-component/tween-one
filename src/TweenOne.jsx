@@ -16,7 +16,7 @@ class TweenOne extends Component {
     super(...arguments);
     this.rafID = -1;
     this.moment = this.props.moment || 0;
-    this.startMoment = this.props.moment || perFrame - 1;
+    this.startMoment = this.props.moment || perFrame;
     this.startFrame = ticker.frame;
     this.paused = this.props.paused;
     this.reverse = this.props.reverse;
@@ -59,7 +59,7 @@ class TweenOne extends Component {
       if (nextProps.resetStyleBool && this.timeLine) {
         this.timeLine.resetDefaultStyle();
       }
-      this.startMoment = perFrame - 1;// 设置 perFrame 为开始时就播放一帧动画, 不是从0开始, 鼠标跟随使用
+      this.startMoment = perFrame;
       this.startFrame = ticker.frame;
       this.restartAnim = true;
       // this.start(nextProps);
@@ -127,7 +127,8 @@ class TweenOne extends Component {
   }
 
   frame = (register) => {
-    let moment = (ticker.frame - this.startFrame) * perFrame + (!register && this.startMoment || 0);
+    const startMoment = register ? 0 : this.startMoment;
+    let moment = (ticker.frame - this.startFrame) * perFrame + startMoment;
     if (this.reverse) {
       moment = (this.startMoment || 0) - (ticker.frame - this.startFrame) * perFrame;
     }

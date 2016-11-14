@@ -39,9 +39,15 @@ p.sleep = function () {
 };
 const ticker = new Ticker;
 p.tick = function (a) {
-  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : ticker.perFrame;
+  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : 0;
   ticker.lastUpdate = ticker.lastUpdate
     ? ticker.lastUpdate + ticker.elapsed : ticker.getTime() + ticker.elapsed;
+  ticker.time = (ticker.lastUpdate - ticker.startTime) / 1000;
+  // 小于 10 不刷新，，减少刷亲率；
+  if (ticker.elapsed < 10) {
+    ticker.id = requestAnimationFrame(ticker.tick);
+    return;
+  }
   const obj = ticker.tickFnObject;
   Object.keys(obj).forEach(key => {
     if (obj[key]) {
@@ -50,7 +56,8 @@ p.tick = function (a) {
   });
   // 如果 object 里没对象了，自动杀掉；
   if (!Object.keys(obj).length) {
-    return ticker.sleep();
+    ticker.sleep();
+    return;
   }
   if (ticker.elapsed > ticker.skipFrameMax || !ticker.frame) {
     ticker.frame++;
@@ -67,7 +74,8 @@ p.timeout = function (fn, time) {
   const timeoutID = `timeout${Date.now()}-${timeoutIdNumber}`;
   const startFrame = this.frame;
   this.wake(timeoutID, () => {
-    const moment = (this.frame - startFrame) * this.perFrame;
+    // 跟 tween-one 的开始统一用 perFrame;
+    const moment = (this.frame - startFrame) * this.perFrame + this.perFrame;
     if (moment >= (time || 0)) {
       this.clear(timeoutID);
       fn();
@@ -85,7 +93,7 @@ p.interval = function (fn, time) {
   const intervalID = `interval${Date.now()}-${intervalIdNumber}`;
   let starFrame = this.frame;
   this.wake(intervalID, () => {
-    const moment = (this.frame - starFrame) * this.perFrame;
+    const moment = (this.frame - starFrame) * this.perFrame + this.perFrame;
     if (moment >= (time || 0)) {
       starFrame = this.frame;
       fn();
