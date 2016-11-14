@@ -1,8 +1,8 @@
-webpackJsonp([22,29],[
+webpackJsonp([21,29],[
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(217);
+	module.exports = __webpack_require__(216);
 
 
 /***/ },
@@ -21920,7 +21920,8 @@ webpackJsonp([22,29],[
 	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
 	  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
 	  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	  return per + ' ' + percent + ' translate3d(0,0,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
+	  var translate3d = percent ? percent + ' translate3d(0,0,' + translateZ + 'px)' : 'translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px)';
+	  return per + ' ' + translate3d + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
 	}
 
 /***/ },
@@ -23808,8 +23809,7 @@ webpackJsonp([22,29],[
 /* 213 */,
 /* 214 */,
 /* 215 */,
-/* 216 */,
-/* 217 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23826,7 +23826,7 @@ webpackJsonp([22,29],[
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _SvgDrawPlugin = __webpack_require__(218);
+	var _SvgDrawPlugin = __webpack_require__(217);
 	
 	var _SvgDrawPlugin2 = _interopRequireDefault(_SvgDrawPlugin);
 	
@@ -23903,7 +23903,7 @@ webpackJsonp([22,29],[
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
 /***/ },
-/* 218 */
+/* 217 */
 /***/ function(module, exports) {
 
 	'use strict';

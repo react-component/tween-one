@@ -1,8 +1,8 @@
-webpackJsonp([15,29],[
+webpackJsonp([14,29],[
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(203);
+	module.exports = __webpack_require__(202);
 
 
 /***/ },
@@ -21920,7 +21920,8 @@ webpackJsonp([15,29],[
 	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
 	  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
 	  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	  return per + ' ' + percent + ' translate3d(0,0,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
+	  var translate3d = percent ? percent + ' translate3d(0,0,' + translateZ + 'px)' : 'translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px)';
+	  return per + ' ' + translate3d + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
 	}
 
 /***/ },
@@ -23794,8 +23795,7 @@ webpackJsonp([15,29],[
 /* 199 */,
 /* 200 */,
 /* 201 */,
-/* 202 */,
-/* 203 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23812,7 +23812,7 @@ webpackJsonp([15,29],[
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _PathPlugin = __webpack_require__(204);
+	var _PathPlugin = __webpack_require__(203);
 	
 	var _PathPlugin2 = _interopRequireDefault(_PathPlugin);
 	
@@ -23868,7 +23868,7 @@ webpackJsonp([15,29],[
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
 /***/ },
-/* 204 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

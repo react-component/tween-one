@@ -1,8 +1,8 @@
-webpackJsonp([25,29],[
+webpackJsonp([24,29],[
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(221);
+	module.exports = __webpack_require__(220);
 
 
 /***/ },
@@ -21920,7 +21920,8 @@ webpackJsonp([25,29],[
 	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
 	  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
 	  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	  return per + ' ' + percent + ' translate3d(0,0,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
+	  var translate3d = percent ? percent + ' translate3d(0,0,' + translateZ + 'px)' : 'translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px)';
+	  return per + ' ' + translate3d + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
 	}
 
 /***/ },
@@ -23812,8 +23813,7 @@ webpackJsonp([25,29],[
 /* 217 */,
 /* 218 */,
 /* 219 */,
-/* 220 */,
-/* 221 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

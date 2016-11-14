@@ -1,8 +1,8 @@
-webpackJsonp([24,29],[
+webpackJsonp([23,29],[
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(220);
+	module.exports = __webpack_require__(219);
 
 
 /***/ },
@@ -21920,7 +21920,8 @@ webpackJsonp([24,29],[
 	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
 	  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
 	  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	  return per + ' ' + percent + ' translate3d(0,0,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
+	  var translate3d = percent ? percent + ' translate3d(0,0,' + translateZ + 'px)' : 'translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px)';
+	  return per + ' ' + translate3d + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
 	}
 
 /***/ },
@@ -23806,8 +23807,7 @@ webpackJsonp([24,29],[
 /* 211 */,
 /* 212 */,
 /* 213 */,
-/* 214 */,
-/* 215 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23816,7 +23816,7 @@ webpackJsonp([24,29],[
 	  value: true
 	});
 	
-	var _snapsvglite = __webpack_require__(216);
+	var _snapsvglite = __webpack_require__(215);
 	
 	var SvgPlugin = function SvgPlugin(target, vars, key) {
 	  this.target = target;
@@ -23889,7 +23889,7 @@ webpackJsonp([24,29],[
 	module.exports = exports['default'];
 
 /***/ },
-/* 216 */
+/* 215 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -24361,10 +24361,10 @@ webpackJsonp([24,29],[
 	};
 
 /***/ },
+/* 216 */,
 /* 217 */,
 /* 218 */,
-/* 219 */,
-/* 220 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24381,7 +24381,7 @@ webpackJsonp([24,29],[
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _SvgMorphPlugin = __webpack_require__(215);
+	var _SvgMorphPlugin = __webpack_require__(214);
 	
 	var _SvgMorphPlugin2 = _interopRequireDefault(_SvgMorphPlugin);
 	

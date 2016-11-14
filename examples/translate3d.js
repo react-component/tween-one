@@ -1,70 +1,12 @@
-webpackJsonp([0,29],[
+webpackJsonp([25,29],[
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1);
+	module.exports = __webpack_require__(221);
 
 
 /***/ },
-/* 1 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _rcTweenOne = __webpack_require__(2);
-	
-	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
-	
-	var _react = __webpack_require__(5);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(38);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
-	
-	var Demo = function (_React$Component) {
-	  _inherits(Demo, _React$Component);
-	
-	  function Demo() {
-	    _classCallCheck(this, Demo);
-	
-	    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
-	  }
-	
-	  Demo.prototype.render = function render() {
-	    return _react2.default.createElement(
-	      _rcTweenOne2.default,
-	      {
-	        animation: [{ rotateY: 180, duration: 1300 }, { delay: -900, translateX: 100, duration: 1000 }],
-	        style: { margin: 200, width: 100,
-	          transform: 'perspective(100px) rotateY(10deg)', backgroundColor: '#fff000'
-	        }
-	      },
-	      _react2.default.createElement(
-	        'div',
-	        null,
-	        '\u6267\u884C\u52A8\u6548'
-	      )
-	    );
-	  };
-	
-	  return Demo;
-	}(_react2.default.Component);
-	
-	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
-
-/***/ },
+/* 1 */,
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -21978,7 +21920,8 @@ webpackJsonp([0,29],[
 	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
 	  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
 	  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-	  return per + ' ' + percent + ' translate3d(0,0,' + translateZ + 'px) ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
+	  var translate3d = percent ? percent + ' translate3d(0,0,' + translateZ + 'px)' : 'translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px)';
+	  return per + ' ' + translate3d + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
 	}
 
 /***/ },
@@ -23836,6 +23779,99 @@ webpackJsonp([0,29],[
 	exports.default = TweenOneGroup;
 	module.exports = exports['default'];
 
+/***/ },
+/* 187 */,
+/* 188 */,
+/* 189 */,
+/* 190 */,
+/* 191 */,
+/* 192 */,
+/* 193 */,
+/* 194 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _rcTweenOne = __webpack_require__(2);
+	
+	var _rcTweenOne2 = _interopRequireDefault(_rcTweenOne);
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(38);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
+	var Demo = function (_React$Component) {
+	  _inherits(Demo, _React$Component);
+	
+	  function Demo() {
+	    _classCallCheck(this, Demo);
+	
+	    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+	  }
+	
+	  Demo.prototype.render = function render() {
+	    return _react2.default.createElement(
+	      _rcTweenOne2.default,
+	      {
+	        animation: [{ rotateY: 180, duration: 1300 }, { delay: -900, translateX: 100, duration: 1000 }],
+	        style: { margin: 200, width: 100,
+	          transform: 'perspective(100px) rotateY(10deg)', backgroundColor: '#fff000'
+	        }
+	      },
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        '\u6267\u884C\u52A8\u6548'
+	      )
+	    );
+	  };
+	
+	  return Demo;
+	}(_react2.default.Component);
+	
+	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
+
 /***/ }
 ]);
-//# sourceMappingURL=3dTween.js.map
+//# sourceMappingURL=translate3d.js.map

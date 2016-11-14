@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 /******/
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"3dTween","1":"bezier","2":"blur","3":"childrenUpdate","4":"color","5":"control","6":"delay","7":"easingPath","8":"followMouse","9":"from","10":"fromDelay","11":"group","12":"groupAbsolute","13":"gsapWritten","14":"moment","15":"path","16":"repeat","17":"scrollAnim","18":"shadow","19":"shadowInset","20":"simple","21":"svg","22":"svgDraw","23":"svgDrawShape","24":"svgPoints","25":"timeline","26":"update","27":"updateStyle","28":"yoyo"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + "." + ({"0":"bezier","1":"blur","2":"childrenUpdate","3":"color","4":"control","5":"delay","6":"easingPath","7":"followMouse","8":"from","9":"fromDelay","10":"group","11":"groupAbsolute","12":"gsapWritten","13":"moment","14":"path","15":"repeat","16":"scrollAnim","17":"shadow","18":"shadowInset","19":"simple","20":"svg","21":"svgDraw","22":"svgDrawShape","23":"svgPoints","24":"timeline","25":"translate3d","26":"update","27":"updateStyle","28":"yoyo"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
