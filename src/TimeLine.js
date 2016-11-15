@@ -46,6 +46,8 @@ const timeLine = function (target, toData, attr) {
   this.defaultData = [];
   // 每个的开始数据；
   this.start = {};
+  // 记录动画开始;
+  this.onStart = {};
   // 开始默认的数据；
   this.startDefaultData = {};
   const data = [];
@@ -239,7 +241,7 @@ p.render = function () {
     const fromDelay = item.type === 'from' ? delay : 0;
     if (progressTime + fromDelay > -this.perFrame && !this.start[i]) {
       this.start[i] = this.getAnimStartData(item.vars);
-      if (!this.register) {
+      if (!this.register && progressTime <= this.perFrame) {
         this.register = true;
         // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
         // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
@@ -248,7 +250,6 @@ p.render = function () {
           item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration) : s;
         const st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
         this.setRatio(st, item, i);
-        return;
       }
     }
     const e = {
@@ -273,17 +274,19 @@ p.render = function () {
       }
       item.mode = 'onComplete';
     } else if (progressTime >= 0 && progressTime < duration) {
-      item.mode = progressTime < this.perFrame ? 'onStart' : 'onUpdate';
+      item.mode = progressTime < this.perFrame && !this.onStart[i] ? 'onStart' : 'onUpdate';
       progressTime = progressTime < 0 ? 0 : progressTime;
       progressTime = progressTime > duration ? duration : progressTime;
       const ratio = item.ease(progressTime, startData, endData, duration);
       this.setRatio(ratio, item, i);
+      this.onStart[i] = true;
       if (progressTime <= this.perFrame) {
         item.onStart(e);
       } else {
         item.onUpdate({ ratio, ...e });
       }
     }
+
     if (progressTime >= 0 && progressTime < duration + this.perFrame) {
       this.onChange({
         moment: this.progressTime,
@@ -301,6 +304,7 @@ p.frame = function (moment) {
 p.resetAnimData = function () {
   this.tween = {};
   this.start = {};
+  this.onStart = {};
 };
 
 p.resetDefaultStyle = function () {

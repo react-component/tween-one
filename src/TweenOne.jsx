@@ -16,7 +16,7 @@ class TweenOne extends Component {
     super(...arguments);
     this.rafID = -1;
     this.moment = this.props.moment || 0;
-    this.startMoment = this.props.moment || perFrame;
+    this.startMoment = this.props.moment || 0;
     this.startFrame = ticker.frame;
     this.paused = this.props.paused;
     this.reverse = this.props.reverse;
@@ -59,7 +59,7 @@ class TweenOne extends Component {
       if (nextProps.resetStyleBool && this.timeLine) {
         this.timeLine.resetDefaultStyle();
       }
-      this.startMoment = perFrame;
+      this.startMoment = 0;
       this.startFrame = ticker.frame;
       this.restartAnim = true;
       // this.start(nextProps);
@@ -111,10 +111,10 @@ class TweenOne extends Component {
     const props = this.props;
     if (props.animation && Object.keys(props.animation).length) {
       this.timeLine = new TimeLine(this.dom, dataToArray(props.animation), props.attr);
-      // 开始动画
-      this.play();
       // 预先注册 raf, 初始动画数值。
       this.raf(0, true);
+      // 开始动画
+      this.play();
     }
   }
 
@@ -126,9 +126,13 @@ class TweenOne extends Component {
     this.rafID = ticker.add(this.raf);
   }
 
-  frame = (register) => {
-    const startMoment = register ? 0 : this.startMoment;
-    let moment = (ticker.frame - this.startFrame) * perFrame + startMoment;
+  frame = (date, register) => {
+    const registerMoment = register ? date : 0;
+    let moment = (ticker.frame - this.startFrame) * perFrame + registerMoment + this.startMoment;
+    if (!register && moment < perFrame) {
+      // 注册完后，第一帧预先跑动， 鼠标跟随
+      moment = perFrame;
+    }
     if (this.reverse) {
       moment = (this.startMoment || 0) - (ticker.frame - this.startFrame) * perFrame;
     }
@@ -143,7 +147,7 @@ class TweenOne extends Component {
   }
 
   raf = (date, register) => {
-    this.frame(register);
+    this.frame(date, register);
     if ((this.moment >= this.timeLine.totalTime && !this.reverse)
       || this.paused || (this.reverse && this.moment === 0)) {
       return this.cancelRequestAnimationFrame();
