@@ -196,10 +196,10 @@ webpackJsonp([0,29],[
 	      var props = _this.props;
 	      if (props.animation && Object.keys(props.animation).length) {
 	        _this.timeLine = new _TimeLine2.default(_this.dom, (0, _util.dataToArray)(props.animation), props.attr);
-	        // 开始动画
-	        _this.play();
 	        // 预先注册 raf, 初始动画数值。
 	        _this.raf(0, true);
+	        // 开始动画
+	        _this.play();
 	      }
 	    };
 	
@@ -211,9 +211,13 @@ webpackJsonp([0,29],[
 	      _this.rafID = _ticker2.default.add(_this.raf);
 	    };
 	
-	    _this.frame = function (register) {
-	      var startMoment = register ? 0 : _this.startMoment;
-	      var moment = (_ticker2.default.frame - _this.startFrame) * perFrame + startMoment;
+	    _this.frame = function (date, register) {
+	      var registerMoment = register ? date : 0;
+	      var moment = (_ticker2.default.frame - _this.startFrame) * perFrame + registerMoment + _this.startMoment;
+	      if (!register && moment < perFrame) {
+	        // 注册完后，第一帧预先跑动， 鼠标跟随
+	        moment = perFrame;
+	      }
 	      if (_this.reverse) {
 	        moment = (_this.startMoment || 0) - (_ticker2.default.frame - _this.startFrame) * perFrame;
 	      }
@@ -228,7 +232,7 @@ webpackJsonp([0,29],[
 	    };
 	
 	    _this.raf = function (date, register) {
-	      _this.frame(register);
+	      _this.frame(date, register);
 	      if (_this.moment >= _this.timeLine.totalTime && !_this.reverse || _this.paused || _this.reverse && _this.moment === 0) {
 	        return _this.cancelRequestAnimationFrame();
 	      }
@@ -241,7 +245,7 @@ webpackJsonp([0,29],[
 	
 	    _this.rafID = -1;
 	    _this.moment = _this.props.moment || 0;
-	    _this.startMoment = _this.props.moment || perFrame;
+	    _this.startMoment = _this.props.moment || 0;
 	    _this.startFrame = _ticker2.default.frame;
 	    _this.paused = _this.props.paused;
 	    _this.reverse = _this.props.reverse;
@@ -289,7 +293,7 @@ webpackJsonp([0,29],[
 	      if (nextProps.resetStyleBool && this.timeLine) {
 	        this.timeLine.resetDefaultStyle();
 	      }
-	      this.startMoment = perFrame;
+	      this.startMoment = 0;
 	      this.startFrame = _ticker2.default.frame;
 	      this.restartAnim = true;
 	      // this.start(nextProps);
@@ -21775,8 +21779,6 @@ webpackJsonp([0,29],[
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _styleUtils = __webpack_require__(177);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function toArrayChildren(children) {
@@ -21979,7 +21981,10 @@ webpackJsonp([0,29],[
 	  throw new Error('Error while parsing the path');
 	}
 	
-	function getTransformValue(t, ratio, supports3D) {
+	function getTransformValue(t, supports3D) {
+	  if (typeof t === 'string') {
+	    return t;
+	  }
 	  var perspective = t.perspective;
 	  var angle = t.rotate;
 	  var rotateX = t.rotateX;
@@ -22001,12 +22006,7 @@ webpackJsonp([0,29],[
 	  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1 || !supports3D) {
 	    ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
 	    var translate = percent || 'translate(' + translateX + 'px,' + translateY + 'px)';
-	    var transform = translate + ' ' + an + ' ' + ss + ' ' + sk;
-	    if (ratio >= 1) {
-	      // IE 9 没 3d;
-	      return _styleUtils.createMatrix && !percent ? (0, _styleUtils.createMatrix)(transform) : transform;
-	    }
-	    return transform;
+	    return translate + ' ' + an + ' ' + ss + ' ' + sk;
 	  }
 	  ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
 	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
@@ -22251,28 +22251,36 @@ webpackJsonp([0,29],[
 	function getMatrix(t) {
 	  var arr = t.replace(/[a-z|(|)]/g, '').split(',');
 	  var m = {};
-	  m.m11 = parseFloat(arr[0]);
-	  m.m12 = parseFloat(arr[1]);
-	  m.m13 = 0;
-	  m.m14 = 0;
-	  m.m21 = parseFloat(arr[2]);
-	  m.m22 = parseFloat(arr[3]);
-	  m.m23 = 0;
-	  m.m24 = 0;
-	  m.m31 = 0;
-	  m.m32 = 0;
-	  m.m33 = 1;
-	  m.m34 = 0;
-	  m.m41 = parseFloat(arr[4]);
-	  m.m42 = parseFloat(arr[5]);
-	  m.m43 = 0;
-	  m.m44 = 0;
+	  if (arr.length === 6) {
+	    m.m11 = parseFloat(arr[0]);
+	    m.m12 = parseFloat(arr[1]);
+	    m.m13 = 0;
+	    m.m14 = 0;
+	    m.m21 = parseFloat(arr[2]);
+	    m.m22 = parseFloat(arr[3]);
+	    m.m23 = 0;
+	    m.m24 = 0;
+	    m.m31 = 0;
+	    m.m32 = 0;
+	    m.m33 = 1;
+	    m.m34 = 0;
+	    m.m41 = parseFloat(arr[4]);
+	    m.m42 = parseFloat(arr[5]);
+	    m.m43 = 0;
+	    m.m44 = 0;
+	  } else {
+	    arr.forEach(function (item, i) {
+	      var ii = i % 4 + 1;
+	      var j = Math.floor(i / 4) + 1;
+	      m['m' + j + ii] = parseFloat(item);
+	    });
+	  }
 	  return m;
 	}
 	
 	function getTransform(transform) {
-	  var _transform = transform === 'none' ? 'matrix(1, 0, 0, 1, 0, 0)' : transform;
-	  var m = createMatrix(_transform) || getMatrix(_transform);
+	  var _transform = transform === 'none' || transform === '' ? 'matrix(1, 0, 0, 1, 0, 0)' : transform;
+	  var m = getMatrix(_transform);
 	  var m11 = m.m11;
 	  var m12 = m.m12;
 	  var m13 = m.m13;
@@ -22512,6 +22520,8 @@ webpackJsonp([0,29],[
 	  this.defaultData = [];
 	  // 每个的开始数据；
 	  this.start = {};
+	  // 记录动画开始;
+	  this.onStart = {};
 	  // 开始默认的数据；
 	  this.startDefaultData = {};
 	  var data = [];
@@ -22710,7 +22720,7 @@ webpackJsonp([0,29],[
 	    var fromDelay = item.type === 'from' ? delay : 0;
 	    if (progressTime + fromDelay > -_this6.perFrame && !_this6.start[i]) {
 	      _this6.start[i] = _this6.getAnimStartData(item.vars);
-	      if (!_this6.register) {
+	      if (!_this6.register && progressTime <= _this6.perFrame) {
 	        _this6.register = true;
 	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
 	        // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
@@ -22718,7 +22728,6 @@ webpackJsonp([0,29],[
 	        var ss = duration ? item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration) : s;
 	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
 	        _this6.setRatio(st, item, i);
-	        return;
 	      }
 	    }
 	    var e = {
@@ -22741,17 +22750,19 @@ webpackJsonp([0,29],[
 	      }
 	      item.mode = 'onComplete';
 	    } else if (progressTime >= 0 && progressTime < duration) {
-	      item.mode = progressTime < _this6.perFrame ? 'onStart' : 'onUpdate';
+	      item.mode = progressTime < _this6.perFrame && !_this6.onStart[i] ? 'onStart' : 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > duration ? duration : progressTime;
 	      var ratio = item.ease(progressTime, startData, endData, duration);
 	      _this6.setRatio(ratio, item, i);
+	      _this6.onStart[i] = true;
 	      if (progressTime <= _this6.perFrame) {
 	        item.onStart(e);
 	      } else {
 	        item.onUpdate(_extends({ ratio: ratio }, e));
 	      }
 	    }
+	
 	    if (progressTime >= 0 && progressTime < duration + _this6.perFrame) {
 	      _this6.onChange(_extends({
 	        moment: _this6.progressTime,
@@ -22768,6 +22779,7 @@ webpackJsonp([0,29],[
 	p.resetAnimData = function () {
 	  this.tween = {};
 	  this.start = {};
+	  this.onStart = {};
 	};
 	
 	p.resetDefaultStyle = function () {
@@ -23356,7 +23368,7 @@ webpackJsonp([0,29],[
 	    if (key in _plugins2.default) {
 	      _this3.propsData.data[key].setRatio(ratio, tween);
 	      if (key === 'bezier') {
-	        style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, ratio, _this3.supports3D);
+	        style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, _this3.supports3D);
 	      } else {
 	        Object.keys(tween.style).forEach(function (css) {
 	          return style[css] = tween.style[css];
@@ -23388,7 +23400,7 @@ webpackJsonp([0,29],[
 	      } else {
 	        tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
 	      }
-	      style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, ratio, _this3.supports3D);
+	      style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, _this3.supports3D);
 	      return;
 	    } else if (Array.isArray(endVars)) {
 	      var _type = _this3.propsData.dataType[key];
@@ -23484,12 +23496,6 @@ webpackJsonp([0,29],[
 	p.tick = function (a) {
 	  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : 0;
 	  ticker.lastUpdate = ticker.lastUpdate ? ticker.lastUpdate + ticker.elapsed : ticker.getTime() + ticker.elapsed;
-	  ticker.time = (ticker.lastUpdate - ticker.startTime) / 1000;
-	  // 小于 10 不刷新，，减少刷亲率；
-	  if (ticker.elapsed < 10) {
-	    ticker.id = (0, _raf2.default)(ticker.tick);
-	    return;
-	  }
 	  var obj = ticker.tickFnObject;
 	  Object.keys(obj).forEach(function (key) {
 	    if (obj[key]) {
@@ -23518,8 +23524,7 @@ webpackJsonp([0,29],[
 	  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
 	  var startFrame = this.frame;
 	  this.wake(timeoutID, function () {
-	    // 跟 tween-one 的开始统一用 perFrame;
-	    var moment = (_this.frame - startFrame) * _this.perFrame + _this.perFrame;
+	    var moment = (_this.frame - startFrame) * _this.perFrame;
 	    if (moment >= (time || 0)) {
 	      _this.clear(timeoutID);
 	      fn();
@@ -23539,7 +23544,7 @@ webpackJsonp([0,29],[
 	  var intervalID = 'interval' + Date.now() + '-' + intervalIdNumber;
 	  var starFrame = this.frame;
 	  this.wake(intervalID, function () {
-	    var moment = (_this2.frame - starFrame) * _this2.perFrame + _this2.perFrame;
+	    var moment = (_this2.frame - starFrame) * _this2.perFrame;
 	    if (moment >= (time || 0)) {
 	      starFrame = _this2.frame;
 	      fn();
@@ -23564,7 +23569,6 @@ webpackJsonp([0,29],[
 	
 	for(var i = 0; !raf && i < vendors.length; i++) {
 	  raf = root[vendors[i] + 'Request' + suffix]
-	
 	  caf = root[vendors[i] + 'Cancel' + suffix]
 	      || root[vendors[i] + 'CancelRequest' + suffix]
 	}
@@ -23903,9 +23907,6 @@ webpackJsonp([0,29],[
 	var _r3 = [];
 	var _corProps = {};
 	var _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
-	function createMatrix(style) {
-	  return window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style) || window.MozCSSMatrix && new window.MozCSSMatrix(style) || window.MsCSSMatrix && new window.MsCSSMatrix(style) || window.OCSSMatrix && new window.OCSSMatrix(style) || window.CSSMatrix && new window.CSSMatrix(style) || {};
-	}
 	
 	var GsapBezier = {
 	  Segment: function Segment(a, b, c, d) {
@@ -24392,14 +24393,14 @@ webpackJsonp([0,29],[
 	  getAnimStart: function getAnimStart() {
 	    var computedStyle = this.getComputedStyle();
 	    var transform = computedStyle[this.transform];
-	    var matrix = createMatrix(transform || '');
+	    transform = transform === 'none' ? '' : transform;
+	    var matrix = (0, _styleUtils.createMatrix)(transform);
 	    // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
 	    this.vars.startPoint = { x: matrix.e, y: matrix.f };
 	    this.init();
 	  },
 	  setRatio: function setRatio(r, t) {
-	    var transform = (0, _styleUtils.getTransform)(this.set(r));
-	    t.style.transform = transform;
+	    t.style.transform = this.set(r);
 	  }
 	};
 	Bezier.bezierThrough = GsapBezier.bezierThrough;

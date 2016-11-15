@@ -105,10 +105,10 @@ webpackJsonp([16,29],[
 	      var props = _this.props;
 	      if (props.animation && Object.keys(props.animation).length) {
 	        _this.timeLine = new _TimeLine2.default(_this.dom, (0, _util.dataToArray)(props.animation), props.attr);
-	        // 开始动画
-	        _this.play();
 	        // 预先注册 raf, 初始动画数值。
 	        _this.raf(0, true);
+	        // 开始动画
+	        _this.play();
 	      }
 	    };
 	
@@ -120,9 +120,13 @@ webpackJsonp([16,29],[
 	      _this.rafID = _ticker2.default.add(_this.raf);
 	    };
 	
-	    _this.frame = function (register) {
-	      var startMoment = register ? 0 : _this.startMoment;
-	      var moment = (_ticker2.default.frame - _this.startFrame) * perFrame + startMoment;
+	    _this.frame = function (date, register) {
+	      var registerMoment = register ? date : 0;
+	      var moment = (_ticker2.default.frame - _this.startFrame) * perFrame + registerMoment + _this.startMoment;
+	      if (!register && moment < perFrame) {
+	        // 注册完后，第一帧预先跑动， 鼠标跟随
+	        moment = perFrame;
+	      }
 	      if (_this.reverse) {
 	        moment = (_this.startMoment || 0) - (_ticker2.default.frame - _this.startFrame) * perFrame;
 	      }
@@ -137,7 +141,7 @@ webpackJsonp([16,29],[
 	    };
 	
 	    _this.raf = function (date, register) {
-	      _this.frame(register);
+	      _this.frame(date, register);
 	      if (_this.moment >= _this.timeLine.totalTime && !_this.reverse || _this.paused || _this.reverse && _this.moment === 0) {
 	        return _this.cancelRequestAnimationFrame();
 	      }
@@ -150,7 +154,7 @@ webpackJsonp([16,29],[
 	
 	    _this.rafID = -1;
 	    _this.moment = _this.props.moment || 0;
-	    _this.startMoment = _this.props.moment || perFrame;
+	    _this.startMoment = _this.props.moment || 0;
 	    _this.startFrame = _ticker2.default.frame;
 	    _this.paused = _this.props.paused;
 	    _this.reverse = _this.props.reverse;
@@ -198,7 +202,7 @@ webpackJsonp([16,29],[
 	      if (nextProps.resetStyleBool && this.timeLine) {
 	        this.timeLine.resetDefaultStyle();
 	      }
-	      this.startMoment = perFrame;
+	      this.startMoment = 0;
 	      this.startFrame = _ticker2.default.frame;
 	      this.restartAnim = true;
 	      // this.start(nextProps);
@@ -21684,8 +21688,6 @@ webpackJsonp([16,29],[
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _styleUtils = __webpack_require__(177);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function toArrayChildren(children) {
@@ -21888,7 +21890,10 @@ webpackJsonp([16,29],[
 	  throw new Error('Error while parsing the path');
 	}
 	
-	function getTransformValue(t, ratio, supports3D) {
+	function getTransformValue(t, supports3D) {
+	  if (typeof t === 'string') {
+	    return t;
+	  }
 	  var perspective = t.perspective;
 	  var angle = t.rotate;
 	  var rotateX = t.rotateX;
@@ -21910,12 +21915,7 @@ webpackJsonp([16,29],[
 	  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1 || !supports3D) {
 	    ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
 	    var translate = percent || 'translate(' + translateX + 'px,' + translateY + 'px)';
-	    var transform = translate + ' ' + an + ' ' + ss + ' ' + sk;
-	    if (ratio >= 1) {
-	      // IE 9 没 3d;
-	      return _styleUtils.createMatrix && !percent ? (0, _styleUtils.createMatrix)(transform) : transform;
-	    }
-	    return transform;
+	    return translate + ' ' + an + ' ' + ss + ' ' + sk;
 	  }
 	  ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
 	  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
@@ -22160,28 +22160,36 @@ webpackJsonp([16,29],[
 	function getMatrix(t) {
 	  var arr = t.replace(/[a-z|(|)]/g, '').split(',');
 	  var m = {};
-	  m.m11 = parseFloat(arr[0]);
-	  m.m12 = parseFloat(arr[1]);
-	  m.m13 = 0;
-	  m.m14 = 0;
-	  m.m21 = parseFloat(arr[2]);
-	  m.m22 = parseFloat(arr[3]);
-	  m.m23 = 0;
-	  m.m24 = 0;
-	  m.m31 = 0;
-	  m.m32 = 0;
-	  m.m33 = 1;
-	  m.m34 = 0;
-	  m.m41 = parseFloat(arr[4]);
-	  m.m42 = parseFloat(arr[5]);
-	  m.m43 = 0;
-	  m.m44 = 0;
+	  if (arr.length === 6) {
+	    m.m11 = parseFloat(arr[0]);
+	    m.m12 = parseFloat(arr[1]);
+	    m.m13 = 0;
+	    m.m14 = 0;
+	    m.m21 = parseFloat(arr[2]);
+	    m.m22 = parseFloat(arr[3]);
+	    m.m23 = 0;
+	    m.m24 = 0;
+	    m.m31 = 0;
+	    m.m32 = 0;
+	    m.m33 = 1;
+	    m.m34 = 0;
+	    m.m41 = parseFloat(arr[4]);
+	    m.m42 = parseFloat(arr[5]);
+	    m.m43 = 0;
+	    m.m44 = 0;
+	  } else {
+	    arr.forEach(function (item, i) {
+	      var ii = i % 4 + 1;
+	      var j = Math.floor(i / 4) + 1;
+	      m['m' + j + ii] = parseFloat(item);
+	    });
+	  }
 	  return m;
 	}
 	
 	function getTransform(transform) {
-	  var _transform = transform === 'none' ? 'matrix(1, 0, 0, 1, 0, 0)' : transform;
-	  var m = createMatrix(_transform) || getMatrix(_transform);
+	  var _transform = transform === 'none' || transform === '' ? 'matrix(1, 0, 0, 1, 0, 0)' : transform;
+	  var m = getMatrix(_transform);
 	  var m11 = m.m11;
 	  var m12 = m.m12;
 	  var m13 = m.m13;
@@ -22421,6 +22429,8 @@ webpackJsonp([16,29],[
 	  this.defaultData = [];
 	  // 每个的开始数据；
 	  this.start = {};
+	  // 记录动画开始;
+	  this.onStart = {};
 	  // 开始默认的数据；
 	  this.startDefaultData = {};
 	  var data = [];
@@ -22619,7 +22629,7 @@ webpackJsonp([16,29],[
 	    var fromDelay = item.type === 'from' ? delay : 0;
 	    if (progressTime + fromDelay > -_this6.perFrame && !_this6.start[i]) {
 	      _this6.start[i] = _this6.getAnimStartData(item.vars);
-	      if (!_this6.register) {
+	      if (!_this6.register && progressTime <= _this6.perFrame) {
 	        _this6.register = true;
 	        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
 	        // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
@@ -22627,7 +22637,6 @@ webpackJsonp([16,29],[
 	        var ss = duration ? item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration) : s;
 	        var st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
 	        _this6.setRatio(st, item, i);
-	        return;
 	      }
 	    }
 	    var e = {
@@ -22650,17 +22659,19 @@ webpackJsonp([16,29],[
 	      }
 	      item.mode = 'onComplete';
 	    } else if (progressTime >= 0 && progressTime < duration) {
-	      item.mode = progressTime < _this6.perFrame ? 'onStart' : 'onUpdate';
+	      item.mode = progressTime < _this6.perFrame && !_this6.onStart[i] ? 'onStart' : 'onUpdate';
 	      progressTime = progressTime < 0 ? 0 : progressTime;
 	      progressTime = progressTime > duration ? duration : progressTime;
 	      var ratio = item.ease(progressTime, startData, endData, duration);
 	      _this6.setRatio(ratio, item, i);
+	      _this6.onStart[i] = true;
 	      if (progressTime <= _this6.perFrame) {
 	        item.onStart(e);
 	      } else {
 	        item.onUpdate(_extends({ ratio: ratio }, e));
 	      }
 	    }
+	
 	    if (progressTime >= 0 && progressTime < duration + _this6.perFrame) {
 	      _this6.onChange(_extends({
 	        moment: _this6.progressTime,
@@ -22677,6 +22688,7 @@ webpackJsonp([16,29],[
 	p.resetAnimData = function () {
 	  this.tween = {};
 	  this.start = {};
+	  this.onStart = {};
 	};
 	
 	p.resetDefaultStyle = function () {
@@ -23265,7 +23277,7 @@ webpackJsonp([16,29],[
 	    if (key in _plugins2.default) {
 	      _this3.propsData.data[key].setRatio(ratio, tween);
 	      if (key === 'bezier') {
-	        style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, ratio, _this3.supports3D);
+	        style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, _this3.supports3D);
 	      } else {
 	        Object.keys(tween.style).forEach(function (css) {
 	          return style[css] = tween.style[css];
@@ -23297,7 +23309,7 @@ webpackJsonp([16,29],[
 	      } else {
 	        tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
 	      }
-	      style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, ratio, _this3.supports3D);
+	      style[_this3.transform] = (0, _util.getTransformValue)(tween.style.transform, _this3.supports3D);
 	      return;
 	    } else if (Array.isArray(endVars)) {
 	      var _type = _this3.propsData.dataType[key];
@@ -23393,12 +23405,6 @@ webpackJsonp([16,29],[
 	p.tick = function (a) {
 	  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : 0;
 	  ticker.lastUpdate = ticker.lastUpdate ? ticker.lastUpdate + ticker.elapsed : ticker.getTime() + ticker.elapsed;
-	  ticker.time = (ticker.lastUpdate - ticker.startTime) / 1000;
-	  // 小于 10 不刷新，，减少刷亲率；
-	  if (ticker.elapsed < 10) {
-	    ticker.id = (0, _raf2.default)(ticker.tick);
-	    return;
-	  }
 	  var obj = ticker.tickFnObject;
 	  Object.keys(obj).forEach(function (key) {
 	    if (obj[key]) {
@@ -23427,8 +23433,7 @@ webpackJsonp([16,29],[
 	  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
 	  var startFrame = this.frame;
 	  this.wake(timeoutID, function () {
-	    // 跟 tween-one 的开始统一用 perFrame;
-	    var moment = (_this.frame - startFrame) * _this.perFrame + _this.perFrame;
+	    var moment = (_this.frame - startFrame) * _this.perFrame;
 	    if (moment >= (time || 0)) {
 	      _this.clear(timeoutID);
 	      fn();
@@ -23448,7 +23453,7 @@ webpackJsonp([16,29],[
 	  var intervalID = 'interval' + Date.now() + '-' + intervalIdNumber;
 	  var starFrame = this.frame;
 	  this.wake(intervalID, function () {
-	    var moment = (_this2.frame - starFrame) * _this2.perFrame + _this2.perFrame;
+	    var moment = (_this2.frame - starFrame) * _this2.perFrame;
 	    if (moment >= (time || 0)) {
 	      starFrame = _this2.frame;
 	      fn();
@@ -23473,7 +23478,6 @@ webpackJsonp([16,29],[
 	
 	for(var i = 0; !raf && i < vendors.length; i++) {
 	  raf = root[vendors[i] + 'Request' + suffix]
-	
 	  caf = root[vendors[i] + 'Cancel' + suffix]
 	      || root[vendors[i] + 'CancelRequest' + suffix]
 	}
@@ -23908,19 +23912,15 @@ webpackJsonp([16,29],[
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(38);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
 	var _EventDispatcher = __webpack_require__(207);
 	
 	var _EventDispatcher2 = _interopRequireDefault(_EventDispatcher);
 	
-	var _Mapped = __webpack_require__(208);
+	var _ScrollElement2 = __webpack_require__(209);
 	
-	var _Mapped2 = _interopRequireDefault(_Mapped);
+	var _ScrollElement3 = _interopRequireDefault(_ScrollElement2);
 	
-	var _util = __webpack_require__(209);
+	var _util = __webpack_require__(208);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
@@ -23936,104 +23936,54 @@ webpackJsonp([16,29],[
 	
 	function noop() {}
 	
-	function toArrayChildren(children) {
-	  var ret = [];
-	  _react2["default"].Children.forEach(children, function (c) {
-	    ret.push(c);
-	  });
-	  return ret;
-	}
+	var ScrollOverPack = function (_ScrollElement) {
+	  _inherits(ScrollOverPack, _ScrollElement);
 	
-	var ScrollOverPack = function (_React$Component) {
-	  _inherits(ScrollOverPack, _React$Component);
-	
-	  function ScrollOverPack() {
+	  function ScrollOverPack(props) {
 	    _classCallCheck(this, ScrollOverPack);
 	
-	    var _this = _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, _ScrollElement.call(this, props));
 	
 	    _this.scrollEventListener = function (e) {
-	      var clientHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-	      var scrollTop = (0, _util.currentScrollTop)();
-	      // 屏幕缩放时的响应，所以放回这里，这个是pack，只处理子级里面的动画，所以marginTop无关系，所以不需减掉；
-	      var domRect = _this.dom.getBoundingClientRect();
-	      var offsetTop = domRect.top + scrollTop;
-	      var elementShowHeight = scrollTop - offsetTop + clientHeight;
-	      var playScale = (0, _util.transformArguments)(_this.props.playScale);
-	      var playHeight = clientHeight * playScale[0];
-	
-	      var enter = elementShowHeight >= playHeight && elementShowHeight <= clientHeight + playHeight;
-	      var bottomLeave = elementShowHeight < playHeight;
-	      // 设置往上时的出场点...
-	      var leaveHeight = domRect.height > clientHeight ? clientHeight : domRect.height;
-	      var topLeave = _this.props.replay ? elementShowHeight > clientHeight + leaveHeight * playScale[1] : null;
-	      var mode = 'scroll';
-	      if (enter) {
+	      _this.getParam(e);
+	      if (_this.enter) {
 	        if (!_this.state.show) {
 	          _this.setState({
 	            show: true
 	          });
-	          mode = 'enter';
-	          _this.props.onChange({ mode: mode, scrollName: _this.props.scrollName });
 	        }
 	        if (!_this.props.always) {
 	          _EventDispatcher2["default"].removeEventListener(_this.eventType, _this.scrollEventListener);
 	        }
 	      }
+	      var bottomLeave = _this.elementShowHeight < _this.playHeight;
+	      // 设置往上时的出场点...
+	      var topLeave = _this.props.replay ? _this.elementShowHeight > _this.clientHeight + _this.leavePlayHeight : null;
 	      if (topLeave || bottomLeave) {
 	        if (_this.state.show) {
 	          _this.setState({
 	            show: false
 	          });
-	          mode = 'leave';
-	          _this.props.onChange({ mode: mode, scrollName: _this.props.scrollName });
 	        }
-	      }
-	
-	      if (e) {
-	        _this.props.scrollEvent({ mode: mode, scrollName: _this.props.scrollName, e: e });
 	      }
 	    };
 	
-	    _this.children = toArrayChildren(_this.props.children);
+	    _this.children = (0, _util.toArrayChildren)(_this.props.children);
 	    _this.oneEnter = false;
+	    _this.enter = false;
 	    _this.state = {
 	      show: false,
-	      children: toArrayChildren(_this.props.children)
+	      children: (0, _util.toArrayChildren)(_this.props.children)
 	    };
 	    return _this;
 	  }
-	
-	  ScrollOverPack.prototype.componentDidMount = function componentDidMount() {
-	    this.dom = _reactDom2["default"].findDOMNode(this);
-	    // this.computedStyle = document.defaultView.getComputedStyle(this.dom);
-	    if (this.props.scrollName) {
-	      _Mapped2["default"].register(this.props.scrollName, this.dom);
-	    }
-	    var date = Date.now();
-	    var length = _EventDispatcher2["default"]._listeners.scroll ? _EventDispatcher2["default"]._listeners.scroll.length : 0;
-	    this.eventType = 'scroll.scrollEvent' + date + length;
-	    this.scrollEventListener();
-	    _EventDispatcher2["default"].addEventListener(this.eventType, this.scrollEventListener);
-	  };
-	
-	  ScrollOverPack.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-	    this.setState({
-	      children: toArrayChildren(nextProps.children)
-	    });
-	  };
-	
-	  ScrollOverPack.prototype.componentWillUnmount = function componentWillUnmount() {
-	    _Mapped2["default"].unRegister(this.props.scrollName);
-	    _EventDispatcher2["default"].removeEventListener(this.eventType, this.scrollEventListener);
-	  };
 	
 	  ScrollOverPack.prototype.render = function render() {
 	    var _this2 = this;
 	
 	    var placeholderProps = _objectWithoutProperties(this.props, []);
 	
-	    ['scrollName', 'playScale', 'replay', 'component', 'always', 'scrollEvent', 'hideProps'].forEach(function (key) {
+	    ['playScale', 'replay', 'component', 'always', 'scrollEvent', 'hideProps'].forEach(function (key) {
 	      return delete placeholderProps[key];
 	    });
 	    var childToRender = void 0;
@@ -24064,7 +24014,7 @@ webpackJsonp([16,29],[
 	  };
 	
 	  return ScrollOverPack;
-	}(_react2["default"].Component);
+	}(_ScrollElement3["default"]);
 	
 	ScrollOverPack.propTypes = {
 	  component: _react2["default"].PropTypes.string,
@@ -24074,7 +24024,6 @@ webpackJsonp([16,29],[
 	  children: _react2["default"].PropTypes.any,
 	  className: _react2["default"].PropTypes.string,
 	  style: _react2["default"].PropTypes.any,
-	  scrollName: _react2["default"].PropTypes.string,
 	  replay: _react2["default"].PropTypes.bool,
 	  onChange: _react2["default"].PropTypes.func,
 	  hideProps: _react2["default"].PropTypes.object
@@ -24095,16 +24044,20 @@ webpackJsonp([16,29],[
 
 /***/ },
 /* 207 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	
+	var _util = __webpack_require__(208);
+	
 	function EventDispatcher(target) {
 	  this._listeners = {};
 	  this._eventTarget = target || {};
+	  this.recoverLists = [];
 	}
 	EventDispatcher.prototype = {
 	  addEventListener: function addEventListener(type, callback) {
@@ -24154,7 +24107,7 @@ webpackJsonp([16,29],[
 	          if (this._eventTarget.removeEventListener) {
 	            this._eventTarget.removeEventListener(list.t, list.func);
 	          } else if (this._eventTarget.detachEvent) {
-	            this._eventTarget.detachEvent(list.t, list.func);
+	            this._eventTarget.detachEvent('on' + list.t, list.func);
 	          }
 	          if (!_force) {
 	            return;
@@ -24179,6 +24132,36 @@ webpackJsonp([16,29],[
 	        }
 	      }
 	    }
+	  },
+	  removeAllType: function removeAllType(type) {
+	    var _this = this;
+	
+	    var types = type.split('.');
+	    var _type = types[0];
+	    var namespaces = types[1];
+	    var list = this._listeners[_type];
+	    this.recoverLists = this.recoverLists.concat((0, _util.dataToArray)(list).filter(function (item) {
+	      return item.n.match(namespaces);
+	    }));
+	    this.recoverLists.forEach(function (item) {
+	      _this.removeEventListener(item.t + '.' + item.n, item.c);
+	    });
+	  },
+	  reAllType: function reAllType(type) {
+	    var _this2 = this;
+	
+	    var types = type.split('.');
+	    var _type = types[0];
+	    var namespaces = types[1];
+	    this.recoverLists = this.recoverLists.map(function (item) {
+	      if (item.t === _type && item.n.match(namespaces)) {
+	        _this2.addEventListener(item.t + '.' + item.n, item.c);
+	        return null;
+	      }
+	      return item;
+	    }).filter(function (item) {
+	      return item;
+	    });
 	  }
 	};
 	var event = void 0;
@@ -24192,44 +24175,7 @@ webpackJsonp([16,29],[
 
 /***/ },
 /* 208 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var __mapped = {
-	  __arr: []
-	};
-	
-	exports["default"] = {
-	  unMount: function unMount() {
-	    __mapped = { __arr: [] };
-	  },
-	  register: function register(name, element) {
-	    __mapped[name] = element;
-	    __mapped.__arr.push(name);
-	  },
-	  unRegister: function unRegister(name) {
-	    var index = __mapped.__arr.indexOf(name);
-	    if (index >= 0) {
-	      __mapped.__arr.splice(__mapped.__arr.indexOf(name), 1);
-	      delete __mapped[name];
-	    }
-	  },
-	  get: function get(name) {
-	    return __mapped[name];
-	  },
-	  getMapped: function getMapped() {
-	    return __mapped;
-	  }
-	};
-	module.exports = exports['default'];
-
-/***/ },
-/* 209 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -24239,10 +24185,27 @@ webpackJsonp([16,29],[
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
+	exports.toArrayChildren = toArrayChildren;
 	exports.dataToArray = dataToArray;
 	exports.transformArguments = transformArguments;
 	exports.objectEqual = objectEqual;
 	exports.currentScrollTop = currentScrollTop;
+	exports.windowHeight = windowHeight;
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	function toArrayChildren(children) {
+	  var ret = [];
+	  _react2["default"].Children.forEach(children, function (c) {
+	    ret.push(c);
+	  });
+	  return ret;
+	}
+	
 	function dataToArray(vars) {
 	  if (!vars && vars !== 0) {
 	    return [];
@@ -24330,6 +24293,176 @@ webpackJsonp([16,29],[
 	  var isCSS1ScrollTop = isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
 	  return supportPageOffset ? window.pageYOffset : isCSS1ScrollTop;
 	}
+	
+	function windowHeight() {
+	  return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+	}
+
+/***/ },
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _react = __webpack_require__(5);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(38);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _Mapped = __webpack_require__(210);
+	
+	var _Mapped2 = _interopRequireDefault(_Mapped);
+	
+	var _EventDispatcher = __webpack_require__(207);
+	
+	var _EventDispatcher2 = _interopRequireDefault(_EventDispatcher);
+	
+	var _util = __webpack_require__(208);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+	
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+	
+	var noop = function noop() {};
+	
+	var ScrollElement = function (_React$Component) {
+	  _inherits(ScrollElement, _React$Component);
+	
+	  function ScrollElement() {
+	    var _temp, _this, _ret;
+	
+	    _classCallCheck(this, ScrollElement);
+	
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+	
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, _React$Component.call.apply(_React$Component, [this].concat(args))), _this), _this.getParam = function (e) {
+	      _this.clientHeight = (0, _util.windowHeight)();
+	      var scrollTop = (0, _util.currentScrollTop)();
+	      // 屏幕缩放时的响应，所以放回这里，这个是pack，只处理子级里面的动画，所以marginTop无关系，所以不需减掉；
+	      var domRect = _this.dom.getBoundingClientRect();
+	      var offsetTop = domRect.top + scrollTop;
+	      _this.elementShowHeight = scrollTop - offsetTop + _this.clientHeight;
+	      var playScale = (0, _util.transformArguments)(_this.props.playScale);
+	      _this.playHeight = _this.clientHeight * playScale[0];
+	      var leaveHeight = domRect.height;
+	      _this.leavePlayHeight = leaveHeight * playScale[1];
+	      var enter = _this.elementShowHeight >= _this.playHeight && _this.elementShowHeight <= _this.clientHeight + _this.leavePlayHeight;
+	      var enterOrLeave = enter ? 'enter' : 'leave';
+	      var mode = _this.enter !== enter || typeof _this.enter !== 'boolean' ? enterOrLeave : null;
+	      if (mode) {
+	        _this.props.onChange({ mode: mode, id: _this.props.id }, e);
+	      }
+	      _this.enter = enter;
+	    }, _this.scrollEventListener = function (e) {
+	      _this.getParam(e);
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	  }
+	
+	  ScrollElement.prototype.componentDidMount = function componentDidMount() {
+	    this.dom = _reactDom2["default"].findDOMNode(this);
+	    if (this.props.id) {
+	      _Mapped2["default"].register(this.props.id, this.dom);
+	    }
+	    var date = Date.now();
+	    var length = _EventDispatcher2["default"]._listeners.scroll ? _EventDispatcher2["default"]._listeners.scroll.length : 0;
+	    this.eventType = 'scroll.scrollEvent' + date + length;
+	    this.scrollEventListener();
+	    _EventDispatcher2["default"].addEventListener(this.eventType, this.scrollEventListener);
+	  };
+	
+	  ScrollElement.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    this.setState({
+	      children: (0, _util.toArrayChildren)(nextProps.children)
+	    });
+	  };
+	
+	  ScrollElement.prototype.componentWillUnmount = function componentWillUnmount() {
+	    _Mapped2["default"].unRegister(this.props.id);
+	    _EventDispatcher2["default"].removeEventListener(this.eventType, this.scrollEventListener);
+	  };
+	
+	  ScrollElement.prototype.render = function render() {
+	    var props = _objectWithoutProperties(this.props, []);
+	
+	    ['component', 'playScale'].forEach(function (key) {
+	      return delete props[key];
+	    });
+	    return _react2["default"].createElement(this.props.component, _extends({}, props));
+	  };
+	
+	  return ScrollElement;
+	}(_react2["default"].Component);
+	
+	ScrollElement.propTypes = {
+	  component: _react2["default"].PropTypes.any,
+	  playScale: _react2["default"].PropTypes.any,
+	  id: _react2["default"].PropTypes.string,
+	  onChange: _react2["default"].PropTypes.func
+	};
+	
+	ScrollElement.defaultProps = {
+	  component: 'div',
+	  onChange: noop,
+	  playScale: 0.5
+	};
+	exports["default"] = ScrollElement;
+	module.exports = exports['default'];
+
+/***/ },
+/* 210 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var __mapped = {
+	  __arr: []
+	};
+	
+	exports["default"] = {
+	  unMount: function unMount() {
+	    __mapped = { __arr: [] };
+	  },
+	  register: function register(name, element) {
+	    __mapped[name] = element;
+	    __mapped.__arr.push(name);
+	  },
+	  unRegister: function unRegister(name) {
+	    var index = __mapped.__arr.indexOf(name);
+	    if (index >= 0) {
+	      __mapped.__arr.splice(__mapped.__arr.indexOf(name), 1);
+	      delete __mapped[name];
+	    }
+	  },
+	  get: function get(name) {
+	    return __mapped[name];
+	  },
+	  getMapped: function getMapped() {
+	    return __mapped;
+	  }
+	};
+	module.exports = exports['default'];
 
 /***/ }
 ]);
