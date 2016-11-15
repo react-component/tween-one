@@ -237,7 +237,7 @@ p.setRatio = function (ratio, tween) {
     if (key in _plugin) {
       this.propsData.data[key].setRatio(ratio, tween);
       if (key === 'bezier') {
-        style[this.transform] = getTransformValue(tween.style.transform, ratio, this.supports3D);
+        style[this.transform] = getTransformValue(tween.style.transform, this.supports3D);
       } else {
         Object.keys(tween.style).forEach(css => style[css] = tween.style[css]);
       }
@@ -267,7 +267,7 @@ p.setRatio = function (ratio, tween) {
       } else {
         tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
       }
-      style[this.transform] = getTransformValue(tween.style.transform, ratio, this.supports3D);
+      style[this.transform] = getTransformValue(tween.style.transform, this.supports3D);
       return;
     } else if (Array.isArray(endVars)) {
       const _type = this.propsData.dataType[key];

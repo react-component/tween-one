@@ -1,7 +1,4 @@
 import React from 'react';
-import {
-  createMatrix,
-} from 'style-utils';
 
 export function toArrayChildren(children) {
   const ret = [];
@@ -203,7 +200,10 @@ export function parsePath(path) {
   throw new Error('Error while parsing the path');
 }
 
-export function getTransformValue(t, ratio, supports3D) {
+export function getTransformValue(t, supports3D) {
+  if (typeof t === 'string') {
+    return t;
+  }
   const perspective = t.perspective;
   const angle = t.rotate;
   const rotateX = t.rotateX;
@@ -227,12 +227,7 @@ export function getTransformValue(t, ratio, supports3D) {
     ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
     const translate = percent || `translate(${translateX}px,${
       translateY}px)`;
-    const transform = `${translate} ${an} ${ss} ${sk}`;
-    if (ratio >= 1) {
-      // IE 9 没 3d;
-      return createMatrix && !percent ? createMatrix(transform) : transform;
-    }
-    return transform;
+    return `${translate} ${an} ${ss} ${sk}`;
   }
   ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
   const rX = rotateX ? `rotateX(${rotateX}deg)` : '';

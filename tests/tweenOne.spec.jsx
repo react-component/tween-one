@@ -215,8 +215,8 @@ describe('rc-tween-one', () => {
         setTimeout(() => {
           transform = child.style[checkStyleName('transform')];
           xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-          x = xy[0].split(',')[4];
-          y = xy[0].split(',')[5];
+          x = xy[0].split(',')[0];
+          y = xy[0].split(',')[1];
           expect(getFloat(x)).to.be(200);
           expect(getFloat(y)).to.be(0);
           console.log(`x:${x}, y: ${y}`);
@@ -249,8 +249,8 @@ describe('rc-tween-one', () => {
       setTimeout(() => {
         transform = child.style[checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-        x = xy[0].split(',')[4];
-        y = xy[0].split(',')[5];
+        x = xy[0].split(',')[0];
+        y = xy[0].split(',')[1];
         console.log(`x:${x},y:${y}`);
         expect(getFloat(x)).to.be(700);
         expect(getFloat(y)).to.be(400);
@@ -282,8 +282,8 @@ describe('rc-tween-one', () => {
       setTimeout(() => {
         transform = child.style[checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
-        x = xy[0].split(',')[4];
-        y = xy[0].split(',')[5];
+        x = xy[0].split(',')[0];
+        y = xy[0].split(',')[1];
         console.log(`x:${x},y:${y}`);
         expect(Math.round(getFloat(x))).to.be(300);
         expect(Math.round(getFloat(y))).to.be(400);

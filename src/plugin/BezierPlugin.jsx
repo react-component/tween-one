@@ -5,7 +5,7 @@
  */
 import {
   checkStyleName,
-  getTransform,
+  createMatrix,
 } from 'style-utils';
 const _RAD2DEG = 180 / Math.PI;
 const _r1 = [];
@@ -13,13 +13,6 @@ const _r2 = [];
 const _r3 = [];
 const _corProps = {};
 const _correlate = ',x,y,z,left,top,right,bottom,marginTop,marginLeft,marginRight,marginBottom,paddingLeft,paddingTop,paddingRight,paddingBottom,backgroundPosition,backgroundPosition_y,';
-function createMatrix(style) {
-  return (window.WebKitCSSMatrix && new window.WebKitCSSMatrix(style)) ||
-    (window.MozCSSMatrix && new window.MozCSSMatrix(style)) ||
-    (window.MsCSSMatrix && new window.MsCSSMatrix(style)) ||
-    (window.OCSSMatrix && new window.OCSSMatrix(style)) ||
-    (window.CSSMatrix && new window.CSSMatrix(style)) || {};
-}
 
 const GsapBezier = {
   Segment(a, b, c, d) {
@@ -508,15 +501,15 @@ Bezier.prototype = {
   },
   getAnimStart() {
     const computedStyle = this.getComputedStyle();
-    const transform = computedStyle[this.transform];
-    const matrix = createMatrix(transform || '');
+    let transform = computedStyle[this.transform];
+    transform = transform === 'none' ? '' : transform;
+    const matrix = createMatrix(transform);
     // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
     this.vars.startPoint = { x: matrix.e, y: matrix.f };
     this.init();
   },
   setRatio(r, t) {
-    const transform = getTransform(this.set(r));
-    t.style.transform = transform;
+    t.style.transform = this.set(r);
   },
 };
 Bezier.bezierThrough = GsapBezier.bezierThrough;
