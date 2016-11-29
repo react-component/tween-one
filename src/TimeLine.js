@@ -8,6 +8,7 @@ import StylePlugin from './plugin/StylePlugin';
 import {
   getColor,
   parseColor,
+  toFixed,
 } from 'style-utils';
 import { startConvertToEndUnit } from './util.js';
 const DEFAULT_EASING = 'easeInOutQuad';
@@ -218,7 +219,7 @@ p.setRatio = function (ratio, endData, i) {
 p.render = function () {
   this.defaultData.forEach((item, i) => {
     let initTime = item.initTime;
-    const duration = parseFloat(item.duration.toFixed(10));
+    const duration = toFixed(item.duration);
     // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
     let repeatNum = Math.ceil((this.progressTime - initTime) /
         (duration + item.repeatDelay)) - 1;
@@ -235,7 +236,7 @@ p.render = function () {
     const startData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 1 : 0;
     const endData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 0 : 1;
     //  精度损失，只取小数点后10位。
-    let progressTime = parseFloat((this.progressTime - initTime).toFixed(10));
+    let progressTime = toFixed(this.progressTime - initTime);
     // 设置 start
     const delay = item.delay >= 0 ? item.delay : -item.delay;
     const fromDelay = item.type === 'from' ? delay : 0;
