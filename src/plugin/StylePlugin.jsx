@@ -149,7 +149,7 @@ p.getAnimStart = function () {
           parseFloat(startData), startUnit, endUnit, fixed);
       }
       style[key] = parseFloat(startData);
-    } else if (key.match(/color|fill|stroke/i)) {
+    } else if (key.match(/color|fill/i) || key === 'stroke') {
       startData = !startData && key === 'stroke' ? 'rgba(255, 255, 255, 0)' : startData;
       style[cssName] = parseColor(startData);
     } else if (key.match(/shadow/i)) {
