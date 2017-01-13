@@ -1,4 +1,5 @@
 import React from 'react';
+import deepEql from 'deep-eql';
 
 export function toArrayChildren(children) {
   const ret = [];
@@ -19,15 +20,18 @@ export function dataToArray(vars) {
 }
 
 export function objectEqual(obj1, obj2) {
-  if (obj1 === obj2) {
+  if (obj1 === obj2 || deepEql(obj1, obj2)) {
     return true;
   }
   if (!obj1 || !obj2) {
     return false;
   }
-  // animation 写在标签上的进行判断是否相等， 判断每个参数的值;
+  // animation 写在标签上的进行判断是否相等， 判断每个参数有没有 function;
   let equalBool = true;
   if (Array.isArray(obj1) && Array.isArray(obj2)) {
+    if (obj1.length !== obj2.length) {
+      return false;
+    }
     for (let i = 0; i < obj1.length; i++) {
       const currentObj = obj1[i];
       const nextObj = obj2[i];
@@ -48,39 +52,26 @@ export function objectEqual(obj1, obj2) {
     }
   }
 
-  Object.keys(obj1).forEach(key => {
-    if (!(key in obj2)) {
-      equalBool = false;
-      return false;
-    }
-
-    if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-      equalBool = objectEqual(obj1[key], obj2[key]);
-    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
-      if (obj1[key].name !== obj2[key].name) {
+  const setEqualBool = (objA, objB) => {
+    Object.keys(objA).forEach(key => {
+      if (!(key in objB)) {
         equalBool = false;
       }
-    } else if (obj1[key] !== obj2[key]) {
-      equalBool = false;
-    }
-  });
 
-  Object.keys(obj2).forEach(key => {
-    if (!(key in obj1)) {
-      equalBool = false;
-      return false;
-    }
-    if (typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
-      equalBool = objectEqual(obj2[key], obj1[key]);
-    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
-      if (obj1[key].name !== obj2[key].name) {
+      if (typeof objA[key] === 'object' && typeof objB[key] === 'object') {
+        equalBool = objectEqual(objA[key], objB[key]);
+      } else if (typeof objA[key] === 'function' && typeof objB[key] === 'function') {
+        if (objA[key].name !== objB[key].name) {
+          equalBool = false;
+        }
+      } else if (objA[key] !== objB[key]) {
         equalBool = false;
       }
-    } else if (obj2[key] !== obj1[key]) {
-      equalBool = false;
-    }
-  });
+    });
+  };
 
+  setEqualBool(obj1, obj2);
+  setEqualBool(obj2, obj1);
   return equalBool;
 }
 
@@ -219,14 +210,14 @@ export function getTransformValue(t, supports3D) {
   const translateY = yPercent ? 0 : t.translateY;
   const translateZ = t.translateZ || 0;
   const percent = xPercent || yPercent ? `translate(${xPercent || `${
-    translateX}px`},${yPercent || `${translateY}px`})` : '';
+      translateX}px`},${yPercent || `${translateY}px`})` : '';
   const sk = skx || sky ? `skew(${skx}deg,${sky}deg)` : '';
   const an = angle ? `rotate(${angle}deg)` : '';
   let ss;
   if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1 || !supports3D) {
     ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
     const translate = percent || `translate(${translateX}px,${
-      translateY}px)`;
+        translateY}px)`;
     return `${translate} ${an} ${ss} ${sk}`;
   }
   ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
