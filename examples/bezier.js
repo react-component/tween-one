@@ -195,7 +195,7 @@ webpackJsonp([0,29],[
 	    _this.start = function () {
 	      var props = _this.props;
 	      if (props.animation && Object.keys(props.animation).length) {
-	        _this.timeLine = new _TimeLine2.default(_this.dom, (0, _util.dataToArray)(props.animation), props.attr);
+	        _this.timeLine = new _TimeLine2.default(_this.dom, (0, _util.dataToArray)(props.animation), { attr: props.attr, willChange: props.willChange });
 	        // 预先注册 raf, 初始动画数值。
 	        _this.raf(0, true);
 	        // 开始动画
@@ -337,7 +337,7 @@ webpackJsonp([0,29],[
 	
 	  TweenOne.prototype.render = function render() {
 	    var props = _extends({}, this.props);
-	    ['animation', 'component', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool'].forEach(function (key) {
+	    ['animation', 'component', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'willChange'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    props.style = _extends({}, this.props.style);
@@ -371,6 +371,7 @@ webpackJsonp([0,29],[
 	  reverseDelay: _react.PropTypes.number,
 	  moment: _react.PropTypes.number,
 	  attr: _react.PropTypes.string,
+	  willChange: _react.PropTypes.bool,
 	  onChange: _react.PropTypes.func,
 	  resetStyleBool: _react.PropTypes.bool
 	};
@@ -379,7 +380,8 @@ webpackJsonp([0,29],[
 	  component: 'div',
 	  reverseDelay: 0,
 	  attr: 'style',
-	  onChange: noop
+	  onChange: noop,
+	  willChange: true
 	};
 	TweenOne.plugins = _plugins2.default;
 	exports.default = TweenOne;
@@ -23015,11 +23017,12 @@ webpackJsonp([0,29],[
 	  };
 	}
 	
-	var timeLine = function timeLine(target, toData, attr) {
+	var timeLine = function timeLine(target, toData, props) {
 	  var _this = this;
 	
 	  this.target = target;
-	  this.attr = attr || 'style';
+	  this.attr = props.attr || 'style';
+	  this.willChange = props.willChange;
 	  // 记录总时间;
 	  this.totalTime = 0;
 	  // 记录当前时间;
@@ -23139,7 +23142,7 @@ webpackJsonp([0,29],[
 	  var start = {};
 	  Object.keys(item).forEach(function (_key) {
 	    if (_key in _plugins2.default || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
-	      start[_key] = item[_key].getAnimStart();
+	      start[_key] = item[_key].getAnimStart(_this3.willChange);
 	      return;
 	    }
 	    if (_this3.attr === 'attr') {
@@ -23737,19 +23740,29 @@ webpackJsonp([0,29],[
 	  }
 	  return (0, _util.startConvertToEndUnit)(this.target, key, data, startUnit, endUnit, null, key === 'transformOrigin' && !i);
 	};
-	p.getAnimStart = function () {
+	p.getAnimStart = function (willChangeBool) {
 	  var _this2 = this;
 	
 	  var computedStyle = this.getComputedStyle();
 	  var style = {};
 	  this.supports3D = (0, _styleUtils.checkStyleName)('perspective');
-	  this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange || computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
+	  var willChangeArray = void 0;
+	  if (willChangeBool) {
+	    this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange || computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
+	    willChangeArray = this.willChange.split(',').filter(function (k) {
+	      return k;
+	    });
+	  }
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var cssName = (0, _styleUtils.isConvert)(key);
-	    var willStyle = key in _plugins2.default ? _this2.propsData.data[key].useStyle || cssName : cssName;
-	    willStyle = willStyle === 'transformOrigin' ? 'transform-origin' : willStyle;
-	    _this2.willChange = _this2.willChange.replace(willStyle, '');
-	    _this2.willChange = _this2.willChange === '' ? willStyle : willStyle + ', ' + _this2.willChange;
+	    if (willChangeBool) {
+	      var willStyle = key in _plugins2.default ? _this2.propsData.data[key].useStyle || cssName : cssName;
+	      willStyle = willStyle === 'transformOrigin' ? 'transform-origin' : willStyle;
+	      if (willChangeArray.indexOf(willStyle) === -1 && (willStyle in computedStyle || key in _plugins2.default)) {
+	        willChangeArray.push(willStyle);
+	      }
+	      _this2.willChange = willChangeArray.join(',');
+	    }
 	    var startData = computedStyle[cssName];
 	    var fixed = computedStyle.position === 'fixed';
 	    if (!startData || startData === 'none' || startData === 'auto') {
@@ -23862,10 +23875,12 @@ webpackJsonp([0,29],[
 	    tween.style.transform = tween.style.transform || _extends({}, this.start.transform);
 	  }
 	  var style = this.target.style;
-	  if (ratio === (this.type === 'from' ? 0 : 1)) {
-	    style.willChange = null;
-	  } else {
-	    style.willChange = this.willChange;
+	  if (this.willChange) {
+	    if (ratio === (this.type === 'from' ? 0 : 1)) {
+	      style.willChange = null;
+	    } else {
+	      style.willChange = this.willChange;
+	    }
 	  }
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
@@ -24283,7 +24298,7 @@ webpackJsonp([0,29],[
 	      return childrenToRender[0] || null;
 	    }
 	    var componentProps = _extends({}, this.props);
-	    ['component', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd', 'resetStyleBool'].forEach(function (key) {
+	    ['component', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd', 'resetStyleBool', 'willChange'].forEach(function (key) {
 	      return delete componentProps[key];
 	    });
 	    return (0, _react.createElement)(this.props.component, componentProps, childrenToRender);
@@ -24335,6 +24350,7 @@ webpackJsonp([0,29],[
 	    }
 	    onChange = _this3.onChange.bind(_this3, animation, child.key, type);
 	    var children = _react2.default.createElement(_TweenOne2.default, _extends({}, child.props, {
+	      willChange: _this3.props.willChange,
 	      key: child.key,
 	      component: child.type,
 	      animation: (0, _util.transformArguments)(animation, child.key, i),
@@ -24377,6 +24393,7 @@ webpackJsonp([0,29],[
 	  leave: objectOrArrayOrFunc,
 	  animatingClassName: _react.PropTypes.array,
 	  onEnd: _react.PropTypes.func,
+	  willChange: _react.PropTypes.bool,
 	  resetStyleBool: _react.PropTypes.bool
 	};
 	
@@ -24387,6 +24404,7 @@ webpackJsonp([0,29],[
 	  enter: { x: 50, opacity: 0, type: 'from' },
 	  leave: { x: -50, opacity: 0 },
 	  onEnd: noop,
+	  willChange: true,
 	  resetStyleBool: true
 	};
 	exports.default = TweenOneGroup;
