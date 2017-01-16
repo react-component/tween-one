@@ -36,9 +36,10 @@ function defaultData(vars, now) {
   };
 }
 
-const timeLine = function (target, toData, attr) {
+const timeLine = function (target, toData, props) {
   this.target = target;
-  this.attr = attr || 'style';
+  this.attr = props.attr || 'style';
+  this.willChange = props.willChange;
   // 记录总时间;
   this.totalTime = 0;
   // 记录当前时间;
@@ -155,7 +156,7 @@ p.getAnimStartData = function (item) {
   const start = {};
   Object.keys(item).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
-      start[_key] = item[_key].getAnimStart();
+      start[_key] = item[_key].getAnimStart(this.willChange);
       return;
     }
     if (this.attr === 'attr') {

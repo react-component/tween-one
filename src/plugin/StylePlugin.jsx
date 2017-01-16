@@ -99,18 +99,27 @@ p.convertToMarksArray = function (unit, key, data, i) {
   return startConvertToEndUnit(this.target, key, data,
     startUnit, endUnit, null, key === 'transformOrigin' && !i);
 };
-p.getAnimStart = function () {
+p.getAnimStart = function (willChangeBool) {
   const computedStyle = this.getComputedStyle();
   const style = {};
   this.supports3D = checkStyleName('perspective');
-  this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange ||
-  computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
+  let willChangeArray;
+  if (willChangeBool) {
+    this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange ||
+    computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
+    willChangeArray = this.willChange.split(',').filter(k => k);
+  }
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
-    let willStyle = key in _plugin ? this.propsData.data[key].useStyle || cssName : cssName;
-    willStyle = willStyle === 'transformOrigin' ? 'transform-origin' : willStyle;
-    this.willChange = this.willChange.replace(willStyle, '');
-    this.willChange = this.willChange === '' ? willStyle : `${willStyle}, ${this.willChange}`;
+    if (willChangeBool) {
+      let willStyle = key in _plugin ? this.propsData.data[key].useStyle || cssName : cssName;
+      willStyle = willStyle === 'transformOrigin' ? 'transform-origin' : willStyle;
+      if (willChangeArray.indexOf(willStyle) === -1 &&
+        (willStyle in computedStyle || key in _plugin)) {
+        willChangeArray.push(willStyle);
+      }
+      this.willChange = willChangeArray.join(',');
+    }
     let startData = computedStyle[cssName];
     const fixed = computedStyle.position === 'fixed';
     if (!startData || startData === 'none' || startData === 'auto') {
@@ -223,10 +232,12 @@ p.setRatio = function (ratio, tween) {
     tween.style.transform = tween.style.transform || { ...this.start.transform };
   }
   const style = this.target.style;
-  if (ratio === (this.type === 'from' ? 0 : 1)) {
-    style.willChange = null;
-  } else {
-    style.willChange = this.willChange;
+  if (this.willChange) {
+    if (ratio === (this.type === 'from' ? 0 : 1)) {
+      style.willChange = null;
+    } else {
+      style.willChange = this.willChange;
+    }
   }
   Object.keys(this.propsData.data).forEach(key => {
     const _isTransform = isTransform(key) === 'transform';

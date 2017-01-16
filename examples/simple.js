@@ -1,6 +1,7 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
+import '../assets/index.less';
 
 class Demo extends React.Component {
   constructor() {
