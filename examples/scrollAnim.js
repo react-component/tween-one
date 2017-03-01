@@ -123,7 +123,7 @@ webpackJsonp([16,29],[
 	    _this.frame = function (date, register) {
 	      var registerMoment = register ? date : 0;
 	      var moment = (_ticker2.default.frame - _this.startFrame) * perFrame + registerMoment + _this.startMoment;
-	      if (!register && moment < perFrame) {
+	      if (!register && moment < perFrame && typeof _this.props.moment !== 'number') {
 	        // 注册完后，第一帧预先跑动， 鼠标跟随
 	        moment = perFrame;
 	      }
@@ -159,6 +159,7 @@ webpackJsonp([16,29],[
 	    _this.paused = _this.props.paused;
 	    _this.reverse = _this.props.reverse;
 	    _this.onChange = _this.props.onChange;
+	    _this.newMomentAnim = false;
 	    return _this;
 	  }
 	
@@ -173,6 +174,7 @@ webpackJsonp([16,29],[
 	    this.onChange = nextProps.onChange;
 	    // 跳帧事件 moment;
 	    var newMoment = nextProps.moment;
+	    this.newMomentAnim = false;
 	    if (typeof newMoment === 'number' && newMoment !== this.moment) {
 	      this.startMoment = newMoment;
 	      this.startFrame = _ticker2.default.frame;
@@ -187,7 +189,7 @@ webpackJsonp([16,29],[
 	          _this2.play();
 	        })();
 	      } else {
-	        this.raf();
+	        this.newMomentAnim = true;
 	      }
 	    }
 	    // 动画处理
@@ -237,6 +239,9 @@ webpackJsonp([16,29],[
 	    // 样式更新了后再执行动画；
 	    if (this.restartAnim) {
 	      this.start();
+	    }
+	    if (this.newMomentAnim) {
+	      this.raf();
 	    }
 	  };
 	
