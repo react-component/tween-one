@@ -21,6 +21,7 @@ class TweenOne extends Component {
     this.paused = this.props.paused;
     this.reverse = this.props.reverse;
     this.onChange = this.props.onChange;
+    this.newMomentAnim = false;
   }
 
   componentDidMount() {
@@ -32,6 +33,7 @@ class TweenOne extends Component {
     this.onChange = nextProps.onChange;
     // 跳帧事件 moment;
     const newMoment = nextProps.moment;
+    this.newMomentAnim = false;
     if (typeof newMoment === 'number' && newMoment !== this.moment) {
       this.startMoment = newMoment;
       this.startFrame = ticker.frame;
@@ -44,7 +46,7 @@ class TweenOne extends Component {
         });
         this.play();
       } else {
-        this.raf();
+        this.newMomentAnim = true;
       }
     }
     // 动画处理
@@ -95,6 +97,9 @@ class TweenOne extends Component {
     if (this.restartAnim) {
       this.start();
     }
+    if (this.newMomentAnim) {
+      this.raf();
+    }
   }
 
   componentWillUnmount() {
@@ -130,7 +135,7 @@ class TweenOne extends Component {
   frame = (date, register) => {
     const registerMoment = register ? date : 0;
     let moment = (ticker.frame - this.startFrame) * perFrame + registerMoment + this.startMoment;
-    if (!register && moment < perFrame) {
+    if (!register && moment < perFrame && typeof this.props.moment !== 'number') {
       // 注册完后，第一帧预先跑动， 鼠标跟随
       moment = perFrame;
     }
