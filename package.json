@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
@@ -26,8 +26,8 @@
   "main": "./lib/index",
   "entry": {
     "rc-tween-one": [
-      "./src/index.js",
-      "./assets/index.less"
+      "./assets/index.less",
+      "./src/index.js"
     ]
   },
   "config": {
