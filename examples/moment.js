@@ -3,15 +3,27 @@ webpackJsonp([13,29],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(209);
+	module.exports = __webpack_require__(292);
 
 
 /***/ },
 
-/***/ 209:
+/***/ 292:
 /***/ function(module, exports) {
 
 	'use strict';
+	
+	var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+	
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+	
+	var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+	
+	var _inherits2 = require('babel-runtime/helpers/inherits');
+	
+	var _inherits3 = _interopRequireDefault(_inherits2);
 	
 	var _rcTweenOne = require('rc-tween-one');
 	
@@ -27,21 +39,13 @@ webpackJsonp([13,29],{
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
-	
 	var Demo = function (_React$Component) {
-	  _inherits(Demo, _React$Component);
+	  (0, _inherits3.default)(Demo, _React$Component);
 	
 	  function Demo() {
-	    _classCallCheck(this, Demo);
+	    (0, _classCallCheck3.default)(this, Demo);
 	
-	    var _this = _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+	    var _this = (0, _possibleConstructorReturn3.default)(this, _React$Component.apply(this, arguments));
 	
 	    _this.state = {
 	      moment: 2500 };
