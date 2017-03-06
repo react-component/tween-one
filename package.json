@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
@@ -19,10 +19,17 @@
   },
   "files": [
     "lib",
-    "assets/*.css"
+    "assets/*.css",
+    "dist"
   ],
   "licenses": "MIT",
   "main": "./lib/index",
+  "entry": {
+    "rc-tween-one": [
+      "./src/index.js",
+      "./assets/index.less"
+    ]
+  },
   "config": {
     "port": 8100
   },
@@ -30,7 +37,7 @@
     "build": "rc-tools run build",
     "gh-pages": "rc-tools run gh-pages",
     "start": "rc-tools run server",
-    "pub": "rc-tools run pub",
+    "pub": "rc-tools run pub --babel-runtime",
     "lint": "rc-tools run lint",
     "karma": "rc-tools run karma",
     "saucelabs": "rc-tools run saucelabs",
@@ -51,6 +58,7 @@
     "lint"
   ],
   "dependencies": {
+    "babel-runtime": "6.x",
     "raf": "~3.3.0",
     "style-utils": "~0.1.13",
     "tween-functions": "~1.2.0",
