@@ -1617,15 +1617,13 @@ webpackJsonp([24,29],[
 	      this.startMoment = newMoment;
 	      this.startFrame = _ticker2.default.frame;
 	      if (this.rafID === -1 && !nextProps.paused) {
-	        (function () {
-	          _this2.timeLine.resetAnimData();
-	          var style = nextProps.style;
-	          _this2.dom.setAttribute('style', '');
-	          Object.keys(style).forEach(function (key) {
-	            _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
-	          });
-	          _this2.play();
-	        })();
+	        this.timeLine.resetAnimData();
+	        var style = nextProps.style;
+	        this.dom.setAttribute('style', '');
+	        Object.keys(style).forEach(function (key) {
+	          _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
+	        });
+	        this.play();
 	      } else {
 	        this.newMomentAnim = true;
 	      }
@@ -2120,8 +2118,15 @@ webpackJsonp([24,29],[
 /* 91 */
 /***/ function(module, exports) {
 
+	/*
+	object-assign
+	(c) Sindre Sorhus
+	@license MIT
+	*/
+	
 	'use strict';
 	/* eslint-disable no-unused-vars */
+	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
 	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 	
@@ -2142,7 +2147,7 @@ webpackJsonp([24,29],[
 			// Detect buggy property enumeration order in older V8 versions.
 	
 			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-			var test1 = new String('abc');  // eslint-disable-line
+			var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
 			test1[5] = 'de';
 			if (Object.getOwnPropertyNames(test1)[0] === '5') {
 				return false;
@@ -2171,7 +2176,7 @@ webpackJsonp([24,29],[
 			}
 	
 			return true;
-		} catch (e) {
+		} catch (err) {
 			// We don't expect any of the above to throw, but better to be safe.
 			return false;
 		}
@@ -2191,8 +2196,8 @@ webpackJsonp([24,29],[
 				}
 			}
 	
-			if (Object.getOwnPropertySymbols) {
-				symbols = Object.getOwnPropertySymbols(from);
+			if (getOwnPropertySymbols) {
+				symbols = getOwnPropertySymbols(from);
 				for (var i = 0; i < symbols.length; i++) {
 					if (propIsEnumerable.call(from, symbols[i])) {
 						to[symbols[i]] = from[symbols[i]];
