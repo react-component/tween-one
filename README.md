@@ -84,9 +84,6 @@ React.render(<TweenOneGroup>
 
 <a href='https://motion.ant.design/api/tween-one' target='_blank'>中文文档</a>
 
-> version >= 0.6.x support SVG;
-
-
 ### props
 
 | name      | type           | default | description    |
@@ -99,6 +96,7 @@ React.render(<TweenOneGroup>
 | moment     | number         | null    | set the current frame    |
 | attr       | string         | `style` | `style` or `attr`, `attr` is tag attribute. when morph SVG must be `attr`.  |
 | willChange | boolean        | true    | open will-change style. |
+| updateReStart | boolean     | true    | update animation data, re start animate | 
 | component  | string / React.Element  | `div`   | component tag  |
 
 
@@ -106,7 +104,7 @@ React.render(<TweenOneGroup>
 
 > transform need to set the initial value, must be set in the style;
 
-> 0.4 filter => `grayScale`, `sepia`, `hueRotate`, `invert`, `brightness`, `contrast`, `blur`;  { blur: '5px' }  Unit must bring.
+> filter => `grayScale`, `sepia`, `hueRotate`, `invert`, `brightness`, `contrast`, `blur`;  { blur: '5px' }  Unit must bring.
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
@@ -127,6 +125,8 @@ React.render(<TweenOneGroup>
 
 > Cannot be used at the same time `reverse` and `repeat: -1`.
 
+### animation =[ ] is timeline
+
 ### ease: function
 
 path easing;
@@ -137,8 +137,6 @@ const path = 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0';
 const ease = Tween.easing.path(path);
 
 ```
-
-### animation =[ ] is timeline
 
 ### BezierPlugin
 
