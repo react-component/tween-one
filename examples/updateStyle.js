@@ -18,17 +18,16 @@ class Demo extends React.Component {
       this.setState({
         style: { opacity: 1, height: 250, transform: 'translateY(100px)', marginLeft: 100 },
       });
-      this.testText = '变更后的样式:';
       this.bool = false;
     }, 1000);
   }
 
   onChange(e) {
     if (!this.bool) {
-      let text = (<div>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}</div>);
+      let text = (<div> 当前时间 moment: {e.moment}</div>);
       if (this.state.test) {
         text = (<div>{this.state.test}
-          <p>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}</p>
+          <p>当前时间 moment: {e.moment}</p>
         </div>);
       }
       this.setState({

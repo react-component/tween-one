@@ -112,11 +112,10 @@ p.getAnimStart = function (willChangeBool) {
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
     if (willChangeBool) {
-      let willStyle = key in _plugin ? this.propsData.data[key].useStyle || cssName : cssName;
-      willStyle = willStyle === 'transformOrigin' ? 'transform-origin' : willStyle;
+      const willStyle = key in _plugin ? this.propsData.data[key].useStyle || cssName : cssName;
       if (willChangeArray.indexOf(willStyle) === -1 &&
         (willStyle in computedStyle || key in _plugin)) {
-        willChangeArray.push(willStyle);
+        willChangeArray.push(willStyle.replace(/([A-Z])/g, '-$1').toLocaleLowerCase());
       }
       this.willChange = willChangeArray.join(',');
     }
