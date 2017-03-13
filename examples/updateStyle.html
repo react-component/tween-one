@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>updateStyle.js - example - rc-tween-one@1.0.4</title>
+  <title>updateStyle.js - example - rc-tween-one@1.1.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-tween-one@1.0.4</h1>
+      <h1>rc-tween-one@1.1.0</h1>
 
       <p>tween-one anim component for react</p>
     </div>
@@ -289,17 +289,16 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
       <span class="hljs-keyword">this</span>.setState({
         style: { opacity: <span class="hljs-number">1</span>, height: <span class="hljs-number">250</span>, transform: <span class="hljs-string">'translateY(100px)'</span>, marginLeft: <span class="hljs-number">100</span> },
       });
-      <span class="hljs-keyword">this</span>.testText = <span class="hljs-string">'变更后的样式:'</span>;
       <span class="hljs-keyword">this</span>.bool = <span class="hljs-literal">false</span>;
     }, <span class="hljs-number">1000</span>);
   }
 
   onChange(e) {
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.bool) {
-      <span class="hljs-keyword">let</span> text = (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
+      <span class="hljs-keyword">let</span> text = (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span> 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.test) {
         text = (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.state.test}
-          <span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>{this.testText + JSON.stringify(e.tween)}, 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
         <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
       }
       <span class="hljs-keyword">this</span>.setState({
