@@ -96,6 +96,7 @@ React.render(<TweenOneGroup>
 | moment     | number         | null    | set the current frame    |
 | attr       | string         | `style` | `style` or `attr`, `attr` is tag attribute. when morph SVG must be `attr`.  |
 | willChange | boolean        | true    | open will-change style. |
+| resetStyleBool | boolean    | false   | update animation data, reset init style |
 | updateReStart | boolean     | true    | update animation data, re start animate | 
 | component  | string / React.Element  | `div`   | component tag  |
 
