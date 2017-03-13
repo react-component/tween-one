@@ -24857,8 +24857,8 @@
 	      target: _this6.target
 	    };
 	
-	    if (progressTime >= 0 && progressTime < duration + _this6.perFrame) {
-	      if (progressTime >= duration && item.mode !== 'onComplete') {
+	    if (progressTime >= 0 && !(progressTime > duration && item.mode === 'onComplete')) {
+	      if (progressTime >= duration) {
 	        ratio = item.ease(1, startData, endData, 1);
 	        _this6.setRatio(ratio, item, i);
 	        if (item.mode !== 'reset') {
