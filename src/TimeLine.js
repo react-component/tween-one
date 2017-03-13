@@ -272,8 +272,8 @@ p.render = function () {
       target: this.target,
     };
 
-    if (progressTime >= 0 && progressTime < duration + this.perFrame) {
-      if (progressTime >= duration && item.mode !== 'onComplete') {
+    if (progressTime >= 0 && !(progressTime > duration && item.mode === 'onComplete')) {
+      if (progressTime >= duration) {
         ratio = item.ease(1, startData, endData, 1);
         this.setRatio(ratio, item, i);
         if (item.mode !== 'reset') {
