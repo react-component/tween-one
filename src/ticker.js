@@ -7,6 +7,7 @@ const Ticker = function () {
 
 const p = Ticker.prototype = {
   tickFnArray: [],
+  tickKeyObject: {},
   id: -1,
   tweenId: 0,
   frame: 0,
@@ -18,29 +19,21 @@ const p = Ticker.prototype = {
   skipFrameMax: 166,
 };
 p.add = function (fn) {
-  const key = `tweenOne${this.tweenId}`;
+  const key = `TweenOneTicker${this.tweenId}`;
   this.tweenId++;
   this.wake(key, fn);
   return key;
 };
 p.wake = function (key, fn) {
-  const func = fn;
-  func.key = key;
-  this.tickFnArray.push(func);
+  this.tickKeyObject[key] = fn;
+  this.tickFnArray = Object.keys(this.tickKeyObject).map(k => this.tickKeyObject[k]);
   if (this.id === -1) {
     this.id = requestAnimationFrame(this.tick);
   }
 };
 p.clear = function (key) {
-  let int = -1;
-  this.tickFnArray.forEach((func, i) => {
-    if (func.key === key) {
-      int = i;
-    }
-  });
-  if (int !== -1) {
-    this.tickFnArray.splice(int, 1);
-  }
+  delete this.tickKeyObject[key];
+  this.tickFnArray = Object.keys(this.tickKeyObject).map(k => this.tickKeyObject[k]);
 };
 p.sleep = function () {
   requestAnimationFrame.cancel(this.id);
