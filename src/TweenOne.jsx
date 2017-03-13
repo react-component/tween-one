@@ -22,6 +22,7 @@ class TweenOne extends Component {
     this.reverse = this.props.reverse;
     this.onChange = this.props.onChange;
     this.newMomentAnim = false;
+    this.updateAnim = null;
   }
 
   componentDidMount() {
@@ -54,27 +55,23 @@ class TweenOne extends Component {
     const currentAnimation = this.props.animation;
     const equal = objectEqual(currentAnimation, newAnimation);
     const styleEqual = objectEqual(this.props.style, nextProps.style);
-    // 如果 animation 不同， 重新动画
-    this.restartAnim = false;
+    // 如果 animation 不同， 在下一帧重新动画
     if (!equal) {
-      this.cancelRequestAnimationFrame();
-      if (nextProps.resetStyleBool && this.timeLine) {
-        this.timeLine.resetDefaultStyle();
-      }
-      this.startMoment = 0;
-      this.startFrame = ticker.frame;
-      this.restartAnim = true;
-      // this.start(nextProps);
-    } else if (!styleEqual) {
-      // 如果 animation 相同，，style 不同，从当前时间开放。
       if (this.rafID !== -1) {
-        this.cancelRequestAnimationFrame();
-        this.startMoment = this.timeLine.progressTime;
+        this.updateAnim = 'update';
+      } else if (nextProps.updateReStart) {
         this.startFrame = ticker.frame;
-        this.restartAnim = true;
-        // this.start(nextProps);
+        this.updateAnim = 'start';
       }
     }
+
+    if (!styleEqual) {
+      // 在动画时更改了 style, 作为更改开始数值。
+      if (this.rafID !== -1) {
+        this.updateStartStyle = true;
+      }
+    }
+
     // 暂停倒放
     if (this.paused !== nextProps.paused || this.reverse !== nextProps.reverse) {
       this.paused = nextProps.paused;
@@ -94,9 +91,15 @@ class TweenOne extends Component {
 
   componentDidUpdate() {
     // 样式更新了后再执行动画；
-    if (this.restartAnim) {
+    if (this.updateAnim === 'start') {
       this.start();
     }
+
+    if (this.updateStartStyle && !this.updateAnim) {
+      this.timeLine.reStart(this.props.style);
+      this.updateStartStyle = false;
+    }
+
     if (this.newMomentAnim) {
       this.raf();
     }
@@ -113,12 +116,13 @@ class TweenOne extends Component {
   }
 
   start = () => {
+    this.updateAnim = null;
     const props = this.props;
     if (props.animation && Object.keys(props.animation).length) {
       this.timeLine = new TimeLine(this.dom, dataToArray(props.animation),
         { attr: props.attr, willChange: props.willChange });
       // 预先注册 raf, 初始动画数值。
-      this.raf(0, true);
+      this.raf();
       // 开始动画
       this.play();
     }
@@ -132,13 +136,19 @@ class TweenOne extends Component {
     this.rafID = ticker.add(this.raf);
   }
 
-  frame = (date, register) => {
-    const registerMoment = register ? date : 0;
-    let moment = (ticker.frame - this.startFrame) * perFrame + registerMoment + this.startMoment;
-    if (!register && moment < perFrame && typeof this.props.moment !== 'number') {
-      // 注册完后，第一帧预先跑动， 鼠标跟随
-      moment = perFrame;
+  updateAnimFunc = () => {
+    this.cancelRequestAnimationFrame();
+    this.startFrame = ticker.frame;
+    if (this.updateAnim === 'update') {
+      if (this.props.resetStyleBool && this.timeLine) {
+        this.timeLine.resetDefaultStyle();
+      }
+      this.startMoment = 0;
     }
+  }
+
+  frame = () => {
+    let moment = (ticker.frame - this.startFrame) * perFrame + this.startMoment;
     if (this.reverse) {
       moment = (this.startMoment || 0) - (ticker.frame - this.startFrame) * perFrame;
     }
@@ -152,8 +162,15 @@ class TweenOne extends Component {
     this.timeLine.frame(moment);
   }
 
-  raf = (date, register) => {
-    this.frame(date, register);
+  raf = () => {
+    this.frame();
+    if (this.updateAnim) {
+      if (this.updateStartStyle) {
+        this.timeLine.reStart(this.props.style);
+      }
+      this.updateAnimFunc();
+      this.start();
+    }
     if ((this.moment >= this.timeLine.totalTime && !this.reverse)
       || this.paused || (this.reverse && this.moment === 0)) {
       return this.cancelRequestAnimationFrame();
@@ -176,6 +193,7 @@ class TweenOne extends Component {
       'reverse',
       'moment',
       'resetStyleBool',
+      'updateReStart',
       'willChange',
     ].forEach(key => delete props[key]);
     props.style = { ...this.props.style };
@@ -210,6 +228,7 @@ TweenOne.propTypes = {
   willChange: PropTypes.bool,
   onChange: PropTypes.func,
   resetStyleBool: PropTypes.bool,
+  updateReStart: PropTypes.bool,
 };
 
 TweenOne.defaultProps = {
@@ -218,6 +237,7 @@ TweenOne.defaultProps = {
   attr: 'style',
   onChange: noop,
   willChange: true,
+  updateReStart: true,
 };
 TweenOne.plugins = plugins;
 export default TweenOne;

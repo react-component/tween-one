@@ -9,6 +9,7 @@ import {
   getColor,
   parseColor,
   toFixed,
+  stylesToCss,
 } from 'style-utils';
 import { startConvertToEndUnit } from './util.js';
 const DEFAULT_EASING = 'easeInOutQuad';
@@ -52,8 +53,23 @@ const timeLine = function (target, toData, props) {
   this.onStart = {};
   // 开始默认的数据；
   this.startDefaultData = {};
+  // 动画过程
+  this.tween = {};
+  // toData;
+  this.data = toData;
+  // 每帧的时间;
+  this.perFrame = Math.round(1000 / 60);
+  // 注册，第一次进入执行注册
+  this.register = false;
+  // 设置 style
+  const data = this.setAttrIsStyle();
+  // 设置默认动画数据;
+  this.setDefaultData(data);
+};
+const p = timeLine.prototype;
+p.setAttrIsStyle = function () {
   const data = [];
-  toData.forEach((d, i) => {
+  this.data.forEach((d, i) => {
     const _d = { ...d };
     if (this.attr === 'style') {
       data[i] = {};
@@ -81,26 +97,14 @@ const timeLine = function (target, toData, props) {
       data[i] = _d;
     }
   });
-  // 动画过程
-  this.tween = {};
-  // 每帧的时间;
-  this.perFrame = Math.round(1000 / 60);
-  // 注册，第一次进入执行注册
-  this.register = false;
-  // 缓动最小值;
-  this.tinyNum = 0.0000000001;
-  // 设置默认动画数据;
-  this.setDefaultData(data);
+  return data;
 };
-const p = timeLine.prototype;
-
 p.setDefaultData = function (_vars) {
   let now = 0;
   let repeatMax = false;
   const data = _vars.map(item => {
     const appearToBool = typeof item.appearTo === 'number';
     // 加上延时，在没有播放过时；
-    // !appearToBool && (now += item.delay || 0);
     if (!appearToBool) {
       now += item.delay || 0;
     }
@@ -173,7 +177,6 @@ p.getAnimStartData = function (item) {
           startConvertToEndUnit(this.target, _key, parseFloat(data), unit, item[_key].unit)
           : parseFloat(data);
       }
-      // start[_key] = data;
       return;
     }
     start[_key] = this.target[_key] || 0;
@@ -201,7 +204,7 @@ p.setRatio = function (ratio, endData, i) {
       // 除了d和这points外的标签动画；
       if (!endVars.type) {
         data = endVars.unit.charAt(1) === '=' ? startVars + endVars.vars * ratio + endVars.unit :
-        (endVars.vars - startVars) * ratio + startVars + endVars.unit;
+          (endVars.vars - startVars) * ratio + startVars + endVars.unit;
         this.target.setAttribute(_key, data);
       } else if (endVars.type === 'color') {
         if (endVars.vars.length === 3 && startVars.length === 4) {
@@ -225,7 +228,6 @@ p.render = function () {
     let repeatNum = Math.ceil((this.progressTime - initTime) /
         (duration + item.repeatDelay)) - 1;
     repeatNum = repeatNum < 0 ? 0 : repeatNum;
-    // repeatNum = this.progressTime === 0 ? repeatNum + 1 : repeatNum;
     if (item.repeat) {
       if (item.repeat < repeatNum && item.repeat !== -1) {
         return;
@@ -237,59 +239,65 @@ p.render = function () {
     const startData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 1 : 0;
     const endData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 0 : 1;
     //  精度损失，只取小数点后10位。
-    let progressTime = toFixed(this.progressTime - initTime);
-    // 设置 start
-    const delay = item.delay >= 0 ? item.delay : -item.delay;
-    const fromDelay = item.type === 'from' ? delay : 0;
-    if (progressTime + fromDelay > -this.perFrame && !this.start[i]) {
-      this.start[i] = this.getAnimStartData(item.vars);
-      if (!this.register && progressTime <= this.perFrame) {
-        this.register = true;
-        // 在开始跳帧时。。[{x:100,type:'from'},{y:300}]，跳过了from时, moment = 600 => 需要把from合回来
-        // 如果 duration 和 delay 都为 0， 判断用set, 直接注册时就结束;
-        const s = delay ? 0 : item.ease(this.tinyNum, startData, endData, this.tinyNum);
-        const ss = duration ?
-          item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration) : s;
-        const st = progressTime / (duration + fromDelay) > 1 ? 1 : ss;
-        this.setRatio(st, item, i);
+    const progressTime = toFixed(this.progressTime - initTime);
+
+    let ratio;
+
+    // 开始注册;
+    // from 时需先执行参数位置;
+    const fromDelay = item.type === 'from' ? item.delay : 0;
+    if (progressTime + fromDelay >= 0) {
+      if (!this.start[i]) {
+        // 设置 start
+        this.start[i] = this.getAnimStartData(item.vars);
+        if (progressTime < this.perFrame) {
+          ratio = !item.duration && !item.delay ? item.ease(1, startData, endData, 1)
+            : item.ease(0, startData, endData, 1);
+          this.setRatio(ratio, item, i);
+        } else if (progressTime > duration) {
+          ratio = item.ease(1, startData, endData, 1);
+          this.setRatio(ratio, item, i);
+        }
+        if (!this.register) {
+          this.register = true;
+          if (progressTime === 0) {
+            return;
+          }
+        }
       }
     }
+
     const e = {
       index: i,
       target: this.target,
     };
 
-    // onRepeat 处理
-    if (item.repeat && repeatNum > 0
-      && progressTime + fromDelay >= 0 && progressTime < this.perFrame) {
-      // 重新开始, 在第一秒触发时调用;
-      item.onRepeat(e);
-    }
-    if (progressTime < 0 && progressTime + fromDelay > -this.perFrame) {
-      this.setRatio(item.type === 'from' ? 1 : 0, item, i);
-    } else if (progressTime >= duration && item.mode !== 'onComplete') {
-      const compRatio = duration ? item.ease(duration, startData, endData, duration) :
-        item.ease(this.tinyNum, startData, endData, this.tinyNum);
-      this.setRatio(compRatio, item, i);
-      if (item.mode !== 'reset') {
-        item.onComplete(e);
-      }
-      item.mode = 'onComplete';
-    } else if (progressTime >= 0 && progressTime < duration) {
-      item.mode = progressTime < this.perFrame && !this.onStart[i] ? 'onStart' : 'onUpdate';
-      progressTime = progressTime < 0 ? 0 : progressTime;
-      progressTime = progressTime > duration ? duration : progressTime;
-      const ratio = item.ease(progressTime, startData, endData, duration);
-      this.setRatio(ratio, item, i);
-      this.onStart[i] = true;
-      if (progressTime <= this.perFrame) {
-        item.onStart(e);
-      } else {
+    if (progressTime >= 0 && progressTime < duration + this.perFrame) {
+      if (progressTime >= duration && item.mode !== 'onComplete') {
+        ratio = item.ease(1, startData, endData, 1);
+        this.setRatio(ratio, item, i);
+        if (item.mode !== 'reset') {
+          item.onComplete(e);
+        }
+        item.mode = 'onComplete';
+      } else if (progressTime < this.perFrame) {
+        ratio = item.ease(0, startData, endData, 1);
+        this.setRatio(ratio, item, i);
+        // 将第一帧作动画开始 start;
+        if (item.repeat && repeatNum > 0) {
+          item.mode = 'onRepeat';
+          item.onRepeat({ ...e, repeatNum });
+        } else {
+          item.mode = 'onStart';
+          item.onStart(e);
+        }
+      } else if (progressTime > 0 && progressTime < duration) {
+        item.mode = 'onUpdate';
+        ratio = item.ease(progressTime, startData, endData, duration);
+        this.setRatio(ratio, item, i);
         item.onUpdate({ ratio, ...e });
       }
-    }
 
-    if (progressTime >= 0 && progressTime < duration + this.perFrame) {
       this.onChange({
         moment: this.progressTime,
         mode: item.mode,
@@ -320,6 +328,15 @@ p.resetDefaultStyle = function () {
       this.target.setAttribute(key, this.startDefaultData[key]);
     }
   });
+};
+
+p.reStart = function (style) {
+  this.start = {};
+  Object.keys(style).forEach(key => {
+    this.target.style[key] = stylesToCss(key, style[key]);
+  });
+  this.setAttrIsStyle();
+  this.resetDefaultStyle();
 };
 
 p.onChange = noop;

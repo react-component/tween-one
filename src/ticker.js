@@ -6,7 +6,7 @@ const Ticker = function () {
 };
 
 const p = Ticker.prototype = {
-  tickFnObject: {},
+  tickFnArray: [],
   id: -1,
   tweenId: 0,
   frame: 0,
@@ -24,13 +24,23 @@ p.add = function (fn) {
   return key;
 };
 p.wake = function (key, fn) {
-  this.tickFnObject[key] = fn;
+  const func = fn;
+  func.key = key;
+  this.tickFnArray.push(func);
   if (this.id === -1) {
     this.id = requestAnimationFrame(this.tick);
   }
 };
 p.clear = function (key) {
-  delete this.tickFnObject[key];
+  let int = -1;
+  this.tickFnArray.forEach((func, i) => {
+    if (func.key === key) {
+      int = i;
+    }
+  });
+  if (int !== -1) {
+    this.tickFnArray.splice(int, 1);
+  }
 };
 p.sleep = function () {
   requestAnimationFrame.cancel(this.id);
@@ -42,14 +52,9 @@ p.tick = function (a) {
   ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : 0;
   ticker.lastUpdate = ticker.lastUpdate
     ? ticker.lastUpdate + ticker.elapsed : ticker.getTime() + ticker.elapsed;
-  const obj = ticker.tickFnObject;
-  Object.keys(obj).forEach(key => {
-    if (obj[key]) {
-      obj[key](a);
-    }
-  });
+  ticker.tickFnArray.forEach(func => func(a));
   // 如果 object 里没对象了，自动杀掉；
-  if (!Object.keys(obj).length) {
+  if (!ticker.tickFnArray.length) {
     ticker.sleep();
     return;
   }
@@ -63,7 +68,7 @@ p.tick = function (a) {
 let timeoutIdNumber = 0;
 p.timeout = function (fn, time) {
   if (!(typeof fn === 'function')) {
-    return console.warn('Is no function');// eslint-disable-line
+    return console.warn('not function');// eslint-disable-line
   }
   const timeoutID = `timeout${Date.now()}-${timeoutIdNumber}`;
   const startFrame = this.frame;
@@ -80,7 +85,7 @@ p.timeout = function (fn, time) {
 let intervalIdNumber = 0;
 p.interval = function (fn, time) {
   if (!(typeof fn === 'function')) {
-    console.warn('Is no function');// eslint-disable-line
+    console.warn('not function');// eslint-disable-line
     return null;
   }
   const intervalID = `interval${Date.now()}-${intervalIdNumber}`;
