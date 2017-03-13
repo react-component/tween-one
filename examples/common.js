@@ -25604,6 +25604,7 @@
 	
 	var p = Ticker.prototype = {
 	  tickFnArray: [],
+	  tickKeyObject: {},
 	  id: -1,
 	  tweenId: 0,
 	  frame: 0,
@@ -25616,29 +25617,29 @@
 	  skipFrameMax: 166
 	};
 	p.add = function (fn) {
-	  var key = 'tweenOne' + this.tweenId;
+	  var key = 'TweenOneTicker' + this.tweenId;
 	  this.tweenId++;
 	  this.wake(key, fn);
 	  return key;
 	};
 	p.wake = function (key, fn) {
-	  var func = fn;
-	  func.key = key;
-	  this.tickFnArray.push(func);
+	  var _this = this;
+	
+	  this.tickKeyObject[key] = fn;
+	  this.tickFnArray = Object.keys(this.tickKeyObject).map(function (k) {
+	    return _this.tickKeyObject[k];
+	  });
 	  if (this.id === -1) {
 	    this.id = (0, _raf2.default)(this.tick);
 	  }
 	};
 	p.clear = function (key) {
-	  var int = -1;
-	  this.tickFnArray.forEach(function (func, i) {
-	    if (func.key === key) {
-	      int = i;
-	    }
+	  var _this2 = this;
+	
+	  delete this.tickKeyObject[key];
+	  this.tickFnArray = Object.keys(this.tickKeyObject).map(function (k) {
+	    return _this2.tickKeyObject[k];
 	  });
-	  if (int !== -1) {
-	    this.tickFnArray.splice(int, 1);
-	  }
 	};
 	p.sleep = function () {
 	  _raf2.default.cancel(this.id);
@@ -25666,7 +25667,7 @@
 	};
 	var timeoutIdNumber = 0;
 	p.timeout = function (fn, time) {
-	  var _this = this;
+	  var _this3 = this;
 	
 	  if (!(typeof fn === 'function')) {
 	    return console.warn('not function'); // eslint-disable-line
@@ -25674,9 +25675,9 @@
 	  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
 	  var startFrame = this.frame;
 	  this.wake(timeoutID, function () {
-	    var moment = (_this.frame - startFrame) * _this.perFrame;
+	    var moment = (_this3.frame - startFrame) * _this3.perFrame;
 	    if (moment >= (time || 0)) {
-	      _this.clear(timeoutID);
+	      _this3.clear(timeoutID);
 	      fn();
 	    }
 	  });
@@ -25685,7 +25686,7 @@
 	};
 	var intervalIdNumber = 0;
 	p.interval = function (fn, time) {
-	  var _this2 = this;
+	  var _this4 = this;
 	
 	  if (!(typeof fn === 'function')) {
 	    console.warn('not function'); // eslint-disable-line
@@ -25694,9 +25695,9 @@
 	  var intervalID = 'interval' + Date.now() + '-' + intervalIdNumber;
 	  var starFrame = this.frame;
 	  this.wake(intervalID, function () {
-	    var moment = (_this2.frame - starFrame) * _this2.perFrame;
+	    var moment = (_this4.frame - starFrame) * _this4.perFrame;
 	    if (moment >= (time || 0)) {
-	      starFrame = _this2.frame;
+	      starFrame = _this4.frame;
 	      fn();
 	    }
 	  });
