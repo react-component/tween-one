@@ -184,4 +184,5 @@ TweenOneGroup.defaultProps = {
   willChange: true,
   resetStyleBool: true,
 };
+TweenOneGroup.isTweenOneGroup = true;
 export default TweenOneGroup;

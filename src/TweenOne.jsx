@@ -3,7 +3,6 @@ import ReactDom from 'react-dom';
 import { dataToArray, objectEqual } from './util';
 import { stylesToCss } from 'style-utils';
 import TimeLine from './TimeLine';
-import plugins from './plugins';
 import ticker from './ticker';
 
 function noop() {
@@ -239,5 +238,4 @@ TweenOne.defaultProps = {
   willChange: true,
   updateReStart: true,
 };
-TweenOne.plugins = plugins;
 export default TweenOne;
