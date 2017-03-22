@@ -1598,6 +1598,8 @@
 	var TweenOne = __webpack_require__(82);
 	TweenOne.TweenOneGroup = __webpack_require__(277);
 	TweenOne.easing = __webpack_require__(270);
+	TweenOne.plugins = __webpack_require__(272);
+	TweenOne.isTweenOne = true;
 	module.exports = TweenOne;
 
 /***/ },
@@ -1641,10 +1643,6 @@
 	var _TimeLine = __webpack_require__(269);
 	
 	var _TimeLine2 = _interopRequireDefault(_TimeLine);
-	
-	var _plugins = __webpack_require__(272);
-	
-	var _plugins2 = _interopRequireDefault(_plugins);
 	
 	var _ticker = __webpack_require__(274);
 	
@@ -1883,7 +1881,6 @@
 	  willChange: true,
 	  updateReStart: true
 	};
-	TweenOne.plugins = _plugins2.default;
 	exports.default = TweenOne;
 	module.exports = exports['default'];
 
@@ -26041,6 +26038,7 @@
 	  willChange: true,
 	  resetStyleBool: true
 	};
+	TweenOneGroup.isTweenOneGroup = true;
 	exports.default = TweenOneGroup;
 	module.exports = exports['default'];
 
