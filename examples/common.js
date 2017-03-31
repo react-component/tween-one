@@ -1753,6 +1753,9 @@
 	  TweenOne.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
 	    var _this2 = this;
 	
+	    if (nextProps.resetStyleBool && this.timeLine && this.rafID === -1) {
+	      this.timeLine.resetDefaultStyle();
+	    }
 	    this.onChange = nextProps.onChange;
 	    // 跳帧事件 moment;
 	    var newMoment = nextProps.moment;
