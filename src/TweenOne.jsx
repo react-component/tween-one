@@ -30,6 +30,9 @@ class TweenOne extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.resetStyleBool && this.timeLine && this.rafID === -1) {
+      this.timeLine.resetDefaultStyle();
+    }
     this.onChange = nextProps.onChange;
     // 跳帧事件 moment;
     const newMoment = nextProps.moment;
