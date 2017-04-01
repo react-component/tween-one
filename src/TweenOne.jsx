@@ -92,11 +92,6 @@ class TweenOne extends Component {
   }
 
   componentDidUpdate() {
-    // 样式更新了后再执行动画；
-    if (this.updateAnim === 'start') {
-      this.start();
-    }
-
     if (this.updateStartStyle && !this.updateAnim) {
       this.timeLine.reStart(this.props.style);
       this.updateStartStyle = false;
@@ -104,6 +99,11 @@ class TweenOne extends Component {
 
     if (this.newMomentAnim) {
       this.raf();
+    }
+
+    // 样式更新了后再执行动画；
+    if (this.updateAnim === 'start') {
+      this.start();
     }
   }
 
