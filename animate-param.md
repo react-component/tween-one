@@ -50,15 +50,15 @@ tween-one 里的可支持 style 动画参数说明。
 |   scale           | `{ scale: 0 } => transform: scale(0)` 元素以 transformOrigin 的中心点缩放到 0 |
 |   scaleX          | `{ scaleX: 0 } => transform: scaleX(0)` 元素以 transformOrigin 的中心点 X 缩放到 0 |
 |   scaleY          | `{ scaleY: 0 } => transform: scaleY(0)` 元素以 transformOrigin 的中心点 Y 缩放到 0 |
-|   transformOrigin | `{ transformOrigin: '50px 50px'}` 元素当前中心点到 x: 50px y: 50px; |
+|   transformOrigin | `{ transformOrigin: '50px 50px'}` 元素当前中心点到 x: 50px y: 50px |
 
 ### filter 参数 
 
 |     参数名称       |    	说明     |
 |-------------------|---------------------|
-|   grayScale       | `{ grayScale: 1 }` 元素 filter 灰度到 100%; |
-|   sepia           | `{ sepia: 1 }` 元素 filter 颜色到 100%; |
-|   hueRotate       | `{ hueRotate: '90deg' }` 元素 filter 色相盘旋转 90 度; |
+|   grayScale       | `{ grayScale: 1 }` 元素 filter 灰度到 100% |
+|   sepia           | `{ sepia: 1 }` 元素 filter 颜色到 100% |
+|   hueRotate       | `{ hueRotate: '90deg' }` 元素 filter 色相盘旋转 90 度 |
 |   invert          | `{ invert: 1 }` 元素 filter 色值反相到 100% |
 |   brightness      | `{ brightness: 2 }` 元素 filter 亮度到 200% |
 |   contrast        | `{ contrast: 2 }` 对比度到 200% |
