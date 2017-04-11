@@ -103,8 +103,6 @@ React.render(<TweenOneGroup>
 
 ### animation = { }
 
-> transform need to set the initial value, must be set in the style;
-
 > Basic animation param. please view [animation terms](https://github.com/react-component/tween-one/blob/master/animate-param.md)
 
 | name      | type           | default | description    |
