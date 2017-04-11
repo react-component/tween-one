@@ -93,6 +93,21 @@ class TweenOneGroup extends Component {
     }
   }
 
+  getTweenChild = (child, props = {}) => {
+    return (typeof child.type === 'function' ?
+      React.createElement(TweenOne, {
+        ...props,
+        key: child.key,
+        component: null,
+      }, child)
+      : React.createElement(TweenOne, {
+        ...child.props,
+        ...props,
+        key: child.key,
+        component: child.type,
+      }));
+  }
+
   getCoverAnimation = (child, i, type) => {
     let animation;
     let onChange;
@@ -102,15 +117,18 @@ class TweenOneGroup extends Component {
       animation = appear && this.props.enter || null;
     }
     onChange = this.onChange.bind(this, animation, child.key, type);
-    const children = (<TweenOne
-      {...child.props}
-      willChange={this.props.willChange}
-      key={child.key}
-      component={child.type}
-      animation={transformArguments(animation, child.key, i)}
-      onChange={onChange}
-      resetStyleBool={this.props.resetStyleBool}
-    />);
+    const animate = transformArguments(animation, child.key, i);
+    let props = {
+      willChange: this.props.willChange,
+      key: child.key,
+      animation: animate,
+      onChange,
+      resetStyleBool: this.props.resetStyleBool,
+    };
+    if (typeof child.type !== 'function') {
+      props = { ...child.props, ...props };
+    }
+    const children = this.getTweenChild(child, props);
     if (this.keysToEnter.concat(this.keysToLeave).indexOf(child.key) >= 0
       || !this.onEnterBool && animation) {
       this.isTween[child.key] = type;
@@ -133,8 +151,7 @@ class TweenOneGroup extends Component {
         return this.getCoverAnimation(child, i, 'appear');
       }
       return this.isTween[child.key] &&
-        this.getCoverAnimation(child, i, this.isTween[child.key]) ||
-        React.createElement(TweenOne, { ...child.props, component: child.type, key: child.key });
+        this.getCoverAnimation(child, i, this.isTween[child.key]) || this.getTweenChild(child);
     });
   }
 
