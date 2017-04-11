@@ -8,33 +8,33 @@ tween-one 里的可支持 style 动画参数说明。
 
 |     参数名称       |    	说明     |
 |-------------------|---------------------|
-|   width           |  `{ width: 100 }` 元素当前宽度到 100px; |
-|   maxWidth        |  `{ maxWidth: 100 }` 元素当前最大宽度到 100px; |
-|   minWidth        |  `{ minWidth: 100 }` 元素当前最小宽度到 100px; |
-|   height          |  `{ height: 100 }` 元素当前高度到 100px; |
-|   maxHeight       |  `{ maxHeight: 100 }` 元素当前最大高度到 100px; |
-|   mimHeight       |  `{ mimHeight: 100 }` 元素当前最小高度到 100px; |
-|   lineHeight      |  `{ lineHeight: 100 }` 区块行高到 100px; |
-|   opacity         |  `{ opacity: 0 }` 元素当前透明度到 0; |
-|   top             |  `{ top: 100 }` 元素当前顶部距离到 100px, 需配合 `position: relative | absolute`; |
-|   right           | `{ right: 100 }` 元素当前右部距离到 100px, 需配合 `position: relative | absolute`;  |
-|   bottom          | `{ bottom: 100 }` 元素当前下部距离到 100px, 需配合 `position: relative | absolute`;  |
-|   left            | `{ left: 100 }` 元素当前左部距离到 100px, 需配合 `position: relative | absolute`;  |
-|   marginTop       | `{ marginTop: 100 }` 元素当前顶部外边距离到 100px;  |
-|   marginRight     | `{ marginRight: 100 }` 元素当前右部外边距离到 100px;  |
-|   marginBottom    | `{ marginBottom: 100 }` 元素当前下部外边距离到 100px;  |
-|   marginLeft      | `{ marginLeft: 100 }` 元素当前左部外边距离到 100px;  |
-|   paddingTop      | `{ paddingTop: 100 }` 元素当前顶部内边距离到 100px;  |
-|   paddingRight    | `{ paddingRight: 100 }` 元素当前右部内边距离到 100px;  |
-|   paddingBottom   | `{ paddingBottom: 100 }` 元素当前下部内边距离到 100px;  |
-|   paddingLeft     | `{ paddingLeft: 100 }` 元素当前左部内边距离到 100px;  |
-|   color           | `{ color: '#FFFFFF' }` 元素当前文字颜色到白色;   |
-|  backgroundColor  | `{ backgroundColor: '#FFFFFF' }` 元素当前背景颜色到白色; |
-|   borderWidth     | `{ borderWidth: 2 }` 元素当前边框宽度到 2px，同样可用 `borderTopWidth` `borderRightWidth` `borderBottomWidth` `borderLeftWidth`; |
-|   borderRadius    | `{ borderRadius: 5 }` 元素当前圆角到 5px, 同上, 同样可用 `上 左 下 右`;  |
-|   borderColor     | `{ borderColor: '#FFFFFF' }` 元素当前边框颜色到白色; |
-|   boxShadow       | `{ boxShadow: '0 0 10px #000' }` 元素当前阴影到 Y 轴 10px; |
-|   textShadow      | `{ textShadow: '0 0 10px #000' }` 元素当前文字内容阴影到 Y 轴 10px; |
+|   width           |  `{ width: 100 }` 元素当前宽度到 100px |
+|   maxWidth        |  `{ maxWidth: 100 }` 元素当前最大宽度到 100px |
+|   minWidth        |  `{ minWidth: 100 }` 元素当前最小宽度到 100px |
+|   height          |  `{ height: 100 }` 元素当前高度到 100px |
+|   maxHeight       |  `{ maxHeight: 100 }` 元素当前最大高度到 100px |
+|   mimHeight       |  `{ mimHeight: 100 }` 元素当前最小高度到 100px |
+|   lineHeight      |  `{ lineHeight: 100 }` 区块行高到 100px |
+|   opacity         |  `{ opacity: 0 }` 元素当前透明度到 0 |
+|   top             |  `{ top: 100 }` 元素当前顶部距离到 100px, 需配合 `position: relative | absolute` |
+|   right           | `{ right: 100 }` 元素当前右部距离到 100px, 需配合 `position: relative | absolute`  |
+|   bottom          | `{ bottom: 100 }` 元素当前下部距离到 100px, 需配合 `position: relative | absolute`  |
+|   left            | `{ left: 100 }` 元素当前左部距离到 100px, 需配合 `position: relative | absolute`  |
+|   marginTop       | `{ marginTop: 100 }` 元素当前顶部外边距离到 100px  |
+|   marginRight     | `{ marginRight: 100 }` 元素当前右部外边距离到 100px  |
+|   marginBottom    | `{ marginBottom: 100 }` 元素当前下部外边距离到 100px  |
+|   marginLeft      | `{ marginLeft: 100 }` 元素当前左部外边距离到 100px  |
+|   paddingTop      | `{ paddingTop: 100 }` 元素当前顶部内边距离到 100px  |
+|   paddingRight    | `{ paddingRight: 100 }` 元素当前右部内边距离到 100px  |
+|   paddingBottom   | `{ paddingBottom: 100 }` 元素当前下部内边距离到 100px  |
+|   paddingLeft     | `{ paddingLeft: 100 }` 元素当前左部内边距离到 100px  |
+|   color           | `{ color: '#FFFFFF' }` 元素当前文字颜色到白色   |
+|  backgroundColor  | `{ backgroundColor: '#FFFFFF' }` 元素当前背景颜色到白色 |
+|   borderWidth     | `{ borderWidth: 2 }` 元素当前边框宽度到 2px，同样可用 `borderTopWidth` `borderRightWidth` `borderBottomWidth` `borderLeftWidth` |
+|   borderRadius    | `{ borderRadius: 5 }` 元素当前圆角到 5px, 同上, 同样可用 `上 左 下 右`  |
+|   borderColor     | `{ borderColor: '#FFFFFF' }` 元素当前边框颜色到白色 |
+|   boxShadow       | `{ boxShadow: '0 0 10px #000' }` 元素当前阴影到 Y 轴 10px |
+|   textShadow      | `{ textShadow: '0 0 10px #000' }` 元素当前文字内容阴影到 Y 轴 10px |
 
 
 ### transform 参数
