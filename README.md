@@ -103,7 +103,7 @@ React.render(<TweenOneGroup>
 
 ### animation = { }
 
-> Basic animation param. please view [animation terms](https://github.com/react-component/tween-one/blob/master/animate-param.md)
+> Basic animation param. please view [animation terms](https://motion.ant.design/language/animate-term)
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
