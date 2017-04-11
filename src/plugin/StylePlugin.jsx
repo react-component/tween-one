@@ -129,7 +129,7 @@ p.getAnimStart = function (computedStyle, willChangeBool) {
         startData = computedStyle[this.transform];
         style.transform = style.transform || getTransform(startData);
       }
-      this.propsData.data[key].getAnimStart();
+      this.propsData.data[key].getAnimStart(computedStyle);
     } else if (cssName === 'transform') {
       this.transform = checkStyleName('transform');
       startData = computedStyle[this.transform];
