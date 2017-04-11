@@ -110,7 +110,7 @@ React.render(<TweenOneGroup>
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
 | type       | string         | `to`    | play type: `to` `from`|
-| in style   | string / number| null  | CSS style value: `translateX` `rotateX` `color` `marginTop` or `grayScale`, `sepia`, `hueRotate`, `invert`, `brightness`, `contrast`, `blur` or gsap: `x` `y`... |
+| in style   | string / number| null  | CSS style value: `translateX` `rotateX` `color` `marginTop` or `grayScale`, `sepia`, `hueRotate`, `invert`, `brightness`, `contrast`, `blur` or gsap: `x` `y`.[refer](https://github.com/react-component/tween-one/blob/master/animate-param.md).. |
 | duration   |  number        | 450     | animate duration     |
 | delay      | number         | 0       | animate delay  |
 | repeat     | number         | 0       | animate repeat, To repeat indefinitely, use  -1 |
