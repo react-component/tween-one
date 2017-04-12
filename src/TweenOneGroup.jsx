@@ -1,4 +1,5 @@
-import React, { PropTypes, Component, createElement } from 'react';
+import React, { Component, createElement } from 'react';
+import PropTypes from 'prop-types';
 import TweenOne from './TweenOne';
 import {
   dataToArray,
@@ -175,16 +176,13 @@ class TweenOneGroup extends Component {
   }
 }
 
-const objectOrArray = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
-const objectOrArrayOrFunc = PropTypes.oneOfType([objectOrArray, PropTypes.func]);
-
 TweenOneGroup.propTypes = {
   component: PropTypes.any,
   children: PropTypes.any,
   style: PropTypes.object,
   appear: PropTypes.bool,
-  enter: objectOrArrayOrFunc,
-  leave: objectOrArrayOrFunc,
+  enter: PropTypes.any,
+  leave: PropTypes.ant,
   animatingClassName: PropTypes.array,
   onEnd: PropTypes.func,
   willChange: PropTypes.bool,

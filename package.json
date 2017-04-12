@@ -49,9 +49,9 @@
     "expect.js": "0.3.x",
     "pre-commit": "1.x",
     "rc-tools": "5.x",
-    "react": "^15.4.0",
-    "react-addons-test-utils": "^15.4.0",
-    "react-dom": "^15.4.0",
+    "react": "^15.5.0",
+    "react-addons-test-utils": "^15.5.0",
+    "react-dom": "^15.5.0",
     "rc-queue-anim": "^0.13.3",
     "rc-scroll-anim": "0.x"
   },
@@ -59,6 +59,7 @@
     "lint"
   ],
   "dependencies": {
+    "prop-types": "^15.5.0",
     "babel-runtime": "6.x",
     "deep-eql": "~2.0.1",
     "raf": "~3.3.0",

@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import { dataToArray, objectEqual } from './util';
 import { stylesToCss } from 'style-utils';
