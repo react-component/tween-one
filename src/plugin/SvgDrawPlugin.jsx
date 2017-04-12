@@ -28,9 +28,6 @@ SvgDrawPlugin.prototype = {
     }
     return _vars;
   },
-  getComputedStyle() {
-    return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
-  },
   getLineLength(x1, y1, x2, y2) {
     const _x2 = parseFloat(x2) - parseFloat(x1);
     const _y2 = parseFloat(y2) - parseFloat(y1);
@@ -60,8 +57,7 @@ SvgDrawPlugin.prototype = {
     }
     return Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (3 * ry + rx)));
   },
-  getAnimStart() {
-    const computedStyle = this.getComputedStyle();
+  getAnimStart(computedStyle) {
     switch (this.tagName) {
       case 'rect':
         this.length = this.target.getAttribute('width') * 2 +

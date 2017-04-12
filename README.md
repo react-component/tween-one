@@ -129,10 +129,15 @@ React.render(<TweenOneGroup>
 
 path easing;
 
+| name      | type           | default | description    |
+|------------|----------------|---------|----------------|
+| path      | string         | null     | svg path       |
+| param     | object         | `{ rect: 100, lengthPixel: 200 }` | rect is block size, default: 100 * 100; lengthPixel default: curve is divided into 200 sections |
+
 ```jsx
 
 const path = 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0';
-const ease = Tween.easing.path(path);
+const ease = Tween.easing.path(path, param = { rect: 100, lengthPixel: 200 });
 
 ```
 

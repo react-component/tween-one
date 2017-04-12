@@ -496,11 +496,7 @@ Bezier.prototype = {
     }
     return rotate ? 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px) rotate(' + rotate + 'deg)' : 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px)';
   },
-  getComputedStyle() {
-    return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
-  },
-  getAnimStart() {
-    const computedStyle = this.getComputedStyle();
+  getAnimStart(computedStyle) {
     let transform = computedStyle[this.transform];
     transform = transform === 'none' ? '' : transform;
     const matrix = createMatrix(transform);

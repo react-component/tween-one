@@ -1,23 +1,27 @@
 import { TweenOneGroup } from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
+import QueueAnim from 'rc-queue-anim';
 
 class Demo extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
       children: [
-        <div
+        <QueueAnim
           style={{
             opacity: 1,
-            backgroundColor: '#000',
+            backgroundColor: '#000fff',
             float: 'left',
             height: 200,
+            width: 100,
           }}
           key="aa"
+          delay={1000}
         >
-          <div>执行动效</div>
-        </div>,
+          <div key="1">执行动效</div>
+          <div key="2">执行动效</div>
+        </QueueAnim>,
         <div key="a"
           style={{
             opacity: 1,
@@ -39,18 +43,20 @@ class Demo extends React.Component {
 
   onClick() {
     const children = !this.state.children ? [
-      <div
+      (<QueueAnim
         style={{
           opacity: 1,
-          backgroundColor: '#000',
+          backgroundColor: '#000fff',
           float: 'left',
           height: 200,
+          width: 100,
         }}
         key="aa"
+        delay={1000}
       >
-        <div>执行动效</div>
-      </div>,
-      <div key="a"
+        <div key="1">执行动效</div>
+        <div key="2">执行动效</div>
+      </QueueAnim>), (<div key="a"
         style={{
           opacity: 1,
           backgroundColor: '#000',
@@ -59,8 +65,7 @@ class Demo extends React.Component {
         }}
       >
         <div>执行动效</div>
-      </div>,
-    ] : null;
+      </div>)] : null;
     this.setState({
       children,
     });

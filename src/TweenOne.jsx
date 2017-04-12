@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import { dataToArray, objectEqual } from './util';
 import { stylesToCss } from 'style-utils';
@@ -65,6 +66,8 @@ class TweenOne extends Component {
         this.startFrame = ticker.frame;
         this.updateAnim = 'start';
       }
+      // 只做动画，不做回调处理。。。
+      this.timeLine.updateAnim = this.updateAnim;
     }
 
     if (!styleEqual) {
@@ -189,6 +192,7 @@ class TweenOne extends Component {
     [
       'animation',
       'component',
+      'componentReplace',
       'reverseDelay',
       'attr',
       'paused',
@@ -205,10 +209,20 @@ class TweenOne extends Component {
           props.style[`${prefix}Filter`] = props.style[p]);
       }
     });
+    // 子级是组件，生成组件需要替换的 component;
     props.component = typeof props.component === 'function' ?
       this.props.componentReplace : props.component;
     if (!props.component) {
       delete props.component;
+    }
+    // component 为空时调用子级的。。
+    if (!this.props.component) {
+      const childrenProps = this.props.children.props;
+      const { style, className } = childrenProps;
+      // 合并 style 与 className。
+      const newStyle = { ...props.style, ...style };
+      const newClassName = props.className ? `${props.className} ${className}` : className;
+      return React.cloneElement(this.props.children, { style: newStyle, className: newClassName });
     }
     return React.createElement(this.props.component, props);
   }

@@ -176,11 +176,11 @@ export function startConvertToEndUnit(target, style, num, unit, dataUnit, fixed,
   }
   return pix;
 }
-
+let domPath;
 export function parsePath(path) {
   if (typeof path === 'string') {
     if (path.charAt(0).match(/m/i)) {
-      const domPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      domPath = domPath || document.createElementNS('http://www.w3.org/2000/svg', 'path');
       domPath.setAttributeNS(null, 'd', path);
       return domPath;
     }

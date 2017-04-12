@@ -16,16 +16,12 @@ const PathPlugin = function (target, vars) {
 PathPlugin.prototype = {
   name: 'path',
   useStyle: 'transform',
-  getComputedStyle() {
-    return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
-  },
   getPoint(offset) {
     const o = offset || 0;
     const p = this.pathLength * this.progress + o;
     return this.path.getPointAtLength(p);
   },
-  getAnimStart() {
-    const computedStyle = this.getComputedStyle();
+  getAnimStart(computedStyle) {
     const transform = getTransform(computedStyle[checkStyleName('transform')]);
     this.start = transform;
     this.data = { ...transform };

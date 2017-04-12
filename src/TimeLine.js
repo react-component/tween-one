@@ -156,11 +156,15 @@ p.setDefaultData = function (_vars) {
   this.totalTime = repeatMax ? Number.MAX_VALUE : now;
   this.defaultData = data;
 };
+p.getComputedStyle = function () {
+  return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
+};
 p.getAnimStartData = function (item) {
   const start = {};
+  this.computedStyle = this.computedStyle || this.getComputedStyle();
   Object.keys(item).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
-      start[_key] = item[_key].getAnimStart(this.willChange);
+      start[_key] = item[_key].getAnimStart(this.computedStyle, this.willChange);
       return;
     }
     if (this.attr === 'attr') {
@@ -273,10 +277,11 @@ p.render = function () {
     };
 
     if (progressTime >= 0 && !(progressTime > duration && item.mode === 'onComplete')) {
+      const updateAnim = this.updateAnim === 'update';
       if (progressTime >= duration) {
         ratio = item.ease(1, startData, endData, 1);
         this.setRatio(ratio, item, i);
-        if (item.mode !== 'reset') {
+        if (item.mode !== 'reset' && !updateAnim) {
           item.onComplete(e);
         }
         item.mode = 'onComplete';
@@ -284,25 +289,30 @@ p.render = function () {
         ratio = item.ease(0, startData, endData, 1);
         this.setRatio(ratio, item, i);
         // 将第一帧作动画开始 start;
-        if (item.repeat && repeatNum > 0) {
-          item.mode = 'onRepeat';
-          item.onRepeat({ ...e, repeatNum });
-        } else {
-          item.mode = 'onStart';
-          item.onStart(e);
+        if (!updateAnim) {
+          if (item.repeat && repeatNum > 0) {
+            item.mode = 'onRepeat';
+            item.onRepeat({ ...e, repeatNum });
+          } else {
+            item.mode = 'onStart';
+            item.onStart(e);
+          }
         }
       } else if (progressTime > 0 && progressTime < duration) {
         item.mode = 'onUpdate';
         ratio = item.ease(progressTime, startData, endData, duration);
         this.setRatio(ratio, item, i);
-        item.onUpdate({ ratio, ...e });
+        if (!updateAnim) {
+          item.onUpdate({ ratio, ...e });
+        }
       }
-
-      this.onChange({
-        moment: this.progressTime,
-        mode: item.mode,
-        ...e,
-      });
+      if (!updateAnim) {
+        this.onChange({
+          moment: this.progressTime,
+          mode: item.mode,
+          ...e,
+        });
+      }
     }
   });
 };
