@@ -3,12 +3,12 @@ webpackJsonp([14],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(293);
+	module.exports = __webpack_require__(307);
 
 
 /***/ },
 
-/***/ 293:
+/***/ 307:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33,11 +33,11 @@ webpackJsonp([14],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(119);
+	var _reactDom = __webpack_require__(125);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _PathPlugin = __webpack_require__(294);
+	var _PathPlugin = __webpack_require__(308);
 	
 	var _PathPlugin2 = _interopRequireDefault(_PathPlugin);
 	
@@ -85,7 +85,7 @@ webpackJsonp([14],{
 
 /***/ },
 
-/***/ 294:
+/***/ 308:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -98,9 +98,9 @@ webpackJsonp([14],{
 	
 	var _extends3 = _interopRequireDefault(_extends2);
 	
-	var _util = __webpack_require__(265);
+	var _util = __webpack_require__(271);
 	
-	var _styleUtils = __webpack_require__(268);
+	var _styleUtils = __webpack_require__(274);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -116,16 +116,12 @@ webpackJsonp([14],{
 	PathPlugin.prototype = {
 	  name: 'path',
 	  useStyle: 'transform',
-	  getComputedStyle: function getComputedStyle() {
-	    return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
-	  },
 	  getPoint: function getPoint(offset) {
 	    var o = offset || 0;
 	    var p = this.pathLength * this.progress + o;
 	    return this.path.getPointAtLength(p);
 	  },
-	  getAnimStart: function getAnimStart() {
-	    var computedStyle = this.getComputedStyle();
+	  getAnimStart: function getAnimStart(computedStyle) {
 	    var transform = (0, _styleUtils.getTransform)(computedStyle[(0, _styleUtils.checkStyleName)('transform')]);
 	    this.start = transform;
 	    this.data = (0, _extends3.default)({}, transform);

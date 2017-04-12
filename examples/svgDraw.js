@@ -3,12 +3,12 @@ webpackJsonp([21],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(308);
+	module.exports = __webpack_require__(322);
 
 
 /***/ },
 
-/***/ 308:
+/***/ 322:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33,11 +33,11 @@ webpackJsonp([21],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(119);
+	var _reactDom = __webpack_require__(125);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _SvgDrawPlugin = __webpack_require__(309);
+	var _SvgDrawPlugin = __webpack_require__(323);
 	
 	var _SvgDrawPlugin2 = _interopRequireDefault(_SvgDrawPlugin);
 	
@@ -107,7 +107,7 @@ webpackJsonp([21],{
 
 /***/ },
 
-/***/ 309:
+/***/ 323:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -141,9 +141,6 @@ webpackJsonp([21],{
 	      throw new Error('SVGDraw data[' + vars + '] error.');
 	    }
 	    return _vars;
-	  },
-	  getComputedStyle: function getComputedStyle() {
-	    return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
 	  },
 	  getLineLength: function getLineLength(x1, y1, x2, y2) {
 	    var _x2 = parseFloat(x2) - parseFloat(x1);
@@ -179,8 +176,7 @@ webpackJsonp([21],{
 	    }
 	    return Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (3 * ry + rx)));
 	  },
-	  getAnimStart: function getAnimStart() {
-	    var computedStyle = this.getComputedStyle();
+	  getAnimStart: function getAnimStart(computedStyle) {
 	    switch (this.tagName) {
 	      case 'rect':
 	        this.length = this.target.getAttribute('width') * 2 + this.target.getAttribute('height') * 2;

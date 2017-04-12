@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>group.js - example - rc-tween-one@1.1.5</title>
+  <title>group.js - example - rc-tween-one@1.2.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-tween-one@1.1.5</h1>
+      <h1>rc-tween-one@1.2.0</h1>
 
       <p>tween-one anim component for react</p>
     </div>
@@ -272,23 +272,27 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> { TweenOneGroup } <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+<span class="hljs-keyword">import</span> QueueAnim <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-queue-anim'</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
   constructor() {
     <span class="hljs-keyword">super</span>(...arguments);
     <span class="hljs-keyword">this</span>.state = {
       children: [
-        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">QueueAnim</span>
           <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
             <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">1</span>,
-            <span class="hljs-attribute">backgroundColor:</span> '#<span class="hljs-attribute">000</span>',
+            <span class="hljs-attribute">backgroundColor:</span> '#<span class="hljs-attribute">000fff</span>',
             <span class="hljs-attribute">float:</span> '<span class="hljs-attribute">left</span>',
             <span class="hljs-attribute">height:</span> <span class="hljs-attribute">200</span>,
+            <span class="hljs-attribute">width:</span> <span class="hljs-attribute">100</span>,
           }}
           <span class="hljs-attribute">key</span>=<span class="hljs-value">"aa"</span>
+          <span class="hljs-attribute">delay</span>=<span class="hljs-value">{1000}</span>
         &gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-        <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>,
+          <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"1"</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"2"</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">QueueAnim</span>&gt;</span>,
         <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"a"</span>
           <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
             <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">1</span>,
@@ -310,18 +314,20 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 
   onClick() {
     const children = !this.state.children ? [
-      <span class="hljs-tag">&lt;<span class="hljs-title">div</span>
+      (<span class="hljs-tag">&lt;<span class="hljs-title">QueueAnim</span>
         <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
           <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">1</span>,
-          <span class="hljs-attribute">backgroundColor:</span> '#<span class="hljs-attribute">000</span>',
+          <span class="hljs-attribute">backgroundColor:</span> '#<span class="hljs-attribute">000fff</span>',
           <span class="hljs-attribute">float:</span> '<span class="hljs-attribute">left</span>',
           <span class="hljs-attribute">height:</span> <span class="hljs-attribute">200</span>,
+          <span class="hljs-attribute">width:</span> <span class="hljs-attribute">100</span>,
         }}
         <span class="hljs-attribute">key</span>=<span class="hljs-value">"aa"</span>
+        <span class="hljs-attribute">delay</span>=<span class="hljs-value">{1000}</span>
       &gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>,
-      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"a"</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"1"</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"2"</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">QueueAnim</span>&gt;</span>)</span>, (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"a"</span>
         <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
           <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">1</span>,
           <span class="hljs-attribute">backgroundColor:</span> '#<span class="hljs-attribute">000</span>',
@@ -330,26 +336,25 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
         }}
       &gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>执行动效<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>,
-    ] : null;
-    this.setState({
+      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>] : <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">this</span>.setState({
       children,
     });
   }
 
   onEnd(e) {
-    console.log(e);// eslint-disable-line no-console
+    <span class="hljs-built_in">console</span>.log(e);<span class="hljs-comment">// eslint-disable-line no-console</span>
   }
 
   enterType(e) {
-    if (e.key === 'a') {
-      return { x: 100, opacity: 0, type: 'from' };
+    <span class="hljs-keyword">if</span> (e.key === <span class="hljs-string">'a'</span>) {
+      <span class="hljs-keyword">return</span> { x: <span class="hljs-number">100</span>, opacity: <span class="hljs-number">0</span>, type: <span class="hljs-string">'from'</span> };
     }
-    return { y: 80, opacity: 0, type: 'from' };
+    <span class="hljs-keyword">return</span> { y: <span class="hljs-number">80</span>, opacity: <span class="hljs-number">0</span>, type: <span class="hljs-string">'from'</span> };
   }
 
   render() {
-    return (<span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
+    <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.onClick}</span>&gt;</span>切换<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</span>
         <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">height:</span> <span class="hljs-attribute">300</span> }}

@@ -3,12 +3,33 @@ webpackJsonp([16],{
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(296);
+	module.exports = __webpack_require__(310);
 
 
 /***/ },
 
-/***/ 296:
+/***/ 299:
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	
+	exports.default = function (obj, keys) {
+	  var target = {};
+	
+	  for (var i in obj) {
+	    if (keys.indexOf(i) >= 0) continue;
+	    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+	    target[i] = obj[i];
+	  }
+	
+	  return target;
+	};
+
+/***/ },
+
+/***/ 310:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33,11 +54,11 @@ webpackJsonp([16],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(119);
+	var _reactDom = __webpack_require__(125);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _ScrollOverPack = __webpack_require__(297);
+	var _ScrollOverPack = __webpack_require__(311);
 	
 	var _ScrollOverPack2 = _interopRequireDefault(_ScrollOverPack);
 	
@@ -97,7 +118,7 @@ webpackJsonp([16],{
 
 /***/ },
 
-/***/ 297:
+/***/ 311:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -106,43 +127,51 @@ webpackJsonp([16],{
 	  value: true
 	});
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _extends2 = __webpack_require__(83);
+	
+	var _extends3 = _interopRequireDefault(_extends2);
+	
+	var _objectWithoutProperties2 = __webpack_require__(299);
+	
+	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+	
+	var _classCallCheck2 = __webpack_require__(2);
+	
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+	
+	var _possibleConstructorReturn2 = __webpack_require__(3);
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+	
+	var _inherits2 = __webpack_require__(72);
+	
+	var _inherits3 = _interopRequireDefault(_inherits2);
 	
 	var _react = __webpack_require__(88);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _EventDispatcher = __webpack_require__(298);
+	var _EventDispatcher = __webpack_require__(312);
 	
 	var _EventDispatcher2 = _interopRequireDefault(_EventDispatcher);
 	
-	var _ScrollElement2 = __webpack_require__(300);
+	var _ScrollElement2 = __webpack_require__(314);
 	
 	var _ScrollElement3 = _interopRequireDefault(_ScrollElement2);
 	
-	var _util = __webpack_require__(299);
+	var _util = __webpack_require__(313);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-	
-	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
-	
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 	
 	function noop() {}
 	
 	var ScrollOverPack = function (_ScrollElement) {
-	  _inherits(ScrollOverPack, _ScrollElement);
+	  (0, _inherits3["default"])(ScrollOverPack, _ScrollElement);
 	
 	  function ScrollOverPack(props) {
-	    _classCallCheck(this, ScrollOverPack);
+	    (0, _classCallCheck3["default"])(this, ScrollOverPack);
 	
-	    var _this = _possibleConstructorReturn(this, _ScrollElement.call(this, props));
+	    var _this = (0, _possibleConstructorReturn3["default"])(this, _ScrollElement.call(this, props));
 	
 	    _this.scrollEventListener = function (e) {
 	      _this.getParam(e);
@@ -181,14 +210,14 @@ webpackJsonp([16],{
 	  ScrollOverPack.prototype.render = function render() {
 	    var _this2 = this;
 	
-	    var placeholderProps = _objectWithoutProperties(this.props, []);
+	    var placeholderProps = (0, _objectWithoutProperties3["default"])(this.props, []);
 	
 	    ['playScale', 'replay', 'component', 'always', 'scrollEvent', 'hideProps', 'location'].forEach(function (key) {
 	      return delete placeholderProps[key];
 	    });
 	    var childToRender = void 0;
 	    if (!this.oneEnter && !this.state.show) {
-	      childToRender = (0, _react.createElement)(this.props.component, _extends({}, placeholderProps), null);
+	      childToRender = (0, _react.createElement)(this.props.component, (0, _extends3["default"])({}, placeholderProps), null);
 	      this.oneEnter = true;
 	    } else {
 	      if (!this.state.show) {
@@ -199,7 +228,7 @@ webpackJsonp([16],{
 	          var element = void 0;
 	          var hideProps = _this2.props.hideProps[item.key];
 	          if (hideProps) {
-	            element = _react2["default"].cloneElement(item, _extends({}, hideProps));
+	            element = _react2["default"].cloneElement(item, (0, _extends3["default"])({}, hideProps));
 	            return element;
 	          }
 	          element = _react2["default"].cloneElement(item, {}, null);
@@ -208,7 +237,7 @@ webpackJsonp([16],{
 	      } else {
 	        this.children = this.state.children;
 	      }
-	      childToRender = (0, _react.createElement)(this.props.component, _extends({}, placeholderProps), this.children);
+	      childToRender = (0, _react.createElement)(this.props.component, (0, _extends3["default"])({}, placeholderProps), this.children);
 	    }
 	    return childToRender;
 	  };
@@ -244,7 +273,7 @@ webpackJsonp([16],{
 
 /***/ },
 
-/***/ 298:
+/***/ 312:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -253,7 +282,7 @@ webpackJsonp([16],{
 	  value: true
 	});
 	
-	var _util = __webpack_require__(299);
+	var _util = __webpack_require__(313);
 	
 	function EventDispatcher(target) {
 	  this._listeners = {};
@@ -376,7 +405,7 @@ webpackJsonp([16],{
 
 /***/ },
 
-/***/ 299:
+/***/ 313:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -385,7 +414,9 @@ webpackJsonp([16],{
 	  value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	var _typeof2 = __webpack_require__(4);
+	
+	var _typeof3 = _interopRequireDefault(_typeof2);
 	
 	exports.toArrayChildren = toArrayChildren;
 	exports.dataToArray = dataToArray;
@@ -442,7 +473,7 @@ webpackJsonp([16],{
 	      var nextObj = obj2[i];
 	      for (var p in currentObj) {
 	        if (currentObj[p] !== nextObj[p]) {
-	          if (_typeof(currentObj[p]) === 'object' && _typeof(nextObj[p]) === 'object') {
+	          if ((0, _typeof3["default"])(currentObj[p]) === 'object' && (0, _typeof3["default"])(nextObj[p]) === 'object') {
 	            equalBool = objectEqual(currentObj[p], nextObj[p]);
 	          } else {
 	            equalBool = false;
@@ -459,7 +490,7 @@ webpackJsonp([16],{
 	      return false;
 	    }
 	
-	    if (_typeof(obj1[key]) === 'object' && _typeof(obj2[key]) === 'object') {
+	    if ((0, _typeof3["default"])(obj1[key]) === 'object' && (0, _typeof3["default"])(obj2[key]) === 'object') {
 	      equalBool = objectEqual(obj1[key], obj2[key]);
 	    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
 	      if (obj1[key].name !== obj2[key].name) {
@@ -475,7 +506,7 @@ webpackJsonp([16],{
 	      equalBool = false;
 	      return false;
 	    }
-	    if (_typeof(obj2[key]) === 'object' && _typeof(obj1[key]) === 'object') {
+	    if ((0, _typeof3["default"])(obj2[key]) === 'object' && (0, _typeof3["default"])(obj1[key]) === 'object') {
 	      equalBool = objectEqual(obj2[key], obj1[key]);
 	    } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
 	      if (obj1[key].name !== obj2[key].name) {
@@ -499,7 +530,7 @@ webpackJsonp([16],{
 
 /***/ },
 
-/***/ 300:
+/***/ 314:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -508,53 +539,61 @@ webpackJsonp([16],{
 	  value: true
 	});
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _extends2 = __webpack_require__(83);
+	
+	var _extends3 = _interopRequireDefault(_extends2);
+	
+	var _objectWithoutProperties2 = __webpack_require__(299);
+	
+	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+	
+	var _classCallCheck2 = __webpack_require__(2);
+	
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+	
+	var _possibleConstructorReturn2 = __webpack_require__(3);
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+	
+	var _inherits2 = __webpack_require__(72);
+	
+	var _inherits3 = _interopRequireDefault(_inherits2);
 	
 	var _react = __webpack_require__(88);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(119);
+	var _reactDom = __webpack_require__(125);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _Mapped = __webpack_require__(301);
+	var _Mapped = __webpack_require__(315);
 	
 	var _Mapped2 = _interopRequireDefault(_Mapped);
 	
-	var _EventDispatcher = __webpack_require__(298);
+	var _EventDispatcher = __webpack_require__(312);
 	
 	var _EventDispatcher2 = _interopRequireDefault(_EventDispatcher);
 	
-	var _util = __webpack_require__(299);
+	var _util = __webpack_require__(313);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-	
-	function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
-	
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 	
 	var noop = function noop() {};
 	
 	var ScrollElement = function (_React$Component) {
-	  _inherits(ScrollElement, _React$Component);
+	  (0, _inherits3["default"])(ScrollElement, _React$Component);
 	
 	  function ScrollElement() {
 	    var _temp, _this, _ret;
 	
-	    _classCallCheck(this, ScrollElement);
+	    (0, _classCallCheck3["default"])(this, ScrollElement);
 	
 	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	      args[_key] = arguments[_key];
 	    }
 	
-	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, _React$Component.call.apply(_React$Component, [this].concat(args))), _this), _this.getParam = function (e) {
+	    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3["default"])(this, _React$Component.call.apply(_React$Component, [this].concat(args))), _this), _this.getParam = function (e) {
 	      _this.clientHeight = (0, _util.windowHeight)();
 	      var scrollTop = (0, _util.currentScrollTop)();
 	      // 屏幕缩放时的响应，所以放回这里，这个是pack，只处理子级里面的动画，所以marginTop无关系，所以不需减掉；
@@ -574,7 +613,7 @@ webpackJsonp([16],{
 	      _this.enter = enter;
 	    }, _this.scrollEventListener = function (e) {
 	      _this.getParam(e);
-	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }, _temp), (0, _possibleConstructorReturn3["default"])(_this, _ret);
 	  }
 	
 	  ScrollElement.prototype.componentDidMount = function componentDidMount() {
@@ -604,12 +643,12 @@ webpackJsonp([16],{
 	  };
 	
 	  ScrollElement.prototype.render = function render() {
-	    var props = _objectWithoutProperties(this.props, []);
+	    var props = (0, _objectWithoutProperties3["default"])(this.props, []);
 	
 	    ['component', 'playScale', 'location'].forEach(function (key) {
 	      return delete props[key];
 	    });
-	    return _react2["default"].createElement(this.props.component, _extends({}, props));
+	    return _react2["default"].createElement(this.props.component, (0, _extends3["default"])({}, props));
 	  };
 	
 	  return ScrollElement;
@@ -633,7 +672,7 @@ webpackJsonp([16],{
 
 /***/ },
 
-/***/ 301:
+/***/ 315:
 /***/ function(module, exports) {
 
 	"use strict";

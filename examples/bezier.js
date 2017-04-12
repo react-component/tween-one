@@ -33,11 +33,11 @@ webpackJsonp([0],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(119);
+	var _reactDom = __webpack_require__(125);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _BezierPlugin = __webpack_require__(278);
+	var _BezierPlugin = __webpack_require__(284);
 	
 	var _BezierPlugin2 = _interopRequireDefault(_BezierPlugin);
 	
@@ -104,7 +104,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 278:
+/***/ 284:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -113,7 +113,7 @@ webpackJsonp([0],{
 	  value: true
 	});
 	
-	var _styleUtils = __webpack_require__(268);
+	var _styleUtils = __webpack_require__(274);
 	
 	var _RAD2DEG = 180 / Math.PI; /* eslint-disable */
 	/**
@@ -606,11 +606,7 @@ webpackJsonp([0],{
 	    }
 	    return rotate ? 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px) rotate(' + rotate + 'deg)' : 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px)';
 	  },
-	  getComputedStyle: function getComputedStyle() {
-	    return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
-	  },
-	  getAnimStart: function getAnimStart() {
-	    var computedStyle = this.getComputedStyle();
+	  getAnimStart: function getAnimStart(computedStyle) {
 	    var transform = computedStyle[this.transform];
 	    transform = transform === 'none' ? '' : transform;
 	    var matrix = (0, _styleUtils.createMatrix)(transform);
