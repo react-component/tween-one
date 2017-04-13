@@ -1793,7 +1793,9 @@
 	        this.updateAnim = 'start';
 	      }
 	      // 只做动画，不做回调处理。。。
-	      this.timeLine.updateAnim = this.updateAnim;
+	      if (this.timeLine) {
+	        this.timeLine.updateAnim = this.updateAnim;
+	      }
 	    }
 	
 	    if (!styleEqual) {
@@ -26448,7 +26450,7 @@
 	  style: _propTypes2.default.object,
 	  appear: _propTypes2.default.bool,
 	  enter: _propTypes2.default.any,
-	  leave: _propTypes2.default.ant,
+	  leave: _propTypes2.default.any,
 	  animatingClassName: _propTypes2.default.array,
 	  onEnd: _propTypes2.default.func,
 	  willChange: _propTypes2.default.bool,
