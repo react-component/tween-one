@@ -182,7 +182,7 @@ TweenOneGroup.propTypes = {
   style: PropTypes.object,
   appear: PropTypes.bool,
   enter: PropTypes.any,
-  leave: PropTypes.ant,
+  leave: PropTypes.any,
   animatingClassName: PropTypes.array,
   onEnd: PropTypes.func,
   willChange: PropTypes.bool,

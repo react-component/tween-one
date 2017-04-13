@@ -67,7 +67,9 @@ class TweenOne extends Component {
         this.updateAnim = 'start';
       }
       // 只做动画，不做回调处理。。。
-      this.timeLine.updateAnim = this.updateAnim;
+      if (this.timeLine) {
+        this.timeLine.updateAnim = this.updateAnim;
+      }
     }
 
     if (!styleEqual) {
