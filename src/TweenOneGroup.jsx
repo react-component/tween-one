@@ -76,19 +76,20 @@ class TweenOneGroup extends Component {
         tag.className = `${tag.className} ${animatingClassName[isEnter ? 0 : 1]}`.trim();
       }
     } else if (obj.index === length - 1 && obj.mode === 'onComplete') {
-      let children = this.state.children;
       if (type === 'enter') {
         this.keysToEnter.splice(this.keysToEnter.indexOf(key), 1);
       } else if (type === 'leave') {
-        children = this.state.children.filter(child => key !== child.key);
+        const children = this.state.children.filter(child => key !== child.key);
         this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
+        if (!this.keysToLeave.length) {
+          this.setState({
+            children,
+          });
+        }
       }
       tag.className = tag.className
         .replace(animatingClassName[isEnter ? 0 : 1], '').trim();
       delete this.isTween[key];
-      this.setState({
-        children,
-      });
       const _obj = { key, type };
       this.props.onEnd(_obj);
     }
@@ -152,7 +153,7 @@ class TweenOneGroup extends Component {
         return this.getCoverAnimation(child, i, 'appear');
       }
       return this.isTween[child.key] &&
-        this.getCoverAnimation(child, i, this.isTween[child.key]) || this.getTweenChild(child);
+        this.getCoverAnimation(child, i, this.isTween[child.key]) || child;
     });
   }
 
