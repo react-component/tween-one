@@ -153,7 +153,7 @@ class TweenOneGroup extends Component {
         return this.getCoverAnimation(child, i, 'appear');
       }
       return this.isTween[child.key] &&
-        this.getCoverAnimation(child, i, this.isTween[child.key]) || child;
+        this.getCoverAnimation(child, i, this.isTween[child.key]) || this.getTweenChild(child);
     });
   }
 
