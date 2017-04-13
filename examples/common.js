@@ -26368,20 +26368,21 @@
 	        tag.className = (tag.className + ' ' + animatingClassName[isEnter ? 0 : 1]).trim();
 	      }
 	    } else if (obj.index === length - 1 && obj.mode === 'onComplete') {
-	      var children = _this3.state.children;
 	      if (type === 'enter') {
 	        _this3.keysToEnter.splice(_this3.keysToEnter.indexOf(key), 1);
 	      } else if (type === 'leave') {
-	        children = _this3.state.children.filter(function (child) {
+	        var children = _this3.state.children.filter(function (child) {
 	          return key !== child.key;
 	        });
 	        _this3.keysToLeave.splice(_this3.keysToLeave.indexOf(key), 1);
+	        if (!_this3.keysToLeave.length) {
+	          _this3.setState({
+	            children: children
+	          });
+	        }
 	      }
 	      tag.className = tag.className.replace(animatingClassName[isEnter ? 0 : 1], '').trim();
 	      delete _this3.isTween[key];
-	      _this3.setState({
-	        children: children
-	      });
 	      var _obj = { key: key, type: type };
 	      _this3.props.onEnd(_obj);
 	    }
@@ -26439,7 +26440,7 @@
 	      } else if (!_this3.onEnterBool) {
 	        return _this3.getCoverAnimation(child, i, 'appear');
 	      }
-	      return _this3.isTween[child.key] && _this3.getCoverAnimation(child, i, _this3.isTween[child.key]) || _this3.getTweenChild(child);
+	      return _this3.isTween[child.key] && _this3.getCoverAnimation(child, i, _this3.isTween[child.key]) || child;
 	    });
 	  };
 	};
