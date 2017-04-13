@@ -26440,7 +26440,7 @@
 	      } else if (!_this3.onEnterBool) {
 	        return _this3.getCoverAnimation(child, i, 'appear');
 	      }
-	      return _this3.isTween[child.key] && _this3.getCoverAnimation(child, i, _this3.isTween[child.key]) || child;
+	      return _this3.isTween[child.key] && _this3.getCoverAnimation(child, i, _this3.isTween[child.key]) || _this3.getTweenChild(child);
 	    });
 	  };
 	};
