@@ -137,10 +137,10 @@ class TweenOneGroup extends Component {
 
   getChildrenToRender = children => {
     return children.map((child, i) => {
-      const key = child.key;
-      if (!child || !key) {
+      if (!child || !child.key) {
         return child;
       }
+      const key = child.key;
 
       if (this.keysToLeave.indexOf(key) >= 0) {
         return this.getCoverAnimation(child, i, 'leave');
