@@ -18,6 +18,7 @@ class TweenOneGroup extends Component {
     super(...arguments);
     this.keysToEnter = [];
     this.keysToLeave = [];
+    this.keysIsEnter = {};
     this.onEnterBool = false;
     this.isTween = {};
     // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
@@ -44,6 +45,10 @@ class TweenOneGroup extends Component {
       }
       const key = c.key;
       const hasPrev = findChildInChildrenByKey(currentChildren, key);
+      // 如果当前 key 已存在 keysIsEnter 里，，刷新 child;
+      if (this.keysIsEnter[key]) {
+        this.keysIsEnter[key] = React.cloneElement(this.keysIsEnter[key], {}, c);
+      }
       if (!hasPrev && key) {
         this.keysToEnter.push(key);
       }
@@ -81,11 +86,10 @@ class TweenOneGroup extends Component {
       } else if (type === 'leave') {
         const children = this.state.children.filter(child => key !== child.key);
         this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
-        if (!this.keysToLeave.length) {
-          this.setState({
-            children,
-          });
-        }
+        delete this.keysIsEnter[key];
+        this.setState({
+          children,
+        });
       }
       tag.className = tag.className
         .replace(animatingClassName[isEnter ? 0 : 1], '').trim();
@@ -96,18 +100,13 @@ class TweenOneGroup extends Component {
   }
 
   getTweenChild = (child, props = {}) => {
-    return (typeof child.type === 'function' ?
-      React.createElement(TweenOne, {
-        ...props,
-        key: child.key,
-        component: null,
-      }, child)
-      : React.createElement(TweenOne, {
-        ...child.props,
-        ...props,
-        key: child.key,
-        component: child.type,
-      }));
+    const key = child.key;
+    this.keysIsEnter[key] = React.createElement(TweenOne, {
+      ...props,
+      key,
+      component: null,
+    }, child);
+    return this.keysIsEnter[key];
   }
 
   getCoverAnimation = (child, i, type) => {
@@ -120,16 +119,13 @@ class TweenOneGroup extends Component {
     }
     onChange = this.onChange.bind(this, animation, child.key, type);
     const animate = transformArguments(animation, child.key, i);
-    let props = {
+    const props = {
       willChange: this.props.willChange,
       key: child.key,
       animation: animate,
       onChange,
       resetStyleBool: this.props.resetStyleBool,
     };
-    if (typeof child.type !== 'function') {
-      props = { ...child.props, ...props };
-    }
     const children = this.getTweenChild(child, props);
     if (this.keysToEnter.concat(this.keysToLeave).indexOf(child.key) >= 0
       || !this.onEnterBool && animation) {
@@ -140,20 +136,20 @@ class TweenOneGroup extends Component {
 
   getChildrenToRender = children => {
     return children.map((child, i) => {
-      if (!child || !child.key) {
+      const key = child.key;
+      if (!child || !key) {
         return child;
       }
-      const key = child.key;
+
       if (this.keysToLeave.indexOf(key) >= 0) {
         return this.getCoverAnimation(child, i, 'leave');
       } else if ((this.keysToEnter.indexOf(key) >= 0) ||
-        (this.isTween[child.key] && this.keysToLeave.indexOf(key) === -1)) {
+        (this.isTween[key] && this.keysToLeave.indexOf(key) === -1)) {
         return this.getCoverAnimation(child, i, 'enter');
       } else if (!this.onEnterBool) {
         return this.getCoverAnimation(child, i, 'appear');
       }
-      return this.isTween[child.key] &&
-        this.getCoverAnimation(child, i, this.isTween[child.key]) || this.getTweenChild(child);
+      return this.keysIsEnter[key];
     });
   }
 

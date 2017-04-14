@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
@@ -52,7 +52,7 @@
     "react": "^15.5.0",
     "react-addons-test-utils": "^15.5.0",
     "react-dom": "^15.5.0",
-    "rc-queue-anim": "^0.13.3",
+    "rc-queue-anim": "^1.0.0",
     "rc-scroll-anim": "0.x"
   },
   "pre-commit": [

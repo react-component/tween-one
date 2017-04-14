@@ -222,7 +222,7 @@ class TweenOne extends Component {
       const childrenProps = this.props.children.props;
       const { style, className } = childrenProps;
       // 合并 style 与 className。
-      const newStyle = { ...props.style, ...style };
+      const newStyle = { ...style, ...props.style };
       const newClassName = props.className ? `${props.className} ${className}` : className;
       return React.cloneElement(this.props.children, { style: newStyle, className: newClassName });
     }
