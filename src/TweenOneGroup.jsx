@@ -18,7 +18,7 @@ class TweenOneGroup extends Component {
     super(...arguments);
     this.keysToEnter = [];
     this.keysToLeave = [];
-    this.keysIsEnter = {};
+    this.saveTweenTag = {};
     this.onEnterBool = false;
     this.isTween = {};
     // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
@@ -45,9 +45,9 @@ class TweenOneGroup extends Component {
       }
       const key = c.key;
       const hasPrev = findChildInChildrenByKey(currentChildren, key);
-      // 如果当前 key 已存在 keysIsEnter 里，，刷新 child;
-      if (this.keysIsEnter[key]) {
-        this.keysIsEnter[key] = React.cloneElement(this.keysIsEnter[key], {}, c);
+      // 如果当前 key 已存在 saveTweenTag 里，，刷新 child;
+      if (this.saveTweenTag[key]) {
+        this.saveTweenTag[key] = React.cloneElement(this.saveTweenTag[key], {}, c);
       }
       if (!hasPrev && key) {
         this.keysToEnter.push(key);
@@ -62,6 +62,7 @@ class TweenOneGroup extends Component {
       const hasNext = findChildInChildrenByKey(nextChildren, key);
       if (!hasNext && key) {
         this.keysToLeave.push(key);
+        delete this.saveTweenTag[key];
       }
     });
     this.setState({
@@ -86,7 +87,7 @@ class TweenOneGroup extends Component {
       } else if (type === 'leave') {
         const children = this.state.children.filter(child => key !== child.key);
         this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
-        delete this.keysIsEnter[key];
+        delete this.saveTweenTag[key];
         this.setState({
           children,
         });
@@ -101,12 +102,12 @@ class TweenOneGroup extends Component {
 
   getTweenChild = (child, props = {}) => {
     const key = child.key;
-    this.keysIsEnter[key] = React.createElement(TweenOne, {
+    this.saveTweenTag[key] = React.createElement(TweenOne, {
       ...props,
       key,
       component: null,
     }, child);
-    return this.keysIsEnter[key];
+    return this.saveTweenTag[key];
   }
 
   getCoverAnimation = (child, i, type) => {
@@ -149,7 +150,7 @@ class TweenOneGroup extends Component {
       } else if (!this.onEnterBool) {
         return this.getCoverAnimation(child, i, 'appear');
       }
-      return this.keysIsEnter[key];
+      return this.saveTweenTag[key];
     });
   }
 
