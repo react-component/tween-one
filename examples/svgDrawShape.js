@@ -1,15 +1,15 @@
 webpackJsonp([22],{
 
 /***/ 0:
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(324);
+	module.exports = __webpack_require__(331);
 
 
-/***/ },
+/***/ }),
 
-/***/ 323:
-/***/ function(module, exports) {
+/***/ 330:
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -112,10 +112,10 @@ webpackJsonp([22],{
 	exports.default = SvgDrawPlugin;
 	module.exports = exports['default'];
 
-/***/ },
+/***/ }),
 
-/***/ 324:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 331:
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -143,7 +143,7 @@ webpackJsonp([22],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _SvgDrawPlugin = __webpack_require__(323);
+	var _SvgDrawPlugin = __webpack_require__(330);
 	
 	var _SvgDrawPlugin2 = _interopRequireDefault(_SvgDrawPlugin);
 	
@@ -239,7 +239,7 @@ webpackJsonp([22],{
 	
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
-/***/ }
+/***/ })
 
 });
 //# sourceMappingURL=svgDrawShape.js.map

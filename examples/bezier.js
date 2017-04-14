@@ -1,15 +1,15 @@
 webpackJsonp([0],{
 
 /***/ 0:
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(1);
 
 
-/***/ },
+/***/ }),
 
 /***/ 1:
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -102,10 +102,10 @@ webpackJsonp([0],{
 	
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
-/***/ },
+/***/ }),
 
 /***/ 284:
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -627,7 +627,7 @@ webpackJsonp([0],{
 	exports.default = Bezier;
 	module.exports = exports['default'];
 
-/***/ }
+/***/ })
 
 });
 //# sourceMappingURL=bezier.js.map

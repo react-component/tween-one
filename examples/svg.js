@@ -1,15 +1,15 @@
 webpackJsonp([20],{
 
 /***/ 0:
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(319);
+	module.exports = __webpack_require__(326);
 
 
-/***/ },
+/***/ }),
 
-/***/ 319:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 326:
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -37,7 +37,7 @@ webpackJsonp([20],{
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _SvgMorphPlugin = __webpack_require__(320);
+	var _SvgMorphPlugin = __webpack_require__(327);
 	
 	var _SvgMorphPlugin2 = _interopRequireDefault(_SvgMorphPlugin);
 	
@@ -74,10 +74,10 @@ webpackJsonp([20],{
 	
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
-/***/ },
+/***/ }),
 
-/***/ 320:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 327:
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -85,7 +85,7 @@ webpackJsonp([20],{
 	  value: true
 	});
 	
-	var _snapsvglite = __webpack_require__(321);
+	var _snapsvglite = __webpack_require__(328);
 	
 	var SvgPlugin = function SvgPlugin(target, vars, key) {
 	  this.target = target;
@@ -157,10 +157,10 @@ webpackJsonp([20],{
 	exports.default = SvgPlugin;
 	module.exports = exports['default'];
 
-/***/ },
+/***/ }),
 
-/***/ 321:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 328:
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
@@ -635,7 +635,7 @@ webpackJsonp([20],{
 	  return p2 ? [p, p2] : p;
 	};
 
-/***/ }
+/***/ })
 
 });
 //# sourceMappingURL=svg.js.map

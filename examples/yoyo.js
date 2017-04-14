@@ -1,15 +1,15 @@
 webpackJsonp([28],{
 
 /***/ 0:
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(330);
+	module.exports = __webpack_require__(337);
 
 
-/***/ },
+/***/ }),
 
-/***/ 330:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 337:
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -66,7 +66,7 @@ webpackJsonp([28],{
 	
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
-/***/ }
+/***/ })
 
 });
 //# sourceMappingURL=yoyo.js.map

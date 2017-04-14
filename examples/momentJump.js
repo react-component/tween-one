@@ -1,15 +1,15 @@
 webpackJsonp([13],{
 
 /***/ 0:
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(306);
+	module.exports = __webpack_require__(313);
 
 
-/***/ },
+/***/ }),
 
-/***/ 306:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 313:
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -92,7 +92,7 @@ webpackJsonp([13],{
 	
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
-/***/ }
+/***/ })
 
 });
 //# sourceMappingURL=momentJump.js.map

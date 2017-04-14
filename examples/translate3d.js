@@ -1,15 +1,15 @@
 webpackJsonp([25],{
 
 /***/ 0:
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(327);
+	module.exports = __webpack_require__(334);
 
 
-/***/ },
+/***/ }),
 
-/***/ 327:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 334:
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -69,7 +69,7 @@ webpackJsonp([25],{
 	
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
-/***/ }
+/***/ })
 
 });
 //# sourceMappingURL=translate3d.js.map

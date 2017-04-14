@@ -1,15 +1,15 @@
 webpackJsonp([27],{
 
 /***/ 0:
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(329);
+	module.exports = __webpack_require__(336);
 
 
-/***/ },
+/***/ }),
 
-/***/ 329:
-/***/ function(module, exports, __webpack_require__) {
+/***/ 336:
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -80,7 +80,7 @@ webpackJsonp([27],{
 	
 	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
 
-/***/ }
+/***/ })
 
 });
 //# sourceMappingURL=updateStyle.js.map
