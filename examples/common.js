@@ -26299,7 +26299,7 @@
 	
 	    _this.keysToEnter = [];
 	    _this.keysToLeave = [];
-	    _this.keysIsEnter = {};
+	    _this.saveTweenTag = {};
 	    _this.onEnterBool = false;
 	    _this.isTween = {};
 	    // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
@@ -26329,9 +26329,9 @@
 	      }
 	      var key = c.key;
 	      var hasPrev = (0, _util.findChildInChildrenByKey)(currentChildren, key);
-	      // 如果当前 key 已存在 keysIsEnter 里，，刷新 child;
-	      if (_this2.keysIsEnter[key]) {
-	        _this2.keysIsEnter[key] = _react2.default.cloneElement(_this2.keysIsEnter[key], {}, c);
+	      // 如果当前 key 已存在 saveTweenTag 里，，刷新 child;
+	      if (_this2.saveTweenTag[key]) {
+	        _this2.saveTweenTag[key] = _react2.default.cloneElement(_this2.saveTweenTag[key], {}, c);
 	      }
 	      if (!hasPrev && key) {
 	        _this2.keysToEnter.push(key);
@@ -26346,6 +26346,7 @@
 	      var hasNext = (0, _util.findChildInChildrenByKey)(nextChildren, key);
 	      if (!hasNext && key) {
 	        _this2.keysToLeave.push(key);
+	        delete _this2.saveTweenTag[key];
 	      }
 	    });
 	    this.setState({
@@ -26389,7 +26390,7 @@
 	          return key !== child.key;
 	        });
 	        _this3.keysToLeave.splice(_this3.keysToLeave.indexOf(key), 1);
-	        delete _this3.keysIsEnter[key];
+	        delete _this3.saveTweenTag[key];
 	        _this3.setState({
 	          children: children
 	        });
@@ -26405,11 +26406,11 @@
 	    var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 	
 	    var key = child.key;
-	    _this3.keysIsEnter[key] = _react2.default.createElement(_TweenOne2.default, (0, _extends3.default)({}, props, {
+	    _this3.saveTweenTag[key] = _react2.default.createElement(_TweenOne2.default, (0, _extends3.default)({}, props, {
 	      key: key,
 	      component: null
 	    }), child);
-	    return _this3.keysIsEnter[key];
+	    return _this3.saveTweenTag[key];
 	  };
 	
 	  this.getCoverAnimation = function (child, i, type) {
@@ -26438,10 +26439,10 @@
 	
 	  this.getChildrenToRender = function (children) {
 	    return children.map(function (child, i) {
-	      var key = child.key;
-	      if (!child || !key) {
+	      if (!child || !child.key) {
 	        return child;
 	      }
+	      var key = child.key;
 	
 	      if (_this3.keysToLeave.indexOf(key) >= 0) {
 	        return _this3.getCoverAnimation(child, i, 'leave');
@@ -26450,7 +26451,7 @@
 	      } else if (!_this3.onEnterBool) {
 	        return _this3.getCoverAnimation(child, i, 'appear');
 	      }
-	      return _this3.keysIsEnter[key];
+	      return _this3.saveTweenTag[key];
 	    });
 	  };
 	};
