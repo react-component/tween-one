@@ -26017,8 +26017,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var Ticker = function Ticker() {}; /* eslint-disable func-names */
+	var getTime = Date.now || function () {
+	  return new Date().getTime();
+	}; /* eslint-disable func-names */
 	
+	var Ticker = function Ticker() {};
 	
 	var p = Ticker.prototype = {
 	  tickFnArray: [],
@@ -26027,12 +26030,8 @@
 	  tweenId: 0,
 	  frame: 0,
 	  perFrame: Math.round(1000 / 60),
-	  getTime: Date.now || function () {
-	    return new Date().getTime();
-	  },
 	  elapsed: 0,
-	  lastUpdate: 0,
-	  skipFrameMax: 166
+	  lastUpdate: getTime()
 	};
 	p.add = function (fn) {
 	  var key = 'TweenOneTicker' + this.tweenId;
@@ -26066,8 +26065,8 @@
 	};
 	var ticker = new Ticker();
 	p.tick = function (a) {
-	  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : 0;
-	  ticker.lastUpdate = ticker.lastUpdate ? ticker.lastUpdate + ticker.elapsed : ticker.getTime() + ticker.elapsed;
+	  ticker.elapsed = getTime() - ticker.lastUpdate;
+	  ticker.lastUpdate += ticker.elapsed;
 	  ticker.tickFnArray.forEach(function (func) {
 	    return func(a);
 	  });
@@ -26076,7 +26075,7 @@
 	    ticker.sleep();
 	    return;
 	  }
-	  if (ticker.elapsed > ticker.skipFrameMax || !ticker.frame) {
+	  if (!ticker.frame) {
 	    ticker.frame++;
 	  } else {
 	    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
