@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import requestAnimationFrame from 'raf';
 
-
+const getTime = Date.now || (() => new Date().getTime());
 const Ticker = function () {
 };
 
@@ -12,11 +12,8 @@ const p = Ticker.prototype = {
   tweenId: 0,
   frame: 0,
   perFrame: Math.round(1000 / 60),
-  getTime: Date.now || (() =>
-    new Date().getTime()),
   elapsed: 0,
-  lastUpdate: 0,
-  skipFrameMax: 166,
+  lastUpdate: getTime(),
 };
 p.add = function (fn) {
   const key = `TweenOneTicker${this.tweenId}`;
@@ -42,16 +39,15 @@ p.sleep = function () {
 };
 const ticker = new Ticker;
 p.tick = function (a) {
-  ticker.elapsed = ticker.lastUpdate ? ticker.getTime() - ticker.lastUpdate : 0;
-  ticker.lastUpdate = ticker.lastUpdate
-    ? ticker.lastUpdate + ticker.elapsed : ticker.getTime() + ticker.elapsed;
+  ticker.elapsed = getTime() - ticker.lastUpdate;
+  ticker.lastUpdate += ticker.elapsed;
   ticker.tickFnArray.forEach(func => func(a));
   // 如果 object 里没对象了，自动杀掉；
   if (!ticker.tickFnArray.length) {
     ticker.sleep();
     return;
   }
-  if (ticker.elapsed > ticker.skipFrameMax || !ticker.frame) {
+  if (!ticker.frame) {
     ticker.frame++;
   } else {
     ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
