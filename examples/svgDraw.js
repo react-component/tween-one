@@ -198,6 +198,7 @@ webpackJsonp([21],{
 	        this.length = this.target.getTotalLength();
 	        break;
 	    }
+	    this.length = parseFloat(this.length.toFixed(3));
 	    this.start.strokeDasharray = computedStyle.strokeDasharray === 'none' ? '100% 100%' : computedStyle.strokeDasharray;
 	    this.start.strokeDashoffset = parseFloat(computedStyle.strokeDashoffset);
 	    this.start.strokeDasharray = this.setVars(this.start.strokeDasharray);
