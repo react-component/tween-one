@@ -82,6 +82,7 @@ SvgDrawPlugin.prototype = {
         this.length = this.target.getTotalLength();
         break;
     }
+    this.length = parseFloat(this.length.toFixed(3));
     this.start.strokeDasharray = computedStyle.strokeDasharray === 'none'
       ? '100% 100%' : computedStyle.strokeDasharray;
     this.start.strokeDashoffset = parseFloat(computedStyle.strokeDashoffset);
