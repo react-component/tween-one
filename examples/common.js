@@ -1670,6 +1670,9 @@
 	    var _this = (0, _possibleConstructorReturn3.default)(this, _Component.apply(this, arguments));
 	
 	    _this.restart = function () {
+	      if (!_this.timeLine) {
+	        return;
+	      }
 	      _this.startMoment = _this.timeLine.progressTime;
 	      _this.startFrame = _ticker2.default.frame;
 	      _this.play();
@@ -25238,8 +25241,10 @@
 	        initTime = initTime + repeatNum * (duration + item.repeatDelay);
 	      }
 	    }
-	    var startData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 1 : 0;
-	    var endData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 0 : 1;
+	    var startData = item.yoyo && repeatNum % 2 ? 1 : 0;
+	    var endData = item.yoyo && repeatNum % 2 ? 0 : 1;
+	    startData = item.type === 'from' ? 1 - startData : startData;
+	    endData = item.type === 'from' ? 1 - endData : endData;
 	    //  精度损失，只取小数点后10位。
 	    var progressTime = (0, _styleUtils.toFixed)(_this6.progressTime - initTime);
 	
