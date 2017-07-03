@@ -5,12 +5,7 @@
 import easingTypes from './easing';
 import _plugin from './plugins';
 import StylePlugin from './plugin/StylePlugin';
-import {
-  getColor,
-  parseColor,
-  toFixed,
-  stylesToCss,
-} from 'style-utils';
+import { getColor, parseColor, toFixed, stylesToCss } from 'style-utils';
 import { startConvertToEndUnit } from './util.js';
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
@@ -240,8 +235,10 @@ p.render = function () {
         initTime = initTime + repeatNum * (duration + item.repeatDelay);
       }
     }
-    const startData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 1 : 0;
-    const endData = item.yoyo && repeatNum % 2 || item.type === 'from' ? 0 : 1;
+    let startData = item.yoyo && repeatNum % 2 ? 1 : 0;
+    let endData = item.yoyo && repeatNum % 2 ? 0 : 1;
+    startData = item.type === 'from' ? 1 - startData : startData;
+    endData = item.type === 'from' ? 1 - endData : endData;
     //  精度损失，只取小数点后10位。
     const progressTime = toFixed(this.progressTime - initTime);
 

@@ -117,6 +117,9 @@ class TweenOne extends Component {
   }
 
   restart = () => {
+    if (!this.timeLine) {
+      return;
+    }
     this.startMoment = this.timeLine.progressTime;
     this.startFrame = ticker.frame;
     this.play();
