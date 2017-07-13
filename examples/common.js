@@ -25383,9 +25383,10 @@
 	  var rect = param.rect || 100; // path 的大小，100 * 100，
 	  var lengthPixel = param.lengthPixel || 200; // 线上取点像素，默认分为 200 段。。
 	  var points = [];
-	  for (var i = 0; i < lengthPixel; i++) {
-	    points.push(pathNode.getPointAtLength(pathLength / lengthPixel * i));
+	  for (var i = 0; i < lengthPixel - 1; i++) {
+	    points.push(pathNode.getPointAtLength(pathLength / (lengthPixel - 1) * i));
 	  }
+	  points.push(pathNode.getPointAtLength(lengthPixel));
 	  return function path(t, b, _c, d) {
 	    var p = _tweenFunctions2.default.linear(t, b, _c, d);
 	    var timePointX = rect * p; // X 轴的百分比;
