@@ -194,9 +194,11 @@ webpackJsonp([21],{
 	      case 'ellipse':
 	        this.length = this.getEllipseLength();
 	        break;
-	      default:
+	      case 'path':
 	        this.length = this.target.getTotalLength();
 	        break;
+	      default:
+	        throw new Error('The label is not a label in the SVG.');
 	    }
 	    this.length = parseFloat(this.length.toFixed(3));
 	    this.start.strokeDasharray = computedStyle.strokeDasharray === 'none' ? '100% 100%' : computedStyle.strokeDasharray;

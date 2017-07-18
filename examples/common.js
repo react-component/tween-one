@@ -1682,7 +1682,7 @@
 	      _this.updateAnim = null;
 	      var props = _this.props;
 	      if (props.animation && Object.keys(props.animation).length) {
-	        _this.timeLine = new _TimeLine2.default(_this.dom, (0, _util.dataToArray)(props.animation), { attr: props.attr, willChange: props.willChange });
+	        _this.timeLine = new _TimeLine2.default(_this.dom, (0, _util.dataToArray)(props.animation), { attr: props.attr });
 	        // 预先注册 raf, 初始动画数值。
 	        _this.raf();
 	        // 开始动画
@@ -1850,7 +1850,7 @@
 	
 	  TweenOne.prototype.render = function render() {
 	    var props = (0, _extends3.default)({}, this.props);
-	    ['animation', 'component', 'componentReplace', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'updateReStart', 'willChange'].forEach(function (key) {
+	    ['animation', 'component', 'componentReplace', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'updateReStart'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    props.style = (0, _extends3.default)({}, this.props.style);
@@ -1896,7 +1896,6 @@
 	  reverseDelay: _propTypes2.default.number,
 	  moment: _propTypes2.default.number,
 	  attr: _propTypes2.default.string,
-	  willChange: _propTypes2.default.bool,
 	  onChange: _propTypes2.default.func,
 	  resetStyleBool: _propTypes2.default.bool,
 	  updateReStart: _propTypes2.default.bool
@@ -1907,7 +1906,6 @@
 	  reverseDelay: 0,
 	  attr: 'style',
 	  onChange: noop,
-	  willChange: true,
 	  updateReStart: true
 	};
 	exports.default = TweenOne;
@@ -25034,7 +25032,6 @@
 	var timeLine = function timeLine(target, toData, props) {
 	  this.target = target;
 	  this.attr = props.attr || 'style';
-	  this.willChange = props.willChange;
 	  // 记录总时间;
 	  this.totalTime = 0;
 	  // 记录当前时间;
@@ -25043,8 +25040,6 @@
 	  this.defaultData = [];
 	  // 每个的开始数据；
 	  this.start = {};
-	  // 记录动画开始;
-	  this.onStart = {};
 	  // 开始默认的数据；
 	  this.startDefaultData = {};
 	  // 动画过程
@@ -25163,7 +25158,7 @@
 	  this.computedStyle = this.computedStyle || this.getComputedStyle();
 	  Object.keys(item).forEach(function (_key) {
 	    if (_key in _plugins2.default || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
-	      start[_key] = item[_key].getAnimStart(_this3.computedStyle, _this3.willChange);
+	      start[_key] = item[_key].getAnimStart(_this3.computedStyle);
 	      return;
 	    }
 	    if (_this3.attr === 'attr') {
@@ -25287,33 +25282,35 @@
 	          item.onComplete(e);
 	        }
 	        item.mode = 'onComplete';
-	      } else if (progressTime < _this6.perFrame) {
-	        ratio = item.ease(0, startData, endData, 1);
-	        _this6.setRatio(ratio, item, i);
-	        // 将第一帧作动画开始 start;
-	        if (!updateAnim) {
-	          if (item.repeat && repeatNum > 0) {
-	            item.mode = 'onRepeat';
-	            item.onRepeat((0, _extends3.default)({}, e, { repeatNum: repeatNum }));
-	          } else {
-	            item.mode = 'onStart';
-	            item.onStart(e);
-	          }
-	        }
-	      } else if (progressTime > 0 && progressTime < duration) {
-	        item.mode = 'onUpdate';
+	      } else if (progressTime >= 0 && progressTime < duration) {
 	        ratio = item.ease(progressTime, startData, endData, duration);
 	        _this6.setRatio(ratio, item, i);
 	        if (!updateAnim) {
-	          item.onUpdate((0, _extends3.default)({ ratio: ratio }, e));
+	          var startProto = _this6.start[i];
+	          if (!startProto._tweenOnEnter) {
+	            item.mode = 'onStart';
+	            startProto._tweenOnEnter = true;
+	            item.onStart(e);
+	          } else if (item.repeat && repeatNum > 0 && startProto._tweenRepeatNum !== repeatNum) {
+	            item.mode = 'onRepeat';
+	            item.onRepeat((0, _extends3.default)({}, e, { repeatNum: repeatNum }));
+	            startProto._tweenRepeatNum = repeatNum;
+	          } else {
+	            item.mode = 'onUpdate';
+	            item.onUpdate((0, _extends3.default)({ ratio: ratio }, e));
+	          }
 	        }
 	      }
+	
 	      if (!updateAnim) {
 	        _this6.onChange((0, _extends3.default)({
 	          moment: _this6.progressTime,
 	          mode: item.mode
 	        }, e));
 	      }
+	    } else if (progressTime < 0 && _this6.start[i]) {
+	      delete _this6.start[i]._tweenOnEnter;
+	      delete _this6.start[i]._tweenRepeatNum;
 	    }
 	  });
 	};
@@ -25325,7 +25322,6 @@
 	p.resetAnimData = function () {
 	  this.tween = {};
 	  this.start = {};
-	  this.onStart = {};
 	};
 	
 	p.resetDefaultStyle = function () {
@@ -25786,27 +25782,13 @@
 	  }
 	  return (0, _util.startConvertToEndUnit)(this.target, key, data, startUnit, endUnit, null, key === 'transformOrigin' && !i);
 	};
-	p.getAnimStart = function (computedStyle, willChangeBool) {
+	p.getAnimStart = function (computedStyle) {
 	  var _this2 = this;
 	
 	  var style = {};
 	  this.supports3D = (0, _styleUtils.checkStyleName)('perspective');
-	  var willChangeArray = void 0;
-	  if (willChangeBool) {
-	    this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange || computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
-	    willChangeArray = this.willChange.split(',').filter(function (k) {
-	      return k;
-	    });
-	  }
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var cssName = (0, _styleUtils.isConvert)(key);
-	    if (willChangeBool) {
-	      var willStyle = key in _plugins2.default ? _this2.propsData.data[key].useStyle || cssName : cssName;
-	      if (willChangeArray.indexOf(willStyle) === -1 && (willStyle in computedStyle || key in _plugins2.default)) {
-	        willChangeArray.push(willStyle.replace(/([A-Z])/g, '-$1').toLocaleLowerCase());
-	      }
-	      _this2.willChange = willChangeArray.join(',');
-	    }
 	    var startData = computedStyle[cssName];
 	    var fixed = computedStyle.position === 'fixed';
 	    if (!startData || startData === 'none' || startData === 'auto') {
@@ -25919,13 +25901,6 @@
 	    tween.style.transform = tween.style.transform || (0, _extends3.default)({}, this.start.transform);
 	  }
 	  var style = this.target.style;
-	  if (this.willChange) {
-	    if (ratio === (this.type === 'from' ? 0 : 1)) {
-	      style.willChange = null;
-	    } else {
-	      style.willChange = this.willChange;
-	    }
-	  }
 	  Object.keys(this.propsData.data).forEach(function (key) {
 	    var _isTransform = (0, _styleUtils.isTransform)(key) === 'transform';
 	    var startVars = _isTransform ? _this3.start.transform[key] : _this3.start[key];
@@ -26365,7 +26340,7 @@
 	      return childrenToRender[0] || null;
 	    }
 	    var componentProps = (0, _extends3.default)({}, this.props);
-	    ['component', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd', 'resetStyleBool', 'willChange'].forEach(function (key) {
+	    ['component', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd', 'resetStyleBool'].forEach(function (key) {
 	      return delete componentProps[key];
 	    });
 	    return (0, _react.createElement)(this.props.component, componentProps, childrenToRender);
@@ -26429,7 +26404,6 @@
 	    onChange = _this3.onChange.bind(_this3, animation, child.key, type);
 	    var animate = (0, _util.transformArguments)(animation, child.key, i);
 	    var props = {
-	      willChange: _this3.props.willChange,
 	      key: child.key,
 	      animation: animate,
 	      onChange: onChange,
@@ -26470,7 +26444,6 @@
 	  leave: _propTypes2.default.any,
 	  animatingClassName: _propTypes2.default.array,
 	  onEnd: _propTypes2.default.func,
-	  willChange: _propTypes2.default.bool,
 	  resetStyleBool: _propTypes2.default.bool
 	};
 	
@@ -26481,7 +26454,6 @@
 	  enter: { x: 50, opacity: 0, type: 'from' },
 	  leave: { x: -50, opacity: 0 },
 	  onEnd: noop,
-	  willChange: true,
 	  resetStyleBool: true
 	};
 	TweenOneGroup.isTweenOneGroup = true;
