@@ -121,7 +121,6 @@ class TweenOneGroup extends Component {
     onChange = this.onChange.bind(this, animation, child.key, type);
     const animate = transformArguments(animation, child.key, i);
     const props = {
-      willChange: this.props.willChange,
       key: child.key,
       animation: animate,
       onChange,
@@ -168,7 +167,6 @@ class TweenOneGroup extends Component {
       'animatingClassName',
       'onEnd',
       'resetStyleBool',
-      'willChange',
     ].forEach(key => delete componentProps[key]);
     return createElement(this.props.component, componentProps, childrenToRender);
   }
@@ -183,7 +181,6 @@ TweenOneGroup.propTypes = {
   leave: PropTypes.any,
   animatingClassName: PropTypes.array,
   onEnd: PropTypes.func,
-  willChange: PropTypes.bool,
   resetStyleBool: PropTypes.bool,
 };
 
@@ -194,7 +191,6 @@ TweenOneGroup.defaultProps = {
   enter: { x: 50, opacity: 0, type: 'from' },
   leave: { x: -50, opacity: 0 },
   onEnd: noop,
-  willChange: true,
   resetStyleBool: true,
 };
 TweenOneGroup.isTweenOneGroup = true;

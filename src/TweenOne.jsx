@@ -130,7 +130,7 @@ class TweenOne extends Component {
     const props = this.props;
     if (props.animation && Object.keys(props.animation).length) {
       this.timeLine = new TimeLine(this.dom, dataToArray(props.animation),
-        { attr: props.attr, willChange: props.willChange });
+        { attr: props.attr });
       // 预先注册 raf, 初始动画数值。
       this.raf();
       // 开始动画
@@ -205,7 +205,6 @@ class TweenOne extends Component {
       'moment',
       'resetStyleBool',
       'updateReStart',
-      'willChange',
     ].forEach(key => delete props[key]);
     props.style = { ...this.props.style };
     Object.keys(props.style).forEach(p => {
@@ -246,7 +245,6 @@ TweenOne.propTypes = {
   reverseDelay: PropTypes.number,
   moment: PropTypes.number,
   attr: PropTypes.string,
-  willChange: PropTypes.bool,
   onChange: PropTypes.func,
   resetStyleBool: PropTypes.bool,
   updateReStart: PropTypes.bool,
@@ -257,7 +255,6 @@ TweenOne.defaultProps = {
   reverseDelay: 0,
   attr: 'style',
   onChange: noop,
-  willChange: true,
   updateReStart: true,
 };
 export default TweenOne;

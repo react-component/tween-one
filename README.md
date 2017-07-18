@@ -95,7 +95,6 @@ React.render(<TweenOneGroup>
 | onChange   | func           | null    | when the animation change called, callback({ moment, item, tween, index, mode}) |
 | moment     | number         | null    | set the current frame    |
 | attr       | string         | `style` | `style` or `attr`, `attr` is tag attribute. when morph SVG must be `attr`.  |
-| willChange | boolean        | true    | open will-change style. |
 | resetStyleBool | boolean    | false   | update animation data, reset init style |
 | updateReStart | boolean     | true    | update animation data, re start animate | 
 | component  | string / React.Element  | `div`   | component tag  |
@@ -182,5 +181,4 @@ object: `animation={{ path: { x: path, y: path, rotate: path } }}`, can be contr
 | onEnd     |  func          | -    | one animation end callback |
 | animatingClassName | array | `['tween-one-entering', 'tween-one-leaving']` | className to every element of animating |
 | resetStyleBool   |  boolean   | true  | whether to animation reset the style every time |
-| willChange |  boolean       | true   |  open child will-change style, transfer to child  |
 | component | 	React.Element/String | div  |  component tag  | 

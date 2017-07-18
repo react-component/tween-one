@@ -96,25 +96,11 @@ p.convertToMarksArray = function (unit, key, data, i) {
   return startConvertToEndUnit(this.target, key, data,
     startUnit, endUnit, null, key === 'transformOrigin' && !i);
 };
-p.getAnimStart = function (computedStyle, willChangeBool) {
+p.getAnimStart = function (computedStyle) {
   const style = {};
   this.supports3D = checkStyleName('perspective');
-  let willChangeArray;
-  if (willChangeBool) {
-    this.willChange = computedStyle.willChange === 'auto' || !computedStyle.willChange ||
-    computedStyle.willChange === 'none' ? '' : computedStyle.willChange;
-    willChangeArray = this.willChange.split(',').filter(k => k);
-  }
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
-    if (willChangeBool) {
-      const willStyle = key in _plugin ? this.propsData.data[key].useStyle || cssName : cssName;
-      if (willChangeArray.indexOf(willStyle) === -1 &&
-        (willStyle in computedStyle || key in _plugin)) {
-        willChangeArray.push(willStyle.replace(/([A-Z])/g, '-$1').toLocaleLowerCase());
-      }
-      this.willChange = willChangeArray.join(',');
-    }
     let startData = computedStyle[cssName];
     const fixed = computedStyle.position === 'fixed';
     if (!startData || startData === 'none' || startData === 'auto') {
@@ -227,13 +213,6 @@ p.setRatio = function (ratio, tween) {
     tween.style.transform = tween.style.transform || { ...this.start.transform };
   }
   const style = this.target.style;
-  if (this.willChange) {
-    if (ratio === (this.type === 'from' ? 0 : 1)) {
-      style.willChange = null;
-    } else {
-      style.willChange = this.willChange;
-    }
-  }
   Object.keys(this.propsData.data).forEach(key => {
     const _isTransform = isTransform(key) === 'transform';
     let startVars = _isTransform ? this.start.transform[key] : this.start[key];

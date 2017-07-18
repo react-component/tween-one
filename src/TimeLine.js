@@ -35,7 +35,6 @@ function defaultData(vars, now) {
 const timeLine = function (target, toData, props) {
   this.target = target;
   this.attr = props.attr || 'style';
-  this.willChange = props.willChange;
   // 记录总时间;
   this.totalTime = 0;
   // 记录当前时间;
@@ -44,8 +43,6 @@ const timeLine = function (target, toData, props) {
   this.defaultData = [];
   // 每个的开始数据；
   this.start = {};
-  // 记录动画开始;
-  this.onStart = {};
   // 开始默认的数据；
   this.startDefaultData = {};
   // 动画过程
@@ -159,7 +156,7 @@ p.getAnimStartData = function (item) {
   this.computedStyle = this.computedStyle || this.getComputedStyle();
   Object.keys(item).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
-      start[_key] = item[_key].getAnimStart(this.computedStyle, this.willChange);
+      start[_key] = item[_key].getAnimStart(this.computedStyle);
       return;
     }
     if (this.attr === 'attr') {
@@ -282,27 +279,26 @@ p.render = function () {
           item.onComplete(e);
         }
         item.mode = 'onComplete';
-      } else if (progressTime < this.perFrame) {
-        ratio = item.ease(0, startData, endData, 1);
-        this.setRatio(ratio, item, i);
-        // 将第一帧作动画开始 start;
-        if (!updateAnim) {
-          if (item.repeat && repeatNum > 0) {
-            item.mode = 'onRepeat';
-            item.onRepeat({ ...e, repeatNum });
-          } else {
-            item.mode = 'onStart';
-            item.onStart(e);
-          }
-        }
-      } else if (progressTime > 0 && progressTime < duration) {
-        item.mode = 'onUpdate';
+      } else if (progressTime >= 0 && progressTime < duration) {
         ratio = item.ease(progressTime, startData, endData, duration);
         this.setRatio(ratio, item, i);
         if (!updateAnim) {
-          item.onUpdate({ ratio, ...e });
+          const startProto = this.start[i];
+          if (!startProto._tweenOnEnter) {
+            item.mode = 'onStart';
+            startProto._tweenOnEnter = true;
+            item.onStart(e);
+          } else if (item.repeat && repeatNum > 0 && startProto._tweenRepeatNum !== repeatNum) {
+            item.mode = 'onRepeat';
+            item.onRepeat({ ...e, repeatNum });
+            startProto._tweenRepeatNum = repeatNum;
+          } else {
+            item.mode = 'onUpdate';
+            item.onUpdate({ ratio, ...e });
+          }
         }
       }
+
       if (!updateAnim) {
         this.onChange({
           moment: this.progressTime,
@@ -310,6 +306,9 @@ p.render = function () {
           ...e,
         });
       }
+    } else if (progressTime < 0 && this.start[i]) {
+      delete this.start[i]._tweenOnEnter;
+      delete this.start[i]._tweenRepeatNum;
     }
   });
 };
@@ -321,7 +320,6 @@ p.frame = function (moment) {
 p.resetAnimData = function () {
   this.tween = {};
   this.start = {};
-  this.onStart = {};
 };
 
 p.resetDefaultStyle = function () {
