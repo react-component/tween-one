@@ -25254,7 +25254,7 @@
 	        _this6.start[i] = _this6.getAnimStartData(item.vars);
 	        if (progressTime < _this6.perFrame) {
 	          ratio = !item.duration && !item.delay ? item.ease(1, startData, endData, 1) : item.ease(0, startData, endData, 1);
-	          _this6.setRatio(ratio, item, i);
+	          _this6.setRatio((0, _styleUtils.toFixed)(ratio), item, i);
 	        } else if (progressTime > duration) {
 	          ratio = item.ease(1, startData, endData, 1);
 	          _this6.setRatio(ratio, item, i);
@@ -25277,7 +25277,7 @@
 	      var updateAnim = _this6.updateAnim === 'update';
 	      if (progressTime >= duration) {
 	        ratio = item.ease(1, startData, endData, 1);
-	        _this6.setRatio(ratio, item, i);
+	        _this6.setRatio((0, _styleUtils.toFixed)(ratio), item, i);
 	        if (item.mode !== 'reset' && !updateAnim) {
 	          item.onComplete(e);
 	        }
