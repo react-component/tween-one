@@ -251,7 +251,7 @@ p.render = function () {
         if (progressTime < this.perFrame) {
           ratio = !item.duration && !item.delay ? item.ease(1, startData, endData, 1)
             : item.ease(0, startData, endData, 1);
-          this.setRatio(ratio, item, i);
+          this.setRatio(toFixed(ratio), item, i);
         } else if (progressTime > duration) {
           ratio = item.ease(1, startData, endData, 1);
           this.setRatio(ratio, item, i);
@@ -274,7 +274,7 @@ p.render = function () {
       const updateAnim = this.updateAnim === 'update';
       if (progressTime >= duration) {
         ratio = item.ease(1, startData, endData, 1);
-        this.setRatio(ratio, item, i);
+        this.setRatio(toFixed(ratio), item, i);
         if (item.mode !== 'reset' && !updateAnim) {
           item.onComplete(e);
         }
