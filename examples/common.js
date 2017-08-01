@@ -1882,7 +1882,7 @@
 	
 	TweenOne.propTypes = {
 	  component: _propTypes2.default.any,
-	  componentProps: _propTypes2.default.string,
+	  componentProps: _propTypes2.default.any,
 	  animation: objectOrArray,
 	  children: _propTypes2.default.any,
 	  style: _propTypes2.default.object,
