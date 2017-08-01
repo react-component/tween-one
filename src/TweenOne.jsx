@@ -12,17 +12,22 @@ function noop() {
 const perFrame = Math.round(1000 / 60);
 
 class TweenOne extends Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.rafID = -1;
-    this.moment = this.props.moment || 0;
-    this.startMoment = this.props.moment || 0;
+    this.moment = props.moment || 0;
+    this.startMoment = props.moment || 0;
     this.startFrame = ticker.frame;
-    this.paused = this.props.paused;
-    this.reverse = this.props.reverse;
-    this.onChange = this.props.onChange;
+    this.paused = props.paused;
+    this.reverse = props.reverse;
+    this.onChange = props.onChange;
     this.newMomentAnim = false;
     this.updateAnim = null;
+    if (props.forcedJudg) {
+      Object.keys(props.forcedJudg).forEach(key => {
+        this[key] = props.forcedJudg[key];
+      });
+    }
   }
 
   componentDidMount() {
@@ -205,6 +210,7 @@ class TweenOne extends Component {
       'moment',
       'resetStyleBool',
       'updateReStart',
+      'forcedJudg',
     ].forEach(key => delete props[key]);
     props.style = { ...this.props.style };
     Object.keys(props.style).forEach(p => {
@@ -242,6 +248,7 @@ TweenOne.propTypes = {
   onChange: PropTypes.func,
   resetStyleBool: PropTypes.bool,
   updateReStart: PropTypes.bool,
+  forcedJudg: PropTypes.object,
 };
 
 TweenOne.defaultProps = {
