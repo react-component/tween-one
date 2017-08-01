@@ -230,7 +230,7 @@ const objectOrArray = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
 
 TweenOne.propTypes = {
   component: PropTypes.any,
-  componentProps: PropTypes.string,
+  componentProps: PropTypes.any,
   animation: objectOrArray,
   children: PropTypes.any,
   style: PropTypes.object,
