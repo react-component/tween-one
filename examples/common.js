@@ -1850,7 +1850,7 @@
 	
 	  TweenOne.prototype.render = function render() {
 	    var props = (0, _extends3.default)({}, this.props);
-	    ['animation', 'component', 'componentReplace', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'updateReStart'].forEach(function (key) {
+	    ['animation', 'component', 'componentProps', 'reverseDelay', 'attr', 'paused', 'reverse', 'moment', 'resetStyleBool', 'updateReStart'].forEach(function (key) {
 	      return delete props[key];
 	    });
 	    props.style = (0, _extends3.default)({}, this.props.style);
@@ -1861,11 +1861,6 @@
 	        });
 	      }
 	    });
-	    // 子级是组件，生成组件需要替换的 component;
-	    props.component = typeof props.component === 'function' ? this.props.componentReplace : props.component;
-	    if (!props.component) {
-	      delete props.component;
-	    }
 	    // component 为空时调用子级的。。
 	    if (!this.props.component) {
 	      var childrenProps = this.props.children.props;
@@ -1877,7 +1872,7 @@
 	      var newClassName = props.className ? props.className + ' ' + className : className;
 	      return _react2.default.cloneElement(this.props.children, { style: newStyle, className: newClassName });
 	    }
-	    return _react2.default.createElement(this.props.component, props);
+	    return _react2.default.createElement(this.props.component, (0, _extends3.default)({}, props, this.props.componentProps));
 	  };
 	
 	  return TweenOne;
@@ -1887,7 +1882,7 @@
 	
 	TweenOne.propTypes = {
 	  component: _propTypes2.default.any,
-	  componentReplace: _propTypes2.default.string,
+	  componentProps: _propTypes2.default.string,
 	  animation: objectOrArray,
 	  children: _propTypes2.default.any,
 	  style: _propTypes2.default.object,
@@ -1903,6 +1898,7 @@
 	
 	TweenOne.defaultProps = {
 	  component: 'div',
+	  componentProps: {},
 	  reverseDelay: 0,
 	  attr: 'style',
 	  onChange: noop,
