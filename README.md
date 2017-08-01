@@ -98,6 +98,7 @@ React.render(<TweenOneGroup>
 | resetStyleBool | boolean    | false   | update animation data, reset init style |
 | updateReStart | boolean     | true    | update animation data, re start animate | 
 | component  | string / React.Element  | `div`   | component tag  |
+| componentProps | object     | null   | component is React.Element, component tag props, not add `style` |
 
 
 ### animation = { }

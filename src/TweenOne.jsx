@@ -197,7 +197,7 @@ class TweenOne extends Component {
     [
       'animation',
       'component',
-      'componentReplace',
+      'componentProps',
       'reverseDelay',
       'attr',
       'paused',
@@ -213,12 +213,6 @@ class TweenOne extends Component {
           props.style[`${prefix}Filter`] = props.style[p]);
       }
     });
-    // 子级是组件，生成组件需要替换的 component;
-    props.component = typeof props.component === 'function' ?
-      this.props.componentReplace : props.component;
-    if (!props.component) {
-      delete props.component;
-    }
     // component 为空时调用子级的。。
     if (!this.props.component) {
       const childrenProps = this.props.children.props;
@@ -228,7 +222,7 @@ class TweenOne extends Component {
       const newClassName = props.className ? `${props.className} ${className}` : className;
       return React.cloneElement(this.props.children, { style: newStyle, className: newClassName });
     }
-    return React.createElement(this.props.component, props);
+    return React.createElement(this.props.component, { ...props, ...this.props.componentProps });
   }
 }
 
@@ -236,7 +230,7 @@ const objectOrArray = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
 
 TweenOne.propTypes = {
   component: PropTypes.any,
-  componentReplace: PropTypes.string,
+  componentProps: PropTypes.string,
   animation: objectOrArray,
   children: PropTypes.any,
   style: PropTypes.object,
@@ -252,6 +246,7 @@ TweenOne.propTypes = {
 
 TweenOne.defaultProps = {
   component: 'div',
+  componentProps: {},
   reverseDelay: 0,
   attr: 'style',
   onChange: noop,
