@@ -3,12 +3,12 @@ webpackJsonp([13],{
 /***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(313);
+	module.exports = __webpack_require__(315);
 
 
 /***/ }),
 
-/***/ 313:
+/***/ 315:
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33,7 +33,7 @@ webpackJsonp([13],{
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(125);
+	var _reactDom = __webpack_require__(126);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -48,7 +48,8 @@ webpackJsonp([13],{
 	    var _this = (0, _possibleConstructorReturn3.default)(this, _React$Component.apply(this, arguments));
 	
 	    _this.state = {
-	      moment: 2500 };
+	      moment: 2500 // 初始值
+	    };
 	    return _this;
 	  }
 	
