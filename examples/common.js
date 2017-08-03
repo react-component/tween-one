@@ -25718,7 +25718,7 @@
 	      target: _this6.target
 	    };
 	
-	    if (progressTime > -_this6.perFrame && progressTime < duration + _this6.perFrame) {
+	    if (progressTime > -_this6.perFrame && !(progressTime > duration && item.mode === 'onComplete')) {
 	      var updateAnim = _this6.updateAnim === 'update';
 	      if (progressTime >= duration && !reverse || reverse && progressTime <= 0) {
 	        // onReveresComplete 和 onComplete 统一用 onComplete;
@@ -25728,7 +25728,7 @@
 	          item.onComplete(e);
 	        }
 	        item.mode = 'onComplete';
-	      } else {
+	      } else if (duration) {
 	        ratio = item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration);
 	        _this6.setRatio(ratio, item, i);
 	        if (!updateAnim) {
@@ -26403,7 +26403,8 @@
 	        if (count.charAt(1) === '=') {
 	          tween.style[key] = startVars + endVars * ratio + unit;
 	        } else {
-	          tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
+	          var value = (endVars - startVars) * ratio + startVars;
+	          tween.style[key] = unit ? '' + value + unit : value;
 	        }
 	      }
 	    }
