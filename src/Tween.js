@@ -273,7 +273,7 @@ p.render = function () {
       target: this.target,
     };
 
-    if (progressTime > -this.perFrame && progressTime < duration + this.perFrame) {
+    if (progressTime > -this.perFrame && !(progressTime > duration && item.mode === 'onComplete')) {
       const updateAnim = this.updateAnim === 'update';
       if ((progressTime >= duration && !reverse) || (reverse && progressTime <= 0)) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
@@ -283,7 +283,7 @@ p.render = function () {
           item.onComplete(e);
         }
         item.mode = 'onComplete';
-      } else {
+      } else if (duration) {
         ratio = item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration);
         this.setRatio(ratio, item, i);
         if (!updateAnim) {

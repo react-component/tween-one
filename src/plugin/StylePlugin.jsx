@@ -270,7 +270,8 @@ p.setRatio = function (ratio, tween) {
         if (count.charAt(1) === '=') {
           tween.style[key] = startVars + endVars * ratio + unit;
         } else {
-          tween.style[key] = (endVars - startVars) * ratio + startVars + unit;
+          const value = (endVars - startVars) * ratio + startVars;
+          tween.style[key] = unit ? `${value}${unit}` : value;
         }
       }
     }
