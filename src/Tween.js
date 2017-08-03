@@ -29,10 +29,12 @@ function defaultData(vars, now) {
     type: vars.type || 'to',
     initTime: now,
     appearTo: typeof vars.appearTo === 'number' ? vars.appearTo : null,
+    perTime: 0,
+    currentRepeat: 0,
   };
 }
 
-const timeLine = function (target, toData, props) {
+const Tween = function (target, toData, props) {
   this.target = target;
   this.attr = props.attr || 'style';
   // 记录总时间;
@@ -58,7 +60,7 @@ const timeLine = function (target, toData, props) {
   // 设置默认动画数据;
   this.setDefaultData(data);
 };
-const p = timeLine.prototype;
+const p = Tween.prototype;
 p.setAttrIsStyle = function () {
   const data = [];
   this.data.forEach((d, i) => {
@@ -217,6 +219,7 @@ p.setRatio = function (ratio, endData, i) {
   this.setAnimData(this.tween);
 };
 p.render = function () {
+  const reverse = this.reverse;
   this.defaultData.forEach((item, i) => {
     let initTime = item.initTime;
     const duration = toFixed(item.duration);
@@ -244,7 +247,7 @@ p.render = function () {
     // 开始注册;
     // from 时需先执行参数位置;
     const fromDelay = item.type === 'from' ? item.delay : 0;
-    if (progressTime + fromDelay >= 0) {
+    if (progressTime + fromDelay > -this.perFrame) {
       if (!this.start[i]) {
         // 设置 start
         this.start[i] = this.getAnimStartData(item.vars);
@@ -270,28 +273,29 @@ p.render = function () {
       target: this.target,
     };
 
-    if (progressTime >= 0 && !(progressTime > duration && item.mode === 'onComplete')) {
+    if (progressTime > -this.perFrame && progressTime < duration + this.perFrame) {
       const updateAnim = this.updateAnim === 'update';
-      if (progressTime >= duration) {
-        ratio = item.ease(1, startData, endData, 1);
+      if ((progressTime >= duration && !reverse) || (reverse && progressTime <= 0)) {
+        // onReveresComplete 和 onComplete 统一用 onComplete;
+        ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
         this.setRatio(toFixed(ratio), item, i);
         if (item.mode !== 'reset' && !updateAnim) {
           item.onComplete(e);
         }
         item.mode = 'onComplete';
-      } else if (progressTime >= 0 && progressTime < duration) {
-        ratio = item.ease(progressTime, startData, endData, duration);
+      } else {
+        ratio = item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration);
         this.setRatio(ratio, item, i);
         if (!updateAnim) {
-          const startProto = this.start[i];
-          if (!startProto._tweenOnEnter) {
-            item.mode = 'onStart';
-            startProto._tweenOnEnter = true;
-            item.onStart(e);
-          } else if (item.repeat && repeatNum > 0 && startProto._tweenRepeatNum !== repeatNum) {
+          if (item.repeat && repeatNum > 0 && item.currentRepeat !== repeatNum) {
             item.mode = 'onRepeat';
+            item.currentRepeat = repeatNum;
             item.onRepeat({ ...e, repeatNum });
-            startProto._tweenRepeatNum = repeatNum;
+          } else if (!item.perTime ||
+            (reverse && (item.perTime >= this.reverseStartTime - initTime))) {
+            // onReveresStart 和 onStart 统一用 onStart;
+            item.mode = 'onStart';
+            item.onStart(e);
           } else {
             item.mode = 'onUpdate';
             item.onUpdate({ ratio, ...e });
@@ -306,9 +310,7 @@ p.render = function () {
           ...e,
         });
       }
-    } else if (progressTime < 0 && this.start[i]) {
-      delete this.start[i]._tweenOnEnter;
-      delete this.start[i]._tweenRepeatNum;
+      item.perTime = progressTime;
     }
   });
 };
@@ -345,4 +347,4 @@ p.reStart = function (style) {
 };
 
 p.onChange = noop;
-export default timeLine;
+export default Tween;

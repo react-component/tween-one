@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import { dataToArray, objectEqual } from './util';
 import { stylesToCss } from 'style-utils';
-import TimeLine from './TimeLine';
+import Tween from './Tween';
 import ticker from './ticker';
 
 function noop() {
@@ -23,11 +23,8 @@ class TweenOne extends Component {
     this.onChange = props.onChange;
     this.newMomentAnim = false;
     this.updateAnim = null;
-    if (props.forcedJudg) {
-      Object.keys(props.forcedJudg).forEach(key => {
-        this[key] = props.forcedJudg[key];
-      });
-    }
+    this.forced = {};
+    this.setForcedJudg(props);
   }
 
   componentDidMount() {
@@ -36,8 +33,8 @@ class TweenOne extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.resetStyleBool && this.timeLine && this.rafID === -1) {
-      this.timeLine.resetDefaultStyle();
+    if (nextProps.resetStyleBool && this.tween && this.rafID === -1) {
+      this.tween.resetDefaultStyle();
     }
     this.onChange = nextProps.onChange;
     // 跳帧事件 moment;
@@ -47,7 +44,7 @@ class TweenOne extends Component {
       this.startMoment = newMoment;
       this.startFrame = ticker.frame;
       if (this.rafID === -1 && !nextProps.paused) {
-        this.timeLine.resetAnimData();
+        this.tween.resetAnimData();
         const style = nextProps.style;
         this.dom.setAttribute('style', '');
         Object.keys(style).forEach(key => {
@@ -72,8 +69,8 @@ class TweenOne extends Component {
         this.updateAnim = 'start';
       }
       // 只做动画，不做回调处理。。。
-      if (this.timeLine) {
-        this.timeLine.updateAnim = this.updateAnim;
+      if (this.tween) {
+        this.tween.updateAnim = this.updateAnim;
       }
     }
 
@@ -99,11 +96,13 @@ class TweenOne extends Component {
         }
       }
     }
+
+    this.setForcedJudg(nextProps);
   }
 
   componentDidUpdate() {
     if (this.updateStartStyle && !this.updateAnim) {
-      this.timeLine.reStart(this.props.style);
+      this.tween.reStart(this.props.style);
       this.updateStartStyle = false;
     }
 
@@ -121,12 +120,44 @@ class TweenOne extends Component {
     this.cancelRequestAnimationFrame();
   }
 
+  /**
+   * @method setForcedJudg
+   * @param props
+   * QueueAnim 套在组件下面后导至子级变化。
+   * <QueueAnim component={Menu} >
+   *   <SubMenu key="a" title="导航">
+   *     <Item />
+   *   </SubMenu>
+   * </QueueAnim>
+   * rc-Menu 里是以 isXXX 来判断是 rc-Menu 的子级;
+   * 如: 用 isSubMenu 来处理 hover 事件
+   * 地址: https://github.com/react-component/menu/blob/master/src/MenuMixin.js#L172
+   * 暂时方案: 在组件里添加判断用的值。
+   */
+
+  setForcedJudg = (props) => {
+    Object.keys(this.forced).forEach(key => {
+      delete this[key];
+      delete this.forced[key];
+    });
+    if (props.forcedJudg) {
+      Object.keys(props.forcedJudg).forEach(key => {
+        if (!this[key]) {
+          this[key] = props.forcedJudg[key];
+          this.forced[key] = 1;
+        }
+      });
+    }
+  }
+
   restart = () => {
-    if (!this.timeLine) {
+    if (!this.tween) {
       return;
     }
-    this.startMoment = this.timeLine.progressTime;
+    this.startMoment = this.tween.progressTime;
     this.startFrame = ticker.frame;
+    this.tween.reverse = this.reverse;
+    this.tween.reverseStartTime = this.startMoment;
     this.play();
   }
 
@@ -134,7 +165,7 @@ class TweenOne extends Component {
     this.updateAnim = null;
     const props = this.props;
     if (props.animation && Object.keys(props.animation).length) {
-      this.timeLine = new TimeLine(this.dom, dataToArray(props.animation),
+      this.tween = new Tween(this.dom, dataToArray(props.animation),
         { attr: props.attr });
       // 预先注册 raf, 初始动画数值。
       this.raf();
@@ -155,8 +186,8 @@ class TweenOne extends Component {
     this.cancelRequestAnimationFrame();
     this.startFrame = ticker.frame;
     if (this.updateAnim === 'update') {
-      if (this.props.resetStyleBool && this.timeLine) {
-        this.timeLine.resetDefaultStyle();
+      if (this.props.resetStyleBool && this.tween) {
+        this.tween.resetDefaultStyle();
       }
       this.startMoment = 0;
     }
@@ -167,26 +198,26 @@ class TweenOne extends Component {
     if (this.reverse) {
       moment = (this.startMoment || 0) - (ticker.frame - this.startFrame) * perFrame;
     }
-    moment = moment > this.timeLine.totalTime ? this.timeLine.totalTime : moment;
+    moment = moment > this.tween.totalTime ? this.tween.totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
     if (moment < this.moment && !this.reverse) {
-      this.timeLine.resetDefaultStyle();
+      this.tween.resetDefaultStyle();
     }
     this.moment = moment;
-    this.timeLine.onChange = this.onChange;
-    this.timeLine.frame(moment);
+    this.tween.onChange = this.onChange;
+    this.tween.frame(moment);
   }
 
   raf = () => {
     this.frame();
     if (this.updateAnim) {
       if (this.updateStartStyle) {
-        this.timeLine.reStart(this.props.style);
+        this.tween.reStart(this.props.style);
       }
       this.updateAnimFunc();
       this.start();
     }
-    if ((this.moment >= this.timeLine.totalTime && !this.reverse)
+    if ((this.moment >= this.tween.totalTime && !this.reverse)
       || this.paused || (this.reverse && this.moment === 0)) {
       return this.cancelRequestAnimationFrame();
     }
