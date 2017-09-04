@@ -47,9 +47,11 @@ class TweenOne extends Component {
         this.tween.resetAnimData();
         const style = nextProps.style;
         this.dom.setAttribute('style', '');
-        Object.keys(style).forEach(key => {
-          this.dom.style[key] = stylesToCss(key, style[key]);
-        });
+        if (style) {
+          Object.keys(style).forEach(key => {
+            this.dom.style[key] = stylesToCss(key, style[key]);
+          });
+        }
         this.play();
       } else {
         this.newMomentAnim = true;
