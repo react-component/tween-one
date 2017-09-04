@@ -1707,9 +1707,11 @@
 	        this.tween.resetAnimData();
 	        var style = nextProps.style;
 	        this.dom.setAttribute('style', '');
-	        Object.keys(style).forEach(function (key) {
-	          _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
-	        });
+	        if (style) {
+	          Object.keys(style).forEach(function (key) {
+	            _this2.dom.style[key] = (0, _styleUtils.stylesToCss)(key, style[key]);
+	          });
+	        }
 	        this.play();
 	      } else {
 	        this.newMomentAnim = true;
