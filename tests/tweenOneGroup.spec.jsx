@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import expect from 'expect.js';
-import { TweenOneGroup } from '../index';
+import { TweenOneGroup } from '../src';
 import TestUtils from 'react-dom/test-utils';
 
 describe('rc-tween-one-group', () => {
