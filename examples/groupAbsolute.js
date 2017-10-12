@@ -1,105 +1,107 @@
-webpackJsonp([11],{
+webpackJsonp([8],{
 
-/***/ 0:
+/***/ 199:
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(312);
+module.exports = __webpack_require__(91);
 
 
 /***/ }),
 
-/***/ 312:
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _classCallCheck2 = __webpack_require__(2);
-	
-	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-	
-	var _possibleConstructorReturn2 = __webpack_require__(3);
-	
-	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-	
-	var _inherits2 = __webpack_require__(72);
-	
-	var _inherits3 = _interopRequireDefault(_inherits2);
-	
-	var _rcTweenOne = __webpack_require__(80);
-	
-	var _react = __webpack_require__(88);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(126);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	__webpack_require__(313);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var Demo = function (_React$Component) {
-	  (0, _inherits3.default)(Demo, _React$Component);
-	
-	  function Demo() {
-	    (0, _classCallCheck3.default)(this, Demo);
-	
-	    var _this = (0, _possibleConstructorReturn3.default)(this, _React$Component.apply(this, arguments));
-	
-	    _this.imgArray = ['https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg', 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'];
-	    _this.state = {
-	      int: 0
-	    };
-	    ['onClick'].forEach(function (method) {
-	      return _this[method] = _this[method].bind(_this);
-	    });
-	    return _this;
-	  }
-	
-	  Demo.prototype.onClick = function onClick() {
-	    var int = this.state.int;
-	    int++;
-	    if (int >= this.imgArray.length) {
-	      int = 0;
-	    }
-	    this.setState({ int: int });
-	  };
-	
-	  Demo.prototype.render = function render() {
-	    return _react2.default.createElement(
-	      'div',
-	      null,
-	      _react2.default.createElement(
-	        'button',
-	        { onClick: this.onClick },
-	        '\u5207\u6362'
-	      ),
-	      _react2.default.createElement(
-	        _rcTweenOne.TweenOneGroup,
-	        null,
-	        _react2.default.createElement(
-	          'div',
-	          { key: this.state.int },
-	          _react2.default.createElement('img', { src: this.imgArray[this.state.int], height: '200' })
-	        )
-	      )
-	    );
-	  };
-	
-	  return Demo;
-	}(_react2.default.Component);
-	
-	_reactDom2.default.render(_react2.default.createElement(Demo, null), document.getElementById('__react-content'));
-
-/***/ }),
-
-/***/ 313:
+/***/ 55:
 /***/ (function(module, exports) {
 
-	// removed by extract-text-webpack-plugin
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ 91:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rc_tween_one__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__assets_index_less__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__assets_index_less___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__assets_index_less__);
+
+
+
+
+
+
+
+
+
+var Demo = function (_React$Component) {
+  __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits___default()(Demo, _React$Component);
+
+  function Demo() {
+    __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default()(this, Demo);
+
+    var _this = __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default()(this, (Demo.__proto__ || Object.getPrototypeOf(Demo)).apply(this, arguments));
+
+    _this.imgArray = ['https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg', 'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg'];
+    _this.state = {
+      int: 0
+    };
+    ['onClick'].forEach(function (method) {
+      return _this[method] = _this[method].bind(_this);
+    });
+    return _this;
+  }
+
+  __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass___default()(Demo, [{
+    key: 'onClick',
+    value: function onClick() {
+      var int = this.state.int;
+      int++;
+      if (int >= this.imgArray.length) {
+        int = 0;
+      }
+      this.setState({ int: int });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
+        'div',
+        null,
+        __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
+          'button',
+          { onClick: this.onClick },
+          '\u5207\u6362'
+        ),
+        __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
+          __WEBPACK_IMPORTED_MODULE_4_rc_tween_one__["TweenOneGroup"],
+          null,
+          __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
+            'div',
+            { key: this.state.int },
+            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement('img', { src: this.imgArray[this.state.int], height: '200' })
+          )
+        )
+      );
+    }
+  }]);
+
+  return Demo;
+}(__WEBPACK_IMPORTED_MODULE_5_react___default.a.Component);
+
+__WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(Demo, null), document.getElementById('__react-content'));
 
 /***/ })
 
-});
+},[199]);
 //# sourceMappingURL=groupAbsolute.js.map
