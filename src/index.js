@@ -1,9 +1,9 @@
 // export this package's api
-import TweenOne from './src/TweenOne';
-import group from './src/TweenOneGroup';
-import _easing from './src/easing';
-import _plugins from './src/plugins';
-import _ticker from './src/ticker';
+import TweenOne from './TweenOne';
+import group from './TweenOneGroup';
+import _easing from './easing';
+import _plugins from './plugins';
+import _ticker from './ticker';
 
 TweenOne.TweenOneGroup = group;
 TweenOne.easing = _easing;

@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import expect from 'expect.js';
-import Tween from '../index';
+import Tween from '../src';
 import ticker from '../src/ticker';
 import TestUtils from 'react-dom/test-utils';
 import { checkStyleName } from 'style-utils';

@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
@@ -24,20 +24,22 @@
   ],
   "licenses": "MIT",
   "main": "./lib/index",
-  "entry": {
-    "rc-tween-one": [
-      "./assets/index.less",
-      "./src/index.js"
-    ]
-  },
+  "module": "./es/index",
   "config": {
-    "port": 8100
+    "port": 8100,
+    "entry": {
+      "rc-tween-one": [
+        "./assets/index.less",
+        "./src/index.js"
+      ]
+    }
   },
   "scripts": {
+    "dist": "rc-tools run dist",
     "build": "rc-tools run build",
     "gh-pages": "rc-tools run gh-pages",
     "start": "rc-tools run server",
-    "compile": "rc-tools run compile",
+    "compile": "rc-tools run compile --babel-runtime",
     "pub": "rc-tools run pub --babel-runtime",
     "lint": "rc-tools run lint",
     "karma": "rc-test run karma",
