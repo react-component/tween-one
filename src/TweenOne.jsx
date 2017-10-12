@@ -292,4 +292,5 @@ TweenOne.defaultProps = {
   onChange: noop,
   updateReStart: true,
 };
+TweenOne.isTweenOne = true;
 export default TweenOne;

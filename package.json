@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "1.4.5",
+  "version": "1.5.0",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
@@ -37,21 +37,23 @@
     "build": "rc-tools run build",
     "gh-pages": "rc-tools run gh-pages",
     "start": "rc-tools run server",
+    "compile": "rc-tools run compile",
     "pub": "rc-tools run pub --babel-runtime",
     "lint": "rc-tools run lint",
-    "karma": "rc-tools run karma",
-    "saucelabs": "rc-tools run saucelabs",
-    "test": "rc-tools run test",
-    "chrome-test": "rc-tools run chrome-test",
-    "coverage": "rc-tools run coverage"
+    "karma": "rc-test run karma",
+    "saucelabs": "rc-test run saucelabs",
+    "test": "rc-test run test",
+    "chrome-test": "rc-test run chrome-test",
+    "coverage": "rc-test run coverage"
   },
   "devDependencies": {
+    "core-js": "^2.5.1",
     "expect.js": "0.3.x",
     "pre-commit": "1.x",
-    "rc-tools": "5.x",
-    "react": "^15.5.0",
-    "react-addons-test-utils": "^15.5.0",
-    "react-dom": "^15.5.0",
+    "rc-test": "6.x",
+    "rc-tools": "6.x",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "rc-queue-anim": "^1.0.0",
     "rc-scroll-anim": "0.x"
   },

@@ -1,10 +1,11 @@
 /* eslint no-console:0 */
 import React from 'react';
 import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
 import expect from 'expect.js';
 import Tween from '../index';
 import ticker from '../src/ticker';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import { checkStyleName } from 'style-utils';
 import BezierPlugin from '../src/plugin/BezierPlugin';
 Tween.plugins.push(BezierPlugin);
@@ -33,12 +34,12 @@ describe('rc-tween-one', () => {
         </Tween>);
       }
     }
-    const objectOrArray = React.PropTypes.oneOfType([React.PropTypes.object,
-      React.PropTypes.array]);
+    const objectOrArray = PropTypes.oneOfType([PropTypes.object,
+      PropTypes.array]);
 
     TweenDemo.propTypes = {
       animation: objectOrArray,
-      style: React.PropTypes.object,
+      style: PropTypes.object,
     };
 
     return ReactDom.render(<TweenDemo {...props} />, div);

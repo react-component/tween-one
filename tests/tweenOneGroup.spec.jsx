@@ -1,9 +1,10 @@
 /* eslint no-console:0 */
 import React from 'react';
 import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
 import expect from 'expect.js';
 import { TweenOneGroup } from '../index';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 
 describe('rc-tween-one-group', () => {
   let div;
@@ -42,12 +43,12 @@ describe('rc-tween-one-group', () => {
         </TweenOneGroup>);
       }
     }
-    const objectOrArray = React.PropTypes.oneOfType([React.PropTypes.object,
-      React.PropTypes.array]);
+    const objectOrArray = PropTypes.oneOfType([PropTypes.object,
+      PropTypes.array]);
 
     TweenGroupDemo.propTypes = {
       animation: objectOrArray,
-      style: React.PropTypes.object,
+      style: PropTypes.object,
     };
 
     return ReactDom.render(<TweenGroupDemo {...props} />, div);

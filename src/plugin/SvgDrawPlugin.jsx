@@ -59,10 +59,6 @@ SvgDrawPlugin.prototype = {
   },
   getAnimStart(computedStyle) {
     switch (this.tagName) {
-      case 'rect':
-        this.length = this.target.getAttribute('width') * 2 +
-          this.target.getAttribute('height') * 2;
-        break;
       case 'circle':
         this.length = Math.PI * 2 * this.target.getAttribute('r');
         break;
@@ -78,6 +74,7 @@ SvgDrawPlugin.prototype = {
       case 'ellipse':
         this.length = this.getEllipseLength();
         break;
+      case 'rect':
       case 'path':
         this.length = this.target.getTotalLength();
         break;

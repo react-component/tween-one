@@ -4,14 +4,14 @@ import {
   getTransform,
 } from 'style-utils';
 
-const PathPlugin = function (target, vars) {
+function PathPlugin(target, vars) {
   this.target = target;
   const path = typeof vars === 'string' ? vars : vars.x || vars.y || vars.rotate;
   this.vars = vars;
   this.path = parsePath(path);
   this.start = {};
   this.pathLength = this.path.getTotalLength();
-};
+}
 
 PathPlugin.prototype = {
   name: 'path',
