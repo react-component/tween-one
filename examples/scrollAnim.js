@@ -12,7 +12,6 @@ class Demo extends React.Component {
     return (<div>
       <div style={{ height: 800 }}>往下滚动</div>
       <ScrollOverPack
-        hideProps={{ 1: { reverse: true }, 2: { reverse: true } }}
         style={{ height: 800 }}
       >
         <Tween
@@ -25,7 +24,8 @@ class Demo extends React.Component {
         </Tween>
         <Tween
           key="2"
-          animation={{ y: 30, delay: 100, ease: 'easeOutQuart', type: 'from', opacity: 0 }}
+          id="12"
+          animation={{ y: 30, delay: 100, ease: 'easeOutQuart', type: 'from', opacity: 0, id: 12 }}
           reverseDelay={100}
           style={{ background: '#000fff' }}
         >

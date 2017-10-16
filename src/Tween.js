@@ -225,7 +225,7 @@ p.render = function () {
     const duration = toFixed(item.duration);
     // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
     let repeatNum = Math.ceil((this.progressTime - initTime) /
-        (duration + item.repeatDelay)) - 1;
+      (duration + item.repeatDelay)) - 1;
     repeatNum = repeatNum < 0 ? 0 : repeatNum;
     if (item.repeat) {
       if (item.repeat < repeatNum && item.repeat !== -1) {
@@ -247,7 +247,7 @@ p.render = function () {
     // 开始注册;
     // from 时需先执行参数位置;
     const fromDelay = item.type === 'from' ? item.delay : 0;
-    if (progressTime + fromDelay > -this.perFrame) {
+    if (progressTime + fromDelay >= 0) {
       if (!this.start[i]) {
         // 设置 start
         this.start[i] = this.getAnimStartData(item.vars);
@@ -273,7 +273,30 @@ p.render = function () {
       target: this.target,
     };
 
-    if (progressTime > -this.perFrame && !(progressTime > duration && item.mode === 'onComplete')) {
+    /*     if (progressTime > 0 && progressTime < duration) {
+          const updateAnim = this.updateAnim === 'update';
+          item.mode = 'onUpdate';
+          item.onUpdate({ ratio, ...e });
+          ratio = item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration);
+          this.setRatio(ratio, item, i);
+        } else if (progressTime <= 0 && (!item.perTime ||
+          (reverse && (item.perTime >= this.reverseStartTime - initTime)))) {
+          // onReveresStart 和 onStart 统一用 onStart;
+          item.mode = 'onStart';
+          item.onStart(e);
+          this.setRatio(reverse ? 1 : 0, item, i);
+        } else if (((progressTime >= duration && !reverse) || (reverse && progressTime <= 0))
+          && item.mode !== 'onComplete') {
+          if (item.mode !== 'reset' && !updateAnim) {
+            item.onComplete(e);
+          }
+          item.mode = 'onComplete';
+          this.setRatio(reverse ? 0 : 1, item, i);
+        } */
+
+    if (progressTime > -this.perFrame &&
+      !(progressTime > duration && item.mode === 'onComplete') &&
+      this.start[i]) {
       const updateAnim = this.updateAnim === 'update';
       if ((progressTime >= duration && !reverse) || (reverse && progressTime <= 0)) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
@@ -291,8 +314,9 @@ p.render = function () {
             item.mode = 'onRepeat';
             item.currentRepeat = repeatNum;
             item.onRepeat({ ...e, repeatNum });
-          } else if (!item.perTime ||
-            (reverse && (item.perTime >= this.reverseStartTime - initTime))) {
+          } else if ((!item.perTime ||
+            (reverse && (item.perTime >= this.reverseStartTime - initTime)))
+            && item.mode !== 'onStart') {
             // onReveresStart 和 onStart 统一用 onStart;
             item.mode = 'onStart';
             item.onStart(e);
