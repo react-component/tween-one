@@ -40,7 +40,7 @@ SvgDrawPlugin.prototype = {
       .forEach((item, i) => {
         const arr = pointsArray[Math.floor(i / 2)] || [];
         arr.push(parseFloat(item));
-        if (!i % 2) {
+        if (!(i % 2)) {
           pointsArray.push(arr);
         }
       });
