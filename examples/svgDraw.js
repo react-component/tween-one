@@ -143,10 +143,13 @@ SvgDrawPlugin.prototype = {
     var _this = this;
 
     // .match(/(?:(-|-=|\+=)?\d*\.?\d*(?:e[\-+]?\d+)?)[0-9]/gi)
-    var pointsArray = (this.target.getAttribute('points') || '').split(/\s+/).map(function (item) {
-      return item.split(',').map(function (n) {
-        return parseFloat(n);
-      });
+    var pointsArray = [];
+    (this.target.getAttribute('points') || '').split(/[\s+|,]/).forEach(function (item, i) {
+      var arr = pointsArray[Math.floor(i / 2)] || [];
+      arr.push(parseFloat(item));
+      if (!i % 2) {
+        pointsArray.push(arr);
+      }
     });
     if (name === 'polygon') {
       pointsArray.push(pointsArray[0]);
