@@ -17,12 +17,12 @@ SvgDrawPlugin.prototype = {
     const data = vars.split(' ');
     if (data.length > 1) {
       _vars.start = data[0].indexOf('%') >= 0 ?
-      parseFloat(data[0]) / 100 * this.length : parseFloat(data[0]);
+        parseFloat(data[0]) / 100 * this.length : parseFloat(data[0]);
       _vars.end = data[1].indexOf('%') >= 0 ?
-      parseFloat(data[1]) / 100 * this.length : parseFloat(data[1]);
+        parseFloat(data[1]) / 100 * this.length : parseFloat(data[1]);
     } else if (parseFloat(vars)) {
       _vars.end = vars.indexOf('%') >= 0 ?
-      parseFloat(vars) / 100 * this.length : parseFloat(vars);
+        parseFloat(vars) / 100 * this.length : parseFloat(vars);
     } else {
       throw new Error(`SVGDraw data[${vars}] error.`);
     }
@@ -35,8 +35,15 @@ SvgDrawPlugin.prototype = {
   },
   getPolyLength(name) {
     // .match(/(?:(-|-=|\+=)?\d*\.?\d*(?:e[\-+]?\d+)?)[0-9]/gi)
-    const pointsArray = (this.target.getAttribute('points') || '').split(/\s+/)
-      .map(item => item.split(',').map(n => parseFloat(n)));
+    const pointsArray = [];
+    (this.target.getAttribute('points') || '').split(/[\s+|,]/)
+      .forEach((item, i) => {
+        const arr = pointsArray[Math.floor(i / 2)] || [];
+        arr.push(parseFloat(item));
+        if (!i % 2) {
+          pointsArray.push(arr);
+        }
+      });
     if (name === 'polygon') {
       pointsArray.push(pointsArray[0]);
     }
