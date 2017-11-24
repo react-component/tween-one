@@ -55,6 +55,7 @@ const Tween = function (target, toData, props) {
   this.perFrame = Math.round(1000 / 60);
   // 注册，第一次进入执行注册
   this.register = false;
+  if (!this.target) return
   // 设置 style
   const data = this.setAttrIsStyle();
   // 设置默认动画数据;
