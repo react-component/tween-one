@@ -273,27 +273,6 @@ p.render = function () {
       target: this.target,
     };
 
-    /*     if (progressTime > 0 && progressTime < duration) {
-          const updateAnim = this.updateAnim === 'update';
-          item.mode = 'onUpdate';
-          item.onUpdate({ ratio, ...e });
-          ratio = item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration);
-          this.setRatio(ratio, item, i);
-        } else if (progressTime <= 0 && (!item.perTime ||
-          (reverse && (item.perTime >= this.reverseStartTime - initTime)))) {
-          // onReveresStart 和 onStart 统一用 onStart;
-          item.mode = 'onStart';
-          item.onStart(e);
-          this.setRatio(reverse ? 1 : 0, item, i);
-        } else if (((progressTime >= duration && !reverse) || (reverse && progressTime <= 0))
-          && item.mode !== 'onComplete') {
-          if (item.mode !== 'reset' && !updateAnim) {
-            item.onComplete(e);
-          }
-          item.mode = 'onComplete';
-          this.setRatio(reverse ? 0 : 1, item, i);
-        } */
-
     if (progressTime > -this.perFrame &&
       !(progressTime > duration && item.mode === 'onComplete') &&
       this.start[i]) {
