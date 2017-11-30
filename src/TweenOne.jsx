@@ -33,9 +33,6 @@ class TweenOne extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.resetStyleBool && this.tween && this.rafID === -1) {
-      this.tween.resetDefaultStyle();
-    }
     this.onChange = nextProps.onChange;
     // 跳帧事件 moment;
     const newMoment = nextProps.moment;
@@ -64,6 +61,10 @@ class TweenOne extends Component {
     const styleEqual = objectEqual(this.props.style, nextProps.style);
     // 如果 animation 不同， 在下一帧重新动画
     if (!equal) {
+      // 在有动画的情况下才可以执行 resetDefaultStyle; 避免无动画时也把 style 刷成默认状态。
+      if (nextProps.resetStyleBool && this.tween && this.rafID === -1) {
+        this.tween.resetDefaultStyle();
+      }
       if (this.rafID !== -1) {
         this.updateAnim = 'update';
       } else if (nextProps.updateReStart) {
