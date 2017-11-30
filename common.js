@@ -2362,9 +2362,6 @@ var TweenOne = function (_Component) {
     value: function componentWillReceiveProps(nextProps) {
       var _this2 = this;
 
-      if (nextProps.resetStyleBool && this.tween && this.rafID === -1) {
-        this.tween.resetDefaultStyle();
-      }
       this.onChange = nextProps.onChange;
       // 跳帧事件 moment;
       var newMoment = nextProps.moment;
@@ -2393,6 +2390,10 @@ var TweenOne = function (_Component) {
       var styleEqual = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__util__["h" /* objectEqual */])(this.props.style, nextProps.style);
       // 如果 animation 不同， 在下一帧重新动画
       if (!equal) {
+        // 在有动画的情况下才可以执行 resetDefaultStyle; 避免无动画时也把 style 刷成默认状态。
+        if (nextProps.resetStyleBool && this.tween && this.rafID === -1) {
+          this.tween.resetDefaultStyle();
+        }
         if (this.rafID !== -1) {
           this.updateAnim = 'update';
         } else if (nextProps.updateReStart) {
@@ -3605,27 +3606,6 @@ p.render = function () {
       index: i,
       target: _this6.target
     };
-
-    /*     if (progressTime > 0 && progressTime < duration) {
-          const updateAnim = this.updateAnim === 'update';
-          item.mode = 'onUpdate';
-          item.onUpdate({ ratio, ...e });
-          ratio = item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration);
-          this.setRatio(ratio, item, i);
-        } else if (progressTime <= 0 && (!item.perTime ||
-          (reverse && (item.perTime >= this.reverseStartTime - initTime)))) {
-          // onReveresStart 和 onStart 统一用 onStart;
-          item.mode = 'onStart';
-          item.onStart(e);
-          this.setRatio(reverse ? 1 : 0, item, i);
-        } else if (((progressTime >= duration && !reverse) || (reverse && progressTime <= 0))
-          && item.mode !== 'onComplete') {
-          if (item.mode !== 'reset' && !updateAnim) {
-            item.onComplete(e);
-          }
-          item.mode = 'onComplete';
-          this.setRatio(reverse ? 0 : 1, item, i);
-        } */
 
     if (progressTime > -_this6.perFrame && !(progressTime > duration && item.mode === 'onComplete') && _this6.start[i]) {
       var updateAnim = _this6.updateAnim === 'update';
