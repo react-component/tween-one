@@ -1014,7 +1014,7 @@ function startConvertToEndUnit(target, style, num, unit, dataUnit, fixed, isOrig
     pix = parseFloat(num);
   }
   if (dataUnit === '%') {
-    pix = pix * 100 / (horiz ? t.clientWidth : t.clientHeight);
+    pix = pix ? pix * 100 / (horiz ? t.clientWidth : t.clientHeight) : 0;
   } else if (dataUnit === 'vw') {
     pix = parseFloat(num) / document.body.clientWidth * 100;
   } else if (dataUnit === 'vh') {
