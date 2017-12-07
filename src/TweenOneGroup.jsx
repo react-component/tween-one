@@ -143,8 +143,14 @@ class TweenOneGroup extends Component {
 
       if (this.keysToLeave.indexOf(key) >= 0) {
         return this.getCoverAnimation(child, i, 'leave');
-      } else if ((this.keysToEnter.indexOf(key) >= 0) ||
-        (this.isTween[key] && this.keysToLeave.indexOf(key) === -1)) {
+      } else if (((this.keysToEnter.indexOf(key) >= 0) ||
+        (this.isTween[key] && this.keysToLeave.indexOf(key) === -1)) &&
+        !(this.isTween[key] === 'enter' && this.saveTweenTag[key])) {
+        /**
+        * 1. 在 key 在 enter 里。
+        * 2. 出场未结束，触发进场, this.isTween[key] 为 leave, key 在 enter 里。
+        * 3. 状态为 enter 且 tweenTag 里有值时，不执行重载动画属性，直接调用 tweenTag 里的。
+        */
         return this.getCoverAnimation(child, i, 'enter');
       } else if (!this.onEnterBool) {
         return this.getCoverAnimation(child, i, 'appear');

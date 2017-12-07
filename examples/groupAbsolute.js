@@ -30,7 +30,7 @@ class Demo extends React.Component {
   render() {
     return (<div>
       <button onClick={this.onClick}>切换</button>
-      <TweenOneGroup>
+      <TweenOneGroup style={{ position: 'relative' }}>
         <div key={this.state.int}>
           <img src={this.imgArray[this.state.int]} height="200" />
         </div>
