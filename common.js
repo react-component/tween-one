@@ -3881,7 +3881,12 @@ var _initialiseProps = function _initialiseProps() {
 
       if (_this3.keysToLeave.indexOf(key) >= 0) {
         return _this3.getCoverAnimation(child, i, 'leave');
-      } else if (_this3.keysToEnter.indexOf(key) >= 0 || _this3.isTween[key] && _this3.keysToLeave.indexOf(key) === -1) {
+      } else if ((_this3.keysToEnter.indexOf(key) >= 0 || _this3.isTween[key] && _this3.keysToLeave.indexOf(key) === -1) && !(_this3.isTween[key] === 'enter' && _this3.saveTweenTag[key])) {
+        /**
+        * 1. 在 key 在 enter 里。
+        * 2. 出场未结束，触发进场, this.isTween[key] 为 leave, key 在 enter 里。
+        * 3. 状态为 enter 且 tweenTag 里有值时，不执行重载动画属性，直接调用 tweenTag 里的。
+        */
         return _this3.getCoverAnimation(child, i, 'enter');
       } else if (!_this3.onEnterBool) {
         return _this3.getCoverAnimation(child, i, 'appear');

@@ -85,7 +85,7 @@ var Demo = function (_React$Component) {
         ),
         __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
           __WEBPACK_IMPORTED_MODULE_4_rc_tween_one__["b" /* TweenOneGroup */],
-          null,
+          { style: { position: 'relative' } },
           __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
             'div',
             { key: this.state.int },

@@ -424,7 +424,7 @@ var QueueAnim = function (_React$Component) {
       });
       var childrenToRender = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils__["a" /* toArrayChildren */])(this.state.children).map(this.getChildrenToRender);
       var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tagProps, this.props.componentProps);
-      console.log(childrenToRender)
+
       return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(this.props.component, props, childrenToRender);
     }
   }]);
