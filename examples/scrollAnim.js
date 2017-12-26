@@ -424,7 +424,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof2 = __webpack_require__(19);
+var _typeof2 = __webpack_require__(14);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
