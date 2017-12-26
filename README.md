@@ -182,3 +182,4 @@ object: `animation={{ path: { x: path, y: path, rotate: path } }}`, can be contr
 | animatingClassName | array | `['tween-one-entering', 'tween-one-leaving']` | className to every element of animating |
 | resetStyleBool   |  boolean   | true  | whether to animation reset the style every time |
 | component | 	React.Element/String | div  |  component tag  | 
+| componentProps | object  |  -  | component tag props |

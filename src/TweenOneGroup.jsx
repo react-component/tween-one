@@ -72,14 +72,14 @@ class TweenOneGroup extends Component {
 
   onChange = (animation, key, type, obj) => {
     const length = dataToArray(animation).length;
-    const animatingClassName = this.props.animatingClassName;
     const tag = obj.target;
+    const classIsSvg = typeof tag.className === 'object' && 'baseVal' in tag.className;
     const isEnter = type === 'enter' || type === 'appear';
     if (obj.mode === 'onStart') {
-      tag.className = tag.className
-        .replace(animatingClassName[isEnter ? 1 : 0], '').trim();
-      if (tag.className.indexOf(animatingClassName[isEnter ? 0 : 1]) === -1) {
-        tag.className = `${tag.className} ${animatingClassName[isEnter ? 0 : 1]}`.trim();
+      if (classIsSvg) {
+        tag.className.baseVal = this.setClassName(tag.className.baseVal, isEnter);
+      } else {
+        tag.className = this.setClassName(tag.className, isEnter);
       }
     } else if (obj.index === length - 1 && obj.mode === 'onComplete') {
       if (type === 'enter') {
@@ -92,12 +92,25 @@ class TweenOneGroup extends Component {
           children,
         });
       }
-      tag.className = tag.className
-        .replace(animatingClassName[isEnter ? 0 : 1], '').trim();
+      if (classIsSvg) {
+        tag.className.baseVal = tag.className.baseVal
+          .replace(this.props.animatingClassName[isEnter ? 0 : 1], '').trim();
+      } else {
+        tag.className = tag.className
+          .replace(this.props.animatingClassName[isEnter ? 0 : 1], '').trim();
+      }
       delete this.isTween[key];
       const _obj = { key, type };
       this.props.onEnd(_obj);
     }
+  }
+
+  setClassName = (name, isEnter) => {
+    let className = name.replace(this.props.animatingClassName[isEnter ? 1 : 0], '').trim();
+    if (className.indexOf(this.props.animatingClassName[isEnter ? 0 : 1]) === -1) {
+      className = `${className} ${this.props.animatingClassName[isEnter ? 0 : 1]}`.trim();
+    }
+    return className;
   }
 
   getTweenChild = (child, props = {}) => {
@@ -167,6 +180,7 @@ class TweenOneGroup extends Component {
     const componentProps = { ...this.props };
     [
       'component',
+      'componentProps',
       'appear',
       'enter',
       'leave',
@@ -174,12 +188,16 @@ class TweenOneGroup extends Component {
       'onEnd',
       'resetStyleBool',
     ].forEach(key => delete componentProps[key]);
-    return createElement(this.props.component, componentProps, childrenToRender);
+    return createElement(this.props.component,
+      { ...componentProps, ...this.props.componentProps },
+      childrenToRender
+    );
   }
 }
 
 TweenOneGroup.propTypes = {
   component: PropTypes.any,
+  componentProps: PropTypes.object,
   children: PropTypes.any,
   style: PropTypes.object,
   appear: PropTypes.bool,
@@ -192,6 +210,7 @@ TweenOneGroup.propTypes = {
 
 TweenOneGroup.defaultProps = {
   component: 'div',
+  componentProps: {},
   appear: true,
   animatingClassName: ['tween-one-entering', 'tween-one-leaving'],
   enter: { x: 50, opacity: 0, type: 'from' },

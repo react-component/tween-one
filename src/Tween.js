@@ -261,7 +261,7 @@ p.render = function () {
         }
         if (!this.register) {
           this.register = true;
-          if (progressTime === 0) {
+          if (progressTime === 0 && item.duration) {
             return;
           }
         }
