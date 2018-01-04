@@ -10,6 +10,7 @@ import cssList, {
   splitFilterToObject,
   getTransform,
   stylesToCss,
+  createMatrix,
 } from 'style-utils';
 import { startConvertToEndUnit, getTransformValue } from '../util.js';
 import _plugin from '../plugins';
@@ -207,7 +208,7 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
   return _vars;
 };
 
-p.setRatio = function (ratio, tween) {
+p.setRatio = function (ratio, tween, svgComputedStyle) {
   tween.style = tween.style || {};
   if (this.start.transform) {
     tween.style.transform = tween.style.transform || { ...this.start.transform };
@@ -253,6 +254,9 @@ p.setRatio = function (ratio, tween) {
         tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
       }
       style[this.transform] = getTransformValue(tween.style.transform, this.supports3D);
+      if (svgComputedStyle) {
+        svgComputedStyle[this.transform] = createMatrix(style[this.transform]).toString();
+      }
       return;
     } else if (Array.isArray(endVars)) {
       const _type = this.propsData.dataType[key];
