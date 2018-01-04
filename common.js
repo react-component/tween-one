@@ -3383,6 +3383,9 @@ var Tween = function Tween(target, toData, props) {
   this.perFrame = Math.round(1000 / 60);
   // 注册，第一次进入执行注册
   this.register = false;
+  // svg元素的 style
+  this.svgComputedStyle = {};
+  this.isSvg = this.target.ownerSVGElement;
   // 设置 style
   var data = this.setAttrIsStyle();
   // 设置默认动画数据;
@@ -3482,21 +3485,42 @@ p.setDefaultData = function (_vars) {
   this.defaultData = data;
 };
 p.getComputedStyle = function () {
-  return document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
+  var _this3 = this;
+
+  var style = document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
+  if (this.isSvg && style.transform === 'none') {
+    var attrStyle = this.target.getAttribute('style');
+    var transform = 'none';
+    if (attrStyle && attrStyle.indexOf('transform') >= 0) {
+      transform = attrStyle.split(';').filter(function (k) {
+        return k.indexOf('transform') >= 0;
+      }).map(function (item) {
+        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["createMatrix"])(item.split(':')[1].trim()).toString();
+      })[0];
+      Object.keys(style).forEach(function (key) {
+        return _this3.svgComputedStyle[key] = style[key];
+      });
+      this.svgComputedStyle.transform = transform;
+      return this.svgComputedStyle;
+    }
+    // 暂时不支持标签上的 transform，后期增加;
+    console.warn('Do not add transform on the label, otherwise it will be invalid.');
+  }
+  return style;
 };
 p.getAnimStartData = function (item) {
-  var _this3 = this;
+  var _this4 = this;
 
   var start = {};
   this.computedStyle = this.computedStyle || this.getComputedStyle();
   Object.keys(item).forEach(function (_key) {
-    if (_key in __WEBPACK_IMPORTED_MODULE_2__plugins__["a" /* default */] || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
-      start[_key] = item[_key].getAnimStart(_this3.computedStyle);
+    if (_key in __WEBPACK_IMPORTED_MODULE_2__plugins__["a" /* default */] || _this4.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+      start[_key] = item[_key].getAnimStart(_this4.computedStyle);
       return;
     }
-    if (_this3.attr === 'attr') {
+    if (_this4.attr === 'attr') {
       // 除了d和这points外的标签动画；
-      var attribute = _this3.target.getAttribute(_key);
+      var attribute = _this4.target.getAttribute(_key);
       var data = attribute === 'null' || !attribute ? 0 : attribute;
       if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
         data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
@@ -3504,40 +3528,40 @@ p.getAnimStartData = function (item) {
         start[_key] = data;
       } else if (parseFloat(data) || parseFloat(data) === 0 || data === 0) {
         var unit = data.toString().replace(/[^a-z|%]/g, '');
-        start[_key] = unit !== item[_key].unit ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__util_js__["i" /* startConvertToEndUnit */])(_this3.target, _key, parseFloat(data), unit, item[_key].unit) : parseFloat(data);
+        start[_key] = unit !== item[_key].unit ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__util_js__["i" /* startConvertToEndUnit */])(_this4.target, _key, parseFloat(data), unit, item[_key].unit) : parseFloat(data);
       }
       return;
     }
-    start[_key] = _this3.target[_key] || 0;
+    start[_key] = _this4.target[_key] || 0;
   });
   return start;
 };
 p.setAnimData = function (data) {
-  var _this4 = this;
+  var _this5 = this;
 
   Object.keys(data).forEach(function (key) {
-    if (key in __WEBPACK_IMPORTED_MODULE_2__plugins__["a" /* default */] || _this4.attr === 'attr' && (key === 'd' || key === 'points')) {
+    if (key in __WEBPACK_IMPORTED_MODULE_2__plugins__["a" /* default */] || _this5.attr === 'attr' && (key === 'd' || key === 'points')) {
       return;
     }
-    _this4.target[key] = data[key];
+    _this5.target[key] = data[key];
   });
 };
 p.setRatio = function (ratio, endData, i) {
-  var _this5 = this;
+  var _this6 = this;
 
   Object.keys(endData.vars).forEach(function (_key) {
-    if (_key in __WEBPACK_IMPORTED_MODULE_2__plugins__["a" /* default */] || _this5.attr === 'attr' && (_key === 'd' || _key === 'points')) {
-      endData.vars[_key].setRatio(ratio, _this5.tween);
+    if (_key in __WEBPACK_IMPORTED_MODULE_2__plugins__["a" /* default */] || _this6.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+      endData.vars[_key].setRatio(ratio, _this6.tween, _this6.isSvg && _this6.svgComputedStyle);
       return;
     }
     var endVars = endData.vars[_key];
-    var startVars = _this5.start[i][_key];
+    var startVars = _this6.start[i][_key];
     var data = void 0;
-    if (_this5.attr === 'attr') {
+    if (_this6.attr === 'attr') {
       // 除了d和这points外的标签动画；
       if (!endVars.type) {
         data = endVars.unit.charAt(1) === '=' ? startVars + endVars.vars * ratio + endVars.unit : (endVars.vars - startVars) * ratio + startVars + endVars.unit;
-        _this5.target.setAttribute(_key, data);
+        _this6.target.setAttribute(_key, data);
       } else if (endVars.type === 'color') {
         if (endVars.vars.length === 3 && startVars.length === 4) {
           endVars.vars[3] = 1;
@@ -3546,21 +3570,21 @@ p.setRatio = function (ratio, endData, i) {
           var startData = startVars[_i] || 0;
           return (_endData - startData) * ratio + startData;
         });
-        _this5.target.setAttribute(_key, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["getColor"])(data));
+        _this6.target.setAttribute(_key, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["getColor"])(data));
       }
     }
   });
   this.setAnimData(this.tween);
 };
 p.render = function () {
-  var _this6 = this;
+  var _this7 = this;
 
   var reverse = this.reverse;
   this.defaultData.forEach(function (item, i) {
     var initTime = item.initTime;
     var duration = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["toFixed"])(item.duration);
     // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
-    var repeatNum = Math.ceil((_this6.progressTime - initTime) / (duration + item.repeatDelay)) - 1;
+    var repeatNum = Math.ceil((_this7.progressTime - initTime) / (duration + item.repeatDelay)) - 1;
     repeatNum = repeatNum < 0 ? 0 : repeatNum;
     if (item.repeat) {
       if (item.repeat < repeatNum && item.repeat !== -1) {
@@ -3575,7 +3599,7 @@ p.render = function () {
     startData = item.type === 'from' ? 1 - startData : startData;
     endData = item.type === 'from' ? 1 - endData : endData;
     //  精度损失，只取小数点后10位。
-    var progressTime = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["toFixed"])(_this6.progressTime - initTime);
+    var progressTime = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["toFixed"])(_this7.progressTime - initTime);
 
     var ratio = void 0;
 
@@ -3583,18 +3607,18 @@ p.render = function () {
     // from 时需先执行参数位置;
     var fromDelay = item.type === 'from' ? item.delay : 0;
     if (progressTime + fromDelay >= 0) {
-      if (!_this6.start[i]) {
+      if (!_this7.start[i]) {
         // 设置 start
-        _this6.start[i] = _this6.getAnimStartData(item.vars);
-        if (progressTime < _this6.perFrame) {
+        _this7.start[i] = _this7.getAnimStartData(item.vars);
+        if (progressTime < _this7.perFrame) {
           ratio = !item.duration && !item.delay ? item.ease(1, startData, endData, 1) : item.ease(0, startData, endData, 1);
-          _this6.setRatio(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["toFixed"])(ratio), item, i);
+          _this7.setRatio(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["toFixed"])(ratio), item, i);
         } else if (progressTime > duration) {
           ratio = item.ease(1, startData, endData, 1);
-          _this6.setRatio(ratio, item, i);
+          _this7.setRatio(ratio, item, i);
         }
-        if (!_this6.register) {
-          _this6.register = true;
+        if (!_this7.register) {
+          _this7.register = true;
           if (progressTime === 0 && item.duration) {
             return;
           }
@@ -3604,28 +3628,28 @@ p.render = function () {
 
     var e = {
       index: i,
-      target: _this6.target
+      target: _this7.target
     };
 
-    if (progressTime > -_this6.perFrame && !(progressTime > duration && item.mode === 'onComplete') && _this6.start[i]) {
-      var updateAnim = _this6.updateAnim === 'update';
+    if (progressTime > -_this7.perFrame && !(progressTime > duration && item.mode === 'onComplete') && _this7.start[i]) {
+      var updateAnim = _this7.updateAnim === 'update';
       if (progressTime >= duration && !reverse || reverse && progressTime <= 0) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
-        _this6.setRatio(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["toFixed"])(ratio), item, i);
+        _this7.setRatio(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["toFixed"])(ratio), item, i);
         if (item.mode !== 'reset' && !updateAnim) {
           item.onComplete(e);
         }
         item.mode = 'onComplete';
       } else if (duration) {
         ratio = item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration);
-        _this6.setRatio(ratio, item, i);
+        _this7.setRatio(ratio, item, i);
         if (!updateAnim) {
           if (item.repeat && repeatNum > 0 && item.currentRepeat !== repeatNum) {
             item.mode = 'onRepeat';
             item.currentRepeat = repeatNum;
             item.onRepeat(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, e, { repeatNum: repeatNum }));
-          } else if ((!item.perTime || reverse && item.perTime >= _this6.reverseStartTime - initTime) && item.mode !== 'onStart') {
+          } else if ((!item.perTime || reverse && item.perTime >= _this7.reverseStartTime - initTime) && item.mode !== 'onStart') {
             // onReveresStart 和 onStart 统一用 onStart;
             item.mode = 'onStart';
             item.onStart(e);
@@ -3637,8 +3661,8 @@ p.render = function () {
       }
 
       if (!updateAnim) {
-        _this6.onChange(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({
-          moment: _this6.progressTime,
+        _this7.onChange(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({
+          moment: _this7.progressTime,
           mode: item.mode
         }, e));
       }
@@ -3657,7 +3681,7 @@ p.resetAnimData = function () {
 };
 
 p.resetDefaultStyle = function () {
-  var _this7 = this;
+  var _this8 = this;
 
   this.tween = {};
   this.defaultData = this.defaultData.map(function (item) {
@@ -3666,17 +3690,17 @@ p.resetDefaultStyle = function () {
   });
   Object.keys(this.startDefaultData).forEach(function (key) {
     if (!(key in defaultData({}, 0))) {
-      _this7.target.setAttribute(key, _this7.startDefaultData[key]);
+      _this8.target.setAttribute(key, _this8.startDefaultData[key]);
     }
   });
 };
 
 p.reStart = function (style) {
-  var _this8 = this;
+  var _this9 = this;
 
   this.start = {};
   Object.keys(style).forEach(function (key) {
-    _this8.target.style[key] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["stylesToCss"])(key, style[key]);
+    _this9.target.style[key] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["stylesToCss"])(key, style[key]);
   });
   this.setAttrIsStyle();
   this.resetDefaultStyle();
@@ -4153,7 +4177,7 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
   return _vars;
 };
 
-p.setRatio = function (ratio, tween) {
+p.setRatio = function (ratio, tween, svgComputedStyle) {
   var _this3 = this;
 
   tween.style = tween.style || {};
@@ -4203,6 +4227,9 @@ p.setRatio = function (ratio, tween) {
         tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
       }
       style[_this3.transform] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__util_js__["j" /* getTransformValue */])(tween.style.transform, _this3.supports3D);
+      if (svgComputedStyle) {
+        svgComputedStyle[_this3.transform] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_style_utils__["createMatrix"])(style[_this3.transform]).toString();
+      }
       return;
     } else if (Array.isArray(endVars)) {
       var _type = _this3.propsData.dataType[key];
