@@ -158,16 +158,19 @@ p.getComputedStyle = function () {
   if (this.isSvg && style.transform === 'none') {
     const attrStyle = this.target.getAttribute('style');
     let transform = 'none';
-    if (attrStyle && attrStyle.indexOf('transform') >= 0) {
+    if (attrStyle && attrStyle.indexOf('transform:') >= 0) {
       transform = attrStyle.split(';')
-        .filter(k => k.indexOf('transform') >= 0)
+        .filter(k => k.indexOf('transform:') >= 0)
         .map(item => createMatrix(item.split(':')[1].trim()).toString())[0];
       Object.keys(style).forEach(key => this.svgComputedStyle[key] = style[key]);
       this.svgComputedStyle.transform = transform;
       return this.svgComputedStyle;
+    } else if (this.target.getAttribute('transform')) {
+      // 暂时不支持标签上的 transform，后期增加;
+      console.warn('Do not add transform on the label, otherwise it will be invalid.');
     }
-    // 暂时不支持标签上的 transform，后期增加;
-    console.warn('Do not add transform on the label, otherwise it will be invalid.');
+    this.svgComputedStyle = { ...style };
+    return this.svgComputedStyle;
   }
   return style;
 };
