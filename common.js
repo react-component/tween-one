@@ -3491,9 +3491,9 @@ p.getComputedStyle = function () {
   if (this.isSvg && style.transform === 'none') {
     var attrStyle = this.target.getAttribute('style');
     var transform = 'none';
-    if (attrStyle && attrStyle.indexOf('transform') >= 0) {
+    if (attrStyle && attrStyle.indexOf('transform:') >= 0) {
       transform = attrStyle.split(';').filter(function (k) {
-        return k.indexOf('transform') >= 0;
+        return k.indexOf('transform:') >= 0;
       }).map(function (item) {
         return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["createMatrix"])(item.split(':')[1].trim()).toString();
       })[0];
@@ -3502,9 +3502,12 @@ p.getComputedStyle = function () {
       });
       this.svgComputedStyle.transform = transform;
       return this.svgComputedStyle;
+    } else if (this.target.getAttribute('transform')) {
+      // 暂时不支持标签上的 transform，后期增加;
+      console.warn('Do not add transform on the label, otherwise it will be invalid.');
     }
-    // 暂时不支持标签上的 transform，后期增加;
-    console.warn('Do not add transform on the label, otherwise it will be invalid.');
+    this.svgComputedStyle = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, style);
+    return this.svgComputedStyle;
   }
   return style;
 };
