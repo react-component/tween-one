@@ -3,6 +3,9 @@ import { parsePath } from './util';
 
 easingTypes.path = (_path, _param) => {
   const param = _param || {};
+  if (typeof window === 'undefined') {
+    return 'linear';
+  }
   const pathNode = parsePath(_path);
   const pathLength = pathNode.getTotalLength();
   const rect = param.rect || 100;// path 的大小，100 * 100，
@@ -17,8 +20,8 @@ easingTypes.path = (_path, _param) => {
     const timePointX = rect * p; // X 轴的百分比;
     // 取出 x 轴百分比上的点;
     const point = points.filter((item) =>
-        item.x >= timePointX
-      )[0] || pathNode.getPointAtLength(p * pathLength);
+      item.x >= timePointX
+    )[0] || pathNode.getPointAtLength(p * pathLength);
     return 1 - (point.y / rect);
   };
 };

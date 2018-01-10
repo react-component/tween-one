@@ -154,7 +154,8 @@ p.setDefaultData = function (_vars) {
   this.defaultData = data;
 };
 p.getComputedStyle = function () {
-  const style = document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
+  const style = typeof window !== 'undefined' && document.defaultView ?
+    document.defaultView.getComputedStyle(this.target) : {};
   if (this.isSvg && style.transform === 'none') {
     const attrStyle = this.target.getAttribute('style');
     let transform = 'none';
