@@ -2640,6 +2640,9 @@ TweenOne.isTweenOne = true;
 
 __WEBPACK_IMPORTED_MODULE_0_tween_functions___default.a.path = function (_path, _param) {
   var param = _param || {};
+  if (typeof window === 'undefined') {
+    return 'linear';
+  }
   var pathNode = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* parsePath */])(_path);
   var pathLength = pathNode.getTotalLength();
   var rect = param.rect || 100; // path 的大小，100 * 100，
@@ -3487,7 +3490,7 @@ p.setDefaultData = function (_vars) {
 p.getComputedStyle = function () {
   var _this3 = this;
 
-  var style = document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
+  var style = typeof window !== 'undefined' && document.defaultView ? document.defaultView.getComputedStyle(this.target) : {};
   if (this.isSvg && style.transform === 'none') {
     var attrStyle = this.target.getAttribute('style');
     var transform = 'none';
