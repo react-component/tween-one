@@ -97,7 +97,7 @@ p.convertToMarksArray = function (unit, key, data, i) {
   return startConvertToEndUnit(this.target, key, data,
     startUnit, endUnit, null, key === 'transformOrigin' && !i);
 };
-p.getAnimStart = function (computedStyle) {
+p.getAnimStart = function (computedStyle, isSvg) {
   const style = {};
   this.supports3D = checkStyleName('perspective');
   Object.keys(this.propsData.data).forEach(key => {
@@ -113,13 +113,13 @@ p.getAnimStart = function (computedStyle) {
     if (key in _plugin) {
       if (key === 'bezier') {
         this.transform = checkStyleName('transform');
-        startData = computedStyle[this.transform];
+        startData = computedStyle[isSvg ? 'transformSVG' : this.transform];
         style.transform = style.transform || getTransform(startData);
       }
-      this.propsData.data[key].getAnimStart(computedStyle);
+      this.propsData.data[key].getAnimStart(computedStyle, isSvg);
     } else if (cssName === 'transform') {
       this.transform = checkStyleName('transform');
-      startData = computedStyle[this.transform];
+      startData = computedStyle[isSvg ? 'transformSVG' : this.transform];
       endUnit = this.propsData.dataUnit[key];
       transform = style.transform || getTransform(startData);
       if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
@@ -208,7 +208,7 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
   return _vars;
 };
 
-p.setRatio = function (ratio, tween, svgComputedStyle) {
+p.setRatio = function (ratio, tween, computedStyle) {
   tween.style = tween.style || {};
   if (this.start.transform) {
     tween.style.transform = tween.style.transform || { ...this.start.transform };
@@ -221,7 +221,7 @@ p.setRatio = function (ratio, tween, svgComputedStyle) {
     let unit = this.propsData.dataUnit[key];
     const count = this.propsData.dataCount[key];
     if (key in _plugin) {
-      this.propsData.data[key].setRatio(ratio, tween);
+      this.propsData.data[key].setRatio(ratio, tween, computedStyle);
       if (key === 'bezier') {
         style[this.transform] = getTransformValue(tween.style.transform, this.supports3D);
       } else {
@@ -254,8 +254,8 @@ p.setRatio = function (ratio, tween, svgComputedStyle) {
         tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
       }
       style[this.transform] = getTransformValue(tween.style.transform, this.supports3D);
-      if (svgComputedStyle) {
-        svgComputedStyle[this.transform] = createMatrix(style[this.transform]).toString();
+      if (computedStyle) {
+        computedStyle.transformSVG = createMatrix(style[this.transform]).toString();
       }
       return;
     } else if (Array.isArray(endVars)) {

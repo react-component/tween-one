@@ -65,14 +65,15 @@ SvgDrawPlugin.prototype = {
     return Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (3 * ry + rx)));
   },
   getAnimStart(computedStyle) {
+    const getAttribute = (str) => (this.target.getAttribute(str));
     switch (this.tagName) {
       case 'circle':
-        this.length = Math.PI * 2 * this.target.getAttribute('r');
+        this.length = Math.PI * 2 * getAttribute('r');
         break;
       case 'line':
-        this.length = this.getLineLength(this.target.getAttribute('x1'),
-          this.target.getAttribute('y1'), this.target.getAttribute('x2'),
-          this.target.getAttribute('y2'));
+        this.length = this.getLineLength(getAttribute('x1'),
+          getAttribute('y1'), getAttribute('x2'),
+          getAttribute('y2'));
         break;
       case 'polyline':
       case 'polygon':
@@ -82,6 +83,8 @@ SvgDrawPlugin.prototype = {
         this.length = this.getEllipseLength();
         break;
       case 'rect':
+        this.length = getAttribute('width') * 2 + getAttribute('height') * 2;
+        break;
       case 'path':
         this.length = this.target.getTotalLength();
         break;
@@ -89,8 +92,8 @@ SvgDrawPlugin.prototype = {
         throw new Error('The label is not a label in the SVG.');
     }
     this.length = parseFloat(this.length.toFixed(3));
-    this.start.strokeDasharray = computedStyle.strokeDasharray === 'none'
-      ? '100% 100%' : computedStyle.strokeDasharray;
+    this.start.strokeDasharray = computedStyle.strokeDasharray === 'none' ||
+      !computedStyle.strokeDasharray ? '100% 100%' : computedStyle.strokeDasharray;
     this.start.strokeDashoffset = parseFloat(computedStyle.strokeDashoffset);
     this.start.strokeDasharray = this.setVars(this.start.strokeDasharray);
     this.vars = this.setVars(this.vars);

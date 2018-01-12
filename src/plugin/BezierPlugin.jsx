@@ -171,7 +171,7 @@ const GsapBezier = {
     let l;
     let seamless;
     let last;
-    correlate = (typeof(correlate) === 'string') ? ',' + correlate + ',' : _correlate;
+    correlate = (typeof (correlate) === 'string') ? ',' + correlate + ',' : _correlate;
     if (curviness === null) {
       curviness = 1;
     }
@@ -271,7 +271,7 @@ const GsapBezier = {
       for (let j = 0; j < values.length; j++) {
         tmp = values[j][p];
         const _a = typeof tmp === 'string' && tmp.charAt(1) === '=' ?
-        prepend[p] + Number(tmp.charAt(0) + tmp.substr(2)) : Number(tmp);
+          prepend[p] + Number(tmp.charAt(0) + tmp.substr(2)) : Number(tmp);
         a = (prepend === null) ? values[j][p] : _a;
         if (soft && j > 1 && j < values.length - 1) {
           cur[cnt++] = (a + cur[cnt - 2]) / 2;
@@ -334,7 +334,7 @@ const GsapBezier = {
     Object.keys(obj).forEach((key) => {
       this.addCubicLengths(obj[key], a, resolution);
     });
-    a.forEach((c, i)=> {
+    a.forEach((c, i) => {
       d += Math.sqrt(c);
       let index = i % resolution;
       curLS[index] = d;
@@ -351,7 +351,7 @@ const GsapBezier = {
   },
 };
 
-const Bezier = function(target, vars) {
+const Bezier = function (target, vars) {
   this.vars = this.getDefaultData(vars);
   this.target = target;
   this.transform = checkStyleName('transform');
@@ -372,11 +372,11 @@ Bezier.prototype = {
     const autoRotate = vars.autoRotate;
     this._timeRes = !vars.timeResolution ? 6 : parseInt(vars.timeResolution, 10);
     const a = (autoRotate === true) ? 0 : Number(autoRotate);
-    const b = (autoRotate instanceof Array) ? autoRotate : [['x', 'y', 'rotation', ( a || 0)]];
+    const b = (autoRotate instanceof Array) ? autoRotate : [['x', 'y', 'rotation', (a || 0)]];
     this._autoRotate = autoRotate ? b : null;
     this._beziers = (vars.type !== 'cubic' && vars.type !== 'quadratic' && vars.type !== 'soft') ?
       GsapBezier.bezierThrough(vars.vars, isNaN(vars.curviness) ?
-      1 : vars.curviness, false, (vars.type === 'thruBasic'), vars.correlate, vars.startPoint) :
+        1 : vars.curviness, false, (vars.type === 'thruBasic'), vars.correlate, vars.startPoint) :
       GsapBezier.parseBezierData(vars);
     this._segCount = this._beziers.x.length;
     if (this._timeRes) {
@@ -496,21 +496,24 @@ Bezier.prototype = {
     }
     return rotate ? 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px) rotate(' + rotate + 'deg)' : 'translate(' + XYobj.x + 'px,' + XYobj.y + 'px)';
   },
-  getAnimStart(computedStyle) {
-    let transform = computedStyle[this.transform];
+  getAnimStart(computedStyle, isSvg) {
+    let transform = computedStyle[isSvg ? 'transformSVG' : this.transform];
     transform = transform === 'none' ? '' : transform;
     const matrix = createMatrix(transform);
     // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
     this.vars.startPoint = { x: matrix.e, y: matrix.f };
     this.init();
   },
-  setRatio(r, t) {
+  setRatio(r, t, computedStyle) {
     t.style.transform = this.set(r);
+    if (computedStyle) {
+      computedStyle.transformSVG = createMatrix(t.style.transform).toString();
+    }
   },
 };
 Bezier.bezierThrough = GsapBezier.bezierThrough;
 Bezier.cubicToQuadratic = GsapBezier.cubicToQuadratic;
-Bezier.quadraticToCubic = (a, b, c)=> {
+Bezier.quadraticToCubic = (a, b, c) => {
   return new GsapBezier.Segment(a, (2 * b + a) / 3, (2 * b + c) / 3, c);
 };
 

@@ -2,6 +2,7 @@ import { parsePath, getTransformValue } from '../util';
 import {
   checkStyleName,
   getTransform,
+  createMatrix,
 } from 'style-utils';
 
 function PathPlugin(target, vars) {
@@ -21,12 +22,13 @@ PathPlugin.prototype = {
     const p = this.pathLength * this.progress + o;
     return this.path.getPointAtLength(p);
   },
-  getAnimStart(computedStyle) {
-    const transform = getTransform(computedStyle[checkStyleName('transform')]);
+  getAnimStart(computedStyle, isSvg) {
+    const transform = getTransform(computedStyle[isSvg ?
+      'transformSVG' : checkStyleName('transform')]);
     this.start = transform;
     this.data = { ...transform };
   },
-  setRatio(r, t) {
+  setRatio(r, t, computedStyle) {
     this.progress = r;
     const p = this.getPoint();
     const p0 = this.getPoint(-1);
@@ -42,6 +44,9 @@ PathPlugin.prototype = {
         Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI : this.data.rotate;
     }
     t.style.transform = getTransformValue(this.data);
+    if (computedStyle) {
+      computedStyle.transformSVG = createMatrix(t.style.transform).toString();
+    }
   },
 };
 

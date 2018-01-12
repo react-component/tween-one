@@ -5,7 +5,14 @@
 import easingTypes from './easing';
 import _plugin from './plugins';
 import StylePlugin from './plugin/StylePlugin';
-import { getColor, parseColor, toFixed, stylesToCss, createMatrix } from 'style-utils';
+import {
+  getColor,
+  parseColor,
+  toFixed,
+  stylesToCss,
+  createMatrix,
+  checkStyleName,
+} from 'style-utils';
 import { startConvertToEndUnit } from './util.js';
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
@@ -55,8 +62,7 @@ const Tween = function (target, toData, props) {
   this.perFrame = Math.round(1000 / 60);
   // 注册，第一次进入执行注册
   this.register = false;
-  // svg元素的 style
-  this.svgComputedStyle = {};
+  // svg元素
   this.isSvg = this.target.ownerSVGElement;
   // 设置 style
   const data = this.setAttrIsStyle();
@@ -156,22 +162,21 @@ p.setDefaultData = function (_vars) {
 p.getComputedStyle = function () {
   const style = typeof window !== 'undefined' && document.defaultView ?
     document.defaultView.getComputedStyle(this.target) : {};
-  if (this.isSvg && style.transform === 'none') {
-    const attrStyle = this.target.getAttribute('style');
-    let transform = 'none';
-    if (attrStyle && attrStyle.indexOf('transform:') >= 0) {
-      transform = attrStyle.split(';')
-        .filter(k => k.indexOf('transform:') >= 0)
-        .map(item => createMatrix(item.split(':')[1].trim()).toString())[0];
-      Object.keys(style).forEach(key => this.svgComputedStyle[key] = style[key]);
-      this.svgComputedStyle.transform = transform;
-      return this.svgComputedStyle;
-    } else if (this.target.getAttribute('transform')) {
-      // 暂时不支持标签上的 transform，后期增加;
-      console.warn('Do not add transform on the label, otherwise it will be invalid.');
+  // 如果是 SVG, 样式全部提出为 transformSVG, 兼容 safari 不能获取 transform;
+  if (this.isSvg) {
+    let transform = style[checkStyleName('transform')] || 'none';
+    if (transform === 'none') {
+      const attrStyle = this.target.getAttribute('style');
+      if (attrStyle && attrStyle.indexOf('transform:') >= 0) {
+        transform = attrStyle.split(';')
+          .filter(k => k.indexOf('transform:') >= 0)
+          .map(item => createMatrix(item.split(':')[1].trim()).toString())[0];
+      } else if (this.target.getAttribute('transform')) {
+        // 暂时不支持标签上的 transform，后期增加;
+        console.warn('Do not add transform on the label, otherwise it will be invalid.');
+      }
     }
-    this.svgComputedStyle = { ...style };
-    return this.svgComputedStyle;
+    style.transformSVG = transform;
   }
   return style;
 };
@@ -180,7 +185,7 @@ p.getAnimStartData = function (item) {
   this.computedStyle = this.computedStyle || this.getComputedStyle();
   Object.keys(item).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
-      start[_key] = item[_key].getAnimStart(this.computedStyle);
+      start[_key] = item[_key].getAnimStart(this.computedStyle, this.isSvg);
       return;
     }
     if (this.attr === 'attr') {
@@ -214,7 +219,7 @@ p.setAnimData = function (data) {
 p.setRatio = function (ratio, endData, i) {
   Object.keys(endData.vars).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
-      endData.vars[_key].setRatio(ratio, this.tween, this.isSvg && this.svgComputedStyle);
+      endData.vars[_key].setRatio(ratio, this.tween, this.isSvg && this.computedStyle);
       return;
     }
     const endVars = endData.vars[_key];
