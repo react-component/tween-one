@@ -92,23 +92,6 @@ describe('rc-tween-one', () => {
     }, 500);
   });
 
-  it.only('single tween-one component is svg', (done) => {
-    const ease = Tween.easing.path('M0,100L100,0');
-    instance = createTweenInstance({
-      animation: { x: 100, ease },
-      component: 'rect',
-    });
-    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'rect');
-    console.log('start:', child.style.transform);
-    expect(child.style.transform).to.be('translate(0px, 0px)');
-    ticker.timeout(() => {
-      // 默认时间为450,用500是肯定过值；
-      console.log('end:', child.style.transform);
-      expect(child.style.transform).to.be('translate(100px, 0px)');
-      done();
-    }, 500);
-  });
-
   it('timeline tween-one', (done) => {
     instance = createTweenInstance({
       animation: [{ top: 100 }, { left: 100 }, { top: 0 }, { left: 0 }],
@@ -449,6 +432,23 @@ describe('rc-tween-one', () => {
       const width = child.getAttribute('width');
       console.log(width);
       expect(getFloat(width)).to.be(100);
+      done();
+    }, 500);
+  });
+
+  it('single tween-one component is svg', (done) => {
+    const ease = Tween.easing.path('M0,100L100,0');
+    instance = createTweenInstance({
+      animation: { translateX: 100, ease },
+      component: 'rect',
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'rect');
+    console.log('start:', child.style[checkStyleName('transform')]);
+    expect(child.style[checkStyleName('transform')]).to.be('translate(0px, 0px)');
+    ticker.timeout(() => {
+      // 默认时间为450,用500是肯定过值；
+      console.log('end:', child.style[checkStyleName('transform')]);
+      expect(child.style[checkStyleName('transform')]).to.be('translate(100px, 0px)');
       done();
     }, 500);
   });
