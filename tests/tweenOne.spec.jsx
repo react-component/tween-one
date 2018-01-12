@@ -26,6 +26,18 @@ describe('rc-tween-one', () => {
       }
 
       render() {
+        if (this.props.component === 'rect') {
+          return (<svg>
+            <Tween
+              {...this.props} reverse={this.state.reverse}
+              animation={this.state.animation} style={this.state.style}
+              moment={this.state.moment}
+              width="100px"
+              height="100px"
+              fill="#000"
+            />
+          </svg>);
+        }
         return (<Tween {...this.props} reverse={this.state.reverse}
           animation={this.state.animation} style={this.state.style}
           moment={this.state.moment}
@@ -35,11 +47,12 @@ describe('rc-tween-one', () => {
       }
     }
     const objectOrArray = PropTypes.oneOfType([PropTypes.object,
-      PropTypes.array]);
+    PropTypes.array]);
 
     TweenDemo.propTypes = {
       animation: objectOrArray,
       style: PropTypes.object,
+      component: PropTypes.any,
     };
 
     return ReactDom.render(<TweenDemo {...props} />, div);
@@ -75,6 +88,23 @@ describe('rc-tween-one', () => {
       // 默认时间为450,用500是肯定过值；
       console.log('end:', child.style.top);
       expect(getFloat(child.style.top)).to.be(100);
+      done();
+    }, 500);
+  });
+
+  it.only('single tween-one component is svg', (done) => {
+    const ease = Tween.easing.path('M0,100L100,0');
+    instance = createTweenInstance({
+      animation: { x: 100, ease },
+      component: 'rect',
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'rect');
+    console.log('start:', child.style.transform);
+    expect(child.style.transform).to.be('translate(0px, 0px)');
+    ticker.timeout(() => {
+      // 默认时间为450,用500是肯定过值；
+      console.log('end:', child.style.transform);
+      expect(child.style.transform).to.be('translate(100px, 0px)');
       done();
     }, 500);
   });
