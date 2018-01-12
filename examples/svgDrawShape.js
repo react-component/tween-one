@@ -1,24 +1,24 @@
 webpackJsonp([4],{
 
-/***/ 102:
+/***/ 100:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rc_tween_one__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_plugin_SvgDrawPlugin__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_plugin_SvgDrawPlugin__ = __webpack_require__(35);
 
 
 
@@ -123,15 +123,15 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ }),
 
-/***/ 210:
+/***/ 198:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(102);
+module.exports = __webpack_require__(100);
 
 
 /***/ }),
 
-/***/ 36:
+/***/ 35:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -200,12 +200,17 @@ SvgDrawPlugin.prototype = {
     return Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (3 * ry + rx)));
   },
   getAnimStart: function getAnimStart(computedStyle) {
+    var _this2 = this;
+
+    var getAttribute = function getAttribute(str) {
+      return _this2.target.getAttribute(str);
+    };
     switch (this.tagName) {
       case 'circle':
-        this.length = Math.PI * 2 * this.target.getAttribute('r');
+        this.length = Math.PI * 2 * getAttribute('r');
         break;
       case 'line':
-        this.length = this.getLineLength(this.target.getAttribute('x1'), this.target.getAttribute('y1'), this.target.getAttribute('x2'), this.target.getAttribute('y2'));
+        this.length = this.getLineLength(getAttribute('x1'), getAttribute('y1'), getAttribute('x2'), getAttribute('y2'));
         break;
       case 'polyline':
       case 'polygon':
@@ -215,6 +220,8 @@ SvgDrawPlugin.prototype = {
         this.length = this.getEllipseLength();
         break;
       case 'rect':
+        this.length = getAttribute('width') * 2 + getAttribute('height') * 2;
+        break;
       case 'path':
         this.length = this.target.getTotalLength();
         break;
@@ -222,7 +229,7 @@ SvgDrawPlugin.prototype = {
         throw new Error('The label is not a label in the SVG.');
     }
     this.length = parseFloat(this.length.toFixed(3));
-    this.start.strokeDasharray = computedStyle.strokeDasharray === 'none' ? '100% 100%' : computedStyle.strokeDasharray;
+    this.start.strokeDasharray = computedStyle.strokeDasharray === 'none' || !computedStyle.strokeDasharray ? '100% 100%' : computedStyle.strokeDasharray;
     this.start.strokeDashoffset = parseFloat(computedStyle.strokeDashoffset);
     this.start.strokeDasharray = this.setVars(this.start.strokeDasharray);
     this.vars = this.setVars(this.vars);
@@ -236,5 +243,5 @@ SvgDrawPlugin.prototype = {
 
 /***/ })
 
-},[210]);
+},[198]);
 //# sourceMappingURL=svgDrawShape.js.map

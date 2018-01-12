@@ -1,13 +1,13 @@
 webpackJsonp([7],{
 
-/***/ 112:
+/***/ 110:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_style_utils__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_style_utils__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_style_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_style_utils__);
 
 
@@ -30,12 +30,12 @@ PathPlugin.prototype = {
     var p = this.pathLength * this.progress + o;
     return this.path.getPointAtLength(p);
   },
-  getAnimStart: function getAnimStart(computedStyle) {
-    var transform = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_style_utils__["getTransform"])(computedStyle[__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_style_utils__["checkStyleName"])('transform')]);
+  getAnimStart: function getAnimStart(computedStyle, isSvg) {
+    var transform = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_style_utils__["getTransform"])(computedStyle[isSvg ? 'transformSVG' : __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_style_utils__["checkStyleName"])('transform')]);
     this.start = transform;
     this.data = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, transform);
   },
-  setRatio: function setRatio(r, t) {
+  setRatio: function setRatio(r, t, computedStyle) {
     this.progress = r;
     var p = this.getPoint();
     var p0 = this.getPoint(-1);
@@ -50,6 +50,9 @@ PathPlugin.prototype = {
       this.data.rotate = this.vars.rotate ? Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI : this.data.rotate;
     }
     t.style.transform = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["j" /* getTransformValue */])(this.data);
+    if (computedStyle) {
+      computedStyle.transformSVG = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_style_utils__["createMatrix"])(t.style.transform).toString();
+    }
   }
 };
 
@@ -57,33 +60,33 @@ PathPlugin.prototype = {
 
 /***/ }),
 
-/***/ 202:
+/***/ 190:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(94);
+module.exports = __webpack_require__(92);
 
 
 /***/ }),
 
-/***/ 94:
+/***/ 92:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rc_tween_one__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_plugin_PathPlugin__ = __webpack_require__(112);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_plugin_PathPlugin__ = __webpack_require__(110);
 
 
 
@@ -138,5 +141,5 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ })
 
-},[202]);
+},[190]);
 //# sourceMappingURL=path.js.map
