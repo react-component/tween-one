@@ -1,12 +1,20 @@
 {
   "name": "rc-tween-one",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
     "react-component",
+    "component",
     "react-tween-one",
-    "tween-one"
+    "tween-one",
+    "rc-tween-one",
+    "animation",
+    "animate",
+    "motion",
+    "rc-motion",
+    "ant-motion",
+    "tween"
   ],
   "homepage": "https://github.com/react-component/tween-one",
   "author": "",
