@@ -65,8 +65,14 @@ React.render(<TweenOne animation={{x:100}}>
 
 ```jsx
 var TweenOne = require('rc-tween-one');
+var React = require('react');
 var SvgDrawPlugin = require('rc-tween-one/lib/plugin/SvgDrawPlugin');
 TweenOne.plugins.push(SvgDrawPlugin);
+React.render(<TweenOne 
+  animation={{ SVGDraw:'50%'}}
+  d="M0,0L100,0"
+  style={{ fill: 'none', strokeWidth: 20, stroke: '#00000' }}
+/>, container);
 ```
 
 ### TweenOneGroup
