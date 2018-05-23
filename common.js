@@ -1007,7 +1007,7 @@ function parsePath(path) {
   throw new Error('Error while parsing the path');
 }
 
-function getTransformValue(t, supports3D) {
+function getTransformValue(t) {
   if (typeof t === 'string') {
     return t;
   }
@@ -1020,26 +1020,17 @@ function getTransformValue(t, supports3D) {
   var sz = t.scaleZ;
   var skx = t.skewX;
   var sky = t.skewY;
-  var xPercent = t.xPercent || 0;
-  var yPercent = t.yPercent || 0;
-  var translateX = xPercent ? 0 : t.translateX;
-  var translateY = yPercent ? 0 : t.translateY;
-  var translateZ = t.translateZ || 0;
-  var percent = xPercent || yPercent ? 'translate(' + (xPercent || translateX + 'px') + ',' + (yPercent || translateY + 'px') + ')' : '';
+  var translateX = typeof t.translateX === 'string' ? t.translateX : t.translateX + 'px';
+  var translateY = typeof t.translateY === 'string' ? t.translateY : t.translateY + 'px';
+  var translateZ = typeof t.translateZ === 'string' ? t.translateZ : t.translateZ + 'px';
   var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
   var an = angle ? 'rotate(' + angle + 'deg)' : '';
-  var ss = void 0;
-  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1 || !supports3D) {
-    ss = sx !== 1 || sy !== 1 ? 'scale(' + sx + ',' + sy + ')' : '';
-    var translate = percent || 'translate(' + translateX + 'px,' + translateY + 'px)';
-    return translate + ' ' + an + ' ' + ss + ' ' + sk;
-  }
-  ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
+  var ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
   var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
   var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
   var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-  var translate3d = percent ? percent + ' translate3d(0,0,' + translateZ + 'px)' : 'translate3d(' + translateX + 'px,' + translateY + 'px,' + translateZ + 'px)';
-  return per + ' ' + translate3d + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk;
+  var translate = t.translateZ ? 'translate3d(' + translateX + ',' + translateY + ',' + translateZ + ')' : 'translate(' + translateX + ',' + translateY + ')';
+  return (per + ' ' + translate + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
 }
 
 /***/ }),
@@ -3967,7 +3958,6 @@ p.getAnimStart = function (computedStyle, isSvg) {
   var _this2 = this;
 
   var style = {};
-  this.supports3D = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_style_utils__["checkStyleName"])('perspective');
   Object.keys(this.propsData.data).forEach(function (key) {
     var cssName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_style_utils__["isConvert"])(key);
     var startData = computedStyle[cssName];
@@ -3991,9 +3981,7 @@ p.getAnimStart = function (computedStyle, isSvg) {
       endUnit = _this2.propsData.dataUnit[key];
       transform = style.transform || __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(startData);
       if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
-        var percent = key === 'translateX' ? 'xPercent' : 'yPercent';
-        transform[percent] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__util_js__["i" /* startConvertToEndUnit */])(_this2.target, computedStyle, key, transform[key], null, endUnit);
-        transform[key] = 0;
+        transform[key] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__util_js__["i" /* startConvertToEndUnit */])(_this2.target, computedStyle, key, transform[key], null, endUnit);
       }
       style.transform = transform;
     } else if (cssName === 'filter') {
@@ -4091,7 +4079,7 @@ p.setRatio = function (ratio, tween, computedStyle) {
     if (key in __WEBPACK_IMPORTED_MODULE_3__plugins__["a" /* default */]) {
       _this3.propsData.data[key].setRatio(ratio, tween, computedStyle);
       if (key === 'bezier') {
-        style[_this3.transform] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__util_js__["j" /* getTransformValue */])(tween.style.transform, _this3.supports3D);
+        style[_this3.transform] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__util_js__["j" /* getTransformValue */])(tween.style.transform);
       } else {
         Object.keys(tween.style).forEach(function (css) {
           return style[css] = tween.style[css];
@@ -4100,12 +4088,11 @@ p.setRatio = function (ratio, tween, computedStyle) {
       return;
     } else if (_isTransform) {
       if (unit && unit.match(/%|vw|vh|em|rem/i)) {
-        var pName = key === 'translateX' ? 'xPercent' : 'yPercent';
-        startVars = _this3.start.transform[pName];
+        startVars = _this3.start.transform[key];
         if (count.charAt(1) === '=') {
-          tween.style.transform[pName] = startVars + endVars * ratio + unit;
+          tween.style.transform[key] = startVars + endVars * ratio + unit;
         } else {
-          tween.style.transform[pName] = (endVars - startVars) * ratio + startVars + unit;
+          tween.style.transform[key] = (endVars - startVars) * ratio + startVars + unit;
         }
       } else if (key === 'scale') {
         var xStart = _this3.start.transform.scaleX;
@@ -4118,15 +4105,13 @@ p.setRatio = function (ratio, tween, computedStyle) {
           tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
         }
       } else {
-        delete tween.style.transform.xPercent;
-        delete tween.style.transform.yPercent;
+        if (count.charAt(1) === '=') {
+          tween.style.transform[key] = startVars + endVars * ratio;
+        } else {
+          tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
+        }
       }
-      if (count.charAt(1) === '=') {
-        tween.style.transform[key] = startVars + endVars * ratio;
-      } else {
-        tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
-      }
-      style[_this3.transform] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__util_js__["j" /* getTransformValue */])(tween.style.transform, _this3.supports3D);
+      style[_this3.transform] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__util_js__["j" /* getTransformValue */])(tween.style.transform);
       if (computedStyle) {
         computedStyle.transformSVG = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_style_utils__["createMatrix"])(style[_this3.transform]).toString();
       }
