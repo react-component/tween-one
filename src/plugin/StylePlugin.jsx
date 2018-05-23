@@ -86,7 +86,7 @@ p.setDefaultData = function () {
     }
   });
 };
-p.convertToMarksArray = function (unit, key, data, i) {
+p.convertToMarksArray = function (computedStyle, unit, key, data, i) {
   const startUnit = data.toString().replace(/[^a-z|%]/g, '');
   const endUnit = unit[i];
   if (startUnit === endUnit) {
@@ -94,7 +94,7 @@ p.convertToMarksArray = function (unit, key, data, i) {
   } else if (!parseFloat(data) && parseFloat(data) !== 0) {
     return data;
   }
-  return startConvertToEndUnit(this.target, key, data,
+  return startConvertToEndUnit(this.target, computedStyle, key, data,
     startUnit, endUnit, null, key === 'transformOrigin' && !i);
 };
 p.getAnimStart = function (computedStyle, isSvg) {
@@ -124,7 +124,8 @@ p.getAnimStart = function (computedStyle, isSvg) {
       transform = style.transform || getTransform(startData);
       if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
         const percent = key === 'translateX' ? 'xPercent' : 'yPercent';
-        transform[percent] = startConvertToEndUnit(this.target, key, transform[key], null, endUnit);
+        transform[percent] = startConvertToEndUnit(this.target, computedStyle,
+           key, transform[key], null, endUnit);
         transform[key] = 0;
       }
       style.transform = transform;
@@ -136,7 +137,7 @@ p.getAnimStart = function (computedStyle, isSvg) {
       startUnit = startData.toString().replace(/[^a-z|%]/g, '');
       endUnit = this.propsData.dataUnit[key];
       if (endUnit !== startUnit) {
-        startData = startConvertToEndUnit(this.target, cssName,
+        startData = startConvertToEndUnit(this.target, computedStyle, cssName,
           parseFloat(startData), startUnit, endUnit, fixed);
       }
       style[key] = parseFloat(startData);
@@ -146,19 +147,19 @@ p.getAnimStart = function (computedStyle, isSvg) {
     } else if (key.match(/shadow/i)) {
       startData = parseShadow(startData);
       endUnit = this.propsData.dataUnit[key];
-      startData = startData.map(this.convertToMarksArray.bind(this, endUnit, key));
+      startData = startData.map(this.convertToMarksArray.bind(this, computedStyle, endUnit, key));
       style[cssName] = startData;
     } else if (Array.isArray(this.propsData.data[key])) {
       startData = startData.split(/[\s|,]/);
       endUnit = this.propsData.dataUnit[key];
-      startData = startData.map(this.convertToMarksArray.bind(this, endUnit, key));
+      startData = startData.map(this.convertToMarksArray.bind(this, computedStyle, endUnit, key));
       style[cssName] = startData;
     } else {
       // 计算单位
       endUnit = this.propsData.dataUnit[cssName];
       startUnit = startData.toString().replace(/[^a-z|%]/g, '');
       if (endUnit !== startUnit) {
-        startData = startConvertToEndUnit(this.target, cssName,
+        startData = startConvertToEndUnit(this.target, computedStyle, cssName,
           parseFloat(startData), startUnit, endUnit, fixed);
       }
       style[cssName] = parseFloat(startData || 0);
@@ -247,6 +248,9 @@ p.setRatio = function (ratio, tween, computedStyle) {
           tween.style.transform.scaleX = (endVars - xStart) * ratio + xStart;
           tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
         }
+      } else {
+        delete tween.style.transform.xPercent;
+        delete tween.style.transform.yPercent;
       }
       if (count.charAt(1) === '=') {
         tween.style.transform[key] = startVars + endVars * ratio;

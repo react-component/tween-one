@@ -1,20 +1,24 @@
 {
   "name": "rc-tween-one",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
     "react-component",
     "component",
     "react-tween-one",
+    "tween",
+    "react-tween",
     "tween-one",
-    "rc-tween-one",
     "animation",
     "animate",
+    "rc-animation",
+    "react-animation",
+    "rc-animate",
+    "react-animate",
     "motion",
     "rc-motion",
-    "ant-motion",
-    "tween"
+    "ant-motion"
   ],
   "homepage": "https://github.com/react-component/tween-one",
   "author": "",
@@ -72,7 +76,7 @@
     "lint"
   ],
   "dependencies": {
-    "prop-types": "^15.5.0",
+    "prop-types": "^15.6.1",
     "babel-runtime": "6.x",
     "deep-eql": "~3.0.1",
     "raf": "~3.4.0",

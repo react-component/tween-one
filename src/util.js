@@ -148,31 +148,58 @@ export function getChildrenFromProps(props) {
   return props && props.children;
 }
 
-export function startConvertToEndUnit(target, style, num, unit, dataUnit, fixed, isOriginWidth) {
+export function startConvertToEndUnit(
+  target, computedStyle, style, num,
+  unit, dataUnit, fixed, isOriginWidth
+) {
   const horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
   let t = style.indexOf('border') !== -1 ? target : target.parentNode || document.body;
   t = fixed ? document.body : t;
   let pix;
-
-  if (unit === '%') {
-    pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
-  } else if (unit === 'vw') {
-    pix = parseFloat(num) * document.body.clientWidth / 100;
-  } else if (unit === 'vh') {
-    pix = parseFloat(num) * document.body.clientHeight / 100;
-  } else if (unit && unit.match(/em/i)) {
-    pix = parseFloat(num) * 16;
-  } else {
-    pix = parseFloat(num);
+  let htmlComputedStyle;
+  switch (unit) {
+    case '%':
+      pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
+      break;
+    case 'vw':
+      pix = parseFloat(num) * document.body.clientWidth / 100;
+      break;
+    case 'vh':
+      pix = parseFloat(num) * document.body.clientHeight / 100;
+      break;
+    case 'em':
+      pix = parseFloat(num) * parseFloat(computedStyle.fontSize);
+      break;
+    case 'rem': {
+      htmlComputedStyle = getComputedStyle(document.getElementsByTagName('html')[0]);
+      pix = parseFloat(num) * parseFloat(htmlComputedStyle.fontSize);
+      break;
+    }
+    default:
+      pix = parseFloat(num);
+      break;
   }
-  if (dataUnit === '%') {
-    pix = pix ? pix * 100 / (horiz ? t.clientWidth : t.clientHeight) : 0;
-  } else if (dataUnit === 'vw') {
-    pix = parseFloat(num) / document.body.clientWidth * 100;
-  } else if (dataUnit === 'vh') {
-    pix = parseFloat(num) / document.body.clientHeight * 100;
-  } else if (dataUnit && dataUnit.match(/em/i)) {
-    pix = parseFloat(num) / 16;
+  switch (dataUnit) {
+    case '%':
+      pix = pix ? pix * 100 / (horiz ? t.clientWidth : t.clientHeight) : 0;
+      break;
+    case 'vw':
+      pix = parseFloat(num) / document.body.clientWidth * 100;
+      break;
+    case 'vh':
+      pix = parseFloat(num) / document.body.clientHeight * 100;
+      break;
+    case 'em':
+      pix = parseFloat(num) / parseFloat(computedStyle.fontSize);
+      break;
+    case 'rem': {
+      htmlComputedStyle = htmlComputedStyle ||
+        getComputedStyle(document.getElementsByTagName('html')[0]);
+      pix = parseFloat(num) / parseFloat(htmlComputedStyle.fontSize);
+      break;
+    }
+    default:
+      break;
   }
   return pix;
 }
@@ -210,14 +237,14 @@ export function getTransformValue(t, supports3D) {
   const translateY = yPercent ? 0 : t.translateY;
   const translateZ = t.translateZ || 0;
   const percent = xPercent || yPercent ? `translate(${xPercent || `${
-      translateX}px`},${yPercent || `${translateY}px`})` : '';
+    translateX}px`},${yPercent || `${translateY}px`})` : '';
   const sk = skx || sky ? `skew(${skx}deg,${sky}deg)` : '';
   const an = angle ? `rotate(${angle}deg)` : '';
   let ss;
   if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1 || !supports3D) {
     ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
     const translate = percent || `translate(${translateX}px,${
-        translateY}px)`;
+      translateY}px)`;
     return `${translate} ${an} ${ss} ${sk}`;
   }
   ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';

@@ -13,9 +13,10 @@ class Demo extends React.Component {
   }
 
   render() {
-    return (<Tween animation={{ translateX: '500px', transformOrigin: '30% 60%' }}
+    return (<Tween
+      animation={{ x: 300 }}
       onChange={this.bbb.bind(this)}
-      style={{ opacity: 1, height: 100, transform: 'translate(50px,30px)' }}
+      style={{ opacity: 1, height: 100, display: 'inline-block' }}
     >
       <div>执行动效</div>
     </Tween>);
