@@ -1,9 +1,9 @@
 webpackJsonp([6],{
 
-/***/ 195:
+/***/ 193:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(97);
+module.exports = __webpack_require__(95);
 
 
 /***/ }),
@@ -15,7 +15,7 @@ module.exports = __webpack_require__(97);
 
 /***/ }),
 
-/***/ 97:
+/***/ 95:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -63,9 +63,10 @@ var Demo = function (_React$Component) {
     value: function render() {
       return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
         __WEBPACK_IMPORTED_MODULE_4_rc_tween_one__["a" /* default */],
-        { animation: { translateX: '500px', transformOrigin: '30% 60%' },
+        {
+          animation: { x: 300 },
           onChange: this.bbb.bind(this),
-          style: { opacity: 1, height: 100, transform: 'translate(50px,30px)' }
+          style: { opacity: 1, height: 100, display: 'inline-block' }
         },
         __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
           'div',
@@ -83,5 +84,5 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ })
 
-},[195]);
+},[193]);
 //# sourceMappingURL=simple.js.map

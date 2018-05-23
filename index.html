@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-tween-one@1.7.3 - tween-one anim component for react</title>
+  <title>rc-tween-one@1.7.5 - tween-one anim component for react</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-tween-one@1.7.3</h1>
+  <h1>rc-tween-one@1.7.5</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -845,8 +845,17 @@ npm start</code></pre></div><h2>Example<a id="user-content-example" name="exampl
 React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{x:100}}</span>&gt;</span>
   demo
 <span class="hljs-tag">&lt;/<span class="hljs-title">TweenOne</span>&gt;</span>, container);</span></code></pre></div><h3>Plugin<a id="user-content-plugin" name="plugin" class="anchor" aria-hidden="true" href="#plugin"><span class="octicon octicon-link"></span></a></h3><div class="highlight"><pre><code language="js"><span class="hljs-keyword">var</span> TweenOne = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-tween-one'</span>);
+<span class="hljs-keyword">var</span> React = <span class="hljs-built_in">require</span>(<span class="hljs-string">'react'</span>);
 <span class="hljs-keyword">var</span> SvgDrawPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'rc-tween-one/lib/plugin/SvgDrawPlugin'</span>);
-TweenOne.plugins.push(SvgDrawPlugin);</code></pre></div><h3>TweenOneGroup<a id="user-content-tweenonegroup" name="tweenonegroup" class="anchor" aria-hidden="true" href="#tweenonegroup"><span class="octicon octicon-link"></span></a></h3><div class="highlight"><pre><code language="xml">var TweenOne = require('rc-tween-one');
+TweenOne.plugins.push(SvgDrawPlugin);
+React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">svg</span> <span class="hljs-attribute">width</span>=<span class="hljs-value">"600"</span> <span class="hljs-attribute">height</span>=<span class="hljs-value">"600"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">TweenOne</span> 
+    <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">SVGDraw:</span>'<span class="hljs-attribute">50</span>%'}}
+    <span class="hljs-attribute">d</span>=<span class="hljs-value">"M0,0L100,0"</span>
+    <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">fill:</span> '<span class="hljs-attribute">none</span>', <span class="hljs-attribute">strokeWidth:</span> <span class="hljs-attribute">20</span>, <span class="hljs-attribute">stroke:</span> '#<span class="hljs-attribute">00000</span>' }}
+    <span class="hljs-attribute">component</span>=<span class="hljs-value">"path"</span>
+  /&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">svg</span>&gt;</span>, container);</span></code></pre></div><h3>TweenOneGroup<a id="user-content-tweenonegroup" name="tweenonegroup" class="anchor" aria-hidden="true" href="#tweenonegroup"><span class="octicon octicon-link"></span></a></h3><div class="highlight"><pre><code language="xml">var TweenOne = require('rc-tween-one');
 var React = require('react');
 var TweenOneGroup = TweenOne.TweenOneGroup;
 React.render(<span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</span>&gt;</span>
@@ -1053,7 +1062,8 @@ React.render(<span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</
 </tbody>
 </table>
 <div class="highlight"><pre><code language="js"><span class="hljs-keyword">const</span> path = <span class="hljs-string">'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0'</span>;
-<span class="hljs-keyword">const</span> ease = Tween.easing.path(path, param = { rect: <span class="hljs-number">100</span>, lengthPixel: <span class="hljs-number">200</span> });</code></pre></div><h3>BezierPlugin<a id="user-content-bezierplugin" name="bezierplugin" class="anchor" aria-hidden="true" href="#bezierplugin"><span class="octicon octicon-link"></span></a></h3><p>bezier = { }</p>
+<span class="hljs-keyword">const</span> ease = Tween.easing.path(path, param = { rect: <span class="hljs-number">100</span>, lengthPixel: <span class="hljs-number">200</span> });
+</code></pre></div><h3>BezierPlugin<a id="user-content-bezierplugin" name="bezierplugin" class="anchor" aria-hidden="true" href="#bezierplugin"><span class="octicon octicon-link"></span></a></h3><p>bezier = { }</p>
 <table>
 <thead>
 <tr>

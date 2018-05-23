@@ -1,6 +1,6 @@
 webpackJsonp([0],{
 
-/***/ 167:
+/***/ 165:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39,7 +39,7 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ 168:
+/***/ 166:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -85,19 +85,17 @@ var _propTypes = __webpack_require__(26);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _Mapped = __webpack_require__(167);
+var _Mapped = __webpack_require__(165);
 
 var _Mapped2 = _interopRequireDefault(_Mapped);
 
-var _EventDispatcher = __webpack_require__(76);
+var _EventDispatcher = __webpack_require__(74);
 
 var _EventDispatcher2 = _interopRequireDefault(_EventDispatcher);
 
 var _util = __webpack_require__(55);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var noop = function noop() {};
 
 var ScrollElement = function (_React$Component) {
   (0, _inherits3['default'])(ScrollElement, _React$Component);
@@ -138,13 +136,26 @@ var ScrollElement = function (_React$Component) {
       } else {
         _this.leavePlayHeight = leaveHeight * parseFloat(playScaleLeaveArray[1]) / 100;
       }
-      var enter = _this.elementShowHeight >= _this.playHeight && _this.elementShowHeight <= _this.clientHeight + _this.leavePlayHeight;
+      var enter = _this.props.replay ? _this.elementShowHeight >= _this.playHeight && _this.elementShowHeight <= _this.clientHeight + _this.leavePlayHeight : _this.elementShowHeight >= _this.playHeight;
       var enterOrLeave = enter ? 'enter' : 'leave';
       var mode = _this.enter !== enter || typeof _this.enter !== 'boolean' ? enterOrLeave : null;
       if (mode) {
-        _this.props.onChange({ mode: mode, id: _this.props.id }, e);
+        _this.props.onChange({ mode: mode, id: _this.props.id });
       }
+      _this.props.onScroll({
+        domEvent: e,
+        scrollTop: scrollTop,
+        showHeight: _this.elementShowHeight,
+        offsetTop: offsetTop,
+        id: _this.props.id
+      });
       _this.enter = enter;
+    }, _this.addScrollEvent = function () {
+      _EventDispatcher2['default'].addEventListener(_this.eventType, _this.scrollEventListener, _this.target);
+      var scrollTop = (0, _util.currentScrollTop)();
+      if (!scrollTop) {
+        _this.scrollEventListener();
+      }
     }, _this.scrollEventListener = function (e) {
       _this.getParam(e);
     }, _temp), (0, _possibleConstructorReturn3['default'])(_this, _ret);
@@ -165,19 +176,12 @@ var ScrollElement = function (_React$Component) {
 
       var length = _EventDispatcher2['default']._listeners.scroll ? _EventDispatcher2['default']._listeners.scroll.length : 0;
       this.eventType = 'scroll.scrollEvent' + date + length;
-      _EventDispatcher2['default'].addEventListener(this.eventType, this.scrollEventListener, this.target);
-
-      var scrollTop = (0, _util.currentScrollTop)();
-      if (!scrollTop) {
-        this.scrollEventListener();
-      }
+      this.addScrollEvent();
     }
   }, {
     key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      this.setState({
-        children: (0, _util.toArrayChildren)(nextProps.children)
-      });
+    value: function componentWillReceiveProps() {
+      this.scrollEventListener();
     }
   }, {
     key: 'componentWillUnmount',
@@ -189,37 +193,45 @@ var ScrollElement = function (_React$Component) {
     key: 'render',
     value: function render() {
       var props = (0, _objectWithoutProperties3['default'])(this.props, []);
+      var componentProps = props.componentProps,
+          component = props.component;
 
-      ['component', 'playScale', 'location', 'targetId'].forEach(function (key) {
+      ['component', 'playScale', 'location', 'targetId', 'onScroll', 'onChange', 'replay', 'componentProps'].forEach(function (key) {
         return delete props[key];
       });
-      return _react2['default'].createElement(this.props.component, (0, _extends3['default'])({}, props));
+      return _react2['default'].createElement(component, (0, _extends3['default'])({}, props, componentProps));
     }
   }]);
   return ScrollElement;
 }(_react2['default'].Component);
 
 ScrollElement.propTypes = {
-  component: _propTypes2['default'].oneOfType([_propTypes2['default'].func, _propTypes2['default'].string]),
+  component: _propTypes2['default'].any,
   playScale: _propTypes2['default'].any,
   id: _propTypes2['default'].string,
   onChange: _propTypes2['default'].func,
+  onScroll: _propTypes2['default'].func,
   location: _propTypes2['default'].string,
-  targetId: _propTypes2['default'].string
+  targetId: _propTypes2['default'].string,
+  replay: _propTypes2['default'].bool,
+  componentProps: _propTypes2['default'].object
 };
-
 ScrollElement.defaultProps = {
   component: 'div',
-  onChange: noop,
-  playScale: 0.5
+  onChange: _util.noop,
+  onScroll: _util.noop,
+  playScale: 0.5,
+  replay: false,
+  componentProps: {}
 };
+
 ScrollElement.isScrollElement = true;
 exports['default'] = ScrollElement;
 module.exports = exports['default'];
 
 /***/ }),
 
-/***/ 169:
+/***/ 167:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -261,19 +273,17 @@ var _propTypes = __webpack_require__(26);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _EventDispatcher = __webpack_require__(76);
+var _EventDispatcher = __webpack_require__(74);
 
 var _EventDispatcher2 = _interopRequireDefault(_EventDispatcher);
 
-var _ScrollElement2 = __webpack_require__(168);
+var _ScrollElement2 = __webpack_require__(166);
 
 var _ScrollElement3 = _interopRequireDefault(_ScrollElement2);
 
 var _util = __webpack_require__(55);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function noop() {}
 
 var ScrollOverPack = function (_ScrollElement) {
   (0, _inherits3['default'])(ScrollOverPack, _ScrollElement);
@@ -320,20 +330,44 @@ var ScrollOverPack = function (_ScrollElement) {
   }
 
   (0, _createClass3['default'])(ScrollOverPack, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      var _this2 = this;
+
+      this.setState({
+        children: (0, _util.toArrayChildren)(nextProps.children)
+      }, function () {
+        var inListener = _EventDispatcher2['default']._listeners.scroll && _EventDispatcher2['default']._listeners.scroll.some(function (c) {
+          return c.n === _this2.eventType.split('.')[1];
+        });
+        if (nextProps.always && !inListener) {
+          _this2.addScrollEvent();
+        } else {
+          _this2.scrollEventListener();
+        }
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var placeholderProps = (0, _objectWithoutProperties3['default'])(this.props, []);
+      var props = (0, _objectWithoutProperties3['default'])(this.props, []);
+      var componentProps = props.componentProps,
+          appear = props.appear,
+          component = props.component;
 
-      ['playScale', 'replay', 'component', 'always', 'scrollEvent', 'appear', 'location', 'targetId'].forEach(function (key) {
-        return delete placeholderProps[key];
+      ['playScale', 'replay', 'component', 'always', 'scrollEvent', 'appear', 'location', 'targetId', 'onScroll', 'onChange', 'componentProps'].forEach(function (key) {
+        return delete props[key];
       });
       var childToRender = void 0;
       if (!this.oneEnter) {
-        var show = !this.props.appear;
-        var children = (0, _util.toArrayChildren)(this.props.children).map(function (item) {
+        var show = !appear;
+        var children = (0, _util.toArrayChildren)(props.children).map(function (item) {
+          if (!item) {
+            return null;
+          }
           return item.type.isTweenOne ? _react2['default'].cloneElement(item, (0, _extends3['default'])({}, item.props, { paused: !show })) : _react2['default'].cloneElement(item, item.props, show && item.props.children);
         });
-        childToRender = (0, _react.createElement)(this.props.component, (0, _extends3['default'])({}, placeholderProps), children);
+        childToRender = (0, _react.createElement)(component, (0, _extends3['default'])({}, props, componentProps), children);
         this.oneEnter = true;
       } else {
         if (!this.state.show) {
@@ -350,7 +384,7 @@ var ScrollOverPack = function (_ScrollElement) {
         } else {
           this.children = this.state.children;
         }
-        childToRender = (0, _react.createElement)(this.props.component, (0, _extends3['default'])({}, placeholderProps), this.children);
+        childToRender = (0, _react.createElement)(component, (0, _extends3['default'])({}, props, componentProps), this.children);
       }
       return childToRender;
     }
@@ -359,7 +393,7 @@ var ScrollOverPack = function (_ScrollElement) {
 }(_ScrollElement3['default']);
 
 ScrollOverPack.propTypes = {
-  component: _propTypes2['default'].oneOfType([_propTypes2['default'].func, _propTypes2['default'].string]),
+  component: _propTypes2['default'].any,
   playScale: _propTypes2['default'].any,
   always: _propTypes2['default'].bool,
   scrollEvent: _propTypes2['default'].func,
@@ -368,18 +402,22 @@ ScrollOverPack.propTypes = {
   style: _propTypes2['default'].any,
   replay: _propTypes2['default'].bool,
   onChange: _propTypes2['default'].func,
-  appear: _propTypes2['default'].bool
+  onScroll: _propTypes2['default'].func,
+  appear: _propTypes2['default'].bool,
+  componentProps: _propTypes2['default'].object
 };
-
 ScrollOverPack.defaultProps = {
   component: 'div',
   playScale: 0.5,
   always: true,
-  scrollEvent: noop,
+  scrollEvent: _util.noop,
   replay: false,
-  onChange: noop,
-  appear: true
+  onChange: _util.noop,
+  onScroll: _util.noop,
+  appear: true,
+  componentProps: {}
 };
+
 ScrollOverPack.isScrollOverPack = true;
 
 exports['default'] = ScrollOverPack;
@@ -387,10 +425,10 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ 192:
+/***/ 190:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(94);
+module.exports = __webpack_require__(92);
 
 
 /***/ }),
@@ -437,6 +475,7 @@ exports.transformArguments = transformArguments;
 exports.objectEqual = objectEqual;
 exports.currentScrollTop = currentScrollTop;
 exports.windowHeight = windowHeight;
+exports.noop = noop;
 
 var _react = __webpack_require__(0);
 
@@ -541,9 +580,11 @@ function windowHeight() {
   return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 }
 
+function noop() {}
+
 /***/ }),
 
-/***/ 76:
+/***/ 74:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -685,7 +726,7 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ 94:
+/***/ 92:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -703,7 +744,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_scroll_anim_lib_ScrollOverPack__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_scroll_anim_lib_ScrollOverPack__ = __webpack_require__(167);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_scroll_anim_lib_ScrollOverPack___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_rc_scroll_anim_lib_ScrollOverPack__);
 
 
@@ -772,5 +813,5 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ })
 
-},[192]);
+},[190]);
 //# sourceMappingURL=scrollAnim.js.map

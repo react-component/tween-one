@@ -1,6 +1,6 @@
 webpackJsonp([1],{
 
-/***/ 163:
+/***/ 161:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19,8 +19,8 @@ webpackJsonp([1],{
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_prop_types__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_prop_types__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_tween_one__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__utils__ = __webpack_require__(166);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__animTypes__ = __webpack_require__(164);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__utils__ = __webpack_require__(164);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__animTypes__ = __webpack_require__(162);
 
 
 
@@ -90,27 +90,41 @@ var QueueAnim = function (_React$Component) {
     var currentChildren = this.originalChildren.filter(function (item) {
       return item;
     });
-    var emptyBool = !nextChildren.length && !currentChildren.length && this.state.children.length;
-    if (emptyBool) {
+    if (this.state.children.length) {
       /**
-       * 多次刷新空子级处理
-       * 如果 state.children 里还有元素，元素还在动画，当前子级设回 state.children;
+       * 多次刷新处理
+       * 如果 state.children 里还有元素，元素还在动画，当前子级加回在出场的子级;
        */
-      currentChildren = this.state.children;
+      var leaveChild = this.state.children.filter(function (item) {
+        return item && _this2.keysToLeave.indexOf(item.key) >= 0;
+      });
+      currentChildren = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__utils__["c" /* mergeChildren */])(currentChildren, leaveChild);
     }
     var newChildren = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__utils__["c" /* mergeChildren */])(currentChildren, nextChildren);
 
     var childrenShow = !newChildren.length ? {} : this.state.childrenShow;
     this.keysToEnterPaused = {};
-    // 在出场没结束时，childrenShow 里的值将不会清除。再触发进场时， childrenShow 里的值是保留着的, 设置了 enterForcedRePlay 将重新播放进场。
+    var emptyBool = !nextChildren.length && !currentChildren.length && this.state.children.length;
+    /**
+     * 在出场没结束时，childrenShow 里的值将不会清除。
+     * 再触发进场时， childrenShow 里的值是保留着的, 设置了 enterForcedRePlay 将重新播放进场。
+     */
     if (!emptyBool) {
       // 空子级状态下刷新不做处理
+      var nextKeys = nextChildren.map(function (c) {
+        return c.key;
+      });
       this.keysToLeave.forEach(function (key) {
         // 将所有在出场里的停止掉。避免间隔性出现
-        _this2.keysToEnterPaused[key] = true;
-        if (nextProps.enterForcedRePlay) {
-          // 清掉所有出场的。
-          delete childrenShow[key];
+        if (nextKeys.indexOf(key) >= 0) {
+          _this2.keysToEnterPaused[key] = true;
+          currentChildren = currentChildren.filter(function (item) {
+            return item.key !== key;
+          });
+          if (nextProps.enterForcedRePlay) {
+            // 清掉所有出场的。
+            delete childrenShow[key];
+          }
         }
       });
     }
@@ -439,7 +453,7 @@ QueueAnim.isQueueAnim = true;
 
 /***/ }),
 
-/***/ 164:
+/***/ 162:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -483,11 +497,11 @@ QueueAnim.isQueueAnim = true;
 
 /***/ }),
 
-/***/ 165:
+/***/ 163:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QueueAnim__ = __webpack_require__(163);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QueueAnim__ = __webpack_require__(161);
 // export this package's api
 
 
@@ -495,7 +509,7 @@ QueueAnim.isQueueAnim = true;
 
 /***/ }),
 
-/***/ 166:
+/***/ 164:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -596,10 +610,10 @@ function getChildrenFromProps(props) {
 
 /***/ }),
 
-/***/ 186:
+/***/ 184:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(88);
+module.exports = __webpack_require__(86);
 
 
 /***/ }),
@@ -626,7 +640,7 @@ exports.default = function (obj, keys) {
 
 /***/ }),
 
-/***/ 88:
+/***/ 86:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -644,7 +658,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_queue_anim__ = __webpack_require__(165);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_queue_anim__ = __webpack_require__(163);
 
 
 
@@ -800,5 +814,5 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ })
 
-},[186]);
+},[184]);
 //# sourceMappingURL=group.js.map
