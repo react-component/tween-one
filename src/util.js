@@ -218,7 +218,7 @@ export function parsePath(path) {
   throw new Error('Error while parsing the path');
 }
 
-export function getTransformValue(t, supports3D) {
+export function getTransformValue(t) {
   if (typeof t === 'string') {
     return t;
   }
@@ -231,27 +231,16 @@ export function getTransformValue(t, supports3D) {
   const sz = t.scaleZ;
   const skx = t.skewX;
   const sky = t.skewY;
-  const xPercent = t.xPercent || 0;
-  const yPercent = t.yPercent || 0;
-  const translateX = xPercent ? 0 : t.translateX;
-  const translateY = yPercent ? 0 : t.translateY;
-  const translateZ = t.translateZ || 0;
-  const percent = xPercent || yPercent ? `translate(${xPercent || `${
-    translateX}px`},${yPercent || `${translateY}px`})` : '';
+  const translateX = typeof t.translateX === 'string' ? t.translateX : `${t.translateX}px`;
+  const translateY = typeof t.translateY === 'string' ? t.translateY : `${t.translateY}px`;
+  const translateZ = typeof t.translateZ === 'string' ? t.translateZ : `${t.translateZ}px`;
   const sk = skx || sky ? `skew(${skx}deg,${sky}deg)` : '';
   const an = angle ? `rotate(${angle}deg)` : '';
-  let ss;
-  if (!perspective && !rotateX && !rotateY && !translateZ && sz === 1 || !supports3D) {
-    ss = sx !== 1 || sy !== 1 ? `scale(${sx},${sy})` : '';
-    const translate = percent || `translate(${translateX}px,${
-      translateY}px)`;
-    return `${translate} ${an} ${ss} ${sk}`;
-  }
-  ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
+  const ss = sx !== 1 || sy !== 1 || sz !== 1 ? `scale3d(${sx},${sy},${sz})` : '';
   const rX = rotateX ? `rotateX(${rotateX}deg)` : '';
   const rY = rotateY ? `rotateY(${rotateY}deg)` : '';
   const per = perspective ? `perspective(${perspective}px)` : '';
-  const translate3d = percent ? `${percent} translate3d(0,0,${translateZ}px)` :
-    `translate3d(${translateX}px,${translateY}px,${translateZ}px)`;
-  return `${per} ${translate3d} ${ss} ${an} ${rX} ${rY} ${sk}`;
+  const translate = t.translateZ ? `translate3d(${translateX},${translateY},${translateZ})` :
+    `translate(${translateX},${translateY})`;
+  return `${per} ${translate} ${ss} ${an} ${rX} ${rY} ${sk}`.trim();
 }

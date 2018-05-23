@@ -99,7 +99,6 @@ p.convertToMarksArray = function (computedStyle, unit, key, data, i) {
 };
 p.getAnimStart = function (computedStyle, isSvg) {
   const style = {};
-  this.supports3D = checkStyleName('perspective');
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
     let startData = computedStyle[cssName];
@@ -123,10 +122,8 @@ p.getAnimStart = function (computedStyle, isSvg) {
       endUnit = this.propsData.dataUnit[key];
       transform = style.transform || getTransform(startData);
       if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
-        const percent = key === 'translateX' ? 'xPercent' : 'yPercent';
-        transform[percent] = startConvertToEndUnit(this.target, computedStyle,
-           key, transform[key], null, endUnit);
-        transform[key] = 0;
+        transform[key] = startConvertToEndUnit(this.target, computedStyle,
+          key, transform[key], null, endUnit);
       }
       style.transform = transform;
     } else if (cssName === 'filter') {
@@ -224,19 +221,18 @@ p.setRatio = function (ratio, tween, computedStyle) {
     if (key in _plugin) {
       this.propsData.data[key].setRatio(ratio, tween, computedStyle);
       if (key === 'bezier') {
-        style[this.transform] = getTransformValue(tween.style.transform, this.supports3D);
+        style[this.transform] = getTransformValue(tween.style.transform);
       } else {
         Object.keys(tween.style).forEach(css => style[css] = tween.style[css]);
       }
       return;
     } else if (_isTransform) {
       if (unit && unit.match(/%|vw|vh|em|rem/i)) {
-        const pName = key === 'translateX' ? 'xPercent' : 'yPercent';
-        startVars = this.start.transform[pName];
+        startVars = this.start.transform[key];
         if (count.charAt(1) === '=') {
-          tween.style.transform[pName] = (startVars + endVars * ratio) + unit;
+          tween.style.transform[key] = (startVars + endVars * ratio) + unit;
         } else {
-          tween.style.transform[pName] = ((endVars - startVars) * ratio + startVars) + unit;
+          tween.style.transform[key] = ((endVars - startVars) * ratio + startVars) + unit;
         }
       } else if (key === 'scale') {
         const xStart = this.start.transform.scaleX;
@@ -249,15 +245,13 @@ p.setRatio = function (ratio, tween, computedStyle) {
           tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
         }
       } else {
-        delete tween.style.transform.xPercent;
-        delete tween.style.transform.yPercent;
+        if (count.charAt(1) === '=') {
+          tween.style.transform[key] = startVars + endVars * ratio;
+        } else {
+          tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
+        }
       }
-      if (count.charAt(1) === '=') {
-        tween.style.transform[key] = startVars + endVars * ratio;
-      } else {
-        tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
-      }
-      style[this.transform] = getTransformValue(tween.style.transform, this.supports3D);
+      style[this.transform] = getTransformValue(tween.style.transform);
       if (computedStyle) {
         computedStyle.transformSVG = createMatrix(style[this.transform]).toString();
       }
