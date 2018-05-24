@@ -44,6 +44,8 @@ function defaultData(vars, now) {
 const Tween = function (target, toData, props) {
   this.target = target;
   this.attr = props.attr || 'style';
+  // 时间精度补齐；
+  this.accuracy = 0.00001;
   // 记录总时间;
   this.totalTime = 0;
   // 记录当前时间;
@@ -304,7 +306,7 @@ p.render = function () {
       !(progressTime > duration && item.mode === 'onComplete') &&
       this.start[i]) {
       const updateAnim = this.updateAnim === 'update';
-      if (((progressTime >= duration && !reverse) || (reverse && progressTime <= 0))
+      if (((progressTime >= duration - this.accuracy && !reverse) || (reverse && progressTime <= 0))
         && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
