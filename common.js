@@ -3256,6 +3256,8 @@ function defaultData(vars, now) {
 var Tween = function Tween(target, toData, props) {
   this.target = target;
   this.attr = props.attr || 'style';
+  // 时间精度补齐；
+  this.accuracy = 0.00001;
   // 记录总时间;
   this.totalTime = 0;
   // 记录当前时间;
@@ -3521,7 +3523,7 @@ p.render = function () {
 
     if (progressTime > -_this6.perFrame && !(progressTime > duration && item.mode === 'onComplete') && _this6.start[i]) {
       var updateAnim = _this6.updateAnim === 'update';
-      if ((progressTime >= duration && !reverse || reverse && progressTime <= 0) && repeatNum >= item.repeat) {
+      if ((progressTime >= duration - _this6.accuracy && !reverse || reverse && progressTime <= 0) && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
         _this6.setRatio(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["toFixed"])(ratio), item, i, item.currentRepeat !== repeatNum);
