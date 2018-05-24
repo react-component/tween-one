@@ -216,10 +216,10 @@ p.setAnimData = function (data) {
     this.target[key] = data[key];
   });
 };
-p.setRatio = function (ratio, endData, i) {
+p.setRatio = function (ratio, endData, i, isRepeat) {
   Object.keys(endData.vars).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
-      endData.vars[_key].setRatio(ratio, this.tween, this.isSvg && this.computedStyle);
+      endData.vars[_key].setRatio(ratio, this.tween, this.isSvg && this.computedStyle, isRepeat);
       return;
     }
     const endVars = endData.vars[_key];
@@ -304,17 +304,20 @@ p.render = function () {
       !(progressTime > duration && item.mode === 'onComplete') &&
       this.start[i]) {
       const updateAnim = this.updateAnim === 'update';
-      if ((progressTime >= duration && !reverse) || (reverse && progressTime <= 0)) {
+      if (((progressTime >= duration && !reverse) || (reverse && progressTime <= 0))
+        && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
-        this.setRatio(toFixed(ratio), item, i);
+        this.setRatio(toFixed(ratio), item, i, item.currentRepeat !== repeatNum);
         if (item.mode !== 'reset' && !updateAnim) {
           item.onComplete(e);
         }
         item.mode = 'onComplete';
       } else if (duration) {
-        ratio = item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration);
-        this.setRatio(ratio, item, i);
+        let currentProgress = progressTime < 0 ? 0 : progressTime;
+        currentProgress = currentProgress > duration ? duration : currentProgress;
+        ratio = item.ease(currentProgress, startData, endData, duration);
+        this.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
         if (!updateAnim) {
           if (item.repeat && repeatNum > 0 && item.currentRepeat !== repeatNum) {
             item.mode = 'onRepeat';

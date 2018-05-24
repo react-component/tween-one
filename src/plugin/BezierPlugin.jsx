@@ -504,7 +504,10 @@ Bezier.prototype = {
     this.vars.startPoint = { x: matrix.e, y: matrix.f };
     this.init();
   },
-  setRatio(r, t, computedStyle) {
+  setRatio(r, t, computedStyle, isRepeat) {
+    if (isRepeat) {
+      this.init();
+    }
     t.style.transform = this.set(r);
     if (computedStyle) {
       computedStyle.transformSVG = createMatrix(t.style.transform).toString();

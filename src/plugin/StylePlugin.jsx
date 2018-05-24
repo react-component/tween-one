@@ -206,7 +206,7 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
   return _vars;
 };
 
-p.setRatio = function (ratio, tween, computedStyle) {
+p.setRatio = function (ratio, tween, computedStyle, isRepeat) {
   tween.style = tween.style || {};
   if (this.start.transform) {
     tween.style.transform = tween.style.transform || { ...this.start.transform };
@@ -219,7 +219,7 @@ p.setRatio = function (ratio, tween, computedStyle) {
     let unit = this.propsData.dataUnit[key];
     const count = this.propsData.dataCount[key];
     if (key in _plugin) {
-      this.propsData.data[key].setRatio(ratio, tween, computedStyle);
+      this.propsData.data[key].setRatio(ratio, tween, computedStyle, isRepeat);
       if (key === 'bezier') {
         style[this.transform] = getTransformValue(tween.style.transform);
       } else {
