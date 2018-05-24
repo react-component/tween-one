@@ -3434,12 +3434,12 @@ p.setAnimData = function (data) {
     _this4.target[key] = data[key];
   });
 };
-p.setRatio = function (ratio, endData, i) {
+p.setRatio = function (ratio, endData, i, isRepeat) {
   var _this5 = this;
 
   Object.keys(endData.vars).forEach(function (_key) {
     if (_key in __WEBPACK_IMPORTED_MODULE_2__plugins__["a" /* default */] || _this5.attr === 'attr' && (_key === 'd' || _key === 'points')) {
-      endData.vars[_key].setRatio(ratio, _this5.tween, _this5.isSvg && _this5.computedStyle);
+      endData.vars[_key].setRatio(ratio, _this5.tween, _this5.isSvg && _this5.computedStyle, isRepeat);
       return;
     }
     var endVars = endData.vars[_key];
@@ -3521,17 +3521,19 @@ p.render = function () {
 
     if (progressTime > -_this6.perFrame && !(progressTime > duration && item.mode === 'onComplete') && _this6.start[i]) {
       var updateAnim = _this6.updateAnim === 'update';
-      if (progressTime >= duration && !reverse || reverse && progressTime <= 0) {
+      if ((progressTime >= duration && !reverse || reverse && progressTime <= 0) && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
-        _this6.setRatio(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["toFixed"])(ratio), item, i);
+        _this6.setRatio(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_style_utils__["toFixed"])(ratio), item, i, item.currentRepeat !== repeatNum);
         if (item.mode !== 'reset' && !updateAnim) {
           item.onComplete(e);
         }
         item.mode = 'onComplete';
       } else if (duration) {
-        ratio = item.ease(progressTime < 0 ? 0 : progressTime, startData, endData, duration);
-        _this6.setRatio(ratio, item, i);
+        var currentProgress = progressTime < 0 ? 0 : progressTime;
+        currentProgress = currentProgress > duration ? duration : currentProgress;
+        ratio = item.ease(currentProgress, startData, endData, duration);
+        _this6.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
         if (!updateAnim) {
           if (item.repeat && repeatNum > 0 && item.currentRepeat !== repeatNum) {
             item.mode = 'onRepeat';
@@ -4062,7 +4064,7 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
   return _vars;
 };
 
-p.setRatio = function (ratio, tween, computedStyle) {
+p.setRatio = function (ratio, tween, computedStyle, isRepeat) {
   var _this3 = this;
 
   tween.style = tween.style || {};
@@ -4077,7 +4079,7 @@ p.setRatio = function (ratio, tween, computedStyle) {
     var unit = _this3.propsData.dataUnit[key];
     var count = _this3.propsData.dataCount[key];
     if (key in __WEBPACK_IMPORTED_MODULE_3__plugins__["a" /* default */]) {
-      _this3.propsData.data[key].setRatio(ratio, tween, computedStyle);
+      _this3.propsData.data[key].setRatio(ratio, tween, computedStyle, isRepeat);
       if (key === 'bezier') {
         style[_this3.transform] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__util_js__["j" /* getTransformValue */])(tween.style.transform);
       } else {

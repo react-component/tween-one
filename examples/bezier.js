@@ -506,7 +506,10 @@ Bezier.prototype = {
     this.vars.startPoint = { x: matrix.e, y: matrix.f };
     this.init();
   },
-  setRatio: function setRatio(r, t, computedStyle) {
+  setRatio: function setRatio(r, t, computedStyle, isRepeat) {
+    if (isRepeat) {
+      this.init();
+    }
     t.style.transform = this.set(r);
     if (computedStyle) {
       computedStyle.transformSVG = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_style_utils__["createMatrix"])(t.style.transform).toString();
