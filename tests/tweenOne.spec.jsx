@@ -9,6 +9,11 @@ import TestUtils from 'react-dom/test-utils';
 import { checkStyleName } from 'style-utils';
 import BezierPlugin from '../src/plugin/BezierPlugin';
 Tween.plugins.push(BezierPlugin);
+
+const Div = (props) => {
+  return props.show ? <div>text</div> : null;
+};
+
 describe('rc-tween-one', () => {
   let div;
   let instance;
@@ -21,7 +26,9 @@ describe('rc-tween-one', () => {
           animation: this.props.animation,
           style: this.props.style,
           reverse: false,
+          paused: this.props.paused,
           moment: null,
+          showChild: false,
         };
       }
 
@@ -29,7 +36,8 @@ describe('rc-tween-one', () => {
         if (this.props.component === 'rect') {
           return (<svg>
             <Tween
-              {...this.props} reverse={this.state.reverse}
+              {...this.props}
+              reverse={this.state.reverse}
               animation={this.state.animation} style={this.state.style}
               moment={this.state.moment}
               width="100px"
@@ -38,9 +46,13 @@ describe('rc-tween-one', () => {
             />
           </svg>);
         }
-        return (<Tween {...this.props} reverse={this.state.reverse}
-          animation={this.state.animation} style={this.state.style}
+        return (<Tween {...this.props}
+          reverse={this.state.reverse}
+          animation={this.state.animation}
+          style={this.state.style}
           moment={this.state.moment}
+          componentProps={this.props.component === Div ? { show: this.state.showChild } : null}
+          paused={this.state.paused}
         >
           <span>demo</span>
         </Tween>);
@@ -53,6 +65,7 @@ describe('rc-tween-one', () => {
       animation: objectOrArray,
       style: PropTypes.object,
       component: PropTypes.any,
+      paused: PropTypes.bool,
     };
 
     return ReactDom.render(<TweenDemo {...props} />, div);
@@ -78,8 +91,19 @@ describe('rc-tween-one', () => {
 
   it('single tween-one', (done) => {
     instance = createTweenInstance({
-      animation: { top: 100 },
-      style: { top: 0 },
+      animation: {
+        top: 100,
+        left: '100vw',
+        width: '10vh',
+        height: '100%',
+        boxShadow: '0 0 30px rgba(255,125,0,0.5)',
+        marginLeft: '30rem',
+        scale: 1.5,
+        x: '+=100',
+        transformOrigin: '50%',
+        delay: 100,
+      },
+      style: { top: 0, left: '10vw', width: '5vh', height: '10%', marginLeft: '10rem' },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('start:', child.style.top);
@@ -89,7 +113,29 @@ describe('rc-tween-one', () => {
       console.log('end:', child.style.top);
       expect(getFloat(child.style.top)).to.be(100);
       done();
-    }, 500);
+    }, 600);
+  });
+
+  it('single tween-one is array', (done) => {
+    instance = createTweenInstance({
+      animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
+      style: { top: 0, position: 'relative' },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    console.log('start:', child.style.top);
+    expect(getFloat(child.style.top)).to.be(0);
+    ticker.timeout(() => {
+      instance.setState({
+        animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
+      });
+      // 默认时间为450,用500是肯定过值；
+      console.log('end:', child.style.top);
+      expect(getFloat(child.style.top)).to.be(100);
+      ticker.timeout(() => {
+        expect(getFloat(child.style.left)).to.be(100);
+        done();
+      }, 500);
+    }, 600);
   });
 
   it('timeline tween-one', (done) => {
@@ -356,6 +402,29 @@ describe('rc-tween-one', () => {
     }, 600);
   });
 
+  it('is update animation', (done) => {
+    instance = createTweenInstance({
+      animation: {
+        top: 100,
+      },
+      style: { position: 'relative', top: 0 },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    setTimeout(() => {
+      expect(getFloat(child.style.top)).to.above(0);
+      instance.setState({
+        animation: {
+          left: 100,
+        },
+      });
+      setTimeout(() => {
+        expect(getFloat(child.style.left)).to.be(100);
+        console.log('child left:', child.style.left);
+        done();
+      }, 500);
+    }, 200);
+  });
+
   it('is reverse', (done) => {
     instance = createTweenInstance({
       animation: {
@@ -366,6 +435,9 @@ describe('rc-tween-one', () => {
     setTimeout(() => {
       instance.setState({
         reverse: true,
+        animation: {
+          top: 100,
+        },
       });
       setTimeout(() => {
         const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
@@ -373,6 +445,57 @@ describe('rc-tween-one', () => {
         expect(getFloat(child.style.top)).to.be(0);
         done();
       }, 350);
+    }, 300);
+  });
+
+  it('is reverse delay', (done) => {
+    instance = createTweenInstance({
+      animation: {
+        top: 100,
+        color: '#fff000',
+      },
+      reverseDelay: 500,
+      style: { position: 'relative', top: 0 },
+    });
+    setTimeout(() => {
+      instance.setState({
+        reverse: true,
+      });
+      let child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+      const top = getFloat(child.style.top);
+      console.log(top);
+      setTimeout(() => {
+        child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+        console.log(getFloat(child.style.top));
+        expect(getFloat(child.style.top)).to.be(top);
+        setTimeout(() => {
+          child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+          expect(getFloat(child.style.top)).to.be(0);
+          done();
+        }, 500);
+      }, 300);
+    }, 300);
+  });
+
+  it('is paused', (done) => {
+    instance = createTweenInstance({
+      animation: { top: 100 },
+      forcedJudg: { isComp: true },
+    });
+
+    setTimeout(() => {
+      let child = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[0];
+      const top = getFloat(child.style.top);
+      expect(top).to.above(50);
+      instance.setState({
+        paused: true,
+      });
+      setTimeout(() => {
+        child = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[0];
+        console.log('top:', child.style.top);
+        expect(getFloat(child.style.top)).to.be(top);
+        done();
+      }, 100);
     }, 300);
   });
 
@@ -401,6 +524,31 @@ describe('rc-tween-one', () => {
     }, 100);
   });
 
+  it('is moment tween end re', (done) => {
+    instance = createTweenInstance({
+      animation: {
+        top: 100,
+        duration: 500,
+      },
+      style: { position: 'relative', top: 0 },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    setTimeout(() => {
+      instance.setState({
+        moment: 10,
+      }, () => {
+        instance.setState({
+          moment: null,
+        });
+      });
+      setTimeout(() => {
+        console.log(child.style.top);
+        expect(getFloat(child.style.top)).to.be(100);
+        done();
+      }, 550);
+    }, 600);
+  });
+
   it('is timerout', (done) => {
     instance = createTweenInstance({
       animation: {
@@ -424,6 +572,7 @@ describe('rc-tween-one', () => {
     instance = createTweenInstance({
       animation: {
         width: 100,
+        color: '#fff000',
       },
       attr: 'attr',
     });
@@ -451,5 +600,22 @@ describe('rc-tween-one', () => {
       expect(child.style[checkStyleName('transform')]).to.be('translate(100px, 0px)');
       done();
     }, 500);
+  });
+
+  it('child component is null', (done) => {
+    instance = createTweenInstance({
+      animation: { x: 100 },
+      component: Div,
+    });
+    let child = TestUtils.scryRenderedDOMComponentsWithTag(instance);
+    expect(child.length).to.be(0);
+    setTimeout(() => {
+      instance.setState({
+        showChild: true,
+      });
+      child = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div');
+      expect(child.length).to.be(1);
+      done();
+    }, 1000);
   });
 });
