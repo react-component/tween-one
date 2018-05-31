@@ -91,7 +91,14 @@ describe('rc-tween-one', () => {
 
   it('single tween-one', (done) => {
     instance = createTweenInstance({
-      animation: { top: 100 },
+      animation: {
+        top: 100,
+        left: '100vw',
+        width: '10vh',
+        height: '100%',
+        boxShadow: '0 0 30px rgba(255,125,0,0.5)',
+        delay: 100,
+      },
       style: { top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
@@ -102,7 +109,7 @@ describe('rc-tween-one', () => {
       console.log('end:', child.style.top);
       expect(getFloat(child.style.top)).to.be(100);
       done();
-    }, 500);
+    }, 600);
   });
 
   it('timeline tween-one', (done) => {
@@ -379,6 +386,9 @@ describe('rc-tween-one', () => {
     setTimeout(() => {
       instance.setState({
         reverse: true,
+        animation: {
+          top: 100,
+        },
       });
       setTimeout(() => {
         const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
