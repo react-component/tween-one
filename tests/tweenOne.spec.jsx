@@ -399,6 +399,29 @@ describe('rc-tween-one', () => {
     }, 600);
   });
 
+  it('is update animation', (done) => {
+    instance = createTweenInstance({
+      animation: {
+        top: 100,
+      },
+      style: { position: 'relative', top: 0 },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    setTimeout(() => {
+      expect(getFloat(child.style.top)).to.above(50);
+      instance.setState({
+        animation: {
+          left: 100,
+        },
+      });
+      setTimeout(() => {
+        expect(getFloat(child.style.left)).to.be(100);
+        console.log('child left:', child.style.left);
+        done();
+      }, 500);
+    }, 600);
+  });
+
   it('is reverse', (done) => {
     instance = createTweenInstance({
       animation: {
@@ -546,6 +569,7 @@ describe('rc-tween-one', () => {
     instance = createTweenInstance({
       animation: {
         width: 100,
+        color: '#fff000',
       },
       attr: 'attr',
     });
