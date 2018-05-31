@@ -7,7 +7,6 @@ React TweenOne Component
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![Test coverage][coveralls-image]][coveralls-url]
-[![gemnasium deps][gemnasium-image]][gemnasium-url]
 [![node version][node-image]][node-url]
 [![npm download][download-image]][download-url]
 
@@ -17,8 +16,6 @@ React TweenOne Component
 [travis-url]: https://travis-ci.org/react-component/tween-one
 [coveralls-image]: https://img.shields.io/coveralls/react-component/tween-one.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/react-component/tween-one?branch=master
-[gemnasium-image]: http://img.shields.io/gemnasium/react-component/tween-one.svg?style=flat-square
-[gemnasium-url]: https://gemnasium.com/react-component/tween-one
 [node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
 [download-image]: https://img.shields.io/npm/dm/rc-tween-one.svg?style=flat-square
@@ -179,6 +176,22 @@ string: `animation={{ path: 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0' }}`,  d
 
 object: `animation={{ path: { x: path, y: path, rotate: path } }}`, can be controlled from their own needs.
 
+### ChildrenPlugin
+
+#### Children = { value:, floatLength, formatMoney };
+
+| name | type | default | description |
+|---|---|---|---|
+| value | number | null | children number to value. |
+| floatLength | number | null | float precision length |
+| formatMoney | boolean or { thousand, decimal } | false | format number to money. |
+
+#### formatMoney = { thousand, decimal }
+
+| name | type | default | description |
+|---|---|---|---|
+| thousand | string | `,` | no explanation. |
+| decimal  | string | `.` | no explanation. |
 
 ## TweenOneGroup
 
