@@ -411,7 +411,7 @@ describe('rc-tween-one', () => {
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(() => {
-      expect(getFloat(child.style.top)).to.above(50);
+      expect(getFloat(child.style.top)).to.above(0);
       instance.setState({
         animation: {
           left: 100,
