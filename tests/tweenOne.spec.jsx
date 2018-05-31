@@ -389,24 +389,54 @@ describe('rc-tween-one', () => {
     }, 300);
   });
 
+  it('is reverse delay', (done) => {
+    instance = createTweenInstance({
+      animation: {
+        top: 100,
+        color: '#fff000',
+      },
+      reverseDelay: 500,
+      style: { position: 'relative', top: 0 },
+    });
+    setTimeout(() => {
+      instance.setState({
+        reverse: true,
+      });
+      let child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+      const top = getFloat(child.style.top);
+      console.log(top);
+      setTimeout(() => {
+        child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+        console.log(getFloat(child.style.top));
+        expect(getFloat(child.style.top)).to.be(top);
+        setTimeout(() => {
+          child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+          expect(getFloat(child.style.top)).to.be(0);
+          done();
+        }, 500);
+      }, 300);
+    }, 300);
+  });
+
   it('is paused', (done) => {
     instance = createTweenInstance({
       animation: { top: 100 },
-      paused: true,
+      forcedJudg: { isComp: true },
     });
 
     setTimeout(() => {
       let child = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[0];
-      expect(getFloat(child.style.top)).to.be(0);
+      const top = getFloat(child.style.top);
+      expect(top).to.above(50);
       instance.setState({
-        paused: false,
+        paused: true,
       });
       setTimeout(() => {
         child = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[0];
         console.log('top:', child.style.top);
-        expect(getFloat(child.style.top)).to.be(100);
+        expect(getFloat(child.style.top)).to.be(top);
         done();
-      }, 500);
+      }, 100);
     }, 300);
   });
 
@@ -433,6 +463,31 @@ describe('rc-tween-one', () => {
         done();
       }, 10);
     }, 100);
+  });
+
+  it('is moment tween end re', (done) => {
+    instance = createTweenInstance({
+      animation: {
+        top: 100,
+        duration: 500,
+      },
+      style: { position: 'relative', top: 0 },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    setTimeout(() => {
+      instance.setState({
+        moment: 10,
+      }, () => {
+        instance.setState({
+          moment: null,
+        });
+      });
+      setTimeout(() => {
+        console.log(child.style.top);
+        expect(getFloat(child.style.top)).to.be(100);
+        done();
+      }, 550);
+    }, 600);
   });
 
   it('is timerout', (done) => {
