@@ -97,9 +97,10 @@ describe('rc-tween-one', () => {
         width: '10vh',
         height: '100%',
         boxShadow: '0 0 30px rgba(255,125,0,0.5)',
+        marginLeft: '30rem',
         delay: 100,
       },
-      style: { top: 0 },
+      style: { top: 0, left: '10vw', width: '5vh', height: '10%', marginLeft: '10rem' },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('start:', child.style.top);
@@ -109,6 +110,28 @@ describe('rc-tween-one', () => {
       console.log('end:', child.style.top);
       expect(getFloat(child.style.top)).to.be(100);
       done();
+    }, 600);
+  });
+
+  it('single tween-one is array', (done) => {
+    instance = createTweenInstance({
+      animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
+      style: { top: 0, position: 'relative' },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    console.log('start:', child.style.top);
+    expect(getFloat(child.style.top)).to.be(0);
+    ticker.timeout(() => {
+      instance.setState({
+        animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
+      });
+      // 默认时间为450,用500是肯定过值；
+      console.log('end:', child.style.top);
+      expect(getFloat(child.style.top)).to.be(100);
+      ticker.timeout(() => {
+        expect(getFloat(child.style.left)).to.be(100);
+        done();
+      }, 500);
     }, 600);
   });
 
