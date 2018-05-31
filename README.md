@@ -179,6 +179,22 @@ string: `animation={{ path: 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0' }}`,  d
 
 object: `animation={{ path: { x: path, y: path, rotate: path } }}`, can be controlled from their own needs.
 
+### ChildrenPlugin
+
+#### Children = { value:, floatLength, formatMoney };
+
+| name | type | default | description |
+|---|---|---|---|
+| value | number | null | children number to value. |
+| floatLength | number | null | float precision length |
+| formatMoney | boolean or { thousand, decimal } | false | format number to money. |
+
+#### formatMoney = { thousand, decimal }
+
+| name | type | default | description |
+|---|---|---|---|
+| thousand | string | `,` | no explanation. |
+| decimal  | string | `.` | no explanation. |
 
 ## TweenOneGroup
 
