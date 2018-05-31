@@ -10,8 +10,34 @@ function noop() {
 }
 
 const perFrame = Math.round(1000 / 60);
+const objectOrArray = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
 
 class TweenOne extends Component {
+  static propTypes = {
+    component: PropTypes.any,
+    componentProps: PropTypes.any,
+    animation: objectOrArray,
+    children: PropTypes.any,
+    style: PropTypes.object,
+    paused: PropTypes.bool,
+    reverse: PropTypes.bool,
+    reverseDelay: PropTypes.number,
+    moment: PropTypes.number,
+    attr: PropTypes.string,
+    onChange: PropTypes.func,
+    resetStyleBool: PropTypes.bool,
+    updateReStart: PropTypes.bool,
+    forcedJudg: PropTypes.object,
+  };
+
+  static defaultProps = {
+    component: 'div',
+    componentProps: {},
+    reverseDelay: 0,
+    attr: 'style',
+    onChange: noop,
+    updateReStart: true,
+  };
   constructor(props) {
     super(props);
     this.rafID = -1;
@@ -29,10 +55,16 @@ class TweenOne extends Component {
 
   componentDidMount() {
     this.dom = ReactDom.findDOMNode(this);
-    this.start();
+    if (this.dom && this.dom.nodeName !== '#text') {
+      this.start();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
+    if (!this.tween && !this.dom) {
+      this.updateAnim = 'start';
+      return;
+    }
     this.onChange = nextProps.onChange;
     // 跳帧事件 moment;
     const newMoment = nextProps.moment;
@@ -104,17 +136,21 @@ class TweenOne extends Component {
   }
 
   componentDidUpdate() {
-    if (this.updateStartStyle && !this.updateAnim) {
-      this.tween.reStart(this.props.style);
-      this.updateStartStyle = false;
+    if (!this.dom || this.dom.nodeName !== '#text') {
+      this.dom = ReactDom.findDOMNode(this);
     }
+    if (this.tween) {
+      if (this.updateStartStyle && !this.updateAnim) {
+        this.tween.reStart(this.props.style);
+        this.updateStartStyle = false;
+      }
 
-    if (this.newMomentAnim) {
-      this.raf();
+      if (this.newMomentAnim) {
+        this.raf();
+      }
     }
-
     // 样式更新了后再执行动画；
-    if (this.updateAnim === 'start') {
+    if (this.updateAnim === 'start' && this.dom && this.dom.nodeName !== '#text') {
       this.start();
     }
   }
@@ -255,6 +291,9 @@ class TweenOne extends Component {
     });
     // component 为空时调用子级的。。
     if (!this.props.component) {
+      if (!this.props.children) {
+        return this.props.children;
+      }
       const childrenProps = this.props.children.props;
       const { style, className } = childrenProps;
       // 合并 style 与 className。
@@ -265,33 +304,5 @@ class TweenOne extends Component {
     return React.createElement(this.props.component, { ...props, ...this.props.componentProps });
   }
 }
-
-const objectOrArray = PropTypes.oneOfType([PropTypes.object, PropTypes.array]);
-
-TweenOne.propTypes = {
-  component: PropTypes.any,
-  componentProps: PropTypes.any,
-  animation: objectOrArray,
-  children: PropTypes.any,
-  style: PropTypes.object,
-  paused: PropTypes.bool,
-  reverse: PropTypes.bool,
-  reverseDelay: PropTypes.number,
-  moment: PropTypes.number,
-  attr: PropTypes.string,
-  onChange: PropTypes.func,
-  resetStyleBool: PropTypes.bool,
-  updateReStart: PropTypes.bool,
-  forcedJudg: PropTypes.object,
-};
-
-TweenOne.defaultProps = {
-  component: 'div',
-  componentProps: {},
-  reverseDelay: 0,
-  attr: 'style',
-  onChange: noop,
-  updateReStart: true,
-};
 TweenOne.isTweenOne = true;
 export default TweenOne;
