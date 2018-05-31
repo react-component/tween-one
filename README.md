@@ -7,7 +7,6 @@ React TweenOne Component
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![Test coverage][coveralls-image]][coveralls-url]
-[![gemnasium deps][gemnasium-image]][gemnasium-url]
 [![node version][node-image]][node-url]
 [![npm download][download-image]][download-url]
 
@@ -17,8 +16,6 @@ React TweenOne Component
 [travis-url]: https://travis-ci.org/react-component/tween-one
 [coveralls-image]: https://img.shields.io/coveralls/react-component/tween-one.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/react-component/tween-one?branch=master
-[gemnasium-image]: http://img.shields.io/gemnasium/react-component/tween-one.svg?style=flat-square
-[gemnasium-url]: https://gemnasium.com/react-component/tween-one
 [node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
 [download-image]: https://img.shields.io/npm/dm/rc-tween-one.svg?style=flat-square

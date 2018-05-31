@@ -98,6 +98,9 @@ describe('rc-tween-one', () => {
         height: '100%',
         boxShadow: '0 0 30px rgba(255,125,0,0.5)',
         marginLeft: '30rem',
+        scale: 1.5,
+        x: '+=100',
+        transformOrigin: '50%',
         delay: 100,
       },
       style: { top: 0, left: '10vw', width: '5vh', height: '10%', marginLeft: '10rem' },
@@ -419,7 +422,7 @@ describe('rc-tween-one', () => {
         console.log('child left:', child.style.left);
         done();
       }, 500);
-    }, 600);
+    }, 200);
   });
 
   it('is reverse', (done) => {
