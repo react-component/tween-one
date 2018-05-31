@@ -9,6 +9,11 @@ import TestUtils from 'react-dom/test-utils';
 import { checkStyleName } from 'style-utils';
 import BezierPlugin from '../src/plugin/BezierPlugin';
 Tween.plugins.push(BezierPlugin);
+
+const Div = (props) => {
+  return props.show ? <div>text</div> : null;
+};
+
 describe('rc-tween-one', () => {
   let div;
   let instance;
@@ -21,7 +26,9 @@ describe('rc-tween-one', () => {
           animation: this.props.animation,
           style: this.props.style,
           reverse: false,
+          paused: this.props.paused,
           moment: null,
+          showChild: false,
         };
       }
 
@@ -29,7 +36,8 @@ describe('rc-tween-one', () => {
         if (this.props.component === 'rect') {
           return (<svg>
             <Tween
-              {...this.props} reverse={this.state.reverse}
+              {...this.props}
+              reverse={this.state.reverse}
               animation={this.state.animation} style={this.state.style}
               moment={this.state.moment}
               width="100px"
@@ -38,9 +46,13 @@ describe('rc-tween-one', () => {
             />
           </svg>);
         }
-        return (<Tween {...this.props} reverse={this.state.reverse}
-          animation={this.state.animation} style={this.state.style}
+        return (<Tween {...this.props}
+          reverse={this.state.reverse}
+          animation={this.state.animation}
+          style={this.state.style}
           moment={this.state.moment}
+          componentProps={this.props.component === Div ? { show: this.state.showChild } : null}
+          paused={this.state.paused}
         >
           <span>demo</span>
         </Tween>);
@@ -53,6 +65,7 @@ describe('rc-tween-one', () => {
       animation: objectOrArray,
       style: PropTypes.object,
       component: PropTypes.any,
+      paused: PropTypes.bool,
     };
 
     return ReactDom.render(<TweenDemo {...props} />, div);
@@ -376,6 +389,27 @@ describe('rc-tween-one', () => {
     }, 300);
   });
 
+  it('is paused', (done) => {
+    instance = createTweenInstance({
+      animation: { top: 100 },
+      paused: true,
+    });
+
+    setTimeout(() => {
+      let child = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[0];
+      expect(getFloat(child.style.top)).to.be(0);
+      instance.setState({
+        paused: false,
+      });
+      setTimeout(() => {
+        child = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[0];
+        console.log('top:', child.style.top);
+        expect(getFloat(child.style.top)).to.be(100);
+        done();
+      }, 500);
+    }, 300);
+  });
+
   it('is moment', (done) => {
     instance = createTweenInstance({
       animation: {
@@ -451,5 +485,22 @@ describe('rc-tween-one', () => {
       expect(child.style[checkStyleName('transform')]).to.be('translate(100px, 0px)');
       done();
     }, 500);
+  });
+
+  it('child component is null', (done) => {
+    instance = createTweenInstance({
+      animation: { x: 100 },
+      component: Div,
+    });
+    let child = TestUtils.scryRenderedDOMComponentsWithTag(instance);
+    expect(child.length).to.be(0);
+    setTimeout(() => {
+      instance.setState({
+        showChild: true,
+      });
+      child = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div');
+      expect(child.length).to.be(1);
+      done();
+    }, 1000);
   });
 });
