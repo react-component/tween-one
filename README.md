@@ -98,7 +98,9 @@ React.render(<TweenOneGroup>
 | paused      | boolean        | false   | animate pause |
 | reverse    | boolean        | false   | animate revers |
 | reverseDelay | number       | 0       | animate revers start delay |
-| onChange   | func           | null    | when the animation change called, callback({ moment, item, tween, index, mode}) |
+| repeat     |  number        | 0       | `animation` all data repeat, To repeat indefinitely, use  -1 |
+| yoyo       | boolean        | false   | `animation` all data alternating backward and forward on each repeat. |
+| onChange   | func           | null    | when the animation change called, callback({ moment, item, tween, index, mode, timelineMode }) |
 | moment     | number         | null    | set the current frame    |
 | attr       | string         | `style` | `style` or `attr`, `attr` is tag attribute. when morph SVG must be `attr`.  |
 | resetStyleBool | boolean    | false   | update animation data, reset init style |
@@ -119,7 +121,7 @@ React.render(<TweenOneGroup>
 | repeat     | number         | 0       | animate repeat, To repeat indefinitely, use  -1 |
 | repeatDelay| number         | 0       | repeat start delay |
 | appearTo   | number         | null    | Add to the specified time |
-| yoyo       | boolean        | false   | if `true`, every other repeat cycle will run in the opposite direction so that the tween appears to go back and forth (forward then backward).  |
+| yoyo       | boolean        | false   | `true`: alternating backward and forward on each repeat. |
 | ease       | string / func         | `easeInOutQuad` | animate ease. [refer](http://easings.net/en)  |
 | bezier     | object         | null    | bezier curve animate |
 | onStart    | func           | null    | A function that should be called when the tween begins, callback(e), e: { index, target }  |
