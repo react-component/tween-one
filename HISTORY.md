@@ -1,10 +1,6 @@
 # History
 ----
 
-## Unreleased
-
-fix: npm pack with the es module folder
-
 ## 2.0.0
 
 add repeat and yoyo to tag;
