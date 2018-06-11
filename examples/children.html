@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>children.js - example - rc-tween-one@1.8.1</title>
+  <title>children.js - example - rc-tween-one@2.0.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-tween-one@1.8.1</h1>
+      <h1>rc-tween-one@2.0.0</h1>
 
       <p>tween-one anim component for react</p>
     </div>
@@ -272,66 +272,68 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
-<span class="hljs-keyword">import</span> <span class="hljs-string">'../assets/index.less'</span>;
 <span class="hljs-keyword">import</span> ChildrenPlugin <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one/lib/plugin/ChildrenPlugin'</span>;
+
+<span class="hljs-keyword">import</span> <span class="hljs-string">'../assets/index.less'</span>;
 
 Tween.plugins.push(ChildrenPlugin);
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Demo</span>(<span class="hljs-params"></span>) </span>{
-  <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-title">h2</span>&gt;</span>子级的数值变化的动画 - children plugin<span class="hljs-tag">&lt;/<span class="hljs-title">h2</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>基本数字：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
-        <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span> } }}
-      /&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>设置开始数字：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
-        <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span> } }}
-      &gt;</span>
-        9990
-      <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>只取整数：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
-        <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span>, <span class="hljs-attribute">floatLength:</span> <span class="hljs-attribute">0</span> } }}
-      /&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>基本数字, 小数后取两位, float length 2：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
-        <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span>, <span class="hljs-attribute">floatLength:</span> <span class="hljs-attribute">2</span> } }}
-      /&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>格式化钱符：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>¥<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
+  <span class="hljs-keyword">return</span> (
+    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">h2</span>&gt;</span>子级的数值变化的动画 - children plugin<span class="hljs-tag">&lt;/<span class="hljs-title">h2</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>基本数字：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
-          <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span>, <span class="hljs-attribute">floatLength:</span> <span class="hljs-attribute">2</span>, <span class="hljs-attribute">formatMoney:</span> <span class="hljs-attribute">true</span> } }}
-          <span class="hljs-attribute">component</span>=<span class="hljs-value">"span"</span>
+          <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span> } }}
         /&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>自定义钱符格式：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>¥<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>设置开始数字：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
-          <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span>
-            <span class="hljs-attribute">Children:</span> {
-              <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span>,
-              <span class="hljs-attribute">floatLength:</span> <span class="hljs-attribute">2</span>,
-              <span class="hljs-attribute">formatMoney:</span> { <span class="hljs-attribute">thousand:</span> '^', <span class="hljs-attribute">decimal:</span> '%' },
-            },
-          }}
-          <span class="hljs-attribute">component</span>=<span class="hljs-value">"span"</span>
+          <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span> } }}
+        &gt;</span>
+          9990
+        <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>只取整数：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
+          <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span>, <span class="hljs-attribute">floatLength:</span> <span class="hljs-attribute">0</span> } }}
         /&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-  <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>基本数字, 小数后取两位, float length 2：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
+          <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span>, <span class="hljs-attribute">floatLength:</span> <span class="hljs-attribute">2</span> } }}
+        /&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>格式化钱符：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>¥<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
+            <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span>, <span class="hljs-attribute">floatLength:</span> <span class="hljs-attribute">2</span>, <span class="hljs-attribute">formatMoney:</span> <span class="hljs-attribute">true</span> } }}
+            <span class="hljs-attribute">component</span>=<span class="hljs-value">"span"</span>
+          /&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>自定义钱符格式：<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">span</span>&gt;</span>¥<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
+            <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span>
+              <span class="hljs-attribute">Children:</span> {
+                <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span>,
+                <span class="hljs-attribute">floatLength:</span> <span class="hljs-attribute">2</span>,
+                <span class="hljs-attribute">formatMoney:</span> { <span class="hljs-attribute">thousand:</span> '^', <span class="hljs-attribute">decimal:</span> '%' },
+              },
+            }}
+            <span class="hljs-attribute">component</span>=<span class="hljs-value">"span"</span>
+          /&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
 }
 
 ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Demo</span> /&gt;</span>, document.getElementById('__react-content'));

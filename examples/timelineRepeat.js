@@ -1,14 +1,14 @@
-webpackJsonp([17],{
+webpackJsonp([16],{
 
-/***/ 197:
+/***/ 199:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(198);
+module.exports = __webpack_require__(200);
 
 
 /***/ }),
 
-/***/ 198:
+/***/ 200:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -38,6 +38,10 @@ var Demo = function (_React$Component) {
     __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default()(this, Demo);
 
     var _this = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn___default()(this, _React$Component.call(this, props));
+
+    _this.onChange = function (e) {
+      console.log(e.timelineMode);
+    };
 
     _this.state = {
       children: [__WEBPACK_IMPORTED_MODULE_4_react___default.a.createElement(
@@ -76,7 +80,10 @@ var Demo = function (_React$Component) {
       __WEBPACK_IMPORTED_MODULE_3_rc_tween_one__["b" /* default */],
       {
         animation: [{ translateX: 100, rotate: 10 }, { translateY: 100, translateX: 500, rotate: 0 }, { translateX: 0, marginTop: 100 }, { translateY: 0, marginLeft: 100 }, { marginLeft: 0, marginTop: 0 }],
-        style: { height: 400 }
+        repeat: 3,
+        yoyo: true,
+        style: { height: 400 },
+        onChange: this.onChange
       },
       this.state.children
     );
@@ -89,5 +96,5 @@ __WEBPACK_IMPORTED_MODULE_5_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ })
 
-},[197]);
-//# sourceMappingURL=timeline.js.map
+},[199]);
+//# sourceMappingURL=timelineRepeat.js.map

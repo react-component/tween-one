@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>childrenUpdate.js - example - rc-tween-one@1.8.1</title>
+  <title>childrenUpdate.js - example - rc-tween-one@2.0.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-tween-one@1.8.1</h1>
+      <h1>rc-tween-one@2.0.0</h1>
 
       <p>tween-one anim component for react</p>
     </div>
@@ -272,9 +272,10 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
-  constructor() {
-    <span class="hljs-keyword">super</span>(...arguments);
+  constructor(props) {
+    <span class="hljs-keyword">super</span>(props);
     <span class="hljs-keyword">this</span>.state = {
       tweenData: { translateX: <span class="hljs-string">'100px'</span>, duration: <span class="hljs-number">3000</span> },
       childTweenData: { translateY: <span class="hljs-number">200</span>, duration: <span class="hljs-number">1000</span> },
@@ -300,12 +301,13 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
   }
 
   render() {
-    <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{this.state.tweenData}</span>
-      <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">height:</span> <span class="hljs-attribute">300</span>, <span class="hljs-attribute">width:</span> <span class="hljs-attribute">60</span>, <span class="hljs-attribute">textAlign:</span> '<span class="hljs-attribute">center</span>' }}
-    &gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>大面包<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{this.state.childTweenData}</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"tween"</span>&gt;</span>小馒头<span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>)</span>;
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{this.state.tweenData}</span>
+        <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">height:</span> <span class="hljs-attribute">300</span>, <span class="hljs-attribute">width:</span> <span class="hljs-attribute">60</span>, <span class="hljs-attribute">textAlign:</span> '<span class="hljs-attribute">center</span>' }}
+      &gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>大面包<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{this.state.childTweenData}</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"tween"</span>&gt;</span>小馒头<span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>)</span>;
   }
 }
 ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Demo</span> /&gt;</span>, document.getElementById('__react-content'));

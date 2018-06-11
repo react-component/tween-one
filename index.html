@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-tween-one@1.8.1 - tween-one anim component for react</title>
+  <title>rc-tween-one@2.0.0 - tween-one anim component for react</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-tween-one@1.8.1</h1>
+  <h1>rc-tween-one@2.0.0</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -797,6 +797,8 @@
       <li><a href="examples/svgPoints.html">svgPoints</a></li>
       
       <li><a href="examples/timeline.html">timeline</a></li>
+      
+      <li><a href="examples/timelineRepeat.html">timelineRepeat</a></li>
       
       <li><a href="examples/translate3d.html">translate3d</a></li>
       
@@ -900,10 +902,22 @@ React.render(<span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</
 <td>animate revers start delay</td>
 </tr>
 <tr>
+<td>repeat</td>
+<td>number</td>
+<td>0</td>
+<td><code>animation</code> all data repeat, To repeat indefinitely, use  -1</td>
+</tr>
+<tr>
+<td>yoyo</td>
+<td>boolean</td>
+<td>false</td>
+<td><code>animation</code> all data alternating backward and forward on each repeat.</td>
+</tr>
+<tr>
 <td>onChange</td>
 <td>func</td>
 <td>null</td>
-<td>when the animation change called, callback({ moment, item, tween, index, mode})</td>
+<td>when the animation change called, callback({ moment, item, tween, index, mode, timelineMode })</td>
 </tr>
 <tr>
 <td>moment</td>
@@ -996,7 +1010,7 @@ React.render(<span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</
 <td>yoyo</td>
 <td>boolean</td>
 <td>false</td>
-<td>if <code>true</code>, every other repeat cycle will run in the opposite direction so that the tween appears to go back and forth (forward then backward).</td>
+<td><code>true</code>: alternating backward and forward on each repeat.</td>
 </tr>
 <tr>
 <td>ease</td>

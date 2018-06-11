@@ -1,10 +1,10 @@
 webpackJsonp([11],{
 
-/***/ 109:
+/***/ 135:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_style_utils__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_style_utils__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_style_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_style_utils__);
 /* eslint-disable */
 /**
@@ -359,7 +359,7 @@ var GsapBezier = {
 var Bezier = function Bezier(target, vars) {
   this.vars = this.getDefaultData(vars);
   this.target = target;
-  this.transform = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_style_utils__["checkStyleName"])('transform');
+  this.transform = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["checkStyleName"])('transform');
 };
 Bezier.prototype = {
   name: 'bezier',
@@ -501,7 +501,7 @@ Bezier.prototype = {
   getAnimStart: function getAnimStart(computedStyle, isSvg) {
     var transform = computedStyle[isSvg ? 'transformSVG' : this.transform];
     transform = transform === 'none' ? '' : transform;
-    var matrix = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_style_utils__["createMatrix"])(transform);
+    var matrix = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["createMatrix"])(transform);
     // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
     this.vars.startPoint = { x: matrix.e, y: matrix.f };
     this.init();
@@ -512,7 +512,7 @@ Bezier.prototype = {
     }
     t.style.transform = this.set(r);
     if (computedStyle) {
-      computedStyle.transformSVG = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_style_utils__["createMatrix"])(t.style.transform).toString();
+      computedStyle.transformSVG = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["createMatrix"])(t.style.transform).toString();
     }
   }
 };
@@ -526,105 +526,83 @@ Bezier.quadraticToCubic = function (a, b, c) {
 
 /***/ }),
 
-/***/ 177:
+/***/ 76:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(76);
+module.exports = __webpack_require__(77);
 
 
 /***/ }),
 
-/***/ 76:
+/***/ 77:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rc_tween_one__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__src_plugin_BezierPlugin__ = __webpack_require__(109);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_dom__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_plugin_BezierPlugin__ = __webpack_require__(135);
 
 
 
 
 
-
-
-
-__WEBPACK_IMPORTED_MODULE_4_rc_tween_one__["a" /* default */].plugins.push(__WEBPACK_IMPORTED_MODULE_7__src_plugin_BezierPlugin__["a" /* default */]);
-
-var Demo = function (_React$Component) {
-  __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits___default()(Demo, _React$Component);
-
-  function Demo() {
-    __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default()(this, Demo);
-
-    return __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default()(this, (Demo.__proto__ || Object.getPrototypeOf(Demo)).apply(this, arguments));
-  }
-
-  __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass___default()(Demo, [{
-    key: 'render',
-    value: function render() {
-      return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
-        'div',
-        { style: { position: 'relative', height: 300 } },
-        __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
-          __WEBPACK_IMPORTED_MODULE_4_rc_tween_one__["a" /* default */],
-          {
-            animation: {
-              bezier: { type: 'thru', autoRotate: true,
-                vars: [{ x: 200, y: 200 }, { x: 400, y: 0 }, { x: 600, y: 200 }, { x: 800, y: 0 }]
-              },
-              duration: 5000
-            },
-            style: { width: 100 }
+__WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */].plugins.push(__WEBPACK_IMPORTED_MODULE_3__src_plugin_BezierPlugin__["a" /* default */]);
+function Demo() {
+  return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+    'div',
+    { style: { position: 'relative', height: 300 } },
+    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+      __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */],
+      {
+        animation: {
+          bezier: {
+            type: 'thru', autoRotate: true,
+            vars: [{ x: 200, y: 200 }, { x: 400, y: 0 }, { x: 600, y: 200 }, { x: 800, y: 0 }]
           },
-          __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(
-            'div',
-            null,
-            '\u6267\u884C\u52A8\u6548'
-          )
-        ),
-        __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement('div', {
-          style: { width: 5, height: 5, background: '#000',
-            position: 'absolute', top: 0, transform: 'translate(200px,200px)'
-          }
-        }),
-        __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement('div', {
-          style: { width: 5, height: 5, background: '#000', position: 'absolute',
-            top: 0, transform: 'translate(400px,0px)'
-          }
-        }),
-        __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement('div', {
-          style: { width: 5, height: 5, background: '#000', position: 'absolute',
-            top: 0, transform: 'translate(600px,200px)'
-          }
-        }),
-        __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement('div', {
-          style: { width: 5, height: 5, background: '#000', position: 'absolute',
-            top: 0, transform: 'translate(800px,0px)'
-          }
-        })
-      );
-    }
-  }]);
+          duration: 5000
+        },
+        style: { width: 100 }
+      },
+      __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+        'div',
+        null,
+        '\u6267\u884C\u52A8\u6548'
+      )
+    ),
+    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('div', {
+      style: {
+        width: 5, height: 5, background: '#000',
+        position: 'absolute', top: 0, transform: 'translate(200px,200px)'
+      }
+    }),
+    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('div', {
+      style: {
+        width: 5, height: 5, background: '#000', position: 'absolute',
+        top: 0, transform: 'translate(400px,0px)'
+      }
+    }),
+    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('div', {
+      style: {
+        width: 5, height: 5, background: '#000', position: 'absolute',
+        top: 0, transform: 'translate(600px,200px)'
+      }
+    }),
+    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('div', {
+      style: {
+        width: 5, height: 5, background: '#000', position: 'absolute',
+        top: 0, transform: 'translate(800px,0px)'
+      }
+    })
+  );
+}
 
-  return Demo;
-}(__WEBPACK_IMPORTED_MODULE_5_react___default.a.Component);
-
-__WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(Demo, null), document.getElementById('__react-content'));
+__WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(Demo, null), document.getElementById('__react-content'));
 
 /***/ })
 
-},[177]);
+},[76]);
 //# sourceMappingURL=bezier.js.map

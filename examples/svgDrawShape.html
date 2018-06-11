@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>svgDrawShape.js - example - rc-tween-one@1.8.1</title>
+  <title>svgDrawShape.js - example - rc-tween-one@2.0.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-tween-one@1.8.1</h1>
+      <h1>rc-tween-one@2.0.0</h1>
 
       <p>tween-one anim component for react</p>
     </div>
@@ -273,19 +273,20 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
 <span class="hljs-keyword">import</span> SvgDrawPlugin <span class="hljs-keyword">from</span> <span class="hljs-string">'../src/plugin/SvgDrawPlugin'</span>;
+
 Tween.plugins.push(SvgDrawPlugin);
 
 <span class="hljs-keyword">const</span> dataStartArr = [<span class="hljs-string">'100%'</span>, <span class="hljs-string">'30 450'</span>, <span class="hljs-string">'50% 50%'</span>, <span class="hljs-string">'30% 400'</span>, <span class="hljs-string">'50 30%'</span>, <span class="hljs-number">0</span>];
 <span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>;
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
-  constructor() {
-    <span class="hljs-keyword">super</span>(...arguments);
+  constructor(props) {
+    <span class="hljs-keyword">super</span>(props);
     <span class="hljs-keyword">this</span>.state = {
       tweenData: <span class="hljs-string">'50 30%'</span>,
     };
   }
 
-  onClick() {
+  onClick = () =&gt; {
     <span class="hljs-keyword">const</span> tweenData = dataStartArr[i];
     <span class="hljs-keyword">this</span>.setState({
       tweenData,
@@ -297,7 +298,7 @@ Tween.plugins.push(SvgDrawPlugin);
   render() {
     <span class="hljs-keyword">return</span> (
       <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.onClick.bind(this)}</span>&gt;</span>点击切换<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.onClick}</span>&gt;</span>点击切换<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>当前参数：{this.state.tweenData}<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">svg</span> <span class="hljs-attribute">width</span>=<span class="hljs-value">"100%"</span> <span class="hljs-attribute">height</span>=<span class="hljs-value">"600"</span> <span class="hljs-attribute">version</span>=<span class="hljs-value">"1.2"</span>&gt;</span>
           <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>

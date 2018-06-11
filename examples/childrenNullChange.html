@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>childrenNullChange.js - example - rc-tween-one@1.8.1</title>
+  <title>childrenNullChange.js - example - rc-tween-one@2.0.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-tween-one@1.8.1</h1>
+      <h1>rc-tween-one@2.0.0</h1>
 
       <p>tween-one anim component for react</p>
     </div>
@@ -272,10 +272,16 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+<span class="hljs-keyword">import</span> PropTypes <span class="hljs-keyword">from</span> <span class="hljs-string">'prop-types'</span>;
 <span class="hljs-keyword">import</span> <span class="hljs-string">'../assets/index.less'</span>;
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Div</span>(<span class="hljs-params">props</span>) </span>{
-  <span class="hljs-keyword">return</span> props.show ? <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{props.children}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span> : null;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Div</span>(<span class="hljs-params">{ show, children }</span>) </span>{
+  <span class="hljs-keyword">return</span> show ? <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{children}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span> : null;
+}
+
+Div.propTypes = {
+  show: PropTypes.bool,
+  children: PropTypes.any,
 }
 
 class Demo extends React.Component {
@@ -290,13 +296,14 @@ class Demo extends React.Component {
     }, 1000);
   }
   render() {
-    return (<span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
-      <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">x:</span> <span class="hljs-attribute">300</span> }}
-      <span class="hljs-attribute">component</span>=<span class="hljs-value">{Div}</span>
-      <span class="hljs-attribute">componentProps</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">show:</span> <span class="hljs-attribute">this.state.show</span> }}
-    &gt;</span>
-      test
-    <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>)</span>;
+    return (
+      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
+        <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">x:</span> <span class="hljs-attribute">300</span> }}
+        <span class="hljs-attribute">component</span>=<span class="hljs-value">{Div}</span>
+        <span class="hljs-attribute">componentProps</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">show:</span> <span class="hljs-attribute">this.state.show</span> }}
+      &gt;</span>
+        test
+      <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>)</span>;
   }
 }
 ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Demo</span> /&gt;</span>, document.getElementById('__react-content'));

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>control.js - example - rc-tween-one@1.8.1</title>
+  <title>control.js - example - rc-tween-one@2.0.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-tween-one@1.8.1</h1>
+      <h1>rc-tween-one@2.0.0</h1>
 
       <p>tween-one anim component for react</p>
     </div>
@@ -273,27 +273,17 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
 
-
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
-  constructor() {
-    <span class="hljs-keyword">super</span>(...arguments);
+  constructor(props) {
+    <span class="hljs-keyword">super</span>(props);
     <span class="hljs-keyword">this</span>.state = {
       paused: <span class="hljs-literal">true</span>,
       reverse: <span class="hljs-literal">false</span>,
       reverseDelay: <span class="hljs-number">0</span>,
-      restart: <span class="hljs-literal">false</span>,
     };
-    [
-      <span class="hljs-string">'onPlay'</span>,
-      <span class="hljs-string">'onPause'</span>,
-      <span class="hljs-string">'onReverse'</span>,
-      <span class="hljs-string">'onReverseDelay'</span>,
-      <span class="hljs-string">'onRestart'</span>,
-      <span class="hljs-string">'onMoment'</span>,
-    ].forEach((method) =&gt; <span class="hljs-keyword">this</span>[method] = <span class="hljs-keyword">this</span>[method].bind(<span class="hljs-keyword">this</span>));
   }
 
-  onPlay() {
+  onPlay = () =&gt; {
     <span class="hljs-keyword">this</span>.setState({
       paused: <span class="hljs-literal">false</span>,
       reverse: <span class="hljs-literal">false</span>,
@@ -301,14 +291,14 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     });
   }
 
-  onPause() {
+  onPause = () =&gt; {
     <span class="hljs-keyword">this</span>.setState({
       paused: <span class="hljs-literal">true</span>,
       moment: <span class="hljs-literal">null</span>,
     });
   }
 
-  onReverse() {
+  onReverse = () =&gt; {
     <span class="hljs-keyword">this</span>.setState({
       reverse: <span class="hljs-literal">true</span>,
       reverseDelay: <span class="hljs-number">0</span>,
@@ -317,7 +307,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     });
   }
 
-  onReverseDelay() {
+  onReverseDelay = () =&gt; {
     <span class="hljs-keyword">this</span>.setState({
       reverse: <span class="hljs-literal">true</span>,
       reverseDelay: <span class="hljs-number">1000</span>,
@@ -326,7 +316,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     });
   }
 
-  onRestart() {
+  onRestart = () =&gt; {
     <span class="hljs-keyword">this</span>.setState({
       moment: <span class="hljs-number">0</span>,
       paused: <span class="hljs-literal">false</span>,
@@ -334,7 +324,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     });
   }
 
-  onMoment() {
+  onMoment = () =&gt; {
     <span class="hljs-keyword">this</span>.setState({
       moment: <span class="hljs-number">500</span>,
     });

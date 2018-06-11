@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>update.js - example - rc-tween-one@2.0.0</title>
+  <title>timelineRepeat.js - example - rc-tween-one@2.0.0</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -276,69 +276,41 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
   constructor(props) {
     <span class="hljs-keyword">super</span>(props);
-    <span class="hljs-keyword">this</span>.testText = <span class="hljs-string">'刚开始的样式:'</span>;
     <span class="hljs-keyword">this</span>.state = {
-      style: { opacity: <span class="hljs-number">1</span>, height: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">0</span>, transform: <span class="hljs-string">'translateY(0px)'</span> },
-      test: <span class="hljs-string">''</span>,
-      animation: { translateY: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">500</span>, duration: <span class="hljs-number">5000</span> },
+      children: [<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"1"</span>&gt;</span>依次进入<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"2"</span>&gt;</span>依次进入<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>]</span>,
     };
   }
 
   componentDidMount() {
     setTimeout(() =&gt; {
       <span class="hljs-keyword">this</span>.setState({
-        style: { opacity: <span class="hljs-number">1</span>, height: <span class="hljs-number">250</span>, transform: <span class="hljs-string">'translateY(100px)'</span>, marginLeft: <span class="hljs-number">100</span> },
+        children: [<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"1"</span>&gt;</span>121221<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">"2"</span>&gt;</span>1122121<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>]</span>,
       });
-      <span class="hljs-keyword">this</span>.bool = <span class="hljs-literal">false</span>;
     }, <span class="hljs-number">1000</span>);
   }
 
   onChange = (e) =&gt; {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.bool) {
-      <span class="hljs-keyword">let</span> text = (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span> 当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.test) {
-        text = (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.state.test}
-          <span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>当前时间 moment: {e.moment}<span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
-        <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
-      }
-      <span class="hljs-keyword">this</span>.setState({
-        test: text,
-      });
-      <span class="hljs-keyword">this</span>.bool = <span class="hljs-literal">true</span>;
-    }
-  }
-
-  onClick = () =&gt;{
-    <span class="hljs-keyword">this</span>.setState({
-      style: { transform: <span class="hljs-string">'translateY(10px)'</span>, marginLeft: <span class="hljs-number">30</span>, height: <span class="hljs-number">300</span> },
-      animation: { translateY: <span class="hljs-number">100</span>, marginLeft: <span class="hljs-number">100</span>, duration: <span class="hljs-number">1000</span> },
-    });
-    <span class="hljs-keyword">this</span>.bool = <span class="hljs-literal">false</span>;
-  }
-
-  onClick2 = () =&gt; {
-    <span class="hljs-keyword">this</span>.setState({
-      style: { transform: <span class="hljs-string">'translateY(0px)'</span>, marginLeft: <span class="hljs-number">130</span>, height: <span class="hljs-number">300</span> },
-      animation: { translateY: <span class="hljs-number">200</span>, marginLeft: <span class="hljs-number">500</span>, duration: <span class="hljs-number">1000</span> },
-    });
-    <span class="hljs-keyword">this</span>.bool = <span class="hljs-literal">false</span>;
+    <span class="hljs-built_in">console</span>.log(e.timelineMode);
   }
 
   render() {
-    <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">p</span>&gt;</span>在动画时, 变化 style, 将重新计算为 start <span class="hljs-tag">&lt;/<span class="hljs-title">p</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.onClick}</span>&gt;</span>点击改变样式<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.onClick2}</span>&gt;</span>点击改变样式2<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
-      <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span> <span class="hljs-attribute">animation</span>=<span class="hljs-value">{this.state.animation}</span>
-        <span class="hljs-attribute">style</span>=<span class="hljs-value">{this.state.style}</span>
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
+        <span class="hljs-attribute">animation</span>=<span class="hljs-value">{[</span>
+          { <span class="hljs-attribute">translateX:</span> <span class="hljs-attribute">100</span>, <span class="hljs-attribute">rotate:</span> <span class="hljs-attribute">10</span> },
+          { <span class="hljs-attribute">translateY:</span> <span class="hljs-attribute">100</span>, <span class="hljs-attribute">translateX:</span> <span class="hljs-attribute">500</span>, <span class="hljs-attribute">rotate:</span> <span class="hljs-attribute">0</span> },
+          { <span class="hljs-attribute">translateX:</span> <span class="hljs-attribute">0</span>, <span class="hljs-attribute">marginTop:</span> <span class="hljs-attribute">100</span> },
+          { <span class="hljs-attribute">translateY:</span> <span class="hljs-attribute">0</span>, <span class="hljs-attribute">marginLeft:</span> <span class="hljs-attribute">100</span> },
+          { <span class="hljs-attribute">marginLeft:</span> <span class="hljs-attribute">0</span>, <span class="hljs-attribute">marginTop:</span> <span class="hljs-attribute">0</span> },
+        ]}
+        <span class="hljs-attribute">repeat</span>=<span class="hljs-value">{3}</span>
+        <span class="hljs-attribute">yoyo</span>
+        <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">height:</span> <span class="hljs-attribute">400</span> }}
         <span class="hljs-attribute">onChange</span>=<span class="hljs-value">{this.onChange}</span>
       &gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>变化的样式<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+        {this.state.children}
       <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
-      <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>{this.state.test}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
+    )</span>;
   }
 }
 ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">Demo</span> /&gt;</span>, document.getElementById('__react-content'));
@@ -352,7 +324,7 @@ ReactDom.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-t
   </a>
   <script>FastClick.attach(document.body);</script>
   <script src="../common.js?nowrap"></script>
-  <script src="update.js?nowrap"></script>
+  <script src="timelineRepeat.js?nowrap"></script>
 </body>
 
 </html>
