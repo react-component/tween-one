@@ -283,7 +283,7 @@ p.render = function () {
         if (progressTime < this.perFrame) {
           ratio = !item.duration && !item.delay ? item.ease(1, startData, endData, 1)
             : item.ease(0, startData, endData, 1);
-          this.setRatio(toFixed(ratio), item, i);
+          this.setRatio(ratio, item, i);
         } else if (progressTime > duration) {
           ratio = item.ease(1, startData, endData, 1);
           this.setRatio(ratio, item, i);
@@ -302,7 +302,7 @@ p.render = function () {
       target: this.target,
     };
 
-    if (progressTime > -this.perFrame &&
+    if (progressTime >= 0 &&
       !(progressTime > duration && item.mode === 'onComplete') &&
       this.start[i]) {
       const updateAnim = this.updateAnim === 'update';
@@ -310,9 +310,10 @@ p.render = function () {
         && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
-        this.setRatio(toFixed(ratio), item, i, item.currentRepeat !== repeatNum);
-        if (item.mode !== 'reset' && !updateAnim) {
+        this.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
+        if (item.reset && !updateAnim) {
           item.onComplete(e);
+          delete item.reset;
         }
         item.mode = 'onComplete';
       } else if (duration) {
@@ -325,7 +326,7 @@ p.render = function () {
             item.mode = 'onRepeat';
             item.currentRepeat = repeatNum;
             item.onRepeat({ ...e, repeatNum });
-          } else if ((!item.perTime ||
+          } else if ((!item.perTime || progressTime === 0 ||
             (reverse && (item.perTime >= this.reverseStartTime - initTime)))
             && item.mode !== 'onStart') {
             // onReveresStart 和 onStart 统一用 onStart;
@@ -352,6 +353,12 @@ p.render = function () {
 // 播放帧
 p.frame = function (moment) {
   this.progressTime = moment;
+  this.defaultData.forEach(item => {
+    const t = this.progressTime - item.duration - item.initTime;
+    if (t < this.perFrame && t > 0) {
+      this.progressTime = item.duration + item.initTime;
+    }
+  });
   this.render();
 };
 p.resetAnimData = function () {
@@ -362,7 +369,7 @@ p.resetAnimData = function () {
 p.resetDefaultStyle = function () {
   this.tween = {};
   this.defaultData = this.defaultData.map(item => {
-    item.mode = 'reset';
+    item.reset = true;
     return item;
   });
   Object.keys(this.startDefaultData).forEach(key => {

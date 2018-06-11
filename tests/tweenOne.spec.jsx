@@ -618,4 +618,28 @@ describe('rc-tween-one', () => {
       done();
     }, 1000);
   });
+
+  it('timeline repeat and yoyo', (done) => {
+    instance = createTweenInstance({
+      animation: [{ x: 100, duration: 200 }, { y: 100, duration: 200 }],
+      yoyo: true,
+      repeat: 2,
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    console.log(child.style[checkStyleName('transform')]);
+    expect(child.style[checkStyleName('transform')]).to.be('translate(0px, 0px)');
+    ticker.timeout(() => {
+      console.log(child.style[checkStyleName('transform')]);
+      expect(child.style[checkStyleName('transform')]).to.be('translate(100px, 100px)');
+      ticker.timeout(() => {
+        console.log(child.style[checkStyleName('transform')]);
+        expect(child.style[checkStyleName('transform')]).to.be('translate(0px, 0px)');
+        ticker.timeout(() => {
+          console.log(child.style[checkStyleName('transform')]);
+          expect(child.style[checkStyleName('transform')]).to.be('translate(100px, 100px)');
+          done();
+        }, 400);
+      }, 400);
+    }, 400);
+  });
 });

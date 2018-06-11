@@ -22,6 +22,8 @@ class TweenOne extends Component {
     paused: PropTypes.bool,
     reverse: PropTypes.bool,
     reverseDelay: PropTypes.number,
+    yoyo: PropTypes.bool,
+    repeat: PropTypes.number,
     moment: PropTypes.number,
     attr: PropTypes.string,
     onChange: PropTypes.func,
@@ -34,6 +36,7 @@ class TweenOne extends Component {
     component: 'div',
     componentProps: {},
     reverseDelay: 0,
+    repeat: 0,
     attr: 'style',
     onChange: noop,
     updateReStart: true,
@@ -46,7 +49,6 @@ class TweenOne extends Component {
     this.startFrame = ticker.frame;
     this.paused = props.paused;
     this.reverse = props.reverse;
-    this.onChange = props.onChange;
     this.newMomentAnim = false;
     this.updateAnim = null;
     this.forced = {};
@@ -65,7 +67,6 @@ class TweenOne extends Component {
       this.updateAnim = 'start';
       return;
     }
-    this.onChange = nextProps.onChange;
     // 跳帧事件 moment;
     const newMoment = nextProps.moment;
     this.newMomentAnim = false;
@@ -193,7 +194,7 @@ class TweenOne extends Component {
     if (!this.tween) {
       return;
     }
-    this.startMoment = this.tween.progressTime;
+    this.startMoment = this.moment;
     this.startFrame = ticker.frame;
     this.tween.reverse = this.reverse;
     this.tween.reverseStartTime = this.startMoment;
@@ -233,31 +234,74 @@ class TweenOne extends Component {
   }
 
   frame = () => {
+    const { yoyo } = this.props;
+    let { repeat } = this.props;
+    const totalTime = repeat === -1 ? Number.MAX_VALUE : this.tween.totalTime * (repeat + 1);
+    repeat = repeat >= 0 ? repeat : Number.MAX_VALUE;
     let moment = (ticker.frame - this.startFrame) * perFrame + this.startMoment;
     if (this.reverse) {
       moment = (this.startMoment || 0) - (ticker.frame - this.startFrame) * perFrame;
     }
-    moment = moment > this.tween.totalTime ? this.tween.totalTime : moment;
+    moment = moment > totalTime ? totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
-    if (moment < this.moment && !this.reverse) {
+    let repeatNum = Math.floor(moment / this.tween.totalTime);
+    repeatNum = repeatNum > repeat ? repeat : repeatNum;
+    let tweenMoment = moment - this.tween.totalTime * repeatNum;
+    tweenMoment = tweenMoment < perFrame ? 0 : tweenMoment;
+    if (repeat && moment && moment - this.tween.totalTime * repeatNum < perFrame) {
+      // 在重置样式之前补 complete；
+      this.tween.frame(this.tween.totalTime * repeatNum);
+    }
+    if (moment < this.moment && !this.reverse ||
+      repeat !== 0 && repeatNum && tweenMoment <= perFrame
+    ) {
       this.tween.resetDefaultStyle();
     }
+    const yoyoReverse = yoyo && repeatNum % 2;
+    if (yoyoReverse) {
+      tweenMoment = this.tween.totalTime - tweenMoment;
+    }
+    this.tween.onChange = (e) => {
+      const cb = {
+        ...e,
+        timelineMode: '',
+      };
+      if (
+        (!moment && !this.reverse) ||
+        (this.reverse && this.moment === this.startMoment)
+      ) {
+        cb.timelineMode = 'onTimelineStart';
+      } else if (
+        moment >= totalTime && !this.reverse ||
+        !moment && this.reverse
+      ) {
+        cb.timelineMode = 'onTimelineComplete';
+      } else if (repeatNum !== this.timelineRepeatNum) {
+        cb.timelineMode = 'onTimelineRepeat';
+      } else {
+        cb.timelineMode = 'onTimelineUpdate';
+      }
+      this.props.onChange(cb);
+    };
+    this.tween.frame(tweenMoment);
     this.moment = moment;
-    this.tween.onChange = this.onChange;
-    this.tween.frame(moment);
+    this.timelineRepeatNum = repeatNum;
   }
 
   raf = () => {
+    const { style, repeat } = this.props;
+    const totalTime = repeat === -1 ? Number.MAX_VALUE : this.tween.totalTime * (repeat + 1);
     this.frame();
     if (this.updateAnim) {
       if (this.updateStartStyle) {
-        this.tween.reStart(this.props.style);
+        this.tween.reStart(style);
       }
       this.updateAnimFunc();
       this.start();
     }
-    if ((this.moment >= this.tween.totalTime && !this.reverse)
-      || this.paused || (this.reverse && this.moment === 0)) {
+    if ((this.moment >= totalTime && !this.reverse)
+      || this.paused || (this.reverse && this.moment === 0)
+    ) {
       return this.cancelRequestAnimationFrame();
     }
   }
@@ -277,6 +321,8 @@ class TweenOne extends Component {
       'attr',
       'paused',
       'reverse',
+      'repeat',
+      'yoyo',
       'moment',
       'resetStyleBool',
       'updateReStart',
