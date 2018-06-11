@@ -14,8 +14,8 @@ function noop() {
 }
 
 class TweenOneGroup extends Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.keysToEnter = [];
     this.keysToLeave = [];
     this.saveTweenTag = {};
@@ -125,13 +125,12 @@ class TweenOneGroup extends Component {
 
   getCoverAnimation = (child, i, type) => {
     let animation;
-    let onChange;
     animation = type === 'leave' ? this.props.leave : this.props.enter;
     if (type === 'appear') {
       const appear = transformArguments(this.props.appear, child.key, i);
       animation = appear && this.props.enter || null;
     }
-    onChange = this.onChange.bind(this, animation, child.key, type);
+    const onChange = this.onChange.bind(this, animation, child.key, type);
     const animate = transformArguments(animation, child.key, i);
     const props = {
       key: child.key,

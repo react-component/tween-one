@@ -3,13 +3,9 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import ScrollOverPack from 'rc-scroll-anim/lib/ScrollOverPack';
 
-class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
-  }
-
-  render() {
-    return (<div>
+function Demo() {
+  return (
+    <div>
       <div style={{ height: 800 }}>往下滚动</div>
       <ScrollOverPack
         style={{ height: 800 }}
@@ -33,6 +29,6 @@ class Demo extends React.Component {
         </Tween>
       </ScrollOverPack>
     </div>);
-  }
 }
+
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

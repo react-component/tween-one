@@ -1,9 +1,9 @@
-import { parsePath, getTransformValue } from '../util';
 import {
   checkStyleName,
   getTransform,
   createMatrix,
 } from 'style-utils';
+import { parsePath, getTransformValue } from '../util';
 
 function PathPlugin(target, vars) {
   this.target = target;

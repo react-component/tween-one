@@ -4,8 +4,7 @@ import requestAnimationFrame from 'raf';
 const getTime = Date.now || (() => new Date().getTime());
 const Ticker = function () {
 };
-
-const p = Ticker.prototype = {
+Ticker.prototype = {
   tickFnArray: [],
   tickKeyObject: {},
   id: -1,
@@ -15,6 +14,7 @@ const p = Ticker.prototype = {
   elapsed: 0,
   lastUpdate: getTime(),
 };
+const p = Ticker.prototype;
 p.add = function (fn) {
   const key = `TweenOneTicker${this.tweenId}`;
   this.tweenId++;

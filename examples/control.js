@@ -2,27 +2,17 @@ import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
 
-
 class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.state = {
       paused: true,
       reverse: false,
       reverseDelay: 0,
-      restart: false,
     };
-    [
-      'onPlay',
-      'onPause',
-      'onReverse',
-      'onReverseDelay',
-      'onRestart',
-      'onMoment',
-    ].forEach((method) => this[method] = this[method].bind(this));
   }
 
-  onPlay() {
+  onPlay = () => {
     this.setState({
       paused: false,
       reverse: false,
@@ -30,14 +20,14 @@ class Demo extends React.Component {
     });
   }
 
-  onPause() {
+  onPause = () => {
     this.setState({
       paused: true,
       moment: null,
     });
   }
 
-  onReverse() {
+  onReverse = () => {
     this.setState({
       reverse: true,
       reverseDelay: 0,
@@ -46,7 +36,7 @@ class Demo extends React.Component {
     });
   }
 
-  onReverseDelay() {
+  onReverseDelay = () => {
     this.setState({
       reverse: true,
       reverseDelay: 1000,
@@ -55,7 +45,7 @@ class Demo extends React.Component {
     });
   }
 
-  onRestart() {
+  onRestart = () => {
     this.setState({
       moment: 0,
       paused: false,
@@ -63,7 +53,7 @@ class Demo extends React.Component {
     });
   }
 
-  onMoment() {
+  onMoment = () => {
     this.setState({
       moment: 500,
     });

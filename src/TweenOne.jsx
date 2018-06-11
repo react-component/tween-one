@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
-import { dataToArray, objectEqual } from './util';
 import { stylesToCss } from 'style-utils';
+
+import { dataToArray, objectEqual } from './util';
 import Tween from './Tween';
 import ticker from './ticker';
 
@@ -123,13 +124,11 @@ class TweenOne extends Component {
       this.reverse = nextProps.reverse;
       if (this.paused) {
         this.cancelRequestAnimationFrame();
+      } else if (this.reverse && nextProps.reverseDelay) {
+        this.cancelRequestAnimationFrame();
+        ticker.timeout(this.restart, nextProps.reverseDelay);
       } else {
-        if (this.reverse && nextProps.reverseDelay) {
-          this.cancelRequestAnimationFrame();
-          ticker.timeout(this.restart, nextProps.reverseDelay);
-        } else {
-          this.restart();
-        }
+        this.restart();
       }
     }
 
@@ -304,6 +303,7 @@ class TweenOne extends Component {
     ) {
       return this.cancelRequestAnimationFrame();
     }
+    return null;
   }
 
   cancelRequestAnimationFrame = () => {
@@ -331,8 +331,9 @@ class TweenOne extends Component {
     props.style = { ...this.props.style };
     Object.keys(props.style).forEach(p => {
       if (p.match(/filter/i)) {
-        ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix =>
-          props.style[`${prefix}Filter`] = props.style[p]);
+        ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix => {
+          props.style[`${prefix}Filter`] = props.style[p];
+        });
       }
     });
     // component 为空时调用子级的。。

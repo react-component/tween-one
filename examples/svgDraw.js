@@ -2,19 +2,20 @@ import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
 import SvgDrawPlugin from '../src/plugin/SvgDrawPlugin';
+
 Tween.plugins.push(SvgDrawPlugin);
 
 const dataStartArr = ['100%', '30 450', '50% 50%', '30% 400', '50 30%', 0];
 let i = 0;
 class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.state = {
       tweenData: '50 30%',
     };
   }
 
-  onClick() {
+  onClick = () => {
     const tweenData = dataStartArr[i];
     this.setState({
       tweenData,
@@ -26,7 +27,7 @@ class Demo extends React.Component {
   render() {
     return (
       <div>
-        <button onClick={this.onClick.bind(this)}>点击切换</button>
+        <button onClick={this.onClick}>点击切换</button>
         <p>当前参数：{this.state.tweenData}</p>
         <svg width="100%" height="600" version="1.2">
           <Tween

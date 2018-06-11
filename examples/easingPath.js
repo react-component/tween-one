@@ -26,13 +26,9 @@ const anim = [
     ease: t1,
   },
 ];
-class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
-  }
-
-  render() {
-    return (<div style={{ height: 300 }}>
+function Demo() {
+  return (
+    <div style={{ height: 300 }}>
       <Tween
         animation={anim}
         style={{
@@ -51,6 +47,5 @@ class Demo extends React.Component {
         <path d={p1} fill="none" stroke="#000" />
       </svg>
     </div>);
-  }
 }
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

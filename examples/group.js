@@ -4,8 +4,8 @@ import ReactDom from 'react-dom';
 import QueueAnim from 'rc-queue-anim';
 
 class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.state = {
       children: [
         <QueueAnim
@@ -34,14 +34,9 @@ class Demo extends React.Component {
         </div>,
       ],
     };
-    [
-      'onClick',
-      'enterType',
-      'onEnd',
-    ].forEach((method) => this[method] = this[method].bind(this));
   }
 
-  onClick() {
+  onClick = () => {
     const children = !this.state.children ? [
       (<QueueAnim
         style={{
@@ -71,11 +66,11 @@ class Demo extends React.Component {
     });
   }
 
-  onEnd(e) {
+  onEnd = (e) => {
     console.log(e);// eslint-disable-line no-console
   }
 
-  enterType(e) {
+  enterType = (e) => {
     if (e.key === 'a') {
       return { x: 100, opacity: 0, type: 'from' };
     }
@@ -83,17 +78,18 @@ class Demo extends React.Component {
   }
 
   render() {
-    return (<div>
-      <button onClick={this.onClick}>切换</button>
-      <TweenOneGroup
-        style={{ height: 300 }}
-        enter={this.enterType}
-        leave={[{ y: 90 }, { x: 100, opacity: 0 }]}
-        onEnd={this.onEnd}
-      >
-        {this.state.children}
-      </TweenOneGroup>
-    </div>);
+    return (
+      <div>
+        <button onClick={this.onClick}>切换</button>
+        <TweenOneGroup
+          style={{ height: 300 }}
+          enter={this.enterType}
+          leave={[{ y: 90 }, { x: 100, opacity: 0 }]}
+          onEnd={this.onEnd}
+        >
+          {this.state.children}
+        </TweenOneGroup>
+      </div>);
   }
 }
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

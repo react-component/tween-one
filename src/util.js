@@ -35,7 +35,7 @@ export function objectEqual(obj1, obj2) {
     for (let i = 0; i < obj1.length; i++) {
       const currentObj = obj1[i];
       const nextObj = obj2[i];
-      for (const p in currentObj) {
+      for (const p in currentObj) { // eslint-disable-line no-restricted-syntax
         if (currentObj[p] !== nextObj[p]) {
           if (typeof currentObj[p] === 'object' && typeof nextObj[p] === 'object') {
             equalBool = objectEqual(currentObj[p], nextObj[p]);
@@ -119,7 +119,7 @@ export function mergeChildren(prev, next) {
     if (!c) {
       return;
     }
-    if (nextChildrenPending.hasOwnProperty(c.key)) {
+    if (nextChildrenPending.hasOwnProperty(c.key)) { // eslint-disable-line no-prototype-builtins
       ret = ret.concat(nextChildrenPending[c.key]);
     }
     ret.push(c);
@@ -171,7 +171,7 @@ export function startConvertToEndUnit(
       pix = parseFloat(num) * parseFloat(computedStyle.fontSize);
       break;
     case 'rem': {
-      htmlComputedStyle = getComputedStyle(document.getElementsByTagName('html')[0]);
+      htmlComputedStyle = window.getComputedStyle(document.getElementsByTagName('html')[0]);
       pix = parseFloat(num) * parseFloat(htmlComputedStyle.fontSize);
       break;
     }
@@ -194,7 +194,7 @@ export function startConvertToEndUnit(
       break;
     case 'rem': {
       htmlComputedStyle = htmlComputedStyle ||
-        getComputedStyle(document.getElementsByTagName('html')[0]);
+        window.getComputedStyle(document.getElementsByTagName('html')[0]);
       pix = parseFloat(num) / parseFloat(htmlComputedStyle.fontSize);
       break;
     }

@@ -25,7 +25,7 @@ ChildrenPlugin.prototype = {
     return `${negative}${mod ? `${base.substr(0, mod)}${opts.thousand}` : ''}${
       base.substr(mod).replace(/(\d{3})(?=\d)/g, `$1${opts.thousand}`)}${
       decimal ? `${opts.decimal}${decimal}` : ''
-      }`;
+    }`;
   },
   setRatio(ratio) {
     const { value, floatLength, formatMoney } = this.vars;

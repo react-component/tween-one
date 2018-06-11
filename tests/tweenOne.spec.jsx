@@ -3,16 +3,23 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import expect from 'expect.js';
-import Tween from '../src';
-import ticker from '../src/ticker';
 import TestUtils from 'react-dom/test-utils';
 import { checkStyleName } from 'style-utils';
+
+import Tween, { easing, plugins } from '../src';
+import ticker from '../src/ticker';
 import BezierPlugin from '../src/plugin/BezierPlugin';
-Tween.plugins.push(BezierPlugin);
+
+plugins.push(BezierPlugin);
 
 const Div = (props) => {
   return props.show ? <div>text</div> : null;
 };
+
+Div.propTypes = {
+  show: PropTypes.bool,
+  children: PropTypes.any,
+}
 
 describe('rc-tween-one', () => {
   let div;
@@ -20,8 +27,8 @@ describe('rc-tween-one', () => {
 
   function createTweenInstance(props) {
     class TweenDemo extends React.Component {
-      constructor() {
-        super(...arguments);
+      constructor(componentProps) {
+        super(componentProps);
         this.state = {
           animation: this.props.animation,
           style: this.props.style,
@@ -59,7 +66,7 @@ describe('rc-tween-one', () => {
       }
     }
     const objectOrArray = PropTypes.oneOfType([PropTypes.object,
-    PropTypes.array]);
+      PropTypes.array]);
 
     TweenDemo.propTypes = {
       animation: objectOrArray,
@@ -586,7 +593,7 @@ describe('rc-tween-one', () => {
   });
 
   it('single tween-one component is svg', (done) => {
-    const ease = Tween.easing.path('M0,100L100,0');
+    const ease = easing.path('M0,100L100,0');
     instance = createTweenInstance({
       animation: { translateX: 100, ease },
       component: 'rect',

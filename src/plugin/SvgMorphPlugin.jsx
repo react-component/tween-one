@@ -1,15 +1,16 @@
 /* eslint-disable func-names */
 import { path2curve } from './snapsvglite';
+
 const SvgPlugin = function (target, vars, key) {
   this.target = target;
   this.vars = vars;
   this.key = key;
   this.propsData = {};
 };
-
-const p = SvgPlugin.prototype = {
+SvgPlugin.prototype = {
   name: 'SVGMorph',
 };
+const p = SvgPlugin.prototype;
 p.getPointVars = function (d) {
   return d.split(/\s+/).map(item => item.split(',').map(_item => parseFloat(_item)));
 };

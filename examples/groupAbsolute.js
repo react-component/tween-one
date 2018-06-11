@@ -4,8 +4,8 @@ import ReactDom from 'react-dom';
 import '../assets/index.less';
 
 class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.imgArray = [
       'https://os.alipayobjects.com/rmsportal/IhCNTqPpLeTNnwr.jpg',
       'https://os.alipayobjects.com/rmsportal/uaQVvDrCwryVlbb.jpg',
@@ -13,12 +13,9 @@ class Demo extends React.Component {
     this.state = {
       int: 0,
     };
-    [
-      'onClick',
-    ].forEach((method) => this[method] = this[method].bind(this));
   }
 
-  onClick() {
+  onClick = () => {
     let int = this.state.int;
     int++;
     if (int >= this.imgArray.length) {
@@ -28,14 +25,15 @@ class Demo extends React.Component {
   }
 
   render() {
-    return (<div>
-      <button onClick={this.onClick}>切换</button>
-      <TweenOneGroup style={{ position: 'relative' }}>
-        <div key={this.state.int}>
-          <img src={this.imgArray[this.state.int]} height="200" />
-        </div>
-      </TweenOneGroup>
-    </div>);
+    return (
+      <div>
+        <button onClick={this.onClick}>切换</button>
+        <TweenOneGroup style={{ position: 'relative' }}>
+          <div key={this.state.int}>
+            <img src={this.imgArray[this.state.int]} height="200" alt="img"/>
+          </div>
+        </TweenOneGroup>
+      </div>);
   }
 }
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

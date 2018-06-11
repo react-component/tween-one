@@ -1,9 +1,10 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
+
 class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.state = {
       tweenData: { translateX: '100px', duration: 2000 },
     };

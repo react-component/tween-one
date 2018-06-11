@@ -3,8 +3,9 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import expect from 'expect.js';
-import { TweenOneGroup } from '../src';
 import TestUtils from 'react-dom/test-utils';
+
+import { TweenOneGroup } from '../src';
 
 describe('rc-tween-one-group', () => {
   let div;
@@ -13,8 +14,8 @@ describe('rc-tween-one-group', () => {
 
   function createTweenGroupInstance(props) {
     class TweenGroupDemo extends React.Component {
-      constructor() {
-        super(...arguments);
+      constructor(componetProps) {
+        super(componetProps);
         this.state = {
           children: [
             <p key="0">demo</p>,

@@ -22,9 +22,10 @@ const StylePlugin = function (target, vars, type) {
   this.propsData = {};
   this.setDefaultData();
 };
-const p = StylePlugin.prototype = {
+StylePlugin.prototype = {
   name: 'style',
 };
+const p = StylePlugin.prototype;
 p.getTweenData = function (key, vars) {
   const data = {
     data: {},
@@ -223,7 +224,9 @@ p.setRatio = function (ratio, tween, computedStyle, isRepeat) {
       if (key === 'bezier') {
         style[this.transform] = getTransformValue(tween.style.transform);
       } else {
-        Object.keys(tween.style).forEach(css => style[css] = tween.style[css]);
+        Object.keys(tween.style).forEach(css => {
+          style[css] = tween.style[css];
+        });
       }
       return;
     } else if (_isTransform) {
@@ -244,12 +247,10 @@ p.setRatio = function (ratio, tween, computedStyle, isRepeat) {
           tween.style.transform.scaleX = (endVars - xStart) * ratio + xStart;
           tween.style.transform.scaleY = (endVars - yStart) * ratio + yStart;
         }
+      } else if (count.charAt(1) === '=') {
+        tween.style.transform[key] = startVars + endVars * ratio;
       } else {
-        if (count.charAt(1) === '=') {
-          tween.style.transform[key] = startVars + endVars * ratio;
-        } else {
-          tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
-        }
+        tween.style.transform[key] = (endVars - startVars) * ratio + startVars;
       }
       style[this.transform] = getTransformValue(tween.style.transform);
       if (computedStyle) {
@@ -268,13 +269,11 @@ p.setRatio = function (ratio, tween, computedStyle, isRepeat) {
       unit = unit || (cssList.filter.indexOf(key) >= 0 ? '' : styleUnit);
       if (typeof endVars === 'string') {
         tween.style[key] = endVars;
+      } else if (count.charAt(1) === '=') {
+        tween.style[key] = startVars + endVars * ratio + unit;
       } else {
-        if (count.charAt(1) === '=') {
-          tween.style[key] = startVars + endVars * ratio + unit;
-        } else {
-          const value = (endVars - startVars) * ratio + startVars;
-          tween.style[key] = unit ? `${value}${unit}` : value;
-        }
+        const value = (endVars - startVars) * ratio + startVars;
+        tween.style[key] = unit ? `${value}${unit}` : value;
       }
     }
     if (cssList.filter.indexOf(key) >= 0) {

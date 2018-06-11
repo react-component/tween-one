@@ -2,9 +2,6 @@
 /**
  * Created by jljsj on 16/1/27.
  */
-import easingTypes from './easing';
-import _plugin from './plugins';
-import StylePlugin from './plugin/StylePlugin';
 import {
   getColor,
   parseColor,
@@ -13,7 +10,12 @@ import {
   createMatrix,
   checkStyleName,
 } from 'style-utils';
+
+import easingTypes from './easing';
+import _plugin from './plugins';
+import StylePlugin from './plugin/StylePlugin';
 import { startConvertToEndUnit } from './util.js';
+
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
 const DEFAULT_DELAY = 0;
@@ -146,14 +148,12 @@ p.setDefaultData = function (_vars) {
       const appearNow = item.appearTo + (item.delay || 0) +
         tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
       now = appearNow >= now ? appearNow : now;
+    } else if (tweenData.delay < -tweenData.duration) {
+      // 如果延时小于 负时间时,,不加,再减回延时;
+      now -= tweenData.delay;
     } else {
-      if (tweenData.delay < -tweenData.duration) {
-        // 如果延时小于 负时间时,,不加,再减回延时;
-        now -= tweenData.delay;
-      } else {
-        // repeat 为 -1 只记录一次。不能跟 reverse 同时使用;
-        now += tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
-      }
+      // repeat 为 -1 只记录一次。不能跟 reverse 同时使用;
+      now += tweenData.duration * (repeat + 1) + tweenData.repeatDelay * repeat;
     }
     tweenData.mode = '';
     return tweenData;
@@ -261,7 +261,7 @@ p.render = function () {
         return;
       }
       if (item.repeat || item.repeat <= repeatNum) {
-        initTime = initTime + repeatNum * (duration + item.repeatDelay);
+        initTime += repeatNum * (duration + item.repeatDelay);
       }
     }
     let startData = item.yoyo && repeatNum % 2 ? 1 : 0;

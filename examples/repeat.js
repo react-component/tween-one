@@ -1,13 +1,10 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
-class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
-  }
 
-  render() {
-    return (<Tween
+function Demo() {
+  return (
+    <Tween
       animation={{
         opacity: 1,
         x: '100px',
@@ -19,6 +16,6 @@ class Demo extends React.Component {
     >
       <div>执行动效</div>
     </Tween>);
-  }
 }
+
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

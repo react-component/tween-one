@@ -3,8 +3,8 @@ import React from 'react';
 import ReactDom from 'react-dom';
 
 class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.state = {
       animation: {},
     };
@@ -22,11 +22,12 @@ class Demo extends React.Component {
   }
 
   render() {
-    return (<Tween animation={this.state.animation}
-      style={{ height: 100 }}
-    >
-      <div>执行动效</div>
-    </Tween>);
+    return (
+      <Tween animation={this.state.animation}
+        style={{ height: 100 }}
+      >
+        <div>执行动效</div>
+      </Tween>);
   }
 }
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

@@ -1,9 +1,10 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
+
 class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
+  constructor(props) {
+    super(props);
     this.state = {
       tweenData: { translateX: '100px', duration: 3000 },
       childTweenData: { translateY: 200, duration: 1000 },
@@ -29,12 +30,13 @@ class Demo extends React.Component {
   }
 
   render() {
-    return (<Tween animation={this.state.tweenData}
-      style={{ height: 300, width: 60, textAlign: 'center' }}
-    >
-      <div>大面包</div>
-      <Tween animation={this.state.childTweenData} key="tween">小馒头</Tween>
-    </Tween>);
+    return (
+      <Tween animation={this.state.tweenData}
+        style={{ height: 300, width: 60, textAlign: 'center' }}
+      >
+        <div>大面包</div>
+        <Tween animation={this.state.childTweenData} key="tween">小馒头</Tween>
+      </Tween>);
   }
 }
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

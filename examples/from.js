@@ -2,13 +2,9 @@ import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
 
-class Demo extends React.Component {
-  constructor() {
-    super(...arguments);
-  }
-
-  render() {
-    return (<div style={{ position: 'relative', height: 500 }}>
+function Demo() {
+  return (
+    <div style={{ position: 'relative', height: 500 }}>
       <Tween
         animation={[
           { x: 200, y: '+=300', blur: '10px', type: 'from', duration: 500 },
@@ -18,6 +14,6 @@ class Demo extends React.Component {
       >
         <div>执行动效</div>
       </Tween></div>);
-  }
 }
+
 ReactDom.render(<Demo />, document.getElementById('__react-content'));
