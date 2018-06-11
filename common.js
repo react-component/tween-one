@@ -25021,8 +25021,10 @@ p.render = function () {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
         _this6.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
-        if (item.reset && !updateAnim) {
+        if (!item.reset && !updateAnim) {
           item.onComplete(e);
+        }
+        if (item.reset) {
           delete item.reset;
         }
         item.mode = 'onComplete';
