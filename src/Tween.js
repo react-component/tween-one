@@ -254,7 +254,7 @@ p.render = function () {
     const duration = toFixed(item.duration);
     // 处理 yoyo 和 repeat; yoyo 是在时间轴上的, 并不是倒放
     let repeatNum = Math.ceil((this.progressTime - initTime) /
-      (duration + item.repeatDelay)) - 1;
+      (duration + item.repeatDelay)) - 1 || 0;
     repeatNum = repeatNum < 0 ? 0 : repeatNum;
     if (item.repeat) {
       if (item.repeat < repeatNum && item.repeat !== -1) {

@@ -243,7 +243,7 @@ class TweenOne extends Component {
     }
     moment = moment > totalTime ? totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
-    let repeatNum = Math.floor(moment / this.tween.totalTime);
+    let repeatNum = Math.floor(moment / this.tween.totalTime) || 0;
     repeatNum = repeatNum > repeat ? repeat : repeatNum;
     let tweenMoment = moment - this.tween.totalTime * repeatNum;
     tweenMoment = tweenMoment < perFrame ? 0 : tweenMoment;
