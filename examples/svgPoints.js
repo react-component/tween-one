@@ -1,10 +1,53 @@
 webpackJsonp([2],{
 
-/***/ 100:
+/***/ 196:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(197);
+
+
+/***/ }),
+
+/***/ 197:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__snapsvglite__ = __webpack_require__(101);
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_dom__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__ = __webpack_require__(52);
+
+
+
+
+
+__WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */].plugins.push(__WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__["a" /* default */]);
+
+function Demo() {
+  return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+    'svg',
+    { width: '100%', height: '600', version: '1.2' },
+    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */], {
+      animation: [{ points: '300,10 500,200 120,230 450,220 0,20' }, { points: '100,10 200,200 120,430 450,220 0,20' }],
+      style: { fill: '#fff000', storkeWidth: 1, stroke: '#000fff' },
+      component: 'polygon',
+      points: '220,100 300,210 170,250 123,234',
+      attr: 'attr'
+    })
+  );
+}
+__WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(Demo, null), document.getElementById('__react-content'));
+
+/***/ }),
+
+/***/ 52:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__snapsvglite__ = __webpack_require__(53);
 /* eslint-disable func-names */
 
 
@@ -78,7 +121,7 @@ p.setRatio = function (ratio, tween) {
 
 /***/ }),
 
-/***/ 101:
+/***/ 53:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -541,49 +584,6 @@ function path2curve(path, path2) {
 
   return p2 ? [p, p2] : p;
 };
-
-/***/ }),
-
-/***/ 196:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(197);
-
-
-/***/ }),
-
-/***/ 197:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__ = __webpack_require__(100);
-
-
-
-
-
-__WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */].plugins.push(__WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__["a" /* default */]);
-
-function Demo() {
-  return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-    'svg',
-    { width: '100%', height: '600', version: '1.2' },
-    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */], {
-      animation: [{ points: '300,10 500,200 120,230 450,220 0,20' }, { points: '100,10 200,200 120,430 450,220 0,20' }],
-      style: { fill: '#fff000', storkeWidth: 1, stroke: '#000fff' },
-      component: 'polygon',
-      points: '220,100 300,210 170,250 123,234',
-      attr: 'attr'
-    })
-  );
-}
-__WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(Demo, null), document.getElementById('__react-content'));
 
 /***/ })
 
