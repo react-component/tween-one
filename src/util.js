@@ -152,11 +152,14 @@ export function startConvertToEndUnit(
   target, computedStyle, style, num,
   unit, dataUnit, fixed, isOriginWidth
 ) {
-  const horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
-  let t = style.indexOf('border') !== -1 ? target : target.parentNode || document.body;
+  let horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
+  horiz = style === 'padding' || style === 'marign' ? true : horiz;
+  let t = style.indexOf('border') !== -1 || style.indexOf('translate') !== -1 ?
+    target : target.parentNode || document.body;
   t = fixed ? document.body : t;
   let pix;
   let htmlComputedStyle;
+  // transform 在 safari 下会留着单位，chrome 下会全部转换成 px;
   switch (unit) {
     case '%':
       pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);

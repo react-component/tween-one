@@ -313,6 +313,8 @@ p.render = function () {
         this.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
         if (!item.reset && !updateAnim) {
           item.onComplete(e);
+        } else if (progressTime >= duration + this.perFrame - this.accuracy) {
+          return;
         }
         item.mode = 'onComplete';
       } else if (duration) {
@@ -372,6 +374,7 @@ p.resetDefaultStyle = function () {
   this.tween = {};
   this.defaultData = this.defaultData.map(item => {
     item.reset = true;
+    delete item.mode;
     return item;
   });
   Object.keys(this.startDefaultData).forEach(key => {
