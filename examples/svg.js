@@ -1,56 +1,10 @@
 webpackJsonp([3],{
 
-/***/ 190:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(191);
-
-
-/***/ }),
-
-/***/ 191:
+/***/ 100:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__ = __webpack_require__(52);
-
-
-
-
-
-__WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */].plugins.push(__WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__["a" /* default */]);
-
-function Demo() {
-  return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-    'svg',
-    { width: '100%', height: '600', version: '1.2' },
-    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */], {
-      animation: {
-        d: 'M294.863,134.137c0,0,49.599-76.923,26.082,0' + 's-55.142,119.658-55.142,19.658S161.53,19.521,294.863,34.137z'
-      },
-      style: { fill: '#fff000', storkeWidth: 1, stroke: '#000fff' },
-      component: 'path',
-      d: 'M294.863,134.137c0,0,49.599-76.923,126.082,0s-55.142, 119.658-55.142,119.658S161.53,149.521,294.863,134.137z',
-      attr: 'attr'
-    })
-  );
-}
-
-__WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(Demo, null), document.getElementById('__react-content'));
-
-/***/ }),
-
-/***/ 52:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__snapsvglite__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__snapsvglite__ = __webpack_require__(101);
 /* eslint-disable func-names */
 
 
@@ -124,7 +78,7 @@ p.setRatio = function (ratio, tween) {
 
 /***/ }),
 
-/***/ 53:
+/***/ 101:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -587,6 +541,52 @@ function path2curve(path, path2) {
 
   return p2 ? [p, p2] : p;
 };
+
+/***/ }),
+
+/***/ 190:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(191);
+
+
+/***/ }),
+
+/***/ 191:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_dom__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__ = __webpack_require__(100);
+
+
+
+
+
+__WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */].plugins.push(__WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__["a" /* default */]);
+
+function Demo() {
+  return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+    'svg',
+    { width: '100%', height: '600', version: '1.2' },
+    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */], {
+      animation: {
+        d: 'M294.863,134.137c0,0,49.599-76.923,26.082,0' + 's-55.142,119.658-55.142,19.658S161.53,19.521,294.863,34.137z'
+      },
+      style: { fill: '#fff000', storkeWidth: 1, stroke: '#000fff' },
+      component: 'path',
+      d: 'M294.863,134.137c0,0,49.599-76.923,126.082,0s-55.142, 119.658-55.142,119.658S161.53,149.521,294.863,134.137z',
+      attr: 'attr'
+    })
+  );
+}
+
+__WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(Demo, null), document.getElementById('__react-content'));
 
 /***/ })
 
