@@ -10,7 +10,15 @@ const ChildrenPlugin = function (target, vars) {
 ChildrenPlugin.prototype = {
   name: 'Children',
   getAnimStart() {
-    this.start = this.vars.startAt || { value: parseFloat(this.target.innerHTML) || 0 };
+    const { formatMoney } = this.vars;
+    const opts = {
+      thousand: formatMoney && formatMoney.thousand || ',',
+      decimal: formatMoney && formatMoney.decimal || '.',
+    };
+    const rep = new RegExp(`\\${opts.thousand}`, 'g');
+    this.start = this.vars.startAt || {
+      value: parseFloat(this.target.innerHTML.replace(rep, '').replace(opts.decimal, '.')) || 0
+    };
   },
   toMoney(v, _opts) {
     const opts = {

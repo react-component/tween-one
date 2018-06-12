@@ -314,9 +314,6 @@ p.render = function () {
         if (!item.reset && !updateAnim) {
           item.onComplete(e);
         }
-        if (item.reset) {
-          delete item.reset;
-        }
         item.mode = 'onComplete';
       } else if (duration) {
         let currentProgress = progressTime < 0 ? 0 : progressTime;
@@ -349,6 +346,9 @@ p.render = function () {
         });
       }
       item.perTime = progressTime;
+      if (item.reset) {
+        delete item.reset;
+      }
     }
   });
 };

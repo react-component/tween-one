@@ -288,16 +288,25 @@ class TweenOne extends Component {
   }
 
   raf = () => {
-    const { style, repeat } = this.props;
+    const { repeat, style } = this.props;
     const totalTime = repeat === -1 ? Number.MAX_VALUE : this.tween.totalTime * (repeat + 1);
-    this.frame();
+    /**
+      * 踩坑：frame 在前面，所以 onComplete 在 updateAnim 前调用，
+      * 如果在 onComplete 改变样式，将会把 updateAnim 值更改，导到此处调用。
+      * 事件需在当前帧频之前全部被处理完成, 如果在帧上改变了动画参数，直接退出并重新开始
+      * 提到 this.frame 之上；
+      * link: https://github.com/ant-design/ant-motion/issues/165
+      */
     if (this.updateAnim) {
+      this.cancelRequestAnimationFrame();
       if (this.updateStartStyle) {
         this.tween.reStart(style);
       }
       this.updateAnimFunc();
       this.start();
+      return null;
     }
+    this.frame();
     if ((this.moment >= totalTime && !this.reverse)
       || this.paused || (this.reverse && this.moment === 0)
     ) {

@@ -1,7 +1,7 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
 import ReactDom from 'react-dom';
-import ChildrenPlugin from 'rc-tween-one/lib/plugin/ChildrenPlugin';
+import ChildrenPlugin from '../src/plugin/ChildrenPlugin';
 
 import '../assets/index.less';
 
@@ -43,7 +43,9 @@ function Demo() {
           <Tween
             animation={{ Children: { value: 10000, floatLength: 2, formatMoney: true } }}
             component="span"
-          />
+          >
+            20,000.12
+          </Tween>
         </div>
       </div>
       <div style={{ marginBottom: 20 }}>
@@ -55,11 +57,13 @@ function Demo() {
               Children: {
                 value: 10000,
                 floatLength: 2,
-                formatMoney: { thousand: '^', decimal: '%' },
+                formatMoney: { thousand: '.', decimal: ',' },
               },
             }}
             component="span"
-          />
+          >
+          20.000,12
+          </Tween>
         </div>
       </div>
     </div>);
