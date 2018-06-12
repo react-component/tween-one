@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>children.js - example - rc-tween-one@2.0.1</title>
+  <title>children.js - example - rc-tween-one@2.0.2</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-tween-one@2.0.1</h1>
+      <h1>rc-tween-one@2.0.2</h1>
 
       <p>tween-one anim component for react</p>
     </div>
@@ -272,7 +272,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     <div class="highlight"><pre><code language="js"><span class="hljs-keyword">import</span> Tween <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
 <span class="hljs-keyword">import</span> ReactDom <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
-<span class="hljs-keyword">import</span> ChildrenPlugin <span class="hljs-keyword">from</span> <span class="hljs-string">'rc-tween-one/lib/plugin/ChildrenPlugin'</span>;
+<span class="hljs-keyword">import</span> ChildrenPlugin <span class="hljs-keyword">from</span> <span class="hljs-string">'../src/plugin/ChildrenPlugin'</span>;
 
 <span class="hljs-keyword">import</span> <span class="hljs-string">'../assets/index.less'</span>;
 
@@ -314,7 +314,9 @@ Tween.plugins.push(ChildrenPlugin);
           <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
             <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">Children:</span> { <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span>, <span class="hljs-attribute">floatLength:</span> <span class="hljs-attribute">2</span>, <span class="hljs-attribute">formatMoney:</span> <span class="hljs-attribute">true</span> } }}
             <span class="hljs-attribute">component</span>=<span class="hljs-value">"span"</span>
-          /&gt;</span>
+          &gt;</span>
+            20,000.12
+          <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
         <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">marginBottom:</span> <span class="hljs-attribute">20</span> }}&gt;</span>
@@ -326,11 +328,13 @@ Tween.plugins.push(ChildrenPlugin);
               <span class="hljs-attribute">Children:</span> {
                 <span class="hljs-attribute">value:</span> <span class="hljs-attribute">10000</span>,
                 <span class="hljs-attribute">floatLength:</span> <span class="hljs-attribute">2</span>,
-                <span class="hljs-attribute">formatMoney:</span> { <span class="hljs-attribute">thousand:</span> '^', <span class="hljs-attribute">decimal:</span> '%' },
+                <span class="hljs-attribute">formatMoney:</span> { <span class="hljs-attribute">thousand:</span> '<span class="hljs-attribute">.</span>', <span class="hljs-attribute">decimal:</span> ',' },
               },
             }}
             <span class="hljs-attribute">component</span>=<span class="hljs-value">"span"</span>
-          /&gt;</span>
+          &gt;</span>
+          20.000,12
+          <span class="hljs-tag">&lt;/<span class="hljs-title">Tween</span>&gt;</span>
         <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
