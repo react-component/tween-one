@@ -107,7 +107,7 @@ describe('rc-tween-one', () => {
         marginLeft: '30rem',
         scale: 1.5,
         x: '+=100',
-        transformOrigin: '50%',
+        transformOrign: '30% 10%',
         delay: 100,
       },
       style: { top: 0, left: '10vw', width: '5vh', height: '10%', marginLeft: '10rem' },
@@ -123,26 +123,22 @@ describe('rc-tween-one', () => {
     }, 600);
   });
 
-  it('single tween-one is array', (done) => {
+  it('single tween-one duration is 0', () => {
     instance = createTweenInstance({
-      animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
-      style: { top: 0, position: 'relative' },
+      animation: {
+        top: 100,
+        left: '100vw',
+        width: '10vh',
+        height: '100%',
+        boxShadow: '0 0 30px rgba(255,125,0,0.5)',
+        marginLeft: '30rem',
+        scale: 1.5,
+        x: '+=100',
+        transformOrign: '30% 10%',
+        delay: 100,
+      },
+      style: { top: 0, left: '10vw', width: '5vh', height: '10%', marginLeft: '10rem' },
     });
-    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    console.log('start:', child.style.top);
-    expect(getFloat(child.style.top)).to.be(0);
-    ticker.timeout(() => {
-      instance.setState({
-        animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
-      });
-      // 默认时间为450,用500是肯定过值；
-      console.log('end:', child.style.top);
-      expect(getFloat(child.style.top)).to.be(100);
-      ticker.timeout(() => {
-        expect(getFloat(child.style.left)).to.be(100);
-        done();
-      }, 500);
-    }, 600);
   });
 
   it('timeline tween-one', (done) => {
@@ -180,7 +176,7 @@ describe('rc-tween-one', () => {
 
   it('repeat tween-one', (done) => {
     instance = createTweenInstance({
-      animation: { top: 100, repeat: 1, repeatDelay: 300 },
+      animation: { top: 100,  repeat: 1, repeatDelay: 300 },
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
@@ -385,6 +381,9 @@ describe('rc-tween-one', () => {
         top: 100,
         textShadow: '0 1em 5px rgba(0,0,0,1)',
         boxShadow: '0 0 30px rgba(255,125,0,0.5)',
+        scale: '+=0.1',
+        x: '20%',
+        left: '+=20',
         duration: 1000,
       },
       style: { position: 'relative', top: 0 },

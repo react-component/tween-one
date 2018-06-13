@@ -148,6 +148,7 @@ p.getAnimStart = function (computedStyle, isSvg) {
       startData = startData.map(this.convertToMarksArray.bind(this, computedStyle, endUnit, key));
       style[cssName] = startData;
     } else if (Array.isArray(this.propsData.data[key])) {
+      console.log(14)
       startData = startData.split(/[\s|,]/);
       endUnit = this.propsData.dataUnit[key];
       startData = startData.map(this.convertToMarksArray.bind(this, computedStyle, endUnit, key));

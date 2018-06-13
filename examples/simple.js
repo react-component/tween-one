@@ -10,7 +10,7 @@ class Demo extends React.Component {
 
   render() {
     return (<Tween
-      animation={{ x: 300 }}
+      animation={{ x: 300, transformOrign: '30% 30%' }}
       onChange={this.bbb}
       style={{ opacity: 1, height: 100, display: 'inline-block' }}
     >
