@@ -24941,12 +24941,12 @@ p.setAnimData = function (data) {
     _this4.target[key] = data[key];
   });
 };
-p.setRatio = function (ratio, endData, i, isRepeat) {
+p.setRatio = function (ratio, endData, i) {
   var _this5 = this;
 
   Object.keys(endData.vars).forEach(function (_key) {
     if (_key in __WEBPACK_IMPORTED_MODULE_3__plugins__["a" /* default */] || _this5.attr === 'attr' && (_key === 'd' || _key === 'points')) {
-      endData.vars[_key].setRatio(ratio, _this5.tween, _this5.isSvg && _this5.computedStyle, isRepeat);
+      endData.vars[_key].setRatio(ratio, _this5.tween, _this5.isSvg && _this5.computedStyle);
       return;
     }
     var endVars = endData.vars[_key];
@@ -25054,7 +25054,7 @@ p.render = function () {
         var currentProgress = progressTime < 0 ? 0 : progressTime;
         currentProgress = currentProgress > duration ? duration : currentProgress;
         ratio = item.ease(currentProgress, startData, endData, duration);
-        _this6.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
+        _this6.setRatio(ratio, item, i);
         if (!updateAnim) {
           if (item.repeat && repeatNum > 0 && item.currentRepeat !== repeatNum) {
             item.mode = 'onRepeat';
@@ -25597,7 +25597,7 @@ p.setArrayRatio = function (ratio, start, vars, unit, type) {
   return _vars;
 };
 
-p.setRatio = function (ratio, tween, computedStyle, isRepeat) {
+p.setRatio = function (ratio, tween, computedStyle) {
   var _this3 = this;
 
   tween.style = tween.style || {};
@@ -25612,7 +25612,7 @@ p.setRatio = function (ratio, tween, computedStyle, isRepeat) {
     var unit = _this3.propsData.dataUnit[key];
     var count = _this3.propsData.dataCount[key];
     if (key in __WEBPACK_IMPORTED_MODULE_3__plugins__["a" /* default */]) {
-      _this3.propsData.data[key].setRatio(ratio, tween, computedStyle, isRepeat);
+      _this3.propsData.data[key].setRatio(ratio, tween, computedStyle);
       if (key === 'bezier') {
         style[_this3.transform] = Object(__WEBPACK_IMPORTED_MODULE_2__util_js__["d" /* getTransformValue */])(tween.style.transform);
       } else {
