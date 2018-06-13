@@ -123,22 +123,33 @@ describe('rc-tween-one', () => {
     }, 600);
   });
 
-  it('single tween-one duration is 0', () => {
+  it('single tween-one duration is 0', (done) => {
+    let start;
+    let update;
+    let complete;
     instance = createTweenInstance({
       animation: {
-        top: 100,
-        left: '100vw',
-        width: '10vh',
-        height: '100%',
-        boxShadow: '0 0 30px rgba(255,125,0,0.5)',
-        marginLeft: '30rem',
-        scale: 1.5,
-        x: '+=100',
-        transformOrign: '30% 10%',
-        delay: 100,
+        scale: '+=0.1',
+        x: '20%',
+        left: '+=20',
+        duration: 0,
+        onStart() {
+          start = 1;
+        },
+        onUpdate() {
+          update = 1;
+        },
+        onComplete() {
+          complete = 1;
+        }
       },
-      style: { top: 0, left: '10vw', width: '5vh', height: '10%', marginLeft: '10rem' },
     });
+    ticker.timeout(() => {
+      expect(start).to.be(1);
+      expect(update).to.be(1);
+      expect(complete).to.be(1);
+      done();
+    }, 34);
   });
 
   it('timeline tween-one', (done) => {
@@ -176,7 +187,7 @@ describe('rc-tween-one', () => {
 
   it('repeat tween-one', (done) => {
     instance = createTweenInstance({
-      animation: { top: 100,  repeat: 1, repeatDelay: 300 },
+      animation: { top: 100, repeat: 1, repeatDelay: 300 },
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
@@ -381,9 +392,6 @@ describe('rc-tween-one', () => {
         top: 100,
         textShadow: '0 1em 5px rgba(0,0,0,1)',
         boxShadow: '0 0 30px rgba(255,125,0,0.5)',
-        scale: '+=0.1',
-        x: '20%',
-        left: '+=20',
         duration: 1000,
       },
       style: { position: 'relative', top: 0 },
