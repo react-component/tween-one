@@ -25,7 +25,6 @@ const GsapBezier = {
     this.ba = b - a;
   },
   cubicToQuadratic(a, b, c, d) {
-    console.log(222)
     const q1 = { a: a };
     const q2 = {};
     const q3 = {};
