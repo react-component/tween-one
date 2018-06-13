@@ -107,7 +107,7 @@ describe('rc-tween-one', () => {
         marginLeft: '30rem',
         scale: 1.5,
         x: '+=100',
-        transformOrigin: '50%',
+        transformOrign: '30% 10%',
         delay: 100,
       },
       style: { top: 0, left: '10vw', width: '5vh', height: '10%', marginLeft: '10rem' },
@@ -123,26 +123,33 @@ describe('rc-tween-one', () => {
     }, 600);
   });
 
-  it('single tween-one is array', (done) => {
+  it('single tween-one duration is 0', (done) => {
+    let start;
+    let update;
+    let complete;
     instance = createTweenInstance({
-      animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
-      style: { top: 0, position: 'relative' },
+      animation: {
+        scale: '+=0.1',
+        x: '20%',
+        left: '+=20',
+        duration: 0,
+        onStart() {
+          start = 1;
+        },
+        onUpdate() {
+          update = 1;
+        },
+        onComplete() {
+          complete = 1;
+        }
+      },
     });
-    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    console.log('start:', child.style.top);
-    expect(getFloat(child.style.top)).to.be(0);
     ticker.timeout(() => {
-      instance.setState({
-        animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
-      });
-      // 默认时间为450,用500是肯定过值；
-      console.log('end:', child.style.top);
-      expect(getFloat(child.style.top)).to.be(100);
-      ticker.timeout(() => {
-        expect(getFloat(child.style.left)).to.be(100);
-        done();
-      }, 500);
-    }, 600);
+      expect(start).to.be(1);
+      expect(update).to.be(1);
+      expect(complete).to.be(1);
+      done();
+    }, 34);
   });
 
   it('timeline tween-one', (done) => {
@@ -304,6 +311,7 @@ describe('rc-tween-one', () => {
       },
       style: { position: 'absolute' },
     });
+    BezierPlugin.cubicToQuadratic(0, 100, 200, 300);
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(() => {
       let transform = child.style[checkStyleName('transform')];
@@ -430,6 +438,28 @@ describe('rc-tween-one', () => {
         done();
       }, 500);
     }, 200);
+  });
+
+  it('update animation is array', (done) => {
+    instance = createTweenInstance({
+      animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
+      style: { top: 0, position: 'relative' },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    console.log('start:', child.style.top);
+    expect(getFloat(child.style.top)).to.be(0);
+    ticker.timeout(() => {
+      instance.setState({
+        animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
+      });
+      // 默认时间为450,用500是肯定过值；
+      console.log('end:', child.style.top);
+      expect(getFloat(child.style.top)).to.be(100);
+      ticker.timeout(() => {
+        expect(getFloat(child.style.left)).to.be(100);
+        done();
+      }, 500);
+    }, 600);
   });
 
   it('is reverse', (done) => {
