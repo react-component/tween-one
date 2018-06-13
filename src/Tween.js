@@ -312,6 +312,19 @@ p.render = function () {
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
         this.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
         if (!item.reset && !updateAnim) {
+          // duration 为 0 时的一个回调；
+        if (!duration) {
+          item.onStart(e);
+          const cb = {
+            moment: this.progressTime,
+            mode: 'onStart',
+            ...e,
+          };
+          this.onChange(cb);
+          item.onUpdate({ ratio, ...e });
+          cb.mode = 'onUpdate';
+          this.onChange(cb)
+        }
           item.onComplete(e);
         } else if (progressTime >= duration + this.perFrame - this.accuracy) {
           return;
