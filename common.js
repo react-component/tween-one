@@ -25025,14 +25025,26 @@ p.render = function () {
       index: i,
       target: _this6.target
     };
-
+    var cb = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({
+      moment: _this6.progressTime
+    }, e);
     if (progressTime >= 0 && !(progressTime > duration && item.mode === 'onComplete') && _this6.start[i]) {
       var updateAnim = _this6.updateAnim === 'update';
+
       if ((progressTime >= duration - _this6.accuracy && !reverse || reverse && progressTime <= 0) && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
         _this6.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
         if (!item.reset && !updateAnim) {
+          // duration 为 0 时的一个回调；
+          if (!duration) {
+            item.onStart(e);
+            cb.mode = 'onStart';
+            _this6.onChange(cb);
+            item.onUpdate(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({ ratio: ratio }, e));
+            cb.mode = 'onUpdate';
+            _this6.onChange(cb);
+          }
           item.onComplete(e);
         } else if (progressTime >= duration + _this6.perFrame - _this6.accuracy) {
           return;
@@ -25060,10 +25072,8 @@ p.render = function () {
       }
 
       if (!updateAnim) {
-        _this6.onChange(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({
-          moment: _this6.progressTime,
-          mode: item.mode
-        }, e));
+        cb.mode = item.mode;
+        _this6.onChange(cb);
       }
       item.perTime = progressTime;
       if (item.reset) {
