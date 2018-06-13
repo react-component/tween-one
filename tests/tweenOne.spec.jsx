@@ -311,6 +311,7 @@ describe('rc-tween-one', () => {
       },
       style: { position: 'absolute' },
     });
+    BezierPlugin.cubicToQuadratic(0, 100, 200, 300);
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     setTimeout(() => {
       let transform = child.style[checkStyleName('transform')];
@@ -437,6 +438,28 @@ describe('rc-tween-one', () => {
         done();
       }, 500);
     }, 200);
+  });
+
+  it('update animation is array', (done) => {
+    instance = createTweenInstance({
+      animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
+      style: { top: 0, position: 'relative' },
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    console.log('start:', child.style.top);
+    expect(getFloat(child.style.top)).to.be(0);
+    ticker.timeout(() => {
+      instance.setState({
+        animation: [{ top: 100, onStart: () => { console.log('update'); } }, { left: 100 }],
+      });
+      // 默认时间为450,用500是肯定过值；
+      console.log('end:', child.style.top);
+      expect(getFloat(child.style.top)).to.be(100);
+      ticker.timeout(() => {
+        expect(getFloat(child.style.left)).to.be(100);
+        done();
+      }, 500);
+    }, 600);
   });
 
   it('is reverse', (done) => {

@@ -25,6 +25,7 @@ const GsapBezier = {
     this.ba = b - a;
   },
   cubicToQuadratic(a, b, c, d) {
+    console.log(222)
     const q1 = { a: a };
     const q2 = {};
     const q3 = {};
@@ -375,8 +376,8 @@ Bezier.prototype = {
     const b = (autoRotate instanceof Array) ? autoRotate : [['x', 'y', 'rotation', (a || 0)]];
     this._autoRotate = autoRotate ? b : null;
     this._beziers = (vars.type !== 'cubic' && vars.type !== 'quadratic' && vars.type !== 'soft') ?
-      GsapBezier.bezierThrough(vars.vars, isNaN(vars.curviness) ?
-        1 : vars.curviness, false, (vars.type === 'thruBasic'), vars.correlate, vars.startPoint) :
+      GsapBezier.bezierThrough(vars.vars, isNaN(vars.curviness) ? 1 : vars.curviness, 
+        false, (vars.type === 'thruBasic'), vars.correlate, vars.startPoint) :
       GsapBezier.parseBezierData(vars);
     this._segCount = this._beziers.x.length;
     if (this._timeRes) {

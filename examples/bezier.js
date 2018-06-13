@@ -4,13 +4,14 @@ import ReactDom from 'react-dom';
 import BezierPlugin from '../src/plugin/BezierPlugin';
 
 Tween.plugins.push(BezierPlugin);
+console.log(BezierPlugin.cubicToQuadratic(0, 100, 200, 300))
 function Demo() {
   return (
     <div style={{ position: 'relative', height: 300 }}>
       <Tween
         animation={{
           bezier: {
-            type: 'thru', autoRotate: true,
+            type: 'cubic', autoRotate: true,
             vars: [{ x: 200, y: 200 }, { x: 400, y: 0 }, { x: 600, y: 200 }, { x: 800, y: 0 }],
           },
           duration: 5000,
