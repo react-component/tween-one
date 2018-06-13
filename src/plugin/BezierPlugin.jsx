@@ -401,6 +401,7 @@ Bezier.prototype = {
     let b;
     let t;
     let val;
+    let l;
     let lengths;
     let curSeg;
     let value;
@@ -414,14 +415,15 @@ Bezier.prototype = {
       curSeg = this._curSeg;
       value = v * this._length;
       i = this._li;
-      if (value > this._l2 && i < segments) {
-        this._l2 = lengths[++i];
+      if (value > this._l2 && i < segments - 1) {
+        l = segments - 1;
+        while (i < l && (this._l2 = lengths[++i]) <= value) { }
         this._l1 = lengths[i - 1];
         this._li = i;
         this._curSeg = curSeg = this._segments[i];
         this._s2 = curSeg[(this._s1 = this._si = 0)];
       } else if (value < this._l1 && i > 0) {
-        this._l1 = lengths[--i];
+        while (i > 0 && (this._l1 = lengths[--i]) >= value) { }
         if (i === 0 && value < this._l1) {
           this._l1 = 0;
         } else {
@@ -437,11 +439,12 @@ Bezier.prototype = {
       value -= this._l1;
       i = this._si;
       if (value > this._s2 && i < curSeg.length - 1) {
-        this._s2 = curSeg[++i];
+        l = curSeg.length - 1;
+        while (i < l && (this._s2 = curSeg[++i]) <= value) { }
         this._s1 = curSeg[i - 1];
         this._si = i;
       } else if (value < this._s1 && i > 0) {
-        this._s1 = curSeg[--i];
+        while (i > 0 && (this._s1 = curSeg[--i]) >= value) { }
         if (i === 0 && value < this._s1) {
           this._s1 = 0;
         } else {
@@ -450,7 +453,7 @@ Bezier.prototype = {
         this._s2 = curSeg[i];
         this._si = i;
       }
-      t = (i + (value - this._s1) / (this._s2 - this._s1)) * this._prec;
+      t = ((i + (value - this._s1) / (this._s2 - this._s1)) * this._prec) || 0;
     }
     inv = 1 - t;
     for (i = 1; i >= 0; i--) {
@@ -504,10 +507,7 @@ Bezier.prototype = {
     this.vars.startPoint = { x: matrix.e, y: matrix.f };
     this.init();
   },
-  setRatio(r, t, computedStyle, isRepeat) {
-    if (isRepeat) {
-      this.init();
-    }
+  setRatio(r, t, computedStyle) {
     t.style.transform = this.set(r);
     if (computedStyle) {
       computedStyle.transformSVG = createMatrix(t.style.transform).toString();
