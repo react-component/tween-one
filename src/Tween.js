@@ -301,11 +301,15 @@ p.render = function () {
       index: i,
       target: this.target,
     };
-
+    const cb = {
+      moment: this.progressTime,
+      ...e,
+    };
     if (progressTime >= 0 &&
       !(progressTime > duration && item.mode === 'onComplete') &&
       this.start[i]) {
       const updateAnim = this.updateAnim === 'update';
+
       if (((progressTime >= duration - this.accuracy && !reverse) || (reverse && progressTime <= 0))
         && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
@@ -313,18 +317,14 @@ p.render = function () {
         this.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
         if (!item.reset && !updateAnim) {
           // duration 为 0 时的一个回调；
-        if (!duration) {
-          item.onStart(e);
-          const cb = {
-            moment: this.progressTime,
-            mode: 'onStart',
-            ...e,
-          };
-          this.onChange(cb);
-          item.onUpdate({ ratio, ...e });
-          cb.mode = 'onUpdate';
-          this.onChange(cb)
-        }
+          if (!duration) {
+            item.onStart(e);
+            cb.mode = 'onStart';
+            this.onChange(cb);
+            item.onUpdate({ ratio, ...e });
+            cb.mode = 'onUpdate';
+            this.onChange(cb)
+          }
           item.onComplete(e);
         } else if (progressTime >= duration + this.perFrame - this.accuracy) {
           return;
@@ -354,11 +354,8 @@ p.render = function () {
       }
 
       if (!updateAnim) {
-        this.onChange({
-          moment: this.progressTime,
-          mode: item.mode,
-          ...e,
-        });
+        cb.mode = item.mode;
+        this.onChange(cb);
       }
       item.perTime = progressTime;
       if (item.reset) {
