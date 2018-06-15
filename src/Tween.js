@@ -269,8 +269,8 @@ p.render = function () {
     startData = item.type === 'from' ? 1 - startData : startData;
     endData = item.type === 'from' ? 1 - endData : endData;
     //  精度损失，只取小数点后10位。
-    const progressTime = toFixed(this.progressTime - initTime);
-
+    let progressTime = toFixed(this.progressTime - initTime);
+    
     let ratio;
 
     // 开始注册;
@@ -309,7 +309,7 @@ p.render = function () {
       !(progressTime > duration && item.mode === 'onComplete') &&
       this.start[i]) {
       const updateAnim = this.updateAnim === 'update';
-
+      progressTime = progressTime < this.perFrame - this.accuracy ? 0 : progressTime;
       if (((progressTime >= duration - this.accuracy && !reverse) || (reverse && progressTime <= 0))
         && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
