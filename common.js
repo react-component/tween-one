@@ -25030,7 +25030,7 @@ p.render = function () {
     }, e);
     if (progressTime >= 0 && !(progressTime > duration && item.mode === 'onComplete') && _this6.start[i]) {
       var updateAnim = _this6.updateAnim === 'update';
-
+      progressTime = progressTime < _this6.perFrame - _this6.accuracy ? 0 : progressTime;
       if ((progressTime >= duration - _this6.accuracy && !reverse || reverse && progressTime <= 0) && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
