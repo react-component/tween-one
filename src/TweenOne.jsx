@@ -75,7 +75,10 @@ class TweenOne extends Component {
       this.startMoment = newMoment;
       this.startFrame = ticker.frame;
       if (this.rafID === -1 && !nextProps.paused) {
-        this.tween.resetAnimData();
+        this.moment = newMoment;
+        if (this.tween) {
+          this.tween.resetAnimData();
+        }
         const style = nextProps.style;
         this.dom.setAttribute('style', '');
         if (style) {
@@ -128,6 +131,9 @@ class TweenOne extends Component {
         this.cancelRequestAnimationFrame();
         ticker.timeout(this.restart, nextProps.reverseDelay);
       } else {
+        if (this.newMomentAnim) {
+          this.moment = newMoment;
+        }
         this.restart();
       }
     }
@@ -145,7 +151,7 @@ class TweenOne extends Component {
         this.updateStartStyle = false;
       }
 
-      if (this.newMomentAnim) {
+      if (this.newMomentAnim && this.rafID === -1) {
         this.raf();
       }
     }
