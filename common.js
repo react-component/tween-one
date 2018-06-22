@@ -2235,7 +2235,10 @@ var TweenOne = function (_Component) {
       this.startMoment = newMoment;
       this.startFrame = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].frame;
       if (this.rafID === -1 && !nextProps.paused) {
-        this.tween.resetAnimData();
+        this.moment = newMoment;
+        if (this.tween) {
+          this.tween.resetAnimData();
+        }
         var style = nextProps.style;
         this.dom.setAttribute('style', '');
         if (style) {
@@ -2288,6 +2291,9 @@ var TweenOne = function (_Component) {
         this.cancelRequestAnimationFrame();
         __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].timeout(this.restart, nextProps.reverseDelay);
       } else {
+        if (this.newMomentAnim) {
+          this.moment = newMoment;
+        }
         this.restart();
       }
     }
@@ -2305,7 +2311,7 @@ var TweenOne = function (_Component) {
         this.updateStartStyle = false;
       }
 
-      if (this.newMomentAnim) {
+      if (this.newMomentAnim && this.rafID === -1) {
         this.raf();
       }
     }
