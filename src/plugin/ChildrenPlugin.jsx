@@ -44,6 +44,7 @@ ChildrenPlugin.prototype = {
         v = toFixed(v, floatLength);
         const numberArray = v.toString().split('.');
         let decimal = numberArray[1] || '';
+        decimal = decimal.length > 2 ? decimal.substring(0, 2) : decimal;
         const l = floatLength - decimal.length;
         if (l) {
           Array(l).fill(0).forEach(num => {
