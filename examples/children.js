@@ -13,7 +13,7 @@ function Demo() {
       <div style={{ marginBottom: 20 }}>
         <span>基本数字：</span>
         <Tween
-          animation={{ Children: { value: 100, floatLength: 2 } }}
+          animation={{ Children: { value: 10000 } }}
         />
       </div>
       <div style={{ marginBottom: 20 }}>
