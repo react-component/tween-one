@@ -74,11 +74,11 @@ class TweenOne extends Component {
     if (typeof newMoment === 'number' && newMoment !== this.moment) {
       this.startMoment = newMoment;
       this.startFrame = ticker.frame;
+      if (this.tween) {
+        this.tween.resetAnimData();
+      }
       if (this.rafID === -1 && !nextProps.paused) {
         this.moment = newMoment;
-        if (this.tween) {
-          this.tween.resetAnimData();
-        }
         const style = nextProps.style;
         this.dom.setAttribute('style', '');
         if (style) {
@@ -133,6 +133,11 @@ class TweenOne extends Component {
       } else {
         if (this.newMomentAnim) {
           this.moment = newMoment;
+        }
+        // 在 form 状态下，暂停时拉 moment 时，start 有值，，恢复播放，在 delay 的时间没有处理。。
+        if (this.tween) {
+          this.tween.resetAnimData();
+          this.tween.resetDefaultStyle();
         }
         this.restart();
       }
@@ -260,6 +265,9 @@ class TweenOne extends Component {
     if (moment < this.moment && !this.reverse ||
       repeat !== 0 && repeatNum && tweenMoment <= perFrame
     ) {
+      // 在 form 状态下，暂停时拉 moment 时，start 有值，，往返方向播放时，在 delay 的时间没有处理。。
+      // 与上面的处理一样，删除 start ，重新走一遍 start。。
+      this.tween.resetAnimData();
       this.tween.resetDefaultStyle();
     }
     const yoyoReverse = yoyo && repeatNum % 2;
