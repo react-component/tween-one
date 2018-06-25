@@ -2234,11 +2234,11 @@ var TweenOne = function (_Component) {
     if (typeof newMoment === 'number' && newMoment !== this.moment) {
       this.startMoment = newMoment;
       this.startFrame = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].frame;
+      if (this.tween) {
+        this.tween.resetAnimData();
+      }
       if (this.rafID === -1 && !nextProps.paused) {
         this.moment = newMoment;
-        if (this.tween) {
-          this.tween.resetAnimData();
-        }
         var style = nextProps.style;
         this.dom.setAttribute('style', '');
         if (style) {
@@ -2293,6 +2293,11 @@ var TweenOne = function (_Component) {
       } else {
         if (this.newMomentAnim) {
           this.moment = newMoment;
+        }
+        // 在 form 状态下，暂停时拉 moment 时，start 有值，，恢复播放，在 delay 的时间没有处理。。
+        if (this.tween) {
+          this.tween.resetAnimData();
+          this.tween.resetDefaultStyle();
         }
         this.restart();
       }
@@ -2482,6 +2487,9 @@ var _initialiseProps = function _initialiseProps() {
       _this3.tween.frame(_this3.tween.totalTime * repeatNum);
     }
     if (moment < _this3.moment && !_this3.reverse || repeat !== 0 && repeatNum && tweenMoment <= perFrame) {
+      // 在 form 状态下，暂停时拉 moment 时，start 有值，，往返方向播放时，在 delay 的时间没有处理。。
+      // 与上面的处理一样，删除 start ，重新走一遍 start。。
+      _this3.tween.resetAnimData();
       _this3.tween.resetDefaultStyle();
     }
     var yoyoReverse = yoyo && repeatNum % 2;
