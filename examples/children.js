@@ -207,7 +207,7 @@ ChildrenPlugin.prototype = {
         v = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["toFixed"])(v, floatLength);
         var numberArray = v.toString().split('.');
         var decimal = numberArray[1] || '';
-        decimal = decimal.length > 2 ? decimal.substring(0, 2) : decimal;
+        decimal = decimal.length > floatLength ? decimal.substring(0, floatLength) : decimal;
         var l = floatLength - decimal.length;
         if (l) {
           Array(l).fill(0).forEach(function (num) {
