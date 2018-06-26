@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>path.js - example - rc-tween-one@2.0.9</title>
+  <title>path.js - example - rc-tween-one@2.0.10</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-tween-one@2.0.9</h1>
+      <h1>rc-tween-one@2.0.10</h1>
 
       <p>tween-one anim component for react</p>
     </div>
@@ -281,6 +281,8 @@ Tween.plugins.push(PathPlugin);
     c0.381-21.714,6.667-33.714,30.286-34.476
     c36.572-1.18,59.81,77.714,102.667,76.381c30.108-0.937,34.268-32.381,34.095-41.714
     C190.762,22.571,180.493,6.786,159.524,6C113.81,4.286,98,87.524,50.952,85.619z`</span>;
+
+  <span class="hljs-keyword">const</span> p2 = <span class="hljs-string">"M0,0,L100, 0L100, 100L0, 100Z"</span>;
   <span class="hljs-keyword">return</span> (
     <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">position:</span> '<span class="hljs-attribute">relative</span>', <span class="hljs-attribute">width:</span> <span class="hljs-attribute">200</span>, <span class="hljs-attribute">margin:</span> '<span class="hljs-attribute">auto</span>' }}&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
@@ -295,8 +297,21 @@ Tween.plugins.push(PathPlugin);
           <span class="hljs-attribute">background:</span> '#<span class="hljs-attribute">fff000</span>',
         }}
       /&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-title">Tween</span>
+        <span class="hljs-attribute">animation</span>=<span class="hljs-value">{{</span> <span class="hljs-attribute">duration:</span> <span class="hljs-attribute">3000</span>, <span class="hljs-attribute">path:</span> <span class="hljs-attribute">p2</span>, <span class="hljs-attribute">repeat:</span> <span class="hljs-attribute">-1</span>, <span class="hljs-attribute">ease:</span> '<span class="hljs-attribute">linear</span>' }}
+        <span class="hljs-attribute">style</span>=<span class="hljs-value">{{</span>
+          <span class="hljs-attribute">opacity:</span> <span class="hljs-attribute">1</span>,
+          <span class="hljs-attribute">position:</span> '<span class="hljs-attribute">absolute</span>',
+          <span class="hljs-attribute">width:</span> '<span class="hljs-attribute">30px</span>',
+          <span class="hljs-attribute">height:</span> '<span class="hljs-attribute">30px</span>',
+          <span class="hljs-attribute">left:</span> '<span class="hljs-attribute">-15px</span>',
+          <span class="hljs-attribute">top:</span> '<span class="hljs-attribute">-15px</span>',
+          <span class="hljs-attribute">background:</span> '#<span class="hljs-attribute">fff000</span>',
+        }}
+      /&gt;</span>
       <span class="hljs-tag">&lt;<span class="hljs-title">svg</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">path</span> <span class="hljs-attribute">fill</span>=<span class="hljs-value">"none"</span> <span class="hljs-attribute">stroke</span>=<span class="hljs-value">"#000"</span> <span class="hljs-attribute">d</span>=<span class="hljs-value">{p}</span> /&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">path</span> <span class="hljs-attribute">fill</span>=<span class="hljs-value">"none"</span> <span class="hljs-attribute">stroke</span>=<span class="hljs-value">"#000"</span> <span class="hljs-attribute">d</span>=<span class="hljs-value">{p2}</span> /&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-title">svg</span>&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
 }

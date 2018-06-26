@@ -1535,11 +1535,11 @@ function startConvertToEndUnit(target, computedStyle, style, num, unit, dataUnit
   }
   return pix;
 }
-var domPath = void 0;
+
 function parsePath(path) {
   if (typeof path === 'string') {
     if (path.charAt(0).match(/m/i)) {
-      domPath = domPath || document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      var domPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       domPath.setAttributeNS(null, 'd', path);
       return domPath;
     }

@@ -28,6 +28,8 @@ __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */].plugins.push(__WEB
 
 function Demo() {
   var p = 'M50.952,85.619C31.729,84.841,23.557,73.62,24.095,42.952\n    c0.381-21.714,6.667-33.714,30.286-34.476\n    c36.572-1.18,59.81,77.714,102.667,76.381c30.108-0.937,34.268-32.381,34.095-41.714\n    C190.762,22.571,180.493,6.786,159.524,6C113.81,4.286,98,87.524,50.952,85.619z';
+
+  var p2 = "M0,0,L100, 0L100, 100L0, 100Z";
   return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
     'div',
     { style: { position: 'relative', width: 200, margin: 'auto' } },
@@ -43,10 +45,23 @@ function Demo() {
         background: '#fff000'
       }
     }),
+    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0_rc_tween_one__["b" /* default */], {
+      animation: { duration: 3000, path: p2, repeat: -1, ease: 'linear' },
+      style: {
+        opacity: 1,
+        position: 'absolute',
+        width: '30px',
+        height: '30px',
+        left: '-15px',
+        top: '-15px',
+        background: '#fff000'
+      }
+    }),
     __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
       'svg',
       null,
-      __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('path', { fill: 'none', stroke: '#000', d: p })
+      __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('path', { fill: 'none', stroke: '#000', d: p }),
+      __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('path', { fill: 'none', stroke: '#000', d: p2 })
     )
   );
 }
