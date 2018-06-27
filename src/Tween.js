@@ -396,7 +396,7 @@ p.resetDefaultStyle = function () {
 
 p.reStart = function (style) {
   this.start = {};
-  Object.keys(style).forEach(key => {
+  Object.keys(style || {}).forEach(key => {
     this.target.style[key] = stylesToCss(key, style[key]);
   });
   this.setAttrIsStyle();

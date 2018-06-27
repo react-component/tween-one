@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
-import { stylesToCss } from 'style-utils';
 
 import { dataToArray, objectEqual } from './util';
 import Tween from './Tween';
@@ -45,13 +44,10 @@ class TweenOne extends Component {
   constructor(props) {
     super(props);
     this.rafID = -1;
-    this.moment = props.moment || 0;
-    this.startMoment = props.moment || 0;
-    this.startFrame = ticker.frame;
+    this.setDefalut(props);
     this.paused = props.paused;
     this.reverse = props.reverse;
-    this.newMomentAnim = false;
-    this.updateAnim = null;
+    this.updateAnim = false;
     this.forced = {};
     this.setForcedJudg(props);
   }
@@ -65,32 +61,10 @@ class TweenOne extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.tween && !this.dom) {
-      this.updateAnim = 'start';
+      this.updateAnim = true;
       return;
     }
-    // 跳帧事件 moment;
-    const newMoment = nextProps.moment;
-    this.newMomentAnim = false;
-    if (typeof newMoment === 'number' && newMoment !== this.moment) {
-      this.startMoment = newMoment;
-      this.startFrame = ticker.frame;
-      if (this.tween) {
-        this.tween.resetAnimData();
-      }
-      if (this.rafID === -1 && !nextProps.paused) {
-        this.moment = newMoment;
-        const style = nextProps.style;
-        this.dom.setAttribute('style', '');
-        if (style) {
-          Object.keys(style).forEach(key => {
-            this.dom.style[key] = stylesToCss(key, style[key]);
-          });
-        }
-        this.play();
-      } else {
-        this.newMomentAnim = true;
-      }
-    }
+
     // 动画处理
     const newAnimation = nextProps.animation;
     const currentAnimation = this.props.animation;
@@ -99,25 +73,15 @@ class TweenOne extends Component {
     // 如果 animation 不同， 在下一帧重新动画
     if (!equal) {
       // 在有动画的情况下才可以执行 resetDefaultStyle; 避免无动画时也把 style 刷成默认状态。
-      if (nextProps.resetStyleBool && this.tween && this.rafID === -1) {
-        this.tween.resetDefaultStyle();
-      }
-      if (this.rafID !== -1) {
-        this.updateAnim = 'update';
-      } else if (nextProps.updateReStart) {
-        this.startFrame = ticker.frame;
-        this.updateAnim = 'start';
-      }
-      // 只做动画，不做回调处理。。。
-      if (this.tween) {
-        this.tween.updateAnim = this.updateAnim;
-      }
+      this.setDefalut(nextProps);
+      this.updateAnim = true;
+
     }
 
     if (!styleEqual) {
       // 在动画时更改了 style, 作为更改开始数值。
-      if (this.rafID !== -1) {
-        this.updateStartStyle = true;
+      if (this.tween) {
+        this.tween.reStart(this.props.style);
       }
     }
 
@@ -131,9 +95,6 @@ class TweenOne extends Component {
         this.cancelRequestAnimationFrame();
         ticker.timeout(this.restart, nextProps.reverseDelay);
       } else {
-        if (this.newMomentAnim) {
-          this.moment = newMoment;
-        }
         // 在 form 状态下，暂停时拉 moment 时，start 有值，，恢复播放，在 delay 的时间没有处理。。
         if (this.tween) {
           this.tween.resetAnimData();
@@ -142,7 +103,24 @@ class TweenOne extends Component {
         this.restart();
       }
     }
-
+    // 跳帧事件 moment;
+    const nextMoment = nextProps.moment;
+    if (typeof nextMoment === 'number' && nextMoment !== this.props.moment) {
+      if (this.tween && !this.updateAnim) {
+        this.startMoment = nextMoment;
+        this.startFrame = ticker.frame;
+        console.log(3223, this.updateAnim, this.moment, this.startMoment, nextMoment, this.props.moment)
+        if (nextProps.paused) {
+          this.raf();
+        }
+        if (this.tween.progressTime >= this.tween.totalTime) {
+          this.play();
+        }
+      } else {
+        this.setDefalut(nextProps);
+        this.updateAnim = true;
+      }
+    }
     this.setForcedJudg(nextProps);
   }
 
@@ -150,18 +128,8 @@ class TweenOne extends Component {
     if (!this.dom || this.dom.nodeName !== '#text') {
       this.dom = ReactDom.findDOMNode(this);
     }
-    if (this.tween) {
-      if (this.updateStartStyle && !this.updateAnim) {
-        this.tween.reStart(this.props.style);
-        this.updateStartStyle = false;
-      }
-
-      if (this.newMomentAnim && this.rafID === -1) {
-        this.raf();
-      }
-    }
     // 样式更新了后再执行动画；
-    if (this.updateAnim === 'start' && this.dom && this.dom.nodeName !== '#text') {
+    if (this.updateAnim && this.dom && this.dom.nodeName !== '#text') {
       this.start();
     }
   }
@@ -200,6 +168,12 @@ class TweenOne extends Component {
     }
   }
 
+  setDefalut = (props) => {
+    this.moment = props.moment || 0;
+    this.startMoment = props.moment || 0;
+    this.startFrame = ticker.frame;
+  }
+
   restart = () => {
     if (!this.tween) {
       return;
@@ -212,7 +186,7 @@ class TweenOne extends Component {
   }
 
   start = () => {
-    this.updateAnim = null;
+    this.updateAnim = false;
     const props = this.props;
     if (props.animation && Object.keys(props.animation).length) {
       this.tween = new Tween(this.dom, dataToArray(props.animation),
@@ -230,17 +204,6 @@ class TweenOne extends Component {
       return;
     }
     this.rafID = ticker.add(this.raf);
-  }
-
-  updateAnimFunc = () => {
-    this.cancelRequestAnimationFrame();
-    this.startFrame = ticker.frame;
-    if (this.updateAnim === 'update') {
-      if (this.props.resetStyleBool && this.tween) {
-        this.tween.resetDefaultStyle();
-      }
-      this.startMoment = 0;
-    }
   }
 
   frame = () => {
@@ -302,24 +265,8 @@ class TweenOne extends Component {
   }
 
   raf = () => {
-    const { repeat, style } = this.props;
+    const { repeat } = this.props;
     const totalTime = repeat === -1 ? Number.MAX_VALUE : this.tween.totalTime * (repeat + 1);
-    /**
-      * 踩坑：frame 在前面，所以 onComplete 在 updateAnim 前调用，
-      * 如果在 onComplete 改变样式，将会把 updateAnim 值更改，导到此处调用。
-      * 事件需在当前帧频之前全部被处理完成, 如果在帧上改变了动画参数，直接退出并重新开始
-      * 提到 this.frame 之上；
-      * link: https://github.com/ant-design/ant-motion/issues/165
-      */
-    if (this.updateAnim) {
-      this.cancelRequestAnimationFrame();
-      if (this.updateStartStyle) {
-        this.tween.reStart(style);
-      }
-      this.updateAnimFunc();
-      this.start();
-      return null;
-    }
     this.frame();
     if ((this.moment >= totalTime && !this.reverse)
       || this.paused || (this.reverse && this.moment === 0)

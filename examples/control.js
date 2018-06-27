@@ -56,6 +56,10 @@ class Demo extends React.Component {
   onMoment = () => {
     this.setState({
       moment: 500,
+    }, () => {
+      this.setState({
+        moment: null,
+      });
     });
   }
 
