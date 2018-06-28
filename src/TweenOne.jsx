@@ -70,12 +70,9 @@ class TweenOne extends Component {
     const currentAnimation = this.props.animation;
     const equal = objectEqual(currentAnimation, newAnimation);
     const styleEqual = objectEqual(this.props.style, nextProps.style);
-    // 如果 animation 不同， 在下一帧重新动画
     if (!equal) {
-      // 在有动画的情况下才可以执行 resetDefaultStyle; 避免无动画时也把 style 刷成默认状态。
       this.setDefalut(nextProps);
       this.updateAnim = true;
-
     }
 
     if (!styleEqual) {
@@ -95,7 +92,7 @@ class TweenOne extends Component {
         this.cancelRequestAnimationFrame();
         ticker.timeout(this.restart, nextProps.reverseDelay);
       } else {
-        // 在 form 状态下，暂停时拉 moment 时，start 有值，，恢复播放，在 delay 的时间没有处理。。
+        // 在 form 状态下，暂停时拉 moment 时，start 有值恢复播放，在 delay 的时间没有处理。。
         if (this.tween) {
           this.tween.resetAnimData();
           this.tween.resetDefaultStyle();
