@@ -243,7 +243,8 @@ export function getTransformValue(t) {
   const rX = rotateX ? `rotateX(${rotateX}deg)` : '';
   const rY = rotateY ? `rotateY(${rotateY}deg)` : '';
   const per = perspective ? `perspective(${perspective}px)` : '';
+  const defautlTranslate = (ss || an || rX || rY || sk) ? '' : 'translate(0px, 0px)';
   const translate = t.translateZ ? `translate3d(${translateX},${translateY},${translateZ})` :
-    (t.translateX || t.translateY) && `translate(${translateX},${translateY})` || '';
+    (t.translateX || t.translateY) && `translate(${translateX},${translateY})` || defautlTranslate;
   return `${per} ${translate} ${ss} ${an} ${rX} ${rY} ${sk}`.trim();
 }
