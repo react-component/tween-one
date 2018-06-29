@@ -106,7 +106,6 @@ class TweenOne extends Component {
       if (this.tween && !this.updateAnim) {
         this.startMoment = nextMoment;
         this.startFrame = ticker.frame;
-        console.log(3223, this.updateAnim, this.moment, this.startMoment, nextMoment, this.props.moment)
         if (nextProps.paused) {
           this.raf();
         }
