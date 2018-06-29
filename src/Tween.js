@@ -175,7 +175,7 @@ p.getComputedStyle = function () {
           .map(item => createMatrix(item.split(':')[1].trim()).toString())[0];
       } else if (this.target.getAttribute('transform')) {
         // 暂时不支持标签上的 transform，后期增加;
-        console.warn('Do not add transform on the label, otherwise it will be invalid.');
+        console.warn('Do not add transform on the label, otherwise it will be invalid.');// eslint-disable-line no-console
       }
     }
     style.transformSVG = transform;
@@ -396,7 +396,7 @@ p.resetDefaultStyle = function () {
 
 p.reStart = function (style) {
   this.start = {};
-  Object.keys(style).forEach(key => {
+  Object.keys(style || {}).forEach(key => {
     this.target.style[key] = stylesToCss(key, style[key]);
   });
   this.setAttrIsStyle();

@@ -24,6 +24,7 @@ class Demo extends React.Component {
   render() {
     return (
       <Tween animation={this.state.animation}
+        moment={17}
         style={{ height: 100 }}
       >
         <div>执行动效</div>

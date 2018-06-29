@@ -19,7 +19,7 @@ class Demo extends React.Component {
   }
 
   onChange = (e) => {
-    console.log(e.timelineMode);
+    console.log(e.timelineMode);// eslint-disable-line no-console
   }
 
   render() {
