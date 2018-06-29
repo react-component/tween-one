@@ -396,6 +396,7 @@ p.resetDefaultStyle = function () {
 
 p.reStart = function (style) {
   this.start = {};
+  this.target.style.cssText = '';
   Object.keys(style || {}).forEach(key => {
     this.target.style[key] = stylesToCss(key, style[key]);
   });

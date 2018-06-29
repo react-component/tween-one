@@ -69,16 +69,26 @@ class TweenOne extends Component {
     const newAnimation = nextProps.animation;
     const currentAnimation = this.props.animation;
     const equal = objectEqual(currentAnimation, newAnimation);
-    const styleEqual = objectEqual(this.props.style, nextProps.style);
     if (!equal) {
       this.setDefalut(nextProps);
       this.updateAnim = true;
     }
 
-    if (!styleEqual) {
-      // 在动画时更改了 style, 作为更改开始数值。
-      if (this.tween) {
-        this.tween.reStart(this.props.style);
+    // 跳帧事件 moment;
+    const nextMoment = nextProps.moment;
+    if (typeof nextMoment === 'number' && nextMoment !== this.props.moment) {
+      if (this.tween && !this.updateAnim) {
+        this.startMoment = nextMoment;
+        this.startFrame = ticker.frame;
+        if (nextProps.paused) {
+          this.raf();
+        }
+        if (this.tween.progressTime >= this.tween.totalTime) {
+          this.play();
+        }
+      } else {
+        this.setDefalut(nextProps);
+        this.updateAnim = true;
       }
     }
 
@@ -97,24 +107,17 @@ class TweenOne extends Component {
           this.tween.resetAnimData();
           this.tween.resetDefaultStyle();
         }
-        this.restart();
+        if (!this.updateAnim) {
+          this.restart();
+        }
       }
     }
-    // 跳帧事件 moment;
-    const nextMoment = nextProps.moment;
-    if (typeof nextMoment === 'number' && nextMoment !== this.props.moment) {
-      if (this.tween && !this.updateAnim) {
-        this.startMoment = nextMoment;
-        this.startFrame = ticker.frame;
-        if (nextProps.paused) {
-          this.raf();
-        }
-        if (this.tween.progressTime >= this.tween.totalTime) {
-          this.play();
-        }
-      } else {
-        this.setDefalut(nextProps);
-        this.updateAnim = true;
+
+    const styleEqual = objectEqual(this.props.style, nextProps.style);
+    if (!styleEqual) {
+      // 在动画时更改了 style, 作为更改开始数值。
+      if (this.tween) {
+        this.tween.reStart(this.props.style);
       }
     }
     this.setForcedJudg(nextProps);
