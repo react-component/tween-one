@@ -83,6 +83,10 @@ var Demo = function (_React$Component) {
     _this.onMoment = function () {
       _this.setState({
         moment: 500
+      }, function () {
+        _this.setState({
+          moment: null
+        });
       });
     };
 

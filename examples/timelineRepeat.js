@@ -40,7 +40,7 @@ var Demo = function (_React$Component) {
     var _this = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_possibleConstructorReturn___default()(this, _React$Component.call(this, props));
 
     _this.onChange = function (e) {
-      console.log(e.timelineMode);
+      console.log(e.timelineMode); // eslint-disable-line no-console
     };
 
     _this.state = {

@@ -515,7 +515,7 @@ if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var anObject = __webpack_require__(24);
+var anObject = __webpack_require__(23);
 var IE8_DOM_DEFINE = __webpack_require__(57);
 var toPrimitive = __webpack_require__(35);
 var dP = Object.defineProperty;
@@ -538,7 +538,7 @@ exports.f = __webpack_require__(11) ? Object.defineProperty : function definePro
 /***/ (function(module, exports, __webpack_require__) {
 
 // Thank's IE8 for his funny defineProperty
-module.exports = !__webpack_require__(25)(function () {
+module.exports = !__webpack_require__(24)(function () {
   return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
 });
 
@@ -813,6 +813,395 @@ if (process.env.NODE_ENV !== 'production') {
 
 /***/ }),
 /* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["i"] = toArrayChildren;
+/* harmony export (immutable) */ __webpack_exports__["a"] = dataToArray;
+/* harmony export (immutable) */ __webpack_exports__["f"] = objectEqual;
+/* harmony export (immutable) */ __webpack_exports__["b"] = findChildInChildrenByKey;
+/* harmony export (immutable) */ __webpack_exports__["e"] = mergeChildren;
+/* harmony export (immutable) */ __webpack_exports__["j"] = transformArguments;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getChildrenFromProps;
+/* harmony export (immutable) */ __webpack_exports__["h"] = startConvertToEndUnit;
+/* harmony export (immutable) */ __webpack_exports__["g"] = parsePath;
+/* harmony export (immutable) */ __webpack_exports__["d"] = getTransformValue;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_deep_eql__ = __webpack_require__(127);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_deep_eql___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_deep_eql__);
+
+
+
+function toArrayChildren(children) {
+  var ret = [];
+  __WEBPACK_IMPORTED_MODULE_0_react___default.a.Children.forEach(children, function (c) {
+    ret.push(c);
+  });
+  return ret;
+}
+
+function dataToArray(vars) {
+  if (!vars && vars !== 0) {
+    return [];
+  }
+  if (Array.isArray(vars)) {
+    return vars;
+  }
+  return [vars];
+}
+
+function objectEqual(obj1, obj2) {
+  if (obj1 === obj2 || __WEBPACK_IMPORTED_MODULE_1_deep_eql___default()(obj1, obj2)) {
+    return true;
+  }
+  if (!obj1 || !obj2) {
+    return false;
+  }
+  // animation 写在标签上的进行判断是否相等， 判断每个参数有没有 function;
+  var equalBool = true;
+  if (Array.isArray(obj1) && Array.isArray(obj2)) {
+    if (obj1.length !== obj2.length) {
+      return false;
+    }
+    for (var i = 0; i < obj1.length; i++) {
+      var currentObj = obj1[i];
+      var nextObj = obj2[i];
+      for (var p in currentObj) {
+        // eslint-disable-line no-restricted-syntax
+        if (currentObj[p] !== nextObj[p]) {
+          if (typeof currentObj[p] === 'object' && typeof nextObj[p] === 'object') {
+            equalBool = objectEqual(currentObj[p], nextObj[p]);
+          } else if (typeof currentObj[p] === 'function' && typeof nextObj[p] === 'function') {
+            if (currentObj[p].name !== nextObj[p].name) {
+              equalBool = false;
+            }
+          } else {
+            equalBool = false;
+            return false;
+          }
+        }
+      }
+    }
+  }
+
+  var setEqualBool = function setEqualBool(objA, objB) {
+    Object.keys(objA).forEach(function (key) {
+      if (!(key in objB)) {
+        equalBool = false;
+      }
+
+      if (typeof objA[key] === 'object' && typeof objB[key] === 'object') {
+        equalBool = objectEqual(objA[key], objB[key]);
+      } else if (typeof objA[key] === 'function' && typeof objB[key] === 'function') {
+        if (objA[key].name !== objB[key].name) {
+          equalBool = false;
+        }
+      } else if (objA[key] !== objB[key]) {
+        equalBool = false;
+      }
+    });
+  };
+
+  setEqualBool(obj1, obj2);
+  setEqualBool(obj2, obj1);
+  return equalBool;
+}
+
+function findChildInChildrenByKey(children, key) {
+  var ret = null;
+  if (children) {
+    children.forEach(function (c) {
+      if (ret || !c) {
+        return;
+      }
+      if (c.key === key) {
+        ret = c;
+      }
+    });
+  }
+  return ret;
+}
+
+function mergeChildren(prev, next) {
+  var ret = [];
+  // For each key of `next`, the list of keys to insert before that key in
+  // the combined list
+  var nextChildrenPending = {};
+  var pendingChildren = [];
+  var followChildrenKey = void 0;
+  prev.forEach(function (c) {
+    if (!c) {
+      return;
+    }
+    if (findChildInChildrenByKey(next, c.key)) {
+      if (pendingChildren.length) {
+        nextChildrenPending[c.key] = pendingChildren;
+        pendingChildren = [];
+      }
+      followChildrenKey = c.key;
+    } else if (c.key) {
+      pendingChildren.push(c);
+    }
+  });
+  if (!followChildrenKey) {
+    ret = ret.concat(pendingChildren);
+  }
+
+  next.forEach(function (c) {
+    if (!c) {
+      return;
+    }
+    if (nextChildrenPending.hasOwnProperty(c.key)) {
+      // eslint-disable-line no-prototype-builtins
+      ret = ret.concat(nextChildrenPending[c.key]);
+    }
+    ret.push(c);
+    if (c.key === followChildrenKey) {
+      ret = ret.concat(pendingChildren);
+    }
+  });
+
+  return ret;
+}
+
+function transformArguments(arg, key, i) {
+  var result = void 0;
+  if (typeof arg === 'function') {
+    result = arg({
+      key: key,
+      index: i
+    });
+  } else {
+    result = arg;
+  }
+  return result;
+}
+
+function getChildrenFromProps(props) {
+  return props && props.children;
+}
+
+function startConvertToEndUnit(target, computedStyle, style, num, unit, dataUnit, fixed, isOriginWidth) {
+  var horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
+  horiz = style === 'padding' || style === 'marign' ? true : horiz;
+  var t = style.indexOf('border') !== -1 || style.indexOf('translate') !== -1 ? target : target.parentNode || document.body;
+  t = fixed ? document.body : t;
+  var pix = void 0;
+  var htmlComputedStyle = void 0;
+  // transform 在 safari 下会留着单位，chrome 下会全部转换成 px;
+  switch (unit) {
+    case '%':
+      pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
+      break;
+    case 'vw':
+      pix = parseFloat(num) * document.body.clientWidth / 100;
+      break;
+    case 'vh':
+      pix = parseFloat(num) * document.body.clientHeight / 100;
+      break;
+    case 'em':
+      pix = parseFloat(num) * parseFloat(computedStyle.fontSize);
+      break;
+    case 'rem':
+      {
+        htmlComputedStyle = window.getComputedStyle(document.getElementsByTagName('html')[0]);
+        pix = parseFloat(num) * parseFloat(htmlComputedStyle.fontSize);
+        break;
+      }
+    default:
+      pix = parseFloat(num);
+      break;
+  }
+  switch (dataUnit) {
+    case '%':
+      pix = pix ? pix * 100 / (horiz ? t.clientWidth : t.clientHeight) : 0;
+      break;
+    case 'vw':
+      pix = parseFloat(num) / document.body.clientWidth * 100;
+      break;
+    case 'vh':
+      pix = parseFloat(num) / document.body.clientHeight * 100;
+      break;
+    case 'em':
+      pix = parseFloat(num) / parseFloat(computedStyle.fontSize);
+      break;
+    case 'rem':
+      {
+        htmlComputedStyle = htmlComputedStyle || window.getComputedStyle(document.getElementsByTagName('html')[0]);
+        pix = parseFloat(num) / parseFloat(htmlComputedStyle.fontSize);
+        break;
+      }
+    default:
+      break;
+  }
+  return pix;
+}
+
+function parsePath(path) {
+  if (typeof path === 'string') {
+    if (path.charAt(0).match(/m/i)) {
+      var domPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      domPath.setAttributeNS(null, 'd', path);
+      return domPath;
+    }
+    return document.querySelector(path);
+  } else if (path.style) {
+    return path;
+  }
+  throw new Error('Error while parsing the path');
+}
+
+function getTransformValue(t) {
+  if (typeof t === 'string') {
+    return t;
+  }
+  var perspective = t.perspective;
+  var angle = t.rotate;
+  var rotateX = t.rotateX;
+  var rotateY = t.rotateY;
+  var sx = t.scaleX;
+  var sy = t.scaleY;
+  var sz = t.scaleZ;
+  var skx = t.skewX;
+  var sky = t.skewY;
+  var translateX = typeof t.translateX === 'string' ? t.translateX : t.translateX + 'px';
+  var translateY = typeof t.translateY === 'string' ? t.translateY : t.translateY + 'px';
+  var translateZ = typeof t.translateZ === 'string' ? t.translateZ : t.translateZ + 'px';
+  var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
+  var an = angle ? 'rotate(' + angle + 'deg)' : '';
+  var ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
+  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
+  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
+  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
+  var defautlTranslate = ss || an || rX || rY || sk ? '' : 'translate(0px, 0px)';
+  var translate = t.translateZ ? 'translate3d(' + translateX + ',' + translateY + ',' + translateZ + ')' : (t.translateX || t.translateY) && 'translate(' + translateX + ',' + translateY + ')' || defautlTranslate;
+  return (per + ' ' + translate + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
+}
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(18);
+module.exports = function (it) {
+  if (!isObject(it)) throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports) {
+
+module.exports = function (exec) {
+  try {
+    return !!exec();
+  } catch (e) {
+    return true;
+  }
+};
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1111,6 +1500,11 @@ function splitFilterToObject(data) {
 
 function getMatrix(t) {
   var arr = t.match(/(?:\-|\b)[\d\-\.e]+\b/gi);
+  /* arr = arr.map(n => {
+    const dec = n - (n |= 0);
+    return dec ? ((dec * rnd + (dec < 0 ? -0.5 : 0.5)) | 0) / rnd + n : n;
+  }); */
+ //  console.log(arr)
   var m = {};
   if (arr.length === 6) {
     m.m11 = parseFloat(arr[0]);
@@ -1140,6 +1534,7 @@ function getMatrix(t) {
 }
 
 function getTransform(transform) {
+  //console.log(transform)
   var _transform = !transform || transform === 'none' || transform === '' ? 'matrix(1, 0, 0, 1, 0, 0)' : transform;
   var m = getMatrix(_transform);
   var m11 = m.m11;
@@ -1173,6 +1568,7 @@ function getTransform(transform) {
     t1 = m21 * cos + m31 * sin;
     t2 = m22 * cos + m32 * sin;
     t3 = m23 * cos + m33 * sin;
+
     m31 = m21 * -sin + m31 * cos;
     m32 = m22 * -sin + m32 * cos;
     m33 = m23 * -sin + m33 * cos;
@@ -1184,6 +1580,7 @@ function getTransform(transform) {
   // rotateY
   angle = Math.atan2(m31, m33);
   tm.rotateY = toFixed(angle * RAD2DEG);
+  // console.log(m31, m33, angle, RAD2DEG, angle * RAD2DEG)
   if (angle) {
     cos = Math.cos(-angle);
     sin = Math.sin(-angle);
@@ -1224,6 +1621,7 @@ function getTransform(transform) {
   tm.translateX = m.m41;
   tm.translateY = m.m42;
   tm.translateZ = m43;
+  
   return tm;
 }
 
@@ -1307,394 +1705,6 @@ function mergeStyle(current, change) {
 }
 
 exports.default = cssList;
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["i"] = toArrayChildren;
-/* harmony export (immutable) */ __webpack_exports__["a"] = dataToArray;
-/* harmony export (immutable) */ __webpack_exports__["f"] = objectEqual;
-/* harmony export (immutable) */ __webpack_exports__["b"] = findChildInChildrenByKey;
-/* harmony export (immutable) */ __webpack_exports__["e"] = mergeChildren;
-/* harmony export (immutable) */ __webpack_exports__["j"] = transformArguments;
-/* harmony export (immutable) */ __webpack_exports__["c"] = getChildrenFromProps;
-/* harmony export (immutable) */ __webpack_exports__["h"] = startConvertToEndUnit;
-/* harmony export (immutable) */ __webpack_exports__["g"] = parsePath;
-/* harmony export (immutable) */ __webpack_exports__["d"] = getTransformValue;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_deep_eql__ = __webpack_require__(127);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_deep_eql___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_deep_eql__);
-
-
-
-function toArrayChildren(children) {
-  var ret = [];
-  __WEBPACK_IMPORTED_MODULE_0_react___default.a.Children.forEach(children, function (c) {
-    ret.push(c);
-  });
-  return ret;
-}
-
-function dataToArray(vars) {
-  if (!vars && vars !== 0) {
-    return [];
-  }
-  if (Array.isArray(vars)) {
-    return vars;
-  }
-  return [vars];
-}
-
-function objectEqual(obj1, obj2) {
-  if (obj1 === obj2 || __WEBPACK_IMPORTED_MODULE_1_deep_eql___default()(obj1, obj2)) {
-    return true;
-  }
-  if (!obj1 || !obj2) {
-    return false;
-  }
-  // animation 写在标签上的进行判断是否相等， 判断每个参数有没有 function;
-  var equalBool = true;
-  if (Array.isArray(obj1) && Array.isArray(obj2)) {
-    if (obj1.length !== obj2.length) {
-      return false;
-    }
-    for (var i = 0; i < obj1.length; i++) {
-      var currentObj = obj1[i];
-      var nextObj = obj2[i];
-      for (var p in currentObj) {
-        // eslint-disable-line no-restricted-syntax
-        if (currentObj[p] !== nextObj[p]) {
-          if (typeof currentObj[p] === 'object' && typeof nextObj[p] === 'object') {
-            equalBool = objectEqual(currentObj[p], nextObj[p]);
-          } else if (typeof currentObj[p] === 'function' && typeof nextObj[p] === 'function') {
-            if (currentObj[p].name !== nextObj[p].name) {
-              equalBool = false;
-            }
-          } else {
-            equalBool = false;
-            return false;
-          }
-        }
-      }
-    }
-  }
-
-  var setEqualBool = function setEqualBool(objA, objB) {
-    Object.keys(objA).forEach(function (key) {
-      if (!(key in objB)) {
-        equalBool = false;
-      }
-
-      if (typeof objA[key] === 'object' && typeof objB[key] === 'object') {
-        equalBool = objectEqual(objA[key], objB[key]);
-      } else if (typeof objA[key] === 'function' && typeof objB[key] === 'function') {
-        if (objA[key].name !== objB[key].name) {
-          equalBool = false;
-        }
-      } else if (objA[key] !== objB[key]) {
-        equalBool = false;
-      }
-    });
-  };
-
-  setEqualBool(obj1, obj2);
-  setEqualBool(obj2, obj1);
-  return equalBool;
-}
-
-function findChildInChildrenByKey(children, key) {
-  var ret = null;
-  if (children) {
-    children.forEach(function (c) {
-      if (ret || !c) {
-        return;
-      }
-      if (c.key === key) {
-        ret = c;
-      }
-    });
-  }
-  return ret;
-}
-
-function mergeChildren(prev, next) {
-  var ret = [];
-  // For each key of `next`, the list of keys to insert before that key in
-  // the combined list
-  var nextChildrenPending = {};
-  var pendingChildren = [];
-  var followChildrenKey = void 0;
-  prev.forEach(function (c) {
-    if (!c) {
-      return;
-    }
-    if (findChildInChildrenByKey(next, c.key)) {
-      if (pendingChildren.length) {
-        nextChildrenPending[c.key] = pendingChildren;
-        pendingChildren = [];
-      }
-      followChildrenKey = c.key;
-    } else if (c.key) {
-      pendingChildren.push(c);
-    }
-  });
-  if (!followChildrenKey) {
-    ret = ret.concat(pendingChildren);
-  }
-
-  next.forEach(function (c) {
-    if (!c) {
-      return;
-    }
-    if (nextChildrenPending.hasOwnProperty(c.key)) {
-      // eslint-disable-line no-prototype-builtins
-      ret = ret.concat(nextChildrenPending[c.key]);
-    }
-    ret.push(c);
-    if (c.key === followChildrenKey) {
-      ret = ret.concat(pendingChildren);
-    }
-  });
-
-  return ret;
-}
-
-function transformArguments(arg, key, i) {
-  var result = void 0;
-  if (typeof arg === 'function') {
-    result = arg({
-      key: key,
-      index: i
-    });
-  } else {
-    result = arg;
-  }
-  return result;
-}
-
-function getChildrenFromProps(props) {
-  return props && props.children;
-}
-
-function startConvertToEndUnit(target, computedStyle, style, num, unit, dataUnit, fixed, isOriginWidth) {
-  var horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
-  horiz = style === 'padding' || style === 'marign' ? true : horiz;
-  var t = style.indexOf('border') !== -1 || style.indexOf('translate') !== -1 ? target : target.parentNode || document.body;
-  t = fixed ? document.body : t;
-  var pix = void 0;
-  var htmlComputedStyle = void 0;
-  // transform 在 safari 下会留着单位，chrome 下会全部转换成 px;
-  switch (unit) {
-    case '%':
-      pix = parseFloat(num) / 100 * (horiz ? t.clientWidth : t.clientHeight);
-      break;
-    case 'vw':
-      pix = parseFloat(num) * document.body.clientWidth / 100;
-      break;
-    case 'vh':
-      pix = parseFloat(num) * document.body.clientHeight / 100;
-      break;
-    case 'em':
-      pix = parseFloat(num) * parseFloat(computedStyle.fontSize);
-      break;
-    case 'rem':
-      {
-        htmlComputedStyle = window.getComputedStyle(document.getElementsByTagName('html')[0]);
-        pix = parseFloat(num) * parseFloat(htmlComputedStyle.fontSize);
-        break;
-      }
-    default:
-      pix = parseFloat(num);
-      break;
-  }
-  switch (dataUnit) {
-    case '%':
-      pix = pix ? pix * 100 / (horiz ? t.clientWidth : t.clientHeight) : 0;
-      break;
-    case 'vw':
-      pix = parseFloat(num) / document.body.clientWidth * 100;
-      break;
-    case 'vh':
-      pix = parseFloat(num) / document.body.clientHeight * 100;
-      break;
-    case 'em':
-      pix = parseFloat(num) / parseFloat(computedStyle.fontSize);
-      break;
-    case 'rem':
-      {
-        htmlComputedStyle = htmlComputedStyle || window.getComputedStyle(document.getElementsByTagName('html')[0]);
-        pix = parseFloat(num) / parseFloat(htmlComputedStyle.fontSize);
-        break;
-      }
-    default:
-      break;
-  }
-  return pix;
-}
-
-function parsePath(path) {
-  if (typeof path === 'string') {
-    if (path.charAt(0).match(/m/i)) {
-      var domPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      domPath.setAttributeNS(null, 'd', path);
-      return domPath;
-    }
-    return document.querySelector(path);
-  } else if (path.style) {
-    return path;
-  }
-  throw new Error('Error while parsing the path');
-}
-
-function getTransformValue(t) {
-  if (typeof t === 'string') {
-    return t;
-  }
-  var perspective = t.perspective;
-  var angle = t.rotate;
-  var rotateX = t.rotateX;
-  var rotateY = t.rotateY;
-  var sx = t.scaleX;
-  var sy = t.scaleY;
-  var sz = t.scaleZ;
-  var skx = t.skewX;
-  var sky = t.skewY;
-  var translateX = typeof t.translateX === 'string' ? t.translateX : t.translateX + 'px';
-  var translateY = typeof t.translateY === 'string' ? t.translateY : t.translateY + 'px';
-  var translateZ = typeof t.translateZ === 'string' ? t.translateZ : t.translateZ + 'px';
-  var sk = skx || sky ? 'skew(' + skx + 'deg,' + sky + 'deg)' : '';
-  var an = angle ? 'rotate(' + angle + 'deg)' : '';
-  var ss = sx !== 1 || sy !== 1 || sz !== 1 ? 'scale3d(' + sx + ',' + sy + ',' + sz + ')' : '';
-  var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
-  var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
-  var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-  var translate = t.translateZ ? 'translate3d(' + translateX + ',' + translateY + ',' + translateZ + ')' : 'translate(' + translateX + ',' + translateY + ')';
-  return (per + ' ' + translate + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
-}
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isObject = __webpack_require__(18);
-module.exports = function (it) {
-  if (!isObject(it)) throw TypeError(it + ' is not an object!');
-  return it;
-};
-
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports) {
-
-module.exports = function (exec) {
-  try {
-    return !!exec();
-  } catch (e) {
-    return true;
-  }
-};
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
-
-/* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
-
-	return Object(val);
-}
-
-function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
-
-		// Detect buggy property enumeration order in older V8 versions.
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
-
-		return true;
-	} catch (err) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
-}
-
-module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
-
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
-
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
-
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
-
-	return to;
-};
 
 
 /***/ }),
@@ -1969,7 +1979,7 @@ module.exports = {};
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject = __webpack_require__(24);
+var anObject = __webpack_require__(23);
 var dPs = __webpack_require__(91);
 var enumBugKeys = __webpack_require__(40);
 var IE_PROTO = __webpack_require__(38)('IE_PROTO');
@@ -2168,12 +2178,9 @@ p.push = function (plugin) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_prop_types__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_style_utils__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_style_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_style_utils__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__util__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__Tween__ = __webpack_require__(129);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ticker__ = __webpack_require__(73);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__util__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Tween__ = __webpack_require__(129);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ticker__ = __webpack_require__(73);
 
 
 
@@ -2202,13 +2209,10 @@ var TweenOne = function (_Component) {
     _initialiseProps.call(_this);
 
     _this.rafID = -1;
-    _this.moment = props.moment || 0;
-    _this.startMoment = props.moment || 0;
-    _this.startFrame = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].frame;
+    _this.setDefalut(props);
     _this.paused = props.paused;
     _this.reverse = props.reverse;
-    _this.newMomentAnim = false;
-    _this.updateAnim = null;
+    _this.updateAnim = false;
     _this.forced = {};
     _this.setForcedJudg(props);
     return _this;
@@ -2222,62 +2226,25 @@ var TweenOne = function (_Component) {
   };
 
   TweenOne.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-    var _this2 = this;
-
     if (!this.tween && !this.dom) {
-      this.updateAnim = 'start';
+      this.updateAnim = true;
       return;
     }
-    // 跳帧事件 moment;
-    var newMoment = nextProps.moment;
-    this.newMomentAnim = false;
-    if (typeof newMoment === 'number' && newMoment !== this.moment) {
-      this.startMoment = newMoment;
-      this.startFrame = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].frame;
-      if (this.tween) {
-        this.tween.resetAnimData();
-      }
-      if (this.rafID === -1 && !nextProps.paused) {
-        this.moment = newMoment;
-        var style = nextProps.style;
-        this.dom.setAttribute('style', '');
-        if (style) {
-          Object.keys(style).forEach(function (key) {
-            _this2.dom.style[key] = Object(__WEBPACK_IMPORTED_MODULE_7_style_utils__["stylesToCss"])(key, style[key]);
-          });
-        }
-        this.play();
-      } else {
-        this.newMomentAnim = true;
-      }
-    }
+
     // 动画处理
     var newAnimation = nextProps.animation;
     var currentAnimation = this.props.animation;
-    var equal = Object(__WEBPACK_IMPORTED_MODULE_8__util__["f" /* objectEqual */])(currentAnimation, newAnimation);
-    var styleEqual = Object(__WEBPACK_IMPORTED_MODULE_8__util__["f" /* objectEqual */])(this.props.style, nextProps.style);
-    // 如果 animation 不同， 在下一帧重新动画
+    var equal = Object(__WEBPACK_IMPORTED_MODULE_7__util__["f" /* objectEqual */])(currentAnimation, newAnimation);
+    var styleEqual = Object(__WEBPACK_IMPORTED_MODULE_7__util__["f" /* objectEqual */])(this.props.style, nextProps.style);
     if (!equal) {
-      // 在有动画的情况下才可以执行 resetDefaultStyle; 避免无动画时也把 style 刷成默认状态。
-      if (nextProps.resetStyleBool && this.tween && this.rafID === -1) {
-        this.tween.resetDefaultStyle();
-      }
-      if (this.rafID !== -1) {
-        this.updateAnim = 'update';
-      } else if (nextProps.updateReStart) {
-        this.startFrame = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].frame;
-        this.updateAnim = 'start';
-      }
-      // 只做动画，不做回调处理。。。
-      if (this.tween) {
-        this.tween.updateAnim = this.updateAnim;
-      }
+      this.setDefalut(nextProps);
+      this.updateAnim = true;
     }
 
     if (!styleEqual) {
       // 在动画时更改了 style, 作为更改开始数值。
-      if (this.rafID !== -1) {
-        this.updateStartStyle = true;
+      if (this.tween) {
+        this.tween.reStart(this.props.style);
       }
     }
 
@@ -2289,12 +2256,9 @@ var TweenOne = function (_Component) {
         this.cancelRequestAnimationFrame();
       } else if (this.reverse && nextProps.reverseDelay) {
         this.cancelRequestAnimationFrame();
-        __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].timeout(this.restart, nextProps.reverseDelay);
+        __WEBPACK_IMPORTED_MODULE_9__ticker__["a" /* default */].timeout(this.restart, nextProps.reverseDelay);
       } else {
-        if (this.newMomentAnim) {
-          this.moment = newMoment;
-        }
-        // 在 form 状态下，暂停时拉 moment 时，start 有值，，恢复播放，在 delay 的时间没有处理。。
+        // 在 form 状态下，暂停时拉 moment 时，start 有值恢复播放，在 delay 的时间没有处理。。
         if (this.tween) {
           this.tween.resetAnimData();
           this.tween.resetDefaultStyle();
@@ -2302,7 +2266,23 @@ var TweenOne = function (_Component) {
         this.restart();
       }
     }
-
+    // 跳帧事件 moment;
+    var nextMoment = nextProps.moment;
+    if (typeof nextMoment === 'number' && nextMoment !== this.props.moment) {
+      if (this.tween && !this.updateAnim) {
+        this.startMoment = nextMoment;
+        this.startFrame = __WEBPACK_IMPORTED_MODULE_9__ticker__["a" /* default */].frame;
+        if (nextProps.paused) {
+          this.raf();
+        }
+        if (this.tween.progressTime >= this.tween.totalTime) {
+          this.play();
+        }
+      } else {
+        this.setDefalut(nextProps);
+        this.updateAnim = true;
+      }
+    }
     this.setForcedJudg(nextProps);
   };
 
@@ -2310,18 +2290,8 @@ var TweenOne = function (_Component) {
     if (!this.dom || this.dom.nodeName !== '#text') {
       this.dom = __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.findDOMNode(this);
     }
-    if (this.tween) {
-      if (this.updateStartStyle && !this.updateAnim) {
-        this.tween.reStart(this.props.style);
-        this.updateStartStyle = false;
-      }
-
-      if (this.newMomentAnim && this.rafID === -1) {
-        this.raf();
-      }
-    }
     // 样式更新了后再执行动画；
-    if (this.updateAnim === 'start' && this.dom && this.dom.nodeName !== '#text') {
+    if (this.updateAnim && this.dom && this.dom.nodeName !== '#text') {
       this.start();
     }
   };
@@ -2407,147 +2377,124 @@ TweenOne.defaultProps = {
 };
 
 var _initialiseProps = function _initialiseProps() {
-  var _this3 = this;
+  var _this2 = this;
 
   this.setForcedJudg = function (props) {
-    Object.keys(_this3.forced).forEach(function (key) {
-      delete _this3[key];
-      delete _this3.forced[key];
+    Object.keys(_this2.forced).forEach(function (key) {
+      delete _this2[key];
+      delete _this2.forced[key];
     });
     if (props.forcedJudg) {
       Object.keys(props.forcedJudg).forEach(function (key) {
-        if (!_this3[key]) {
-          _this3[key] = props.forcedJudg[key];
-          _this3.forced[key] = 1;
+        if (!_this2[key]) {
+          _this2[key] = props.forcedJudg[key];
+          _this2.forced[key] = 1;
         }
       });
     }
   };
 
+  this.setDefalut = function (props) {
+    _this2.moment = props.moment || 0;
+    _this2.startMoment = props.moment || 0;
+    _this2.startFrame = __WEBPACK_IMPORTED_MODULE_9__ticker__["a" /* default */].frame;
+  };
+
   this.restart = function () {
-    if (!_this3.tween) {
+    if (!_this2.tween) {
       return;
     }
-    _this3.startMoment = _this3.moment;
-    _this3.startFrame = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].frame;
-    _this3.tween.reverse = _this3.reverse;
-    _this3.tween.reverseStartTime = _this3.startMoment;
-    _this3.play();
+    _this2.startMoment = _this2.moment;
+    _this2.startFrame = __WEBPACK_IMPORTED_MODULE_9__ticker__["a" /* default */].frame;
+    _this2.tween.reverse = _this2.reverse;
+    _this2.tween.reverseStartTime = _this2.startMoment;
+    _this2.play();
   };
 
   this.start = function () {
-    _this3.updateAnim = null;
-    var props = _this3.props;
+    _this2.updateAnim = false;
+    var props = _this2.props;
     if (props.animation && Object.keys(props.animation).length) {
-      _this3.tween = new __WEBPACK_IMPORTED_MODULE_9__Tween__["a" /* default */](_this3.dom, Object(__WEBPACK_IMPORTED_MODULE_8__util__["a" /* dataToArray */])(props.animation), { attr: props.attr });
+      _this2.tween = new __WEBPACK_IMPORTED_MODULE_8__Tween__["a" /* default */](_this2.dom, Object(__WEBPACK_IMPORTED_MODULE_7__util__["a" /* dataToArray */])(props.animation), { attr: props.attr });
       // 预先注册 raf, 初始动画数值。
-      _this3.raf();
+      _this2.raf();
       // 开始动画
-      _this3.play();
+      _this2.play();
     }
   };
 
   this.play = function () {
-    _this3.cancelRequestAnimationFrame();
-    if (_this3.paused) {
+    _this2.cancelRequestAnimationFrame();
+    if (_this2.paused) {
       return;
     }
-    _this3.rafID = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].add(_this3.raf);
-  };
-
-  this.updateAnimFunc = function () {
-    _this3.cancelRequestAnimationFrame();
-    _this3.startFrame = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].frame;
-    if (_this3.updateAnim === 'update') {
-      if (_this3.props.resetStyleBool && _this3.tween) {
-        _this3.tween.resetDefaultStyle();
-      }
-      _this3.startMoment = 0;
-    }
+    _this2.rafID = __WEBPACK_IMPORTED_MODULE_9__ticker__["a" /* default */].add(_this2.raf);
   };
 
   this.frame = function () {
-    var yoyo = _this3.props.yoyo;
-    var repeat = _this3.props.repeat;
+    var yoyo = _this2.props.yoyo;
+    var repeat = _this2.props.repeat;
 
-    var totalTime = repeat === -1 ? Number.MAX_VALUE : _this3.tween.totalTime * (repeat + 1);
+    var totalTime = repeat === -1 ? Number.MAX_VALUE : _this2.tween.totalTime * (repeat + 1);
     repeat = repeat >= 0 ? repeat : Number.MAX_VALUE;
-    var moment = (__WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].frame - _this3.startFrame) * perFrame + _this3.startMoment;
-    if (_this3.reverse) {
-      moment = (_this3.startMoment || 0) - (__WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].frame - _this3.startFrame) * perFrame;
+    var moment = (__WEBPACK_IMPORTED_MODULE_9__ticker__["a" /* default */].frame - _this2.startFrame) * perFrame + _this2.startMoment;
+    if (_this2.reverse) {
+      moment = (_this2.startMoment || 0) - (__WEBPACK_IMPORTED_MODULE_9__ticker__["a" /* default */].frame - _this2.startFrame) * perFrame;
     }
     moment = moment > totalTime ? totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
-    var repeatNum = Math.floor(moment / _this3.tween.totalTime) || 0;
+    var repeatNum = Math.floor(moment / _this2.tween.totalTime) || 0;
     repeatNum = repeatNum > repeat ? repeat : repeatNum;
-    var tweenMoment = moment - _this3.tween.totalTime * repeatNum;
+    var tweenMoment = moment - _this2.tween.totalTime * repeatNum;
     tweenMoment = tweenMoment < perFrame ? 0 : tweenMoment;
-    if (repeat && moment && moment - _this3.tween.totalTime * repeatNum < perFrame) {
+    if (repeat && moment && moment - _this2.tween.totalTime * repeatNum < perFrame) {
       // 在重置样式之前补 complete；
-      _this3.tween.frame(_this3.tween.totalTime * repeatNum);
+      _this2.tween.frame(_this2.tween.totalTime * repeatNum);
     }
-    if (moment < _this3.moment && !_this3.reverse || repeat !== 0 && repeatNum && tweenMoment <= perFrame) {
+    if (moment < _this2.moment && !_this2.reverse || repeat !== 0 && repeatNum && tweenMoment <= perFrame) {
       // 在 form 状态下，暂停时拉 moment 时，start 有值，，往返方向播放时，在 delay 的时间没有处理。。
       // 与上面的处理一样，删除 start ，重新走一遍 start。。
-      _this3.tween.resetAnimData();
-      _this3.tween.resetDefaultStyle();
+      _this2.tween.resetAnimData();
+      _this2.tween.resetDefaultStyle();
     }
     var yoyoReverse = yoyo && repeatNum % 2;
     if (yoyoReverse) {
-      tweenMoment = _this3.tween.totalTime - tweenMoment;
+      tweenMoment = _this2.tween.totalTime - tweenMoment;
     }
-    _this3.tween.onChange = function (e) {
+    _this2.tween.onChange = function (e) {
       var cb = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, e, {
         timelineMode: ''
       });
-      if (!moment && !_this3.reverse || _this3.reverse && _this3.moment === _this3.startMoment) {
+      if (!moment && !_this2.reverse || _this2.reverse && _this2.moment === _this2.startMoment) {
         cb.timelineMode = 'onTimelineStart';
-      } else if (moment >= totalTime && !_this3.reverse || !moment && _this3.reverse) {
+      } else if (moment >= totalTime && !_this2.reverse || !moment && _this2.reverse) {
         cb.timelineMode = 'onTimelineComplete';
-      } else if (repeatNum !== _this3.timelineRepeatNum) {
+      } else if (repeatNum !== _this2.timelineRepeatNum) {
         cb.timelineMode = 'onTimelineRepeat';
       } else {
         cb.timelineMode = 'onTimelineUpdate';
       }
-      _this3.props.onChange(cb);
+      _this2.props.onChange(cb);
     };
-    _this3.tween.frame(tweenMoment);
-    _this3.moment = moment;
-    _this3.timelineRepeatNum = repeatNum;
+    _this2.tween.frame(tweenMoment);
+    _this2.moment = moment;
+    _this2.timelineRepeatNum = repeatNum;
   };
 
   this.raf = function () {
-    var _props = _this3.props,
-        repeat = _props.repeat,
-        style = _props.style;
+    var repeat = _this2.props.repeat;
 
-    var totalTime = repeat === -1 ? Number.MAX_VALUE : _this3.tween.totalTime * (repeat + 1);
-    /**
-      * 踩坑：frame 在前面，所以 onComplete 在 updateAnim 前调用，
-      * 如果在 onComplete 改变样式，将会把 updateAnim 值更改，导到此处调用。
-      * 事件需在当前帧频之前全部被处理完成, 如果在帧上改变了动画参数，直接退出并重新开始
-      * 提到 this.frame 之上；
-      * link: https://github.com/ant-design/ant-motion/issues/165
-      */
-    if (_this3.updateAnim) {
-      _this3.cancelRequestAnimationFrame();
-      if (_this3.updateStartStyle) {
-        _this3.tween.reStart(style);
-      }
-      _this3.updateAnimFunc();
-      _this3.start();
-      return null;
-    }
-    _this3.frame();
-    if (_this3.moment >= totalTime && !_this3.reverse || _this3.paused || _this3.reverse && _this3.moment === 0) {
-      return _this3.cancelRequestAnimationFrame();
+    var totalTime = repeat === -1 ? Number.MAX_VALUE : _this2.tween.totalTime * (repeat + 1);
+    _this2.frame();
+    if (_this2.moment >= totalTime && !_this2.reverse || _this2.paused || _this2.reverse && _this2.moment === 0) {
+      return _this2.cancelRequestAnimationFrame();
     }
     return null;
   };
 
   this.cancelRequestAnimationFrame = function () {
-    __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].clear(_this3.rafID);
-    _this3.rafID = -1;
+    __WEBPACK_IMPORTED_MODULE_9__ticker__["a" /* default */].clear(_this2.rafID);
+    _this2.rafID = -1;
   };
 };
 
@@ -2584,7 +2531,7 @@ module.exports = function (fn, that, length) {
 /* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = !__webpack_require__(11) && !__webpack_require__(25)(function () {
+module.exports = !__webpack_require__(11) && !__webpack_require__(24)(function () {
   return Object.defineProperty(__webpack_require__(58)('div'), 'a', { get: function () { return 7; } }).a != 7;
 });
 
@@ -3006,7 +2953,7 @@ module.exports = g;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tween_functions__ = __webpack_require__(130);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tween_functions___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_tween_functions__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util__ = __webpack_require__(22);
 
 
 
@@ -3205,7 +3152,7 @@ var IObject = __webpack_require__(60);
 var $assign = Object.assign;
 
 // should work with symbols and should have deterministic property order (V8 bug)
-module.exports = !$assign || __webpack_require__(25)(function () {
+module.exports = !$assign || __webpack_require__(24)(function () {
   var A = {};
   var B = {};
   // eslint-disable-next-line no-undef
@@ -3372,7 +3319,7 @@ module.exports = function (Constructor, NAME, next) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP = __webpack_require__(10);
-var anObject = __webpack_require__(24);
+var anObject = __webpack_require__(23);
 var getKeys = __webpack_require__(28);
 
 module.exports = __webpack_require__(11) ? Object.defineProperties : function defineProperties(O, Properties) {
@@ -3525,7 +3472,7 @@ var DESCRIPTORS = __webpack_require__(11);
 var $export = __webpack_require__(16);
 var redefine = __webpack_require__(64);
 var META = __webpack_require__(101).KEY;
-var $fails = __webpack_require__(25);
+var $fails = __webpack_require__(24);
 var shared = __webpack_require__(39);
 var setToStringTag = __webpack_require__(45);
 var uid = __webpack_require__(30);
@@ -3534,7 +3481,7 @@ var wksExt = __webpack_require__(46);
 var wksDefine = __webpack_require__(47);
 var enumKeys = __webpack_require__(102);
 var isArray = __webpack_require__(103);
-var anObject = __webpack_require__(24);
+var anObject = __webpack_require__(23);
 var isObject = __webpack_require__(18);
 var toIObject = __webpack_require__(19);
 var toPrimitive = __webpack_require__(35);
@@ -3765,7 +3712,7 @@ var id = 0;
 var isExtensible = Object.isExtensible || function () {
   return true;
 };
-var FREEZE = !__webpack_require__(25)(function () {
+var FREEZE = !__webpack_require__(24)(function () {
   return isExtensible(Object.preventExtensions({}));
 });
 var setMeta = function (it) {
@@ -3919,7 +3866,7 @@ $export($export.S, 'Object', { setPrototypeOf: __webpack_require__(111).set });
 // Works with __proto__ only. Old v8 can't work with null proto objects.
 /* eslint-disable no-proto */
 var isObject = __webpack_require__(18);
-var anObject = __webpack_require__(24);
+var anObject = __webpack_require__(23);
 var check = function (O, proto) {
   anObject(O);
   if (!isObject(proto) && proto !== null) throw TypeError(proto + ": can't set as prototype!");
@@ -3983,7 +3930,7 @@ $export($export.S, 'Object', { create: __webpack_require__(44) });
  * LICENSE file in the root directory of this source tree.
  */
 
-var k=__webpack_require__(26),n=__webpack_require__(13),p=__webpack_require__(32),q=__webpack_require__(14),r="function"===typeof Symbol&&Symbol.for,t=r?Symbol.for("react.element"):60103,u=r?Symbol.for("react.portal"):60106,v=r?Symbol.for("react.fragment"):60107,w=r?Symbol.for("react.strict_mode"):60108,x=r?Symbol.for("react.profiler"):60114,y=r?Symbol.for("react.provider"):60109,z=r?Symbol.for("react.context"):60110,A=r?Symbol.for("react.async_mode"):60111,B=
+var k=__webpack_require__(25),n=__webpack_require__(13),p=__webpack_require__(32),q=__webpack_require__(14),r="function"===typeof Symbol&&Symbol.for,t=r?Symbol.for("react.element"):60103,u=r?Symbol.for("react.portal"):60106,v=r?Symbol.for("react.fragment"):60107,w=r?Symbol.for("react.strict_mode"):60108,x=r?Symbol.for("react.profiler"):60114,y=r?Symbol.for("react.provider"):60109,z=r?Symbol.for("react.context"):60110,A=r?Symbol.for("react.async_mode"):60111,B=
 r?Symbol.for("react.forward_ref"):60112;r&&Symbol.for("react.timeout");var C="function"===typeof Symbol&&Symbol.iterator;function D(a){for(var b=arguments.length-1,e="https://reactjs.org/docs/error-decoder.html?invariant="+a,c=0;c<b;c++)e+="&args[]="+encodeURIComponent(arguments[c+1]);n(!1,"Minified React error #"+a+"; visit %s for the full message or use the non-minified dev environment for full errors and additional helpful warnings. ",e)}
 var E={isMounted:function(){return!1},enqueueForceUpdate:function(){},enqueueReplaceState:function(){},enqueueSetState:function(){}};function F(a,b,e){this.props=a;this.context=b;this.refs=p;this.updater=e||E}F.prototype.isReactComponent={};F.prototype.setState=function(a,b){"object"!==typeof a&&"function"!==typeof a&&null!=a?D("85"):void 0;this.updater.enqueueSetState(this,a,b,"setState")};F.prototype.forceUpdate=function(a){this.updater.enqueueForceUpdate(this,a,"forceUpdate")};function G(){}
 G.prototype=F.prototype;function H(a,b,e){this.props=a;this.context=b;this.refs=p;this.updater=e||E}var I=H.prototype=new G;I.constructor=H;k(I,F.prototype);I.isPureReactComponent=!0;var J={current:null},K=Object.prototype.hasOwnProperty,L={key:!0,ref:!0,__self:!0,__source:!0};
@@ -4020,7 +3967,7 @@ if (process.env.NODE_ENV !== "production") {
   (function() {
 'use strict';
 
-var _assign = __webpack_require__(26);
+var _assign = __webpack_require__(25);
 var invariant = __webpack_require__(13);
 var emptyObject = __webpack_require__(32);
 var warning = __webpack_require__(33);
@@ -5497,7 +5444,7 @@ module.exports = react;
 var emptyFunction = __webpack_require__(14);
 var invariant = __webpack_require__(13);
 var warning = __webpack_require__(33);
-var assign = __webpack_require__(26);
+var assign = __webpack_require__(25);
 
 var ReactPropTypesSecret = __webpack_require__(49);
 var checkPropTypes = __webpack_require__(48);
@@ -6112,7 +6059,7 @@ module.exports = function() {
 /*
  Modernizr 3.0.0pre (Custom Build) | MIT
 */
-var aa=__webpack_require__(13),ca=__webpack_require__(0),m=__webpack_require__(67),p=__webpack_require__(26),v=__webpack_require__(14),da=__webpack_require__(68),ea=__webpack_require__(69),fa=__webpack_require__(70),ha=__webpack_require__(32);
+var aa=__webpack_require__(13),ca=__webpack_require__(0),m=__webpack_require__(67),p=__webpack_require__(25),v=__webpack_require__(14),da=__webpack_require__(68),ea=__webpack_require__(69),fa=__webpack_require__(70),ha=__webpack_require__(32);
 function A(a){for(var b=arguments.length-1,c="https://reactjs.org/docs/error-decoder.html?invariant="+a,d=0;d<b;d++)c+="&args[]="+encodeURIComponent(arguments[d+1]);aa(!1,"Minified React error #"+a+"; visit %s for the full message or use the non-minified dev environment for full errors and additional helpful warnings. ",c)}ca?void 0:A("227");
 function ia(a,b,c,d,e,f,g,h,k){this._hasCaughtError=!1;this._caughtError=null;var n=Array.prototype.slice.call(arguments,3);try{b.apply(c,n)}catch(r){this._caughtError=r,this._hasCaughtError=!0}}
 var B={_caughtError:null,_hasCaughtError:!1,_rethrowError:null,_hasRethrowError:!1,invokeGuardedCallback:function(a,b,c,d,e,f,g,h,k){ia.apply(B,arguments)},invokeGuardedCallbackAndCatchFirstError:function(a,b,c,d,e,f,g,h,k){B.invokeGuardedCallback.apply(this,arguments);if(B.hasCaughtError()){var n=B.clearCaughtError();B._hasRethrowError||(B._hasRethrowError=!0,B._rethrowError=n)}},rethrowCaughtError:function(){return ka.apply(B,arguments)},hasCaughtError:function(){return B._hasCaughtError},clearCaughtError:function(){if(B._hasCaughtError){var a=
@@ -6422,7 +6369,7 @@ var invariant = __webpack_require__(13);
 var React = __webpack_require__(0);
 var warning = __webpack_require__(33);
 var ExecutionEnvironment = __webpack_require__(67);
-var _assign = __webpack_require__(26);
+var _assign = __webpack_require__(25);
 var emptyFunction = __webpack_require__(14);
 var checkPropTypes = __webpack_require__(48);
 var getActiveElement = __webpack_require__(68);
@@ -24730,12 +24677,12 @@ return typeDetect;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_style_utils__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_style_utils__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_style_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_style_utils__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__easing__ = __webpack_require__(72);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__plugins__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__plugin_StylePlugin__ = __webpack_require__(131);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__util_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__util_js__ = __webpack_require__(22);
 
 /* eslint-disable func-names */
 /**
@@ -24910,7 +24857,7 @@ p.getComputedStyle = function () {
         })[0];
       } else if (this.target.getAttribute('transform')) {
         // 暂时不支持标签上的 transform，后期增加;
-        console.warn('Do not add transform on the label, otherwise it will be invalid.');
+        console.warn('Do not add transform on the label, otherwise it will be invalid.'); // eslint-disable-line no-console
       }
     }
     style.transformSVG = transform;
@@ -25134,7 +25081,7 @@ p.reStart = function (style) {
   var _this9 = this;
 
   this.start = {};
-  Object.keys(style).forEach(function (key) {
+  Object.keys(style || {}).forEach(function (key) {
     _this9.target.style[key] = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["stylesToCss"])(key, style[key]);
   });
   this.setAttrIsStyle();
@@ -25407,9 +25354,9 @@ module.exports = tweenFunctions;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_style_utils__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_style_utils__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_style_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_style_utils__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__util_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__util_js__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__plugins__ = __webpack_require__(50);
 
 /* eslint-disable func-names, no-console */
@@ -25842,7 +25789,7 @@ module.exports.polyfill = function(object) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_prop_types__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_prop_types__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__TweenOne__ = __webpack_require__(55);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__util__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__util__ = __webpack_require__(22);
 
 
 

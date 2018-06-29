@@ -60,6 +60,7 @@ var Demo = function (_React$Component) {
     return __WEBPACK_IMPORTED_MODULE_4_react___default.a.createElement(
       __WEBPACK_IMPORTED_MODULE_3_rc_tween_one__["b" /* default */],
       { animation: this.state.animation,
+        moment: 17,
         style: { height: 100 }
       },
       __WEBPACK_IMPORTED_MODULE_4_react___default.a.createElement(
