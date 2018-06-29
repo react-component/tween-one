@@ -2235,16 +2235,26 @@ var TweenOne = function (_Component) {
     var newAnimation = nextProps.animation;
     var currentAnimation = this.props.animation;
     var equal = Object(__WEBPACK_IMPORTED_MODULE_7__util__["f" /* objectEqual */])(currentAnimation, newAnimation);
-    var styleEqual = Object(__WEBPACK_IMPORTED_MODULE_7__util__["f" /* objectEqual */])(this.props.style, nextProps.style);
     if (!equal) {
       this.setDefalut(nextProps);
       this.updateAnim = true;
     }
 
-    if (!styleEqual) {
-      // 在动画时更改了 style, 作为更改开始数值。
-      if (this.tween) {
-        this.tween.reStart(this.props.style);
+    // 跳帧事件 moment;
+    var nextMoment = nextProps.moment;
+    if (typeof nextMoment === 'number' && nextMoment !== this.props.moment) {
+      if (this.tween && !this.updateAnim) {
+        this.startMoment = nextMoment;
+        this.startFrame = __WEBPACK_IMPORTED_MODULE_9__ticker__["a" /* default */].frame;
+        if (nextProps.paused) {
+          this.raf();
+        }
+        if (this.tween.progressTime >= this.tween.totalTime) {
+          this.play();
+        }
+      } else {
+        this.setDefalut(nextProps);
+        this.updateAnim = true;
       }
     }
 
@@ -2263,24 +2273,17 @@ var TweenOne = function (_Component) {
           this.tween.resetAnimData();
           this.tween.resetDefaultStyle();
         }
-        this.restart();
+        if (!this.updateAnim) {
+          this.restart();
+        }
       }
     }
-    // 跳帧事件 moment;
-    var nextMoment = nextProps.moment;
-    if (typeof nextMoment === 'number' && nextMoment !== this.props.moment) {
-      if (this.tween && !this.updateAnim) {
-        this.startMoment = nextMoment;
-        this.startFrame = __WEBPACK_IMPORTED_MODULE_9__ticker__["a" /* default */].frame;
-        if (nextProps.paused) {
-          this.raf();
-        }
-        if (this.tween.progressTime >= this.tween.totalTime) {
-          this.play();
-        }
-      } else {
-        this.setDefalut(nextProps);
-        this.updateAnim = true;
+
+    var styleEqual = Object(__WEBPACK_IMPORTED_MODULE_7__util__["f" /* objectEqual */])(this.props.style, nextProps.style);
+    if (!styleEqual) {
+      // 在动画时更改了 style, 作为更改开始数值。
+      if (this.tween) {
+        this.tween.reStart(this.props.style);
       }
     }
     this.setForcedJudg(nextProps);
@@ -25081,6 +25084,7 @@ p.reStart = function (style) {
   var _this9 = this;
 
   this.start = {};
+  this.target.style.cssText = '';
   Object.keys(style || {}).forEach(function (key) {
     _this9.target.style[key] = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["stylesToCss"])(key, style[key]);
   });
