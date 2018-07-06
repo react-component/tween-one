@@ -188,7 +188,7 @@ __WEBPACK_IMPORTED_MODULE_5_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__);
@@ -198,7 +198,7 @@ __WEBPACK_IMPORTED_MODULE_5_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_prop_types__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_prop_types__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_prop_types__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_tween_one__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__utils__ = __webpack_require__(163);
@@ -329,7 +329,30 @@ var QueueAnim = function (_React$Component) {
       this.leaveUnfinishedChild = leaveChild.map(function (item) {
         return item.key;
       });
-      currentChildren = Object(__WEBPACK_IMPORTED_MODULE_8__utils__["c" /* mergeChildren */])(currentChildren, leaveChild);
+      /**
+       * 获取 leaveChild 在 state.children 里的序列，再将 leaveChild 和 currentChildren 的重新排序。
+       * 避逸 state.children 在 leaveComplete 里没全部完成不触发，
+       * leaveComplete 里如果动画完成了是会删除 keyToLeave，但 state.children 是在全部出场后才触发清除，
+       * 所以这里需要处理出场完成的元素做清除。
+       */
+      var stateChildrens = Object(__WEBPACK_IMPORTED_MODULE_8__utils__["c" /* mergeChildren */])(currentChildren, this.state.children);
+      var currentChild = [];
+      var childReOrder = function childReOrder(child) {
+        child.forEach(function (item) {
+          var order = stateChildrens.indexOf(item);
+          // -1 不应该出现的情况，直接插入数组后面.
+          if (order === -1) {
+            currentChild.push(item);
+          } else {
+            currentChild.splice(order, 0, item);
+          }
+        });
+      };
+      childReOrder(leaveChild);
+      childReOrder(currentChildren);
+      currentChildren = currentChild.filter(function (c) {
+        return c;
+      });
     }
     var newChildren = Object(__WEBPACK_IMPORTED_MODULE_8__utils__["c" /* mergeChildren */])(currentChildren, nextChildren);
 
@@ -416,18 +439,6 @@ var QueueAnim = function (_React$Component) {
     return this.getTweenAnimConfig(data, num);
   };
 
-  QueueAnim.prototype.getTweenSingleConfig = function getTweenSingleConfig(data, num, enterOrLeave) {
-    var obj = {};
-    Object.keys(data).forEach(function (key) {
-      if (Array.isArray(data[key])) {
-        obj[key] = data[key][num];
-      } else if (!enterOrLeave && !num || enterOrLeave && num) {
-        obj[key] = data[key];
-      }
-    });
-    return obj;
-  };
-
   QueueAnim.prototype.getTweenAnimConfig = function getTweenAnimConfig(data, num, enterOrLeave) {
     var _this4 = this;
 
@@ -454,6 +465,7 @@ var QueueAnim = function (_React$Component) {
 }(__WEBPACK_IMPORTED_MODULE_5_react___default.a.Component);
 
 QueueAnim.propTypes = {
+  children: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.any,
   component: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.any,
   componentProps: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.object,
   interval: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.any,
@@ -486,6 +498,18 @@ QueueAnim.defaultProps = {
 
 var _initialiseProps = function _initialiseProps() {
   var _this5 = this;
+
+  this.getTweenSingleConfig = function (data, num, enterOrLeave) {
+    var obj = {};
+    Object.keys(data).forEach(function (key) {
+      if (Array.isArray(data[key])) {
+        obj[key] = data[key][num];
+      } else if (!enterOrLeave && !num || enterOrLeave && num) {
+        obj[key] = data[key];
+      }
+    });
+    return obj;
+  };
 
   this.getTweenData = function (key, i, type) {
     var props = _this5.props;
@@ -530,7 +554,7 @@ var _initialiseProps = function _initialiseProps() {
       var animation = [];
       var startArray = [];
       animate.forEach(function (leave, ii) {
-        var start = startAnim[ii];
+        var start = startAnim && startAnim[ii];
         var animObj = _this5.getTweenSingleData(key, start, leave, animateData.ease, animateData.duration / length, !ii ? delay : 0, !ii ? onStart : null, ii === length ? onComplete : null);
         animation.push(animObj.animation);
         if (animObj.startAnimate) {
@@ -593,7 +617,8 @@ var _initialiseProps = function _initialiseProps() {
       }
       var $interval = Object(__WEBPACK_IMPORTED_MODULE_8__utils__["e" /* transformArguments */])(interval, key, i)[1];
       var $delay = Object(__WEBPACK_IMPORTED_MODULE_8__utils__["e" /* transformArguments */])(delay, key, i)[1];
-      var order = leaveReverse ? _this5.keysToLeave.length - i - 1 : i;
+      // 减掉 leaveUnfinishedChild 里的个数，因为 leaveUnfinishedChild 是旧的出场，不应该计录在队列里。
+      var order = (leaveReverse ? _this5.keysToLeave.length - i - 1 : i) - _this5.leaveUnfinishedChild.length;
       $delay = $interval * order + $delay;
       animation = _this5.getTweenEnterOrLeaveData(key, i, $delay, 'leave');
     } else {
@@ -677,10 +702,10 @@ var _initialiseProps = function _initialiseProps() {
     }
     var childrenShow = _this5.state.childrenShow;
     delete childrenShow[key];
+    delete _this5.saveTweenOneTag[key];
+    delete _this5.unwantedStart[key];
     if (_this5.keysToLeave.indexOf(key) >= 0) {
       _this5.keysToLeave.splice(_this5.keysToLeave.indexOf(key), 1);
-      delete _this5.saveTweenOneTag[key];
-      delete _this5.unwantedStart[key];
     }
     var needLeave = _this5.keysToLeave.some(function (c) {
       return childrenShow[c];
@@ -714,6 +739,7 @@ QueueAnim.isQueueAnim = true;
 /* harmony export (immutable) */ __webpack_exports__["b"] = getChildrenFromProps;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* eslint no-prototype-builtins: 0 */
 
 
 function toArrayChildren(children) {
@@ -848,7 +874,7 @@ function getChildrenFromProps(props) {
 
 /***/ }),
 
-/***/ 34:
+/***/ 33:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
