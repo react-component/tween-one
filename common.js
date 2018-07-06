@@ -1554,9 +1554,7 @@ function getTransform(transform) {
     tm.rotateX = tm.rotate = 0;
     tm.rotateY = 180 - tm.rotateY || 0;
   }
-  tm.rotateX = tm.rotateX < 0 ? 360 + tm.rotateX : tm.rotateX;
-  tm.rotateY = tm.rotateY < 0 ? 360 + tm.rotateY : tm.rotateY;
-  tm.rotate = tm.rotate < 0 ? 360 + tm.rotate : tm.rotate;
+
   tm.scaleX = toFixed(Math.sqrt(m11 * m11 + m12 * m12 + m13 * m13));
   tm.scaleY = toFixed(Math.sqrt(m22 * m22 + m23 * m23));
   tm.scaleZ = toFixed(Math.sqrt(m31 * m31 + m32 * m32 + m33 * m33));
@@ -24895,8 +24893,9 @@ function noop() {}
 __WEBPACK_IMPORTED_MODULE_3__plugins__["a" /* default */].push(__WEBPACK_IMPORTED_MODULE_4__plugin_StylePlugin__["a" /* default */]);
 // 设置默认数据
 function defaultData(vars, now) {
+  var duration = vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION;
   return {
-    duration: vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION,
+    duration: vars.type === 'set' ? 0 : duration,
     delay: vars.delay || DEFAULT_DELAY,
     ease: typeof vars.ease === 'function' ? vars.ease : __WEBPACK_IMPORTED_MODULE_2__easing__["a" /* default */][vars.ease || DEFAULT_EASING],
     onUpdate: vars.onUpdate || noop,
@@ -24906,7 +24905,7 @@ function defaultData(vars, now) {
     repeat: vars.repeat || 0,
     repeatDelay: vars.repeatDelay || 0,
     yoyo: vars.yoyo || false,
-    type: vars.type || 'to',
+    type: vars.type === 'form' ? 'from' : 'to',
     initTime: now,
     appearTo: typeof vars.appearTo === 'number' ? vars.appearTo : null,
     perTime: 0,
@@ -25064,7 +25063,7 @@ p.getAnimStartData = function (item) {
   this.computedStyle = this.computedStyle || this.getComputedStyle();
   Object.keys(item).forEach(function (_key) {
     if (_key in __WEBPACK_IMPORTED_MODULE_3__plugins__["a" /* default */] || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
-      start[_key] = item[_key].getAnimStart(_this3.computedStyle, _this3.isSvg);
+      start[_key] = item[_key].getAnimStart(_this3.computedStyle, _this3.tween, _this3.isSvg);
       return;
     }
     if (_this3.attr === 'attr') {
@@ -25644,10 +25643,11 @@ p.convertToMarksArray = function (computedStyle, unit, key, data, i) {
   }
   return Object(__WEBPACK_IMPORTED_MODULE_2__util_js__["h" /* startConvertToEndUnit */])(this.target, computedStyle, key, data, startUnit, endUnit, null, key === 'transformOrigin' && !i);
 };
-p.getAnimStart = function (computedStyle, isSvg) {
+p.getAnimStart = function (computedStyle, tween, isSvg) {
   var _this2 = this;
 
   var style = {};
+  var tweenStyle = tween.style || {};
   Object.keys(this.propsData.data).forEach(function (key) {
     var cssName = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["isConvert"])(key);
     var startData = computedStyle[cssName];
@@ -25662,14 +25662,14 @@ p.getAnimStart = function (computedStyle, isSvg) {
       if (key === 'bezier') {
         _this2.transform = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["checkStyleName"])('transform');
         startData = computedStyle[isSvg ? 'transformSVG' : _this2.transform];
-        style.transform = style.transform || Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(startData);
+        style.transform = tweenStyle.transform ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tweenStyle.transform) : style.transform || Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(startData);
       }
       _this2.propsData.data[key].getAnimStart(computedStyle, isSvg);
     } else if (cssName === 'transform') {
       _this2.transform = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["checkStyleName"])('transform');
       startData = computedStyle[isSvg ? 'transformSVG' : _this2.transform];
       endUnit = _this2.propsData.dataUnit[key];
-      transform = style.transform || Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(startData);
+      transform = tweenStyle.transform ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tweenStyle.transform) : style.transform || Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(startData);
       if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
         transform[key] = Object(__WEBPACK_IMPORTED_MODULE_2__util_js__["h" /* startConvertToEndUnit */])(_this2.target, computedStyle, key, transform[key], null, endUnit);
       }
