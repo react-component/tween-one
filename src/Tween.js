@@ -270,7 +270,7 @@ p.render = function () {
     endData = item.type === 'from' ? 1 - endData : endData;
     //  精度损失，只取小数点后10位。
     let progressTime = toFixed(this.progressTime - initTime);
-    
+
     let ratio;
 
     // 开始注册;
@@ -288,7 +288,7 @@ p.render = function () {
           ratio = item.ease(1, startData, endData, 1);
           this.setRatio(ratio, item, i);
         }
-        if (!this.register) {
+        if (!this.register || i && !initTime) {
           this.register = true;
           if (progressTime === 0 && item.duration) {
             return;
@@ -340,7 +340,7 @@ p.render = function () {
             item.mode = 'onRepeat';
             item.currentRepeat = repeatNum;
             item.onRepeat({ ...e, repeatNum });
-          } else if ((!item.perTime || progressTime === 0 ||
+          } else if ((typeof item.perTime !== 'number' || progressTime === 0 ||
             (reverse && (item.perTime >= this.reverseStartTime - initTime)))
             && item.mode !== 'onStart') {
             // onReveresStart 和 onStart 统一用 onStart;

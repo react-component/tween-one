@@ -190,6 +190,7 @@ class TweenOne extends Component {
     if (props.animation && Object.keys(props.animation).length) {
       this.tween = new Tween(this.dom, dataToArray(props.animation),
         { attr: props.attr });
+      this.tween.reverse = this.reverse;
       // 预先注册 raf, 初始动画数值。
       this.raf();
       // 开始动画

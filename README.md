@@ -145,7 +145,9 @@ path easing;
 ```js
 const path = 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0';
 const ease = Tween.easing.path(path, param = { rect: 100, lengthPixel: 200 });
-
+React.render(<TweenOne animation={{ x: 100, ease }}>
+  demo
+</TweenOne>, container);
 ```
 
 ### BezierPlugin
