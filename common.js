@@ -24905,7 +24905,7 @@ function defaultData(vars, now) {
     repeat: vars.repeat || 0,
     repeatDelay: vars.repeatDelay || 0,
     yoyo: vars.yoyo || false,
-    type: vars.type === 'form' ? 'from' : 'to',
+    type: vars.type === 'from' ? 'from' : 'to',
     initTime: now,
     appearTo: typeof vars.appearTo === 'number' ? vars.appearTo : null,
     perTime: 0,
