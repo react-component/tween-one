@@ -98,8 +98,9 @@ p.convertToMarksArray = function (computedStyle, unit, key, data, i) {
   return startConvertToEndUnit(this.target, computedStyle, key, data,
     startUnit, endUnit, null, key === 'transformOrigin' && !i);
 };
-p.getAnimStart = function (computedStyle, isSvg) {
+p.getAnimStart = function (computedStyle, tween, isSvg) {
   const style = {};
+  const tweenStyle = tween.style || {};
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
     let startData = computedStyle[cssName];
@@ -114,14 +115,16 @@ p.getAnimStart = function (computedStyle, isSvg) {
       if (key === 'bezier') {
         this.transform = checkStyleName('transform');
         startData = computedStyle[isSvg ? 'transformSVG' : this.transform];
-        style.transform = style.transform || getTransform(startData);
+        style.transform = tweenStyle.transform ? { ...tweenStyle.transform } :
+          style.transform || getTransform(startData);
       }
       this.propsData.data[key].getAnimStart(computedStyle, isSvg);
     } else if (cssName === 'transform') {
       this.transform = checkStyleName('transform');
       startData = computedStyle[isSvg ? 'transformSVG' : this.transform];
       endUnit = this.propsData.dataUnit[key];
-      transform = style.transform || getTransform(startData);
+      transform = tweenStyle.transform ? { ...tweenStyle.transform } :
+        style.transform || getTransform(startData);
       if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
         transform[key] = startConvertToEndUnit(this.target, computedStyle,
           key, transform[key], null, endUnit);

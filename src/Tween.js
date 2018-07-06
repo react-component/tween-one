@@ -24,8 +24,9 @@ function noop() {
 _plugin.push(StylePlugin);
 // 设置默认数据
 function defaultData(vars, now) {
+  const duration = vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION;
   return {
-    duration: vars.duration || vars.duration === 0 ? vars.duration : DEFAULT_DURATION,
+    duration: vars.type === 'set' ? 0 : duration,
     delay: vars.delay || DEFAULT_DELAY,
     ease: typeof vars.ease === 'function' ? vars.ease : easingTypes[vars.ease || DEFAULT_EASING],
     onUpdate: vars.onUpdate || noop,
@@ -35,7 +36,7 @@ function defaultData(vars, now) {
     repeat: vars.repeat || 0,
     repeatDelay: vars.repeatDelay || 0,
     yoyo: vars.yoyo || false,
-    type: vars.type || 'to',
+    type: vars.type === 'form' ? 'from' : 'to',
     initTime: now,
     appearTo: typeof vars.appearTo === 'number' ? vars.appearTo : null,
     perTime: 0,
@@ -187,7 +188,7 @@ p.getAnimStartData = function (item) {
   this.computedStyle = this.computedStyle || this.getComputedStyle();
   Object.keys(item).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
-      start[_key] = item[_key].getAnimStart(this.computedStyle, this.isSvg);
+      start[_key] = item[_key].getAnimStart(this.computedStyle, this.tween, this.isSvg);
       return;
     }
     if (this.attr === 'attr') {
