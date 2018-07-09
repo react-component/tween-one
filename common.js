@@ -26141,8 +26141,8 @@ var _initialiseProps = function _initialiseProps() {
       var appear = Object(__WEBPACK_IMPORTED_MODULE_7__util__["j" /* transformArguments */])(_this3.props.appear, child.key, i);
       animation = appear && _this3.props.enter || null;
     }
-    var onChange = _this3.onChange.bind(_this3, animation, child.key, type);
     var animate = Object(__WEBPACK_IMPORTED_MODULE_7__util__["j" /* transformArguments */])(animation, child.key, i);
+    var onChange = _this3.onChange.bind(_this3, animate, child.key, type);
     var props = {
       key: child.key,
       animation: animate,
