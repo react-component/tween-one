@@ -130,8 +130,8 @@ class TweenOneGroup extends Component {
       const appear = transformArguments(this.props.appear, child.key, i);
       animation = appear && this.props.enter || null;
     }
-    const onChange = this.onChange.bind(this, animation, child.key, type);
     const animate = transformArguments(animation, child.key, i);
+    const onChange = this.onChange.bind(this, animate, child.key, type);
     const props = {
       key: child.key,
       animation: animate,
