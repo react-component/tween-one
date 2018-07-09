@@ -20,9 +20,11 @@ class TweenOneGroup extends Component {
     this.keysToLeave = [];
     this.saveTweenTag = {};
     this.onEnterBool = false;
+    this.animQueue = [];
     this.isTween = {};
     // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
     const children = toArrayChildren(getChildrenFromProps(this.props));
+    this.originalChildren = toArrayChildren(getChildrenFromProps(this.props));
     this.state = {
       children,
     };
@@ -34,40 +36,14 @@ class TweenOneGroup extends Component {
 
   componentWillReceiveProps(nextProps) {
     const nextChildren = toArrayChildren(nextProps.children);
-    const currentChildren = toArrayChildren(this.state.children);
-    const newChildren = mergeChildren(currentChildren, nextChildren);
-
-    this.keysToEnter = [];
-    this.keysToLeave = [];
-    nextChildren.forEach((c) => {
-      if (!c) {
-        return;
-      }
-      const key = c.key;
-      const hasPrev = findChildInChildrenByKey(currentChildren, key);
-      // 如果当前 key 已存在 saveTweenTag 里，，刷新 child;
-      if (this.saveTweenTag[key]) {
-        this.saveTweenTag[key] = React.cloneElement(this.saveTweenTag[key], {}, c);
-      }
-      if (!hasPrev && key) {
-        this.keysToEnter.push(key);
-      }
-    });
-
-    currentChildren.forEach((c) => {
-      if (!c) {
-        return;
-      }
-      const key = c.key;
-      const hasNext = findChildInChildrenByKey(nextChildren, key);
-      if (!hasNext && key) {
-        this.keysToLeave.push(key);
-        delete this.saveTweenTag[key];
-      }
-    });
-    this.setState({
-      children: newChildren,
-    });
+    if (Object.keys(this.isTween).length && !nextProps.exclusive) {
+      this.animQueue.push(nextChildren);
+      return;
+    }
+    this.changeChildren(nextChildren);
+  }
+  componentDidUpdate() {
+    this.originalChildren = toArrayChildren(getChildrenFromProps(this.props));
   }
 
   onChange = (animation, key, type, obj) => {
@@ -82,16 +58,7 @@ class TweenOneGroup extends Component {
         tag.className = this.setClassName(tag.className, isEnter);
       }
     } else if (obj.index === length - 1 && obj.mode === 'onComplete') {
-      if (type === 'enter') {
-        this.keysToEnter.splice(this.keysToEnter.indexOf(key), 1);
-      } else if (type === 'leave') {
-        const children = this.state.children.filter(child => key !== child.key);
-        this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
-        delete this.saveTweenTag[key];
-        this.setState({
-          children,
-        });
-      }
+      delete this.isTween[key];
       if (classIsSvg) {
         tag.className.baseVal = tag.className.baseVal
           .replace(this.props.animatingClassName[isEnter ? 0 : 1], '').trim();
@@ -99,7 +66,23 @@ class TweenOneGroup extends Component {
         tag.className = tag.className
           .replace(this.props.animatingClassName[isEnter ? 0 : 1], '').trim();
       }
-      delete this.isTween[key];
+      if (type === 'enter') {
+        this.keysToEnter.splice(this.keysToEnter.indexOf(key), 1);
+        if (!this.keysToEnter.length) {
+          this.reAnimQueue();
+        }
+      } else if (type === 'leave') {
+        this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
+        delete this.saveTweenTag[key];
+        // 不需要刷新，需要控制 originalChildren.
+        this.state.children = this.state.children.filter(child => key !== child.key);
+        if (!this.keysToLeave.length) {
+          this.forceUpdate(this.reAnimQueue);
+          /* this.setState({
+            children: toArrayChildren(getChildrenFromProps(this.props))
+          }, this.reAnimQueue) */
+        }
+      }
       const _obj = { key, type };
       this.props.onEnd(_obj);
     }
@@ -136,13 +119,15 @@ class TweenOneGroup extends Component {
       key: child.key,
       animation: animate,
       onChange,
-      resetStyleBool: this.props.resetStyleBool,
+      resetStyle: this.props.exclusive,
     };
-    const children = this.getTweenChild(child, props);
     if (this.keysToEnter.concat(this.keysToLeave).indexOf(child.key) >= 0
       || !this.onEnterBool && animation) {
-      this.isTween[child.key] = type;
+      if (!this.saveTweenTag[child.key]) {
+        this.isTween[child.key] = type;
+      }
     }
+    const children = this.getTweenChild(child, props);
     return children;
   }
 
@@ -171,6 +156,50 @@ class TweenOneGroup extends Component {
     });
   }
 
+  reAnimQueue = () => {
+    if (!Object.keys(this.isTween).length && this.animQueue.length) {
+      this.originalChildren = this.state.children;
+      this.changeChildren(this.animQueue[this.animQueue.length - 1]);
+      this.animQueue = [];
+    }
+  }
+
+  changeChildren(nextChildren) {
+    const currentChildren = toArrayChildren(this.originalChildren);
+    const newChildren = mergeChildren(currentChildren, nextChildren);
+    this.keysToEnter = [];
+    this.keysToLeave = [];
+    nextChildren.forEach((c) => {
+      if (!c) {
+        return;
+      }
+      const key = c.key;
+      const hasPrev = findChildInChildrenByKey(currentChildren, key);
+      // 如果当前 key 已存在 saveTweenTag 里，，刷新 child;
+      if (this.saveTweenTag[key]) {
+        this.saveTweenTag[key] = React.cloneElement(this.saveTweenTag[key], {}, c);
+      }
+      if (!hasPrev && key) {
+        this.keysToEnter.push(key);
+      }
+    });
+
+    currentChildren.forEach((c) => {
+      if (!c) {
+        return;
+      }
+      const key = c.key;
+      const hasNext = findChildInChildrenByKey(nextChildren, key);
+      if (!hasNext && key) {
+        this.keysToLeave.push(key);
+        delete this.saveTweenTag[key];
+      }
+    });
+    this.setState({
+      children: newChildren,
+    });
+  }
+
   render() {
     const childrenToRender = this.getChildrenToRender(this.state.children);
     if (!this.props.component) {
@@ -185,7 +214,7 @@ class TweenOneGroup extends Component {
       'leave',
       'animatingClassName',
       'onEnd',
-      'resetStyleBool',
+      'exclusive',
     ].forEach(key => delete componentProps[key]);
     return createElement(this.props.component,
       { ...componentProps, ...this.props.componentProps },
@@ -204,7 +233,7 @@ TweenOneGroup.propTypes = {
   leave: PropTypes.any,
   animatingClassName: PropTypes.array,
   onEnd: PropTypes.func,
-  resetStyleBool: PropTypes.bool,
+  exclusive: PropTypes.bool,
 };
 
 TweenOneGroup.defaultProps = {
@@ -215,7 +244,7 @@ TweenOneGroup.defaultProps = {
   enter: { x: 50, opacity: 0, type: 'from' },
   leave: { x: -50, opacity: 0 },
   onEnd: noop,
-  resetStyleBool: true,
+  exclusive: false,
 };
 TweenOneGroup.isTweenOneGroup = true;
 export default TweenOneGroup;

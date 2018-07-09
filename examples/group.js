@@ -80,7 +80,7 @@ class Demo extends React.Component {
   render() {
     return (
       <div>
-        <button onClick={this.onClick}>切换</button>
+        <button onClick={this.onClick}>{this.state.children ? 'show' : 'hide'}</button>
         <TweenOneGroup
           style={{ height: 300 }}
           enter={this.enterType}

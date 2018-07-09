@@ -103,8 +103,7 @@ React.render(<TweenOneGroup>
 | onChange   | func           | null    | when the animation change called, callback({ moment, item, tween, index, mode, timelineMode }) |
 | moment     | number         | null    | set the current frame    |
 | attr       | string         | `style` | `style` or `attr`, `attr` is tag attribute. when morph SVG must be `attr`.  |
-| resetStyleBool | boolean    | false   | update animation data, reset init style |
-| updateReStart | boolean     | true    | update animation data, re start animate | 
+| resetStyle | boolean    | false   | update animation data, reset init style |
 | component  | string / React.Element  | `div`   | component tag  |
 | componentProps | object     | null   | component is React.Element, component tag props, not add `style` |
 
@@ -206,6 +205,6 @@ object: `animation={{ path: { x: path, y: path, rotate: path } }}`, can be contr
 | leave     | object / array / func | `{ x: 30, opacity: 0 }` | leave anim twee-one data. when array is tween-one timeline, func refer to queue-anim  |
 | onEnd     |  func          | -    | one animation end callback |
 | animatingClassName | array | `['tween-one-entering', 'tween-one-leaving']` | className to every element of animating |
-| resetStyleBool   |  boolean   | true  | whether to animation reset the style every time |
+| exclusive   |  boolean   | false  | Whether to allow a new animate to execute immediately when switching. `enter => leave`: execute immediately leave |
 | component | 	React.Element/String | div  |  component tag  | 
 | componentProps | object  |  -  | component tag props |

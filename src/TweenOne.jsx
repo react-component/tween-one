@@ -27,8 +27,7 @@ class TweenOne extends Component {
     moment: PropTypes.number,
     attr: PropTypes.string,
     onChange: PropTypes.func,
-    resetStyleBool: PropTypes.bool,
-    updateReStart: PropTypes.bool,
+    resetStyle: PropTypes.bool,
     forcedJudg: PropTypes.object,
   };
 
@@ -39,7 +38,6 @@ class TweenOne extends Component {
     repeat: 0,
     attr: 'style',
     onChange: noop,
-    updateReStart: true,
   };
   constructor(props) {
     super(props);
@@ -70,6 +68,9 @@ class TweenOne extends Component {
     const currentAnimation = this.props.animation;
     const equal = objectEqual(currentAnimation, newAnimation);
     if (!equal) {
+      if (nextProps.resetStyle && this.tween) {
+        this.tween.resetDefaultStyle();
+      }
       this.setDefalut(nextProps);
       this.updateAnim = true;
     }
@@ -124,7 +125,7 @@ class TweenOne extends Component {
   }
 
   componentDidUpdate() {
-    if (!this.dom || this.dom.nodeName !== '#text') {
+    if (!this.dom) {
       this.dom = ReactDom.findDOMNode(this);
     }
     // 样式更新了后再执行动画；
@@ -265,9 +266,9 @@ class TweenOne extends Component {
   }
 
   raf = () => {
+    this.frame();
     const { repeat } = this.props;
     const totalTime = repeat === -1 ? Number.MAX_VALUE : this.tween.totalTime * (repeat + 1);
-    this.frame();
     if ((this.moment >= totalTime && !this.reverse)
       || this.paused || (this.reverse && this.moment === 0)
     ) {
@@ -294,8 +295,7 @@ class TweenOne extends Component {
       'repeat',
       'yoyo',
       'moment',
-      'resetStyleBool',
-      'updateReStart',
+      'resetStyle',
       'forcedJudg',
     ].forEach(key => delete props[key]);
     props.style = { ...this.props.style };
