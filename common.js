@@ -2447,13 +2447,18 @@ var _initialiseProps = function _initialiseProps() {
       }
       _this2.props.onChange(cb);
     };
-    _this2.tween.frame(tweenMoment);
     _this2.moment = moment;
     _this2.timelineRepeatNum = repeatNum;
+    _this2.tween.frame(tweenMoment);
   };
 
   this.raf = function () {
+    var tween = _this2.tween;
     _this2.frame();
+    if (tween !== _this2.tween) {
+      // 在 onComplete 时更换动画时，raf 没结束，所以需要强制退出，避逸两个时间的冲突。
+      return null;
+    }
     var repeat = _this2.props.repeat;
 
     var totalTime = repeat === -1 ? Number.MAX_VALUE : _this2.tween.totalTime * (repeat + 1);
@@ -26015,6 +26020,7 @@ var TweenOneGroup = function (_Component) {
     // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
     var children = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_7__util__["c" /* getChildrenFromProps */])(_this.props));
     _this.originalChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_7__util__["c" /* getChildrenFromProps */])(_this.props));
+    _this.currentChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_7__util__["c" /* getChildrenFromProps */])(_this.props));
     _this.state = {
       children: children
     };
@@ -26031,17 +26037,17 @@ var TweenOneGroup = function (_Component) {
       this.animQueue.push(nextChildren);
       return;
     }
-    this.changeChildren(nextChildren);
+    var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(nextProps.exclusive ? this.originalChildren : this.state.children);
+    this.changeChildren(nextChildren, currentChildren);
   };
 
   TweenOneGroup.prototype.componentDidUpdate = function componentDidUpdate() {
     this.originalChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_7__util__["c" /* getChildrenFromProps */])(this.props));
   };
 
-  TweenOneGroup.prototype.changeChildren = function changeChildren(nextChildren) {
+  TweenOneGroup.prototype.changeChildren = function changeChildren(nextChildren, currentChildren) {
     var _this2 = this;
 
-    var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(this.originalChildren);
     var newChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["e" /* mergeChildren */])(currentChildren, nextChildren);
     this.keysToEnter = [];
     this.keysToLeave = [];
@@ -26071,6 +26077,7 @@ var TweenOneGroup = function (_Component) {
         delete _this2.saveTweenTag[key];
       }
     });
+    this.currentChildren = newChildren;
     this.setState({
       children: newChildren
     });
@@ -26119,16 +26126,21 @@ var _initialiseProps = function _initialiseProps() {
         }
       } else if (type === 'leave') {
         _this3.keysToLeave.splice(_this3.keysToLeave.indexOf(key), 1);
-        delete _this3.saveTweenTag[key];
-        // 不需要刷新，需要控制 originalChildren.
-        _this3.state.children = _this3.state.children.filter(function (child) {
+        _this3.currentChildren = _this3.currentChildren.filter(function (child) {
           return key !== child.key;
         });
         if (!_this3.keysToLeave.length) {
-          _this3.forceUpdate(_this3.reAnimQueue);
-          /* this.setState({
-            children: toArrayChildren(getChildrenFromProps(this.props))
-          }, this.reAnimQueue) */
+          var currentChildrenKeys = _this3.currentChildren.map(function (item) {
+            return item.key;
+          });
+          Object.keys(_this3.saveTweenTag).forEach(function ($key) {
+            if (currentChildrenKeys.indexOf($key) === -1) {
+              delete _this3.saveTweenTag[$key];
+            }
+          });
+          _this3.setState({
+            children: _this3.currentChildren
+          }, _this3.reAnimQueue);
         }
       }
       var _obj = { key: key, type: type };
@@ -26204,8 +26216,7 @@ var _initialiseProps = function _initialiseProps() {
 
   this.reAnimQueue = function () {
     if (!Object.keys(_this3.isTween).length && _this3.animQueue.length) {
-      _this3.originalChildren = _this3.state.children;
-      _this3.changeChildren(_this3.animQueue[_this3.animQueue.length - 1]);
+      _this3.changeChildren(_this3.animQueue[_this3.animQueue.length - 1], _this3.state.children);
       _this3.animQueue = [];
     }
   };
