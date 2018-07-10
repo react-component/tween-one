@@ -2202,6 +2202,9 @@ var TweenOne = function (_Component) {
     var currentAnimation = this.props.animation;
     var equal = Object(__WEBPACK_IMPORTED_MODULE_7__util__["f" /* objectEqual */])(currentAnimation, newAnimation);
     if (!equal) {
+      if (nextProps.resetStyle && this.tween) {
+        this.tween.resetDefaultStyle();
+      }
       this.setDefalut(nextProps);
       this.updateAnim = true;
     }
@@ -2256,7 +2259,7 @@ var TweenOne = function (_Component) {
   };
 
   TweenOne.prototype.componentDidUpdate = function componentDidUpdate() {
-    if (!this.dom || this.dom.nodeName !== '#text') {
+    if (!this.dom) {
       this.dom = __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.findDOMNode(this);
     }
     // 样式更新了后再执行动画；
@@ -2286,7 +2289,7 @@ var TweenOne = function (_Component) {
 
   TweenOne.prototype.render = function render() {
     var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, this.props);
-    ['animation', 'component', 'componentProps', 'reverseDelay', 'attr', 'paused', 'reverse', 'repeat', 'yoyo', 'moment', 'resetStyleBool', 'updateReStart', 'forcedJudg'].forEach(function (key) {
+    ['animation', 'component', 'componentProps', 'reverseDelay', 'attr', 'paused', 'reverse', 'repeat', 'yoyo', 'moment', 'resetStyle', 'forcedJudg'].forEach(function (key) {
       return delete props[key];
     });
     props.style = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, this.props.style);
@@ -2331,8 +2334,7 @@ TweenOne.propTypes = {
   moment: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.number,
   attr: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.string,
   onChange: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
-  resetStyleBool: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.bool,
-  updateReStart: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.bool,
+  resetStyle: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.bool,
   forcedJudg: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.object
 };
 TweenOne.defaultProps = {
@@ -2341,8 +2343,7 @@ TweenOne.defaultProps = {
   reverseDelay: 0,
   repeat: 0,
   attr: 'style',
-  onChange: noop,
-  updateReStart: true
+  onChange: noop
 };
 
 var _initialiseProps = function _initialiseProps() {
@@ -2452,10 +2453,10 @@ var _initialiseProps = function _initialiseProps() {
   };
 
   this.raf = function () {
+    _this2.frame();
     var repeat = _this2.props.repeat;
 
     var totalTime = repeat === -1 ? Number.MAX_VALUE : _this2.tween.totalTime * (repeat + 1);
-    _this2.frame();
     if (_this2.moment >= totalTime && !_this2.reverse || _this2.paused || _this2.reverse && _this2.moment === 0) {
       return _this2.cancelRequestAnimationFrame();
     }
@@ -26009,9 +26010,11 @@ var TweenOneGroup = function (_Component) {
     _this.keysToLeave = [];
     _this.saveTweenTag = {};
     _this.onEnterBool = false;
+    _this.animQueue = [];
     _this.isTween = {};
     // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
     var children = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_7__util__["c" /* getChildrenFromProps */])(_this.props));
+    _this.originalChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_7__util__["c" /* getChildrenFromProps */])(_this.props));
     _this.state = {
       children: children
     };
@@ -26023,12 +26026,23 @@ var TweenOneGroup = function (_Component) {
   };
 
   TweenOneGroup.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+    var nextChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(nextProps.children);
+    if (Object.keys(this.isTween).length && !nextProps.exclusive) {
+      this.animQueue.push(nextChildren);
+      return;
+    }
+    this.changeChildren(nextChildren);
+  };
+
+  TweenOneGroup.prototype.componentDidUpdate = function componentDidUpdate() {
+    this.originalChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_7__util__["c" /* getChildrenFromProps */])(this.props));
+  };
+
+  TweenOneGroup.prototype.changeChildren = function changeChildren(nextChildren) {
     var _this2 = this;
 
-    var nextChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(nextProps.children);
-    var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(this.state.children);
+    var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["i" /* toArrayChildren */])(this.originalChildren);
     var newChildren = Object(__WEBPACK_IMPORTED_MODULE_7__util__["e" /* mergeChildren */])(currentChildren, nextChildren);
-
     this.keysToEnter = [];
     this.keysToLeave = [];
     nextChildren.forEach(function (c) {
@@ -26068,7 +26082,7 @@ var TweenOneGroup = function (_Component) {
       return childrenToRender[0] || null;
     }
     var componentProps = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, this.props);
-    ['component', 'componentProps', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd', 'resetStyleBool'].forEach(function (key) {
+    ['component', 'componentProps', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd', 'exclusive'].forEach(function (key) {
       return delete componentProps[key];
     });
     return Object(__WEBPACK_IMPORTED_MODULE_4_react__["createElement"])(this.props.component, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, componentProps, this.props.componentProps), childrenToRender);
@@ -26092,24 +26106,31 @@ var _initialiseProps = function _initialiseProps() {
         tag.className = _this3.setClassName(tag.className, isEnter);
       }
     } else if (obj.index === length - 1 && obj.mode === 'onComplete') {
-      if (type === 'enter') {
-        _this3.keysToEnter.splice(_this3.keysToEnter.indexOf(key), 1);
-      } else if (type === 'leave') {
-        var children = _this3.state.children.filter(function (child) {
-          return key !== child.key;
-        });
-        _this3.keysToLeave.splice(_this3.keysToLeave.indexOf(key), 1);
-        delete _this3.saveTweenTag[key];
-        _this3.setState({
-          children: children
-        });
-      }
+      delete _this3.isTween[key];
       if (classIsSvg) {
         tag.className.baseVal = tag.className.baseVal.replace(_this3.props.animatingClassName[isEnter ? 0 : 1], '').trim();
       } else {
         tag.className = tag.className.replace(_this3.props.animatingClassName[isEnter ? 0 : 1], '').trim();
       }
-      delete _this3.isTween[key];
+      if (type === 'enter') {
+        _this3.keysToEnter.splice(_this3.keysToEnter.indexOf(key), 1);
+        if (!_this3.keysToEnter.length) {
+          _this3.reAnimQueue();
+        }
+      } else if (type === 'leave') {
+        _this3.keysToLeave.splice(_this3.keysToLeave.indexOf(key), 1);
+        delete _this3.saveTweenTag[key];
+        // 不需要刷新，需要控制 originalChildren.
+        _this3.state.children = _this3.state.children.filter(function (child) {
+          return key !== child.key;
+        });
+        if (!_this3.keysToLeave.length) {
+          _this3.forceUpdate(_this3.reAnimQueue);
+          /* this.setState({
+            children: toArrayChildren(getChildrenFromProps(this.props))
+          }, this.reAnimQueue) */
+        }
+      }
       var _obj = { key: key, type: type };
       _this3.props.onEnd(_obj);
     }
@@ -26147,12 +26168,14 @@ var _initialiseProps = function _initialiseProps() {
       key: child.key,
       animation: animate,
       onChange: onChange,
-      resetStyleBool: _this3.props.resetStyleBool
+      resetStyle: _this3.props.exclusive
     };
-    var children = _this3.getTweenChild(child, props);
     if (_this3.keysToEnter.concat(_this3.keysToLeave).indexOf(child.key) >= 0 || !_this3.onEnterBool && animation) {
-      _this3.isTween[child.key] = type;
+      if (!_this3.saveTweenTag[child.key]) {
+        _this3.isTween[child.key] = type;
+      }
     }
+    var children = _this3.getTweenChild(child, props);
     return children;
   };
 
@@ -26178,6 +26201,14 @@ var _initialiseProps = function _initialiseProps() {
       return _this3.saveTweenTag[key];
     });
   };
+
+  this.reAnimQueue = function () {
+    if (!Object.keys(_this3.isTween).length && _this3.animQueue.length) {
+      _this3.originalChildren = _this3.state.children;
+      _this3.changeChildren(_this3.animQueue[_this3.animQueue.length - 1]);
+      _this3.animQueue = [];
+    }
+  };
 };
 
 TweenOneGroup.propTypes = {
@@ -26190,7 +26221,7 @@ TweenOneGroup.propTypes = {
   leave: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.any,
   animatingClassName: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.array,
   onEnd: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.func,
-  resetStyleBool: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.bool
+  exclusive: __WEBPACK_IMPORTED_MODULE_5_prop_types___default.a.bool
 };
 
 TweenOneGroup.defaultProps = {
@@ -26201,7 +26232,7 @@ TweenOneGroup.defaultProps = {
   enter: { x: 50, opacity: 0, type: 'from' },
   leave: { x: -50, opacity: 0 },
   onEnd: noop,
-  resetStyleBool: true
+  exclusive: false
 };
 TweenOneGroup.isTweenOneGroup = true;
 /* harmony default export */ __webpack_exports__["a"] = (TweenOneGroup);

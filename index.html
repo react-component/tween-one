@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-tween-one@2.1.5 - tween-one anim component for react</title>
+  <title>rc-tween-one@2.2.0 - tween-one anim component for react</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-tween-one@2.1.5</h1>
+  <h1>rc-tween-one@2.2.0</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -932,16 +932,10 @@ React.render(<span class="hljs-tag">&lt;<span class="hljs-title">TweenOneGroup</
 <td><code>style</code> or <code>attr</code>, <code>attr</code> is tag attribute. when morph SVG must be <code>attr</code>.</td>
 </tr>
 <tr>
-<td>resetStyleBool</td>
+<td>resetStyle</td>
 <td>boolean</td>
 <td>false</td>
 <td>update animation data, reset init style</td>
-</tr>
-<tr>
-<td>updateReStart</td>
-<td>boolean</td>
-<td>true</td>
-<td>update animation data, re start animate</td>
 </tr>
 <tr>
 <td>component</td>
@@ -1217,10 +1211,10 @@ React.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-titl
 <td>className to every element of animating</td>
 </tr>
 <tr>
-<td>resetStyleBool</td>
+<td>exclusive</td>
 <td>boolean</td>
-<td>true</td>
-<td>whether to animation reset the style every time</td>
+<td>false</td>
+<td>Whether to allow a new animate to execute immediately when switching. <code>enter =&gt; leave</code>: execute immediately leave</td>
 </tr>
 <tr>
 <td>component</td>

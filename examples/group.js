@@ -148,7 +148,7 @@ var Demo = function (_React$Component) {
       __WEBPACK_IMPORTED_MODULE_4_react___default.a.createElement(
         'button',
         { onClick: this.onClick },
-        '\u5207\u6362'
+        this.state.children ? 'show' : 'hide'
       ),
       __WEBPACK_IMPORTED_MODULE_4_react___default.a.createElement(
         __WEBPACK_IMPORTED_MODULE_3_rc_tween_one__["a" /* TweenOneGroup */],
