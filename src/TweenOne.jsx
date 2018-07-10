@@ -260,13 +260,18 @@ class TweenOne extends Component {
       }
       this.props.onChange(cb);
     };
-    this.tween.frame(tweenMoment);
     this.moment = moment;
     this.timelineRepeatNum = repeatNum;
+    this.tween.frame(tweenMoment);
   }
 
   raf = () => {
+    const tween = this.tween;
     this.frame();
+    if (tween !== this.tween) {
+      // 在 onComplete 时更换动画时，raf 没结束，所以需要强制退出，避逸两个时间的冲突。
+      return null;
+    }
     const { repeat } = this.props;
     const totalTime = repeat === -1 ? Number.MAX_VALUE : this.tween.totalTime * (repeat + 1);
     if ((this.moment >= totalTime && !this.reverse)

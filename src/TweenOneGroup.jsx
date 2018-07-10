@@ -25,6 +25,7 @@ class TweenOneGroup extends Component {
     // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
     const children = toArrayChildren(getChildrenFromProps(this.props));
     this.originalChildren = toArrayChildren(getChildrenFromProps(this.props));
+    this.currentChildren = toArrayChildren(getChildrenFromProps(this.props));
     this.state = {
       children,
     };
@@ -40,7 +41,9 @@ class TweenOneGroup extends Component {
       this.animQueue.push(nextChildren);
       return;
     }
-    this.changeChildren(nextChildren);
+    const currentChildren = toArrayChildren(nextProps.exclusive ?
+      this.originalChildren : this.state.children);
+    this.changeChildren(nextChildren, currentChildren);
   }
   componentDidUpdate() {
     this.originalChildren = toArrayChildren(getChildrenFromProps(this.props));
@@ -73,14 +76,17 @@ class TweenOneGroup extends Component {
         }
       } else if (type === 'leave') {
         this.keysToLeave.splice(this.keysToLeave.indexOf(key), 1);
-        delete this.saveTweenTag[key];
-        // 不需要刷新，需要控制 originalChildren.
-        this.state.children = this.state.children.filter(child => key !== child.key);
+        this.currentChildren = this.currentChildren.filter(child => key !== child.key);
         if (!this.keysToLeave.length) {
-          this.forceUpdate(this.reAnimQueue);
-          /* this.setState({
-            children: toArrayChildren(getChildrenFromProps(this.props))
-          }, this.reAnimQueue) */
+          const currentChildrenKeys = this.currentChildren.map(item => item.key);
+          Object.keys(this.saveTweenTag).forEach($key => {
+            if (currentChildrenKeys.indexOf($key) === -1) {
+              delete this.saveTweenTag[$key];
+            }
+          });
+          this.setState({
+            children: this.currentChildren,
+          }, this.reAnimQueue);
         }
       }
       const _obj = { key, type };
@@ -158,14 +164,12 @@ class TweenOneGroup extends Component {
 
   reAnimQueue = () => {
     if (!Object.keys(this.isTween).length && this.animQueue.length) {
-      this.originalChildren = this.state.children;
-      this.changeChildren(this.animQueue[this.animQueue.length - 1]);
+      this.changeChildren(this.animQueue[this.animQueue.length - 1], this.state.children);
       this.animQueue = [];
     }
   }
 
-  changeChildren(nextChildren) {
-    const currentChildren = toArrayChildren(this.originalChildren);
+  changeChildren(nextChildren, currentChildren) {
     const newChildren = mergeChildren(currentChildren, nextChildren);
     this.keysToEnter = [];
     this.keysToLeave = [];
@@ -195,6 +199,7 @@ class TweenOneGroup extends Component {
         delete this.saveTweenTag[key];
       }
     });
+    this.currentChildren = newChildren;
     this.setState({
       children: newChildren,
     });
