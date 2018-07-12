@@ -130,6 +130,9 @@ class TweenOne extends Component {
     }
     // 样式更新了后再执行动画；
     if (this.updateAnim && this.dom && this.dom.nodeName !== '#text') {
+      if (this.tween) {
+        this.cancelRequestAnimationFrame();
+      }
       this.start();
     }
   }
