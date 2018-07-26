@@ -25069,9 +25069,9 @@ p.getAnimStartData = function (item) {
   var _this3 = this;
 
   var start = {};
-  this.computedStyle = this.computedStyle || this.getComputedStyle();
   Object.keys(item).forEach(function (_key) {
     if (_key in __WEBPACK_IMPORTED_MODULE_3__plugins__["a" /* default */] || _this3.attr === 'attr' && (_key === 'd' || _key === 'points')) {
+      _this3.computedStyle = _this3.computedStyle || _this3.getComputedStyle();
       start[_key] = item[_key].getAnimStart(_this3.computedStyle, _this3.tween, _this3.isSvg);
       return;
     }
@@ -25659,7 +25659,7 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
   var tweenStyle = tween.style || {};
   Object.keys(this.propsData.data).forEach(function (key) {
     var cssName = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["isConvert"])(key);
-    var startData = computedStyle[cssName];
+    var startData = tweenStyle[cssName] || computedStyle[cssName];
     var fixed = computedStyle.position === 'fixed';
     if (!startData || startData === 'none' || startData === 'auto') {
       startData = '';
@@ -25684,10 +25684,14 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
       }
       style.transform = transform;
     } else if (cssName === 'filter') {
-      _this2.filterName = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["checkStyleName"])('filter') || 'filter';
-      startData = computedStyle[_this2.filterName];
-      _this2.filterObject = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, _this2.filterObject, Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["splitFilterToObject"])(startData));
-      startData = _this2.filterObject[key] || 0;
+      if (tweenStyle[cssName]) {
+        startData = tweenStyle[cssName];
+      } else {
+        _this2.filterName = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["checkStyleName"])('filter') || 'filter';
+        startData = computedStyle[_this2.filterName];
+        _this2.filterObject = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, _this2.filterObject, Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["splitFilterToObject"])(startData));
+        startData = _this2.filterObject[key] || 0;
+      }
       startUnit = startData.toString().replace(/[^a-z|%]/g, '');
       endUnit = _this2.propsData.dataUnit[key];
       if (endUnit !== startUnit) {
