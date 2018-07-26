@@ -103,7 +103,7 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
   const tweenStyle = tween.style || {};
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
-    let startData = computedStyle[cssName];
+    let startData = tweenStyle[cssName] || computedStyle[cssName];
     const fixed = computedStyle.position === 'fixed';
     if (!startData || startData === 'none' || startData === 'auto') {
       startData = '';
@@ -131,10 +131,14 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
       }
       style.transform = transform;
     } else if (cssName === 'filter') {
-      this.filterName = checkStyleName('filter') || 'filter';
-      startData = computedStyle[this.filterName];
-      this.filterObject = { ...this.filterObject, ...splitFilterToObject(startData) };
-      startData = this.filterObject[key] || 0;
+      if (tweenStyle[cssName]) {
+        startData = tweenStyle[cssName];
+      } else {
+        this.filterName = checkStyleName('filter') || 'filter';
+        startData = computedStyle[this.filterName];
+        this.filterObject = { ...this.filterObject, ...splitFilterToObject(startData) };
+        startData = this.filterObject[key] || 0;
+      }
       startUnit = startData.toString().replace(/[^a-z|%]/g, '');
       endUnit = this.propsData.dataUnit[key];
       if (endUnit !== startUnit) {

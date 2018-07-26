@@ -185,9 +185,9 @@ p.getComputedStyle = function () {
 };
 p.getAnimStartData = function (item) {
   const start = {};
-  this.computedStyle = this.computedStyle || this.getComputedStyle();
   Object.keys(item).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
+      this.computedStyle = this.computedStyle || this.getComputedStyle();
       start[_key] = item[_key].getAnimStart(this.computedStyle, this.tween, this.isSvg);
       return;
     }
