@@ -15,7 +15,6 @@ function Demo() {
           animation={{ y: 30, type: 'from', ease: 'easeOutQuart', opacity: 0 }}
           reverseDelay={200}
           style={{ background: '#fff000' }}
-          
         >
           执行动画
         </Tween>
@@ -25,7 +24,6 @@ function Demo() {
           animation={{ y: 30, delay: 100, ease: 'easeOutQuart', type: 'from', opacity: 0, id: 12 }}
           reverseDelay={100}
           style={{ background: '#000fff' }}
-          onChange={(e) => {console.log(e)}}
         >
           执行动画
         </Tween>
