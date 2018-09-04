@@ -185,6 +185,7 @@ class TweenOne extends Component {
     this.startFrame = ticker.frame;
     this.tween.reverse = this.reverse;
     this.tween.reverseStartTime = this.startMoment;
+    this.raf();
     this.play();
   }
 
@@ -224,7 +225,7 @@ class TweenOne extends Component {
     let repeatNum = Math.floor(moment / this.tween.totalTime) || 0;
     repeatNum = repeatNum > repeat ? repeat : repeatNum;
     let tweenMoment = moment - this.tween.totalTime * repeatNum;
-    tweenMoment = tweenMoment < perFrame ? 0 : tweenMoment;
+    tweenMoment = tweenMoment < perFrame && !this.reverse ? 0 : tweenMoment;
     if (repeat && moment && moment - this.tween.totalTime * repeatNum < perFrame) {
       // 在重置样式之前补 complete；
       this.tween.frame(this.tween.totalTime * repeatNum);

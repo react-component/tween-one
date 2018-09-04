@@ -306,11 +306,11 @@ p.render = function () {
       moment: this.progressTime,
       ...e,
     };
-    if (progressTime >= 0 &&
+    if (progressTime >= (item.delay && reverse ? -this.perFrame + this.accuracy : 0) &&
       !(progressTime > duration && item.mode === 'onComplete') &&
       this.start[i]) {
       const updateAnim = this.updateAnim === 'update';
-      progressTime = progressTime < this.perFrame - this.accuracy ? 0 : progressTime;
+      progressTime = (progressTime < this.perFrame - this.accuracy) && !reverse ? 0 : progressTime;
       if (((progressTime >= duration - this.accuracy && !reverse) || (reverse && progressTime <= 0))
         && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
