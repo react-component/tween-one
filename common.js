@@ -2291,7 +2291,10 @@ var TweenOne = function (_Component) {
       if (!styleEqual) {
         // 在动画时更改了 style, 作为更改开始数值。
         if (this.tween) {
-          this.tween.reStart(this.props.style);
+          this.tween.reStart(nextProps.style);
+          if (this.paused) {
+            this.raf();
+          }
         }
       }
       this.setForcedJudg(nextProps);
