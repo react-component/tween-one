@@ -747,6 +747,7 @@ if (process.env.NODE_ENV !== 'production') {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return windowIsUndefined; });
 /* harmony export (immutable) */ __webpack_exports__["i"] = toArrayChildren;
 /* harmony export (immutable) */ __webpack_exports__["a"] = dataToArray;
 /* harmony export (immutable) */ __webpack_exports__["f"] = objectEqual;
@@ -763,6 +764,8 @@ if (process.env.NODE_ENV !== 'production') {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_deep_eql___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_deep_eql__);
 
 
+
+var windowIsUndefined = !(typeof window !== 'undefined' && window.document && window.document.createElement);
 
 function toArrayChildren(children) {
   var ret = [];
@@ -914,6 +917,9 @@ function getChildrenFromProps(props) {
 }
 
 function startConvertToEndUnit(target, computedStyle, style, num, unit, dataUnit, fixed, isOriginWidth) {
+  if (windowIsUndefined) {
+    return num;
+  }
   var horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
   horiz = style === 'padding' || style === 'marign' ? true : horiz;
   var t = style.indexOf('border') !== -1 || style.indexOf('translate') !== -1 ? target : target.parentNode || document.body;
@@ -3055,7 +3061,7 @@ module.exports = g;
 
 __WEBPACK_IMPORTED_MODULE_0_tween_functions___default.a.path = function (_path, _param) {
   var param = _param || {};
-  if (typeof window === 'undefined') {
+  if (__WEBPACK_IMPORTED_MODULE_1__util__["k" /* windowIsUndefined */]) {
     return 'linear';
   }
   var pathNode = Object(__WEBPACK_IMPORTED_MODULE_1__util__["g" /* parsePath */])(_path);

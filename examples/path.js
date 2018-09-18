@@ -87,9 +87,9 @@ function PathPlugin(target, vars) {
   this.target = target;
   var path = typeof vars === 'string' ? vars : vars.x || vars.y || vars.rotate;
   this.vars = vars;
-  this.path = Object(__WEBPACK_IMPORTED_MODULE_2__util__["g" /* parsePath */])(path);
+  this.path = __WEBPACK_IMPORTED_MODULE_2__util__["k" /* windowIsUndefined */] ? null : Object(__WEBPACK_IMPORTED_MODULE_2__util__["g" /* parsePath */])(path);
   this.start = {};
-  this.pathLength = this.path.getTotalLength();
+  this.pathLength = this.path ? this.path.getTotalLength() : 0;
 }
 
 PathPlugin.prototype = {
@@ -98,7 +98,7 @@ PathPlugin.prototype = {
   getPoint: function getPoint(offset) {
     var o = offset || 0;
     var p = this.pathLength * this.progress + o;
-    return this.path.getPointAtLength(p);
+    return this.path ? this.path.getPointAtLength(p) : 0;
   },
   getAnimStart: function getAnimStart(computedStyle, isSvg) {
     var transform = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(computedStyle[isSvg ? 'transformSVG' : Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["checkStyleName"])('transform')]);
