@@ -2474,7 +2474,7 @@ var _initialiseProps = function _initialiseProps() {
     var repeatNum = Math.floor(moment / _this2.tween.totalTime) || 0;
     repeatNum = repeatNum > repeat ? repeat : repeatNum;
     var tweenMoment = moment - _this2.tween.totalTime * repeatNum;
-    tweenMoment = tweenMoment < perFrame && !_this2.reverse ? 0 : tweenMoment;
+    tweenMoment = tweenMoment < perFrame && !_this2.reverse && totalTime >= perFrame ? 0 : tweenMoment;
     if (repeat && moment && moment - _this2.tween.totalTime * repeatNum < perFrame) {
       // 在重置样式之前补 complete；
       _this2.tween.frame(_this2.tween.totalTime * repeatNum);
@@ -25272,7 +25272,7 @@ p.render = function () {
     }, e);
     if (progressTime >= (item.delay && reverse ? -_this6.perFrame + _this6.accuracy : 0) && !(progressTime > duration && item.mode === 'onComplete') && _this6.start[i]) {
       var updateAnim = _this6.updateAnim === 'update';
-      progressTime = progressTime < _this6.perFrame - _this6.accuracy && !reverse ? 0 : progressTime;
+      progressTime = progressTime < _this6.perFrame - _this6.accuracy && !reverse && item.duration >= _this6.perFrame ? 0 : progressTime;
       if ((progressTime >= duration - _this6.accuracy && !reverse || reverse && progressTime <= 0) && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
