@@ -1,9 +1,9 @@
 import easingTypes from 'tween-functions';
-import { parsePath } from './util';
+import { windowIsUndefined, parsePath } from './util';
 
 easingTypes.path = (_path, _param) => {
   const param = _param || {};
-  if (typeof window === 'undefined') {
+  if (windowIsUndefined) {
     return 'linear';
   }
   const pathNode = parsePath(_path);

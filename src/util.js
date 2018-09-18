@@ -1,6 +1,12 @@
 import React from 'react';
 import deepEql from 'deep-eql';
 
+export const windowIsUndefined = !(
+  typeof window !== 'undefined' &&
+  window.document &&
+  window.document.createElement
+);
+
 export function toArrayChildren(children) {
   const ret = [];
   React.Children.forEach(children, (c) => {
@@ -152,6 +158,9 @@ export function startConvertToEndUnit(
   target, computedStyle, style, num,
   unit, dataUnit, fixed, isOriginWidth
 ) {
+  if (windowIsUndefined) {
+    return num;
+  }
   let horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
   horiz = style === 'padding' || style === 'marign' ? true : horiz;
   let t = style.indexOf('border') !== -1 || style.indexOf('translate') !== -1 ?

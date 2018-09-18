@@ -3,15 +3,15 @@ import {
   getTransform,
   createMatrix,
 } from 'style-utils';
-import { parsePath, getTransformValue } from '../util';
+import { windowIsUndefined, parsePath, getTransformValue } from '../util';
 
 function PathPlugin(target, vars) {
   this.target = target;
   const path = typeof vars === 'string' ? vars : vars.x || vars.y || vars.rotate;
   this.vars = vars;
-  this.path = parsePath(path);
+  this.path = windowIsUndefined ? null : parsePath(path);
   this.start = {};
-  this.pathLength = this.path.getTotalLength();
+  this.pathLength = this.path ? this.path.getTotalLength() : 0;
 }
 
 PathPlugin.prototype = {
@@ -20,7 +20,7 @@ PathPlugin.prototype = {
   getPoint(offset) {
     const o = offset || 0;
     const p = this.pathLength * this.progress + o;
-    return this.path.getPointAtLength(p);
+    return this.path ? this.path.getPointAtLength(p) : 0;
   },
   getAnimStart(computedStyle, isSvg) {
     const transform = getTransform(computedStyle[isSvg ?
