@@ -310,7 +310,8 @@ p.render = function () {
       !(progressTime > duration && item.mode === 'onComplete') &&
       this.start[i]) {
       const updateAnim = this.updateAnim === 'update';
-      progressTime = (progressTime < this.perFrame - this.accuracy) && !reverse ? 0 : progressTime;
+      progressTime = (progressTime < this.perFrame - this.accuracy) && !reverse
+        && item.duration >= this.perFrame ? 0 : progressTime;
       if (((progressTime >= duration - this.accuracy && !reverse) || (reverse && progressTime <= 0))
         && repeatNum >= item.repeat) {
         // onReveresComplete 和 onComplete 统一用 onComplete;

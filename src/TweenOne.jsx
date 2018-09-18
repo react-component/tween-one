@@ -228,7 +228,8 @@ class TweenOne extends Component {
     let repeatNum = Math.floor(moment / this.tween.totalTime) || 0;
     repeatNum = repeatNum > repeat ? repeat : repeatNum;
     let tweenMoment = moment - this.tween.totalTime * repeatNum;
-    tweenMoment = tweenMoment < perFrame && !this.reverse ? 0 : tweenMoment;
+    tweenMoment = tweenMoment < perFrame && !this.reverse &&
+      totalTime >= perFrame ? 0 : tweenMoment;
     if (repeat && moment && moment - this.tween.totalTime * repeatNum < perFrame) {
       // 在重置样式之前补 complete；
       this.tween.frame(this.tween.totalTime * repeatNum);
