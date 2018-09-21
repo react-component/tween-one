@@ -922,7 +922,7 @@ function startConvertToEndUnit(target, computedStyle, style, num, unit, dataUnit
   }
   var horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
   horiz = style === 'padding' || style === 'marign' ? true : horiz;
-  var t = style.indexOf('border') !== -1 || style.indexOf('translate') !== -1 ? target : target.parentNode || document.body;
+  var t = style.indexOf('border') !== -1 || style.indexOf('translate') !== -1 || style === 'transformOrigin' ? target : target.parentNode || document.body;
   t = fixed ? document.body : t;
   var pix = void 0;
   var htmlComputedStyle = void 0;
@@ -2217,7 +2217,6 @@ var TweenOne = function (_Component) {
     _initialiseProps.call(_this);
 
     _this.rafID = -1;
-    _this.setDefalut(props);
     _this.paused = props.paused;
     _this.reverse = props.reverse;
     _this.updateAnim = false;
@@ -2250,7 +2249,6 @@ var TweenOne = function (_Component) {
         if (nextProps.resetStyle && this.tween) {
           this.tween.resetDefaultStyle();
         }
-        this.setDefalut(nextProps);
         this.updateAnim = true;
       }
 
@@ -2267,7 +2265,7 @@ var TweenOne = function (_Component) {
             this.play();
           }
         } else {
-          this.setDefalut(nextProps);
+
           this.updateAnim = true;
         }
       }
@@ -2442,6 +2440,7 @@ var _initialiseProps = function _initialiseProps() {
     _this2.updateAnim = false;
     var props = _this2.props;
     if (props.animation && Object.keys(props.animation).length) {
+      _this2.setDefalut(props);
       _this2.tween = new __WEBPACK_IMPORTED_MODULE_9__Tween__["a" /* default */](_this2.dom, Object(__WEBPACK_IMPORTED_MODULE_8__util__["a" /* dataToArray */])(props.animation), { attr: props.attr });
       _this2.tween.reverse = _this2.reverse;
       // 预先注册 raf, 初始动画数值。
@@ -2493,7 +2492,7 @@ var _initialiseProps = function _initialiseProps() {
       var cb = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, e, {
         timelineMode: ''
       });
-      if (!moment && !_this2.reverse || _this2.reverse && _this2.moment === _this2.startMoment) {
+      if (_this2.moment === _this2.startMoment && !_this2.reverse && !e.index && e.mode === 'onStart' || _this2.reverse) {
         cb.timelineMode = 'onTimelineStart';
       } else if (moment >= totalTime && !_this2.reverse || !moment && _this2.reverse) {
         cb.timelineMode = 'onTimelineComplete';
@@ -3145,6 +3144,11 @@ var ticker = new Ticker();
 p.tick = function (a) {
   ticker.elapsed = getTime() - ticker.lastUpdate;
   ticker.lastUpdate += ticker.elapsed;
+  if (!ticker.frame) {
+    ticker.frame++;
+  } else {
+    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
+  }
   ticker.tickFnArray.forEach(function (func) {
     return func(a);
   });
@@ -3152,11 +3156,6 @@ p.tick = function (a) {
   if (!ticker.tickFnArray.length) {
     ticker.sleep();
     return;
-  }
-  if (!ticker.frame) {
-    ticker.frame++;
-  } else {
-    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
   }
   ticker.id = __WEBPACK_IMPORTED_MODULE_0_raf___default()(ticker.tick);
 };
@@ -25256,7 +25255,7 @@ p.render = function () {
         }
         if (!_this6.register || i && !initTime) {
           _this6.register = true;
-          if (progressTime === 0 && item.duration) {
+          if (progressTime === 0 && item.duration && item.delay) {
             return;
           }
         }
@@ -25270,29 +25269,36 @@ p.render = function () {
     var cb = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({
       moment: _this6.progressTime
     }, e);
-    if (progressTime >= (item.delay && reverse ? -_this6.perFrame + _this6.accuracy : 0) && !(progressTime > duration && item.mode === 'onComplete') && _this6.start[i]) {
+    var maxPer = _this6.perFrame - _this6.accuracy;
+    var startTime = item.delay && reverse ? -maxPer : 0;
+    if (progressTime >= startTime && !(progressTime > duration && item.mode === 'onComplete') && _this6.start[i]) {
       var updateAnim = _this6.updateAnim === 'update';
-      progressTime = progressTime < _this6.perFrame - _this6.accuracy && !reverse && item.duration >= _this6.perFrame ? 0 : progressTime;
+      progressTime = progressTime < maxPer && !reverse && item.duration >= _this6.perFrame ? 0 : progressTime;
       if ((progressTime >= duration - _this6.accuracy && !reverse || reverse && progressTime <= 0) && repeatNum >= item.repeat) {
+        if (item.mode === 'onComplete') {
+          return;
+        }
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
         _this6.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
         if (!item.reset && !updateAnim) {
           // duration 为 0 时的一个回调；
-          if (!duration) {
-            item.onStart(e);
-            cb.mode = 'onStart';
-            _this6.onChange(cb);
+          if (duration < maxPer) {
+            if (!duration) {
+              item.onStart(e);
+              cb.mode = 'onStart';
+              _this6.onChange(cb);
+            }
             item.onUpdate(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({ ratio: ratio }, e));
             cb.mode = 'onUpdate';
             _this6.onChange(cb);
           }
           item.onComplete(e);
-        } else if (progressTime >= duration + _this6.perFrame - _this6.accuracy) {
+        } else if (progressTime >= duration + maxPer) {
           return;
         }
         item.mode = 'onComplete';
-      } else if (duration) {
+      } else if (duration > maxPer) {
         var currentProgress = progressTime < 0 ? 0 : progressTime;
         currentProgress = currentProgress > duration ? duration : currentProgress;
         ratio = item.ease(currentProgress, startData, endData, duration);
@@ -25302,7 +25308,7 @@ p.render = function () {
             item.mode = 'onRepeat';
             item.currentRepeat = repeatNum;
             item.onRepeat(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, e, { repeatNum: repeatNum }));
-          } else if ((typeof item.perTime !== 'number' || progressTime === 0 || reverse && item.perTime >= _this6.reverseStartTime - initTime) && item.mode !== 'onStart') {
+          } else if ((typeof item.perTime !== 'number' || progressTime >= startTime && progressTime <= maxPer || reverse && item.perTime >= _this6.reverseStartTime - initTime) && item.mode !== 'onStart') {
             // onReveresStart 和 onStart 统一用 onStart;
             item.mode = 'onStart';
             item.onStart(e);
