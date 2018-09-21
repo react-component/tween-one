@@ -42,7 +42,6 @@ class TweenOne extends Component {
   constructor(props) {
     super(props);
     this.rafID = -1;
-    this.setDefalut(props);
     this.paused = props.paused;
     this.reverse = props.reverse;
     this.updateAnim = false;
@@ -71,7 +70,6 @@ class TweenOne extends Component {
       if (nextProps.resetStyle && this.tween) {
         this.tween.resetDefaultStyle();
       }
-      this.setDefalut(nextProps);
       this.updateAnim = true;
     }
 
@@ -88,7 +86,7 @@ class TweenOne extends Component {
           this.play();
         }
       } else {
-        this.setDefalut(nextProps);
+
         this.updateAnim = true;
       }
     }
@@ -196,6 +194,7 @@ class TweenOne extends Component {
     this.updateAnim = false;
     const props = this.props;
     if (props.animation && Object.keys(props.animation).length) {
+      this.setDefalut(props);
       this.tween = new Tween(this.dom, dataToArray(props.animation),
         { attr: props.attr });
       this.tween.reverse = this.reverse;
@@ -252,8 +251,9 @@ class TweenOne extends Component {
         timelineMode: '',
       };
       if (
-        (!moment && !this.reverse) ||
-        (this.reverse && this.moment === this.startMoment)
+        (this.moment === this.startMoment &&
+          (!this.reverse && !e.index && e.mode === 'onStart') ||
+          this.reverse)
       ) {
         cb.timelineMode = 'onTimelineStart';
       } else if (

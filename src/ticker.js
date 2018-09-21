@@ -41,16 +41,16 @@ const ticker = new Ticker;
 p.tick = function (a) {
   ticker.elapsed = getTime() - ticker.lastUpdate;
   ticker.lastUpdate += ticker.elapsed;
+  if (!ticker.frame) {
+    ticker.frame++;
+  } else {
+    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
+  }
   ticker.tickFnArray.forEach(func => func(a));
   // 如果 object 里没对象了，自动杀掉；
   if (!ticker.tickFnArray.length) {
     ticker.sleep();
     return;
-  }
-  if (!ticker.frame) {
-    ticker.frame++;
-  } else {
-    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
   }
   ticker.id = requestAnimationFrame(ticker.tick);
 };

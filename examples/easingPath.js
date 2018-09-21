@@ -19,7 +19,7 @@ const anim = [
   {
     repeatDelay: 1000,
     duration: 1000,
-    y: -30,
+    y: 0,
     appearTo: 0,
     repeat: -1,
     yoyo: true,

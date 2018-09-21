@@ -163,7 +163,7 @@ export function startConvertToEndUnit(
   }
   let horiz = /(?:Left|Right|Width|X)/i.test(style) || isOriginWidth;
   horiz = style === 'padding' || style === 'marign' ? true : horiz;
-  let t = style.indexOf('border') !== -1 || style.indexOf('translate') !== -1 ?
+  let t = style.indexOf('border') !== -1 || style.indexOf('translate') !== -1 || style === 'transformOrigin' ?
     target : target.parentNode || document.body;
   t = fixed ? document.body : t;
   let pix;

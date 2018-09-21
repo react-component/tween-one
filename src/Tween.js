@@ -291,7 +291,7 @@ p.render = function () {
         }
         if (!this.register || i && !initTime) {
           this.register = true;
-          if (progressTime === 0 && item.duration) {
+          if (progressTime === 0 && item.duration && item.delay) {
             return;
           }
         }
@@ -306,33 +306,40 @@ p.render = function () {
       moment: this.progressTime,
       ...e,
     };
-    if (progressTime >= (item.delay && reverse ? -this.perFrame + this.accuracy : 0) &&
+    const maxPer = this.perFrame - this.accuracy;
+    const startTime = item.delay && reverse ? -maxPer : 0;
+    if (progressTime >= startTime &&
       !(progressTime > duration && item.mode === 'onComplete') &&
       this.start[i]) {
       const updateAnim = this.updateAnim === 'update';
-      progressTime = (progressTime < this.perFrame - this.accuracy) && !reverse
+      progressTime = (progressTime < maxPer) && !reverse
         && item.duration >= this.perFrame ? 0 : progressTime;
       if (((progressTime >= duration - this.accuracy && !reverse) || (reverse && progressTime <= 0))
         && repeatNum >= item.repeat) {
+        if (item.mode === 'onComplete') {
+          return;
+        }
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
         this.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
         if (!item.reset && !updateAnim) {
           // duration 为 0 时的一个回调；
-          if (!duration) {
-            item.onStart(e);
-            cb.mode = 'onStart';
-            this.onChange(cb);
+          if (duration < maxPer) {
+            if (!duration) {
+              item.onStart(e);
+              cb.mode = 'onStart';
+              this.onChange(cb);
+            }
             item.onUpdate({ ratio, ...e });
             cb.mode = 'onUpdate';
-            this.onChange(cb)
+            this.onChange(cb);
           }
           item.onComplete(e);
-        } else if (progressTime >= duration + this.perFrame - this.accuracy) {
+        } else if (progressTime >= duration + maxPer) {
           return;
         }
         item.mode = 'onComplete';
-      } else if (duration) {
+      } else if (duration > maxPer) {
         let currentProgress = progressTime < 0 ? 0 : progressTime;
         currentProgress = currentProgress > duration ? duration : currentProgress;
         ratio = item.ease(currentProgress, startData, endData, duration);
@@ -342,7 +349,8 @@ p.render = function () {
             item.mode = 'onRepeat';
             item.currentRepeat = repeatNum;
             item.onRepeat({ ...e, repeatNum });
-          } else if ((typeof item.perTime !== 'number' || progressTime === 0 ||
+          } else if ((typeof item.perTime !== 'number' ||
+            progressTime >= startTime && progressTime <= maxPer ||
             (reverse && (item.perTime >= this.reverseStartTime - initTime)))
             && item.mode !== 'onStart') {
             // onReveresStart 和 onStart 统一用 onStart;
