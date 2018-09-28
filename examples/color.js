@@ -1,14 +1,14 @@
 webpackJsonp([29],{
 
-/***/ 148:
+/***/ 140:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(149);
+module.exports = __webpack_require__(141);
 
 
 /***/ }),
 
-/***/ 149:
+/***/ 141:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -41,5 +41,5 @@ __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ })
 
-},[148]);
+},[140]);
 //# sourceMappingURL=color.js.map

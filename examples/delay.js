@@ -1,14 +1,14 @@
 webpackJsonp([27],{
 
-/***/ 152:
+/***/ 144:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(153);
+module.exports = __webpack_require__(145);
 
 
 /***/ }),
 
-/***/ 153:
+/***/ 145:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -40,5 +40,5 @@ __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ })
 
-},[152]);
+},[144]);
 //# sourceMappingURL=delay.js.map
