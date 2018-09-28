@@ -1,6 +1,6 @@
 type IEaseCallBack = ((t: number, b: number, c: number, d: number) => number);
 
-export declare type IAnimTyope = 'to' | 'from';
+export declare type IAnimType = 'to' | 'from';
 
 export declare type IEaseType = 'linear' |
   'easeInSine' | 'easeOutSine' | 'easeInOutSine' |
@@ -15,7 +15,7 @@ export declare type IEaseType = 'linear' |
   'easeInBounce' | 'easeOutBounce' | 'easeInOutBounce' |
   IEaseCallBack; // TweenOne ease path;
 
-export interface IBezier {
+export interface IBezierProps {
   type?: string;
   autoRotate?: boolean;
   vars: { x: number, y: number }[];
@@ -29,7 +29,7 @@ export interface IChildrenProps {
 
 export interface IStyleAnimProps {
   [key: string]: any;
-  bezier?: IBezier;
+  bezier?: IBezierProps;
   SVGDraw?: number | string;// DrawPlugin
   // Children
   Children?: IChildrenProps;
@@ -95,7 +95,7 @@ export interface IStyleAnimProps {
 }
 
 export interface IAnimObject extends IStyleAnimProps {
-  type?: IAnimTyope;
+  type?: IAnimType;
   duration?: number;
   delay?: number;
   repeat?: number;
