@@ -25308,7 +25308,7 @@ p.render = function () {
             item.mode = 'onRepeat';
             item.currentRepeat = repeatNum;
             item.onRepeat(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, e, { repeatNum: repeatNum }));
-          } else if ((typeof item.perTime !== 'number' || progressTime >= startTime && progressTime <= maxPer || reverse && item.perTime >= _this6.reverseStartTime - initTime) && item.mode !== 'onStart') {
+          } else if ((item.perTime <= 0 || reverse && item.perTime >= _this6.reverseStartTime - initTime) && item.mode !== 'onStart') {
             // onReveresStart 和 onStart 统一用 onStart;
             item.mode = 'onStart';
             item.onStart(e);
@@ -25674,6 +25674,9 @@ p.getTweenData = function (key, vars) {
   if (key.match(/colo|fill|storker/i)) {
     data.data[key] = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["parseColor"])(vars);
     data.dataType[key] = 'color';
+  } else if (key === 'strokeDasharray') {
+    data.data[key] = vars.split(',');
+    data.dataType[key] = 'strokeDasharray';
   } else if (key.match(/shadow/i)) {
     data.data[key] = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["parseShadow"])(vars);
     data.dataType[key] = 'shadow';
@@ -25793,7 +25796,9 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
       startData = startData.map(_this2.convertToMarksArray.bind(_this2, computedStyle, endUnit, key));
       style[cssName] = startData;
     } else if (Array.isArray(_this2.propsData.data[key])) {
-      startData = startData.split(/[\s|,]/);
+      startData = startData.split(/[\s|,]/).filter(function (c) {
+        return c || c === 0;
+      });
       endUnit = _this2.propsData.dataUnit[key];
       startData = startData.map(_this2.convertToMarksArray.bind(_this2, computedStyle, endUnit, key));
       style[cssName] = startData;
