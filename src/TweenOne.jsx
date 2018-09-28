@@ -250,6 +250,7 @@ class TweenOne extends Component {
         ...e,
         timelineMode: '',
       };
+      
       if (
         (this.moment === this.startMoment &&
           (!this.reverse && !e.index && e.mode === 'onStart') ||
@@ -266,10 +267,10 @@ class TweenOne extends Component {
       } else {
         cb.timelineMode = 'onTimelineUpdate';
       }
+      this.timelineRepeatNum = repeatNum;
       this.props.onChange(cb);
     };
     this.moment = moment;
-    this.timelineRepeatNum = repeatNum;
     this.tween.frame(tweenMoment);
   }
 

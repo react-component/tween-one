@@ -1,5 +1,4 @@
 import React from 'react';
-import deepEql from 'deep-eql';
 
 export const windowIsUndefined = !(
   typeof window !== 'undefined' &&
@@ -23,6 +22,26 @@ export function dataToArray(vars) {
     return vars;
   }
   return [vars];
+}
+
+function deepEql(a, b) {
+  if (!a || !b) {
+    return false;
+  }
+  const $a = Object.keys(a);
+  const $b = Object.keys(b);
+  if ($a.length && $b.length && $a.length === $b.length) {
+    return !$a.some((key) => {
+      let aa = a[key];
+      let bb = b[key];
+      if (Array.isArray(aa) && Array.isArray(bb)) {
+        aa = aa.join();
+        bb = bb.join();
+      }
+      return aa !== bb;
+    });
+  }
+  return false;
 }
 
 export function objectEqual(obj1, obj2) {
@@ -51,6 +70,8 @@ export function objectEqual(obj1, obj2) {
             }
           } else {
             equalBool = false;
+          }
+          if (!equalBool) {
             return false;
           }
         }

@@ -34,6 +34,8 @@ export interface IProps<T> extends Omit<React.HTMLAttributes<T>, 'onChange'> {
   componentProps?: {};
 }
 
+export const TweenOneGroup: typeof Group;
+
 export default class RcTweenOne<T> extends React.Component<IProps<T>> {
   static easing: {
     path(path: string, parame?: { rect?: number, lengthPixel?: number }): IEaseCallBack;
