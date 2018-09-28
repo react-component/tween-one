@@ -349,8 +349,7 @@ p.render = function () {
             item.mode = 'onRepeat';
             item.currentRepeat = repeatNum;
             item.onRepeat({ ...e, repeatNum });
-          } else if ((typeof item.perTime !== 'number' ||
-            progressTime >= startTime && progressTime <= maxPer ||
+          } else if ((item.perTime <= 0 ||
             (reverse && (item.perTime >= this.reverseStartTime - initTime)))
             && item.mode !== 'onStart') {
             // onReveresStart 和 onStart 统一用 onStart;
