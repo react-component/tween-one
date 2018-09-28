@@ -37,6 +37,9 @@ p.getTweenData = function (key, vars) {
   if (key.match(/colo|fill|storker/i)) {
     data.data[key] = parseColor(vars);
     data.dataType[key] = 'color';
+  } else if (key === 'strokeDasharray'){
+    data.data[key] = vars.split(',');
+    data.dataType[key] = 'strokeDasharray';
   } else if (key.match(/shadow/i)) {
     data.data[key] = parseShadow(vars);
     data.dataType[key] = 'shadow';
@@ -155,7 +158,7 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
       startData = startData.map(this.convertToMarksArray.bind(this, computedStyle, endUnit, key));
       style[cssName] = startData;
     } else if (Array.isArray(this.propsData.data[key])) {
-      startData = startData.split(/[\s|,]/);
+      startData = startData.split(/[\s|,]/).filter(c => (c || c === 0));
       endUnit = this.propsData.dataUnit[key];
       startData = startData.map(this.convertToMarksArray.bind(this, computedStyle, endUnit, key));
       style[cssName] = startData;

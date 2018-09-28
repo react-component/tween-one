@@ -33,7 +33,8 @@
     "lib",
     "assets/*.css",
     "dist",
-    "es"
+    "es",
+    "index.d.ts"
   ],
   "licenses": "MIT",
   "main": "./lib/index",
@@ -62,15 +63,18 @@
     "coverage": "rc-test run coverage"
   },
   "devDependencies": {
+    "@types/react": "^16.0.0",
     "core-js": "^2.5.7",
     "expect.js": "0.3.x",
     "pre-commit": "1.x",
+    "precommit-hook": "1.x",
     "rc-test": "6.x",
     "rc-tools": "8.x",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "rc-queue-anim": "^1.6.1",
-    "rc-scroll-anim": "2.x"
+    "rc-scroll-anim": "2.x",
+    "typescript": "3.x"
   },
   "pre-commit": [
     "lint"
@@ -82,5 +86,6 @@
     "raf": "~3.4.0",
     "style-utils": "~0.1.13",
     "tween-functions": "~1.2.0"
-  }
+  },
+  "types": "typeings/index.d.ts"
 }

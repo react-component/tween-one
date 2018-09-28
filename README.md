@@ -100,7 +100,7 @@ React.render(<TweenOneGroup>
 | reverseDelay | number       | 0       | animate revers start delay |
 | repeat     |  number        | 0       | `animation` all data repeat, To repeat indefinitely, use  -1 |
 | yoyo       | boolean        | false   | `animation` all data alternating backward and forward on each repeat. |
-| onChange   | func           | null    | when the animation change called, callback({ moment, item, tween, index, mode, timelineMode }) |
+| onChange   | func           | null    | when the animation change called, callback({ moment, target, index, mode, timelineMode }) |
 | moment     | number         | null    | set the current frame    |
 | attr       | string         | `style` | `style` or `attr`, `attr` is tag attribute. when morph SVG must be `attr`.  |
 | resetStyle | boolean    | false   | update animation data, reset init style |
