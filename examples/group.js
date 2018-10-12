@@ -161,7 +161,8 @@ var Demo = function (_React$Component) {
             style: { height: 300 },
             enter: this.enterType,
             leave: [{ y: 90 }, { x: 100, opacity: 0 }],
-            onEnd: this.onEnd
+            onEnd: this.onEnd,
+            exclusive: true
           },
           this.state.children
         )

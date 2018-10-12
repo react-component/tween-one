@@ -26681,7 +26681,6 @@ var TweenOneGroup = function (_Component) {
     _this.isTween = {};
     // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
     var children = Object(__WEBPACK_IMPORTED_MODULE_8__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_8__util__["c" /* getChildrenFromProps */])(_this.props));
-    _this.originalChildren = Object(__WEBPACK_IMPORTED_MODULE_8__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_8__util__["c" /* getChildrenFromProps */])(_this.props));
     _this.currentChildren = Object(__WEBPACK_IMPORTED_MODULE_8__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_8__util__["c" /* getChildrenFromProps */])(_this.props));
     _this.state = {
       children: children
@@ -26702,13 +26701,8 @@ var TweenOneGroup = function (_Component) {
         this.animQueue.push(nextChildren);
         return;
       }
-      var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_8__util__["i" /* toArrayChildren */])(nextProps.exclusive ? this.originalChildren : this.state.children);
+      var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_8__util__["i" /* toArrayChildren */])(this.currentChildren);
       this.changeChildren(nextChildren, currentChildren);
-    }
-  }, {
-    key: 'componentDidUpdate',
-    value: function componentDidUpdate() {
-      this.originalChildren = Object(__WEBPACK_IMPORTED_MODULE_8__util__["i" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_8__util__["c" /* getChildrenFromProps */])(this.props));
     }
   }, {
     key: 'changeChildren',
@@ -26913,7 +26907,7 @@ TweenOneGroup.defaultProps = {
   enter: { x: 50, opacity: 0, type: 'from' },
   leave: { x: -50, opacity: 0 },
   onEnd: noop,
-  resetStyle: false,
+  resetStyle: true,
   exclusive: false
 };
 TweenOneGroup.isTweenOneGroup = true;
