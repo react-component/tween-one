@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "2.2.10",
+  "version": "2.2.11",
   "description": "tween-one anim component for react",
   "keywords": [
     "react",
@@ -34,9 +34,7 @@
     "assets/*.css",
     "dist",
     "es",
-    "typings/index.d.ts",
-    "typings/AnimObject.d.ts",
-    "typings/TweenOneGroup.d.ts"
+    "typings"
   ],
   "licenses": "MIT",
   "main": "./lib/index",

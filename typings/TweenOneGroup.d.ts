@@ -10,6 +10,7 @@ export interface IGroupProps<T> extends Omit<React.HTMLAttributes<T>, 'onChange'
   leave?: IAnimObject | IAnimObject[] | ((key: string, index: number) => IAnimObject);
   animatingClassName?: string[] | [string, string];
   exclusive?: boolean;
+  resetStyle?: boolean;
   onEnd?: (e: { key: string, type: string }) => void;
   component?: string | React.ReactNode;
   componentProps?: {};

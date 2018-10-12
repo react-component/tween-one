@@ -125,7 +125,7 @@ class TweenOneGroup extends Component {
       key: child.key,
       animation: animate,
       onChange,
-      resetStyle: this.props.exclusive,
+      resetStyle: this.props.resetStyle,
     };
     if (this.keysToEnter.concat(this.keysToLeave).indexOf(child.key) >= 0
       || !this.onEnterBool && animation) {
@@ -220,6 +220,7 @@ class TweenOneGroup extends Component {
       'animatingClassName',
       'onEnd',
       'exclusive',
+      'resetStyle',
     ].forEach(key => delete componentProps[key]);
     return createElement(this.props.component,
       { ...componentProps, ...this.props.componentProps },
@@ -238,6 +239,7 @@ TweenOneGroup.propTypes = {
   leave: PropTypes.any,
   animatingClassName: PropTypes.array,
   onEnd: PropTypes.func,
+  resetStyle: PropTypes.bool,
   exclusive: PropTypes.bool,
 };
 
@@ -249,6 +251,7 @@ TweenOneGroup.defaultProps = {
   enter: { x: 50, opacity: 0, type: 'from' },
   leave: { x: -50, opacity: 0 },
   onEnd: noop,
+  resetStyle: false,
   exclusive: false,
 };
 TweenOneGroup.isTweenOneGroup = true;

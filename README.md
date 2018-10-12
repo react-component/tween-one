@@ -205,6 +205,7 @@ object: `animation={{ path: { x: path, y: path, rotate: path } }}`, can be contr
 | leave     | object / array / func | `{ x: 30, opacity: 0 }` | leave anim twee-one data. when array is tween-one timeline, func refer to queue-anim  |
 | onEnd     |  func          | -    | one animation end callback |
 | animatingClassName | array | `['tween-one-entering', 'tween-one-leaving']` | className to every element of animating |
+| resetStyle  |  boolean    | TweenOne resetStyle, reset the initial style when changing animation. |
 | exclusive   |  boolean   | false  | Whether to allow a new animate to execute immediately when switching. `enter => leave`: execute immediately leave |
 | component | 	React.Element/String | div  |  component tag  | 
 | componentProps | object  |  -  | component tag props |

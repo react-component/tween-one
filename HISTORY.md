@@ -2,7 +2,7 @@
 ----
 
 ## 2.2.0
-1. TweenOne 的 resetStyleBool 改名成 resetStyle;
+1. resetStyleBool 改名成 resetStyle;
 2. TweenOne 删除 updateReStart, 现在默认是。
 3. Group 重构动画逻辑，以队列形式切换，如果在动画时做切换，需将动画完成后再执切换动画。
 4. Group 增加 exclusive, 在队列动画时强行执行切换动画。
