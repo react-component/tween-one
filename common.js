@@ -26757,7 +26757,7 @@ var TweenOneGroup = function (_Component) {
         return childrenToRender[0] || null;
       }
       var componentProps = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, this.props);
-      ['component', 'componentProps', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd', 'exclusive'].forEach(function (key) {
+      ['component', 'componentProps', 'appear', 'enter', 'leave', 'animatingClassName', 'onEnd', 'exclusive', 'resetStyle'].forEach(function (key) {
         return delete componentProps[key];
       });
       return Object(__WEBPACK_IMPORTED_MODULE_5_react__["createElement"])(this.props.component, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, componentProps, this.props.componentProps), childrenToRender);
@@ -26849,7 +26849,7 @@ var _initialiseProps = function _initialiseProps() {
       key: child.key,
       animation: animate,
       onChange: onChange,
-      resetStyle: _this3.props.exclusive
+      resetStyle: _this3.props.resetStyle
     };
     if (_this3.keysToEnter.concat(_this3.keysToLeave).indexOf(child.key) >= 0 || !_this3.onEnterBool && animation) {
       if (!_this3.saveTweenTag[child.key]) {
@@ -26901,6 +26901,7 @@ TweenOneGroup.propTypes = {
   leave: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.any,
   animatingClassName: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.array,
   onEnd: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
+  resetStyle: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.bool,
   exclusive: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.bool
 };
 
@@ -26912,6 +26913,7 @@ TweenOneGroup.defaultProps = {
   enter: { x: 50, opacity: 0, type: 'from' },
   leave: { x: -50, opacity: 0 },
   onEnd: noop,
+  resetStyle: false,
   exclusive: false
 };
 TweenOneGroup.isTweenOneGroup = true;
