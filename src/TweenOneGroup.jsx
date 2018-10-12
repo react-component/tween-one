@@ -24,7 +24,6 @@ class TweenOneGroup extends Component {
     this.isTween = {};
     // 第一进入，appear 为 true 时默认用 enter 或 tween-one 上的效果
     const children = toArrayChildren(getChildrenFromProps(this.props));
-    this.originalChildren = toArrayChildren(getChildrenFromProps(this.props));
     this.currentChildren = toArrayChildren(getChildrenFromProps(this.props));
     this.state = {
       children,
@@ -41,12 +40,8 @@ class TweenOneGroup extends Component {
       this.animQueue.push(nextChildren);
       return;
     }
-    const currentChildren = toArrayChildren(nextProps.exclusive ?
-      this.originalChildren : this.state.children);
+    const currentChildren = toArrayChildren(this.currentChildren);
     this.changeChildren(nextChildren, currentChildren);
-  }
-  componentDidUpdate() {
-    this.originalChildren = toArrayChildren(getChildrenFromProps(this.props));
   }
 
   onChange = (animation, key, type, obj) => {
@@ -251,7 +246,7 @@ TweenOneGroup.defaultProps = {
   enter: { x: 50, opacity: 0, type: 'from' },
   leave: { x: -50, opacity: 0 },
   onEnd: noop,
-  resetStyle: false,
+  resetStyle: true,
   exclusive: false,
 };
 TweenOneGroup.isTweenOneGroup = true;

@@ -86,6 +86,7 @@ class Demo extends React.Component {
           enter={this.enterType}
           leave={[{ y: 90 }, { x: 100, opacity: 0 }]}
           onEnd={this.onEnd}
+          exclusive
         >
           {this.state.children}
         </TweenOneGroup>
