@@ -26302,8 +26302,10 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
       startData = computedStyle[isSvg ? 'transformSVG' : _this2.transform];
       endUnit = _this2.propsData.dataUnit[key];
       transform = tweenStyle.transform ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tweenStyle.transform) : style.transform || Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(startData);
-      if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
-        transform[key] = Object(__WEBPACK_IMPORTED_MODULE_2__util_js__["h" /* startConvertToEndUnit */])(_this2.target, computedStyle, key, transform[key], null, endUnit);
+      var unitReg = /%|vw|vh|em|rem/i;
+      if (endUnit && endUnit.match(unitReg)) {
+        console.log(tweenStyle.transform && tweenStyle.transform[key]);
+        transform[key] = transform[key] && transform[key].match(unitReg) ? parseFloat(transform[key]) : Object(__WEBPACK_IMPORTED_MODULE_2__util_js__["h" /* startConvertToEndUnit */])(_this2.target, computedStyle, key, transform[key], null, endUnit);
       }
       style.transform = transform;
     } else if (cssName === 'filter') {
