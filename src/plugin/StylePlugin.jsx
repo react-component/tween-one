@@ -37,7 +37,7 @@ p.getTweenData = function (key, vars) {
   if (key.match(/colo|fill|storker/i)) {
     data.data[key] = parseColor(vars);
     data.dataType[key] = 'color';
-  } else if (key === 'strokeDasharray'){
+  } else if (key === 'strokeDasharray') {
     data.data[key] = vars.split(',');
     data.dataType[key] = 'strokeDasharray';
   } else if (key.match(/shadow/i)) {
@@ -128,9 +128,13 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
       endUnit = this.propsData.dataUnit[key];
       transform = tweenStyle.transform ? { ...tweenStyle.transform } :
         style.transform || getTransform(startData);
-      if (endUnit && endUnit.match(/%|vw|vh|em|rem/i)) {
-        transform[key] = startConvertToEndUnit(this.target, computedStyle,
-          key, transform[key], null, endUnit);
+      const unitReg = /%|vw|vh|em|rem/i;
+      if (endUnit && endUnit.match(unitReg)) {
+        console.log(tweenStyle.transform && tweenStyle.transform[key])
+        transform[key] = transform[key] && transform[key].match(unitReg) ?
+          parseFloat(transform[key])
+          : startConvertToEndUnit(this.target, computedStyle,
+            key, transform[key], null, endUnit);
       }
       style.transform = transform;
     } else if (cssName === 'filter') {
