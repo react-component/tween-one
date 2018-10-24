@@ -26280,6 +26280,7 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
 
   var style = {};
   var tweenStyle = tween.style || {};
+  var transform = void 0;
   Object.keys(this.propsData.data).forEach(function (key) {
     var cssName = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["isConvert"])(key);
     var startData = tweenStyle[cssName] || computedStyle[cssName];
@@ -26287,24 +26288,23 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
     if (!startData || startData === 'none' || startData === 'auto') {
       startData = '';
     }
-    var transform = void 0;
     var endUnit = void 0;
     var startUnit = void 0;
     if (key in __WEBPACK_IMPORTED_MODULE_3__plugins__["a" /* default */]) {
       if (key === 'bezier') {
         _this2.transform = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["checkStyleName"])('transform');
         startData = computedStyle[isSvg ? 'transformSVG' : _this2.transform];
-        style.transform = tweenStyle.transform ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tweenStyle.transform) : style.transform || Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(startData);
+        transform = transform || (tweenStyle.transform ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tweenStyle.transform) : style.transform || Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(startData));
+        style.transform = transform;
       }
       _this2.propsData.data[key].getAnimStart(computedStyle, isSvg);
     } else if (cssName === 'transform') {
       _this2.transform = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["checkStyleName"])('transform');
       startData = computedStyle[isSvg ? 'transformSVG' : _this2.transform];
       endUnit = _this2.propsData.dataUnit[key];
-      transform = tweenStyle.transform ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tweenStyle.transform) : style.transform || Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(startData);
+      transform = transform || (tweenStyle.transform ? __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tweenStyle.transform) : style.transform || Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(startData));
       var unitReg = /%|vw|vh|em|rem/i;
       if (endUnit && endUnit.match(unitReg)) {
-        console.log(tweenStyle.transform && tweenStyle.transform[key]);
         transform[key] = transform[key] && transform[key].match(unitReg) ? parseFloat(transform[key]) : Object(__WEBPACK_IMPORTED_MODULE_2__util_js__["h" /* startConvertToEndUnit */])(_this2.target, computedStyle, key, transform[key], null, endUnit);
       }
       style.transform = transform;
@@ -26418,7 +26418,7 @@ p.setRatio = function (ratio, tween, computedStyle) {
       return;
     } else if (_isTransform) {
       if (unit && unit.match(/%|vw|vh|em|rem/i)) {
-        startVars = _this3.start.transform[key];
+        startVars = parseFloat(_this3.start.transform[key]);
         if (count.charAt(1) === '=') {
           tween.style.transform[key] = startVars + endVars * ratio + unit;
         } else {
