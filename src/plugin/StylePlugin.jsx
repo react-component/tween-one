@@ -104,6 +104,7 @@ p.convertToMarksArray = function (computedStyle, unit, key, data, i) {
 p.getAnimStart = function (computedStyle, tween, isSvg) {
   const style = {};
   const tweenStyle = tween.style || {};
+  let transform;
   Object.keys(this.propsData.data).forEach(key => {
     const cssName = isConvert(key);
     let startData = tweenStyle[cssName] || computedStyle[cssName];
@@ -111,26 +112,25 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
     if (!startData || startData === 'none' || startData === 'auto') {
       startData = '';
     }
-    let transform;
     let endUnit;
     let startUnit;
     if (key in _plugin) {
       if (key === 'bezier') {
         this.transform = checkStyleName('transform');
         startData = computedStyle[isSvg ? 'transformSVG' : this.transform];
-        style.transform = tweenStyle.transform ? { ...tweenStyle.transform } :
-          style.transform || getTransform(startData);
+        transform = transform || (tweenStyle.transform ? { ...tweenStyle.transform } :
+          style.transform || getTransform(startData));
+        style.transform = transform;
       }
       this.propsData.data[key].getAnimStart(computedStyle, isSvg);
     } else if (cssName === 'transform') {
       this.transform = checkStyleName('transform');
       startData = computedStyle[isSvg ? 'transformSVG' : this.transform];
       endUnit = this.propsData.dataUnit[key];
-      transform = tweenStyle.transform ? { ...tweenStyle.transform } :
-        style.transform || getTransform(startData);
+      transform = transform || (tweenStyle.transform ? { ...tweenStyle.transform } :
+        style.transform || getTransform(startData));
       const unitReg = /%|vw|vh|em|rem/i;
       if (endUnit && endUnit.match(unitReg)) {
-        console.log(tweenStyle.transform && tweenStyle.transform[key])
         transform[key] = transform[key] && transform[key].match(unitReg) ?
           parseFloat(transform[key])
           : startConvertToEndUnit(this.target, computedStyle,
@@ -245,7 +245,7 @@ p.setRatio = function (ratio, tween, computedStyle) {
       return;
     } else if (_isTransform) {
       if (unit && unit.match(/%|vw|vh|em|rem/i)) {
-        startVars = this.start.transform[key];
+        startVars = parseFloat(this.start.transform[key]);
         if (count.charAt(1) === '=') {
           tween.style.transform[key] = (startVars + endVars * ratio) + unit;
         } else {
