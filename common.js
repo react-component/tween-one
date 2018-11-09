@@ -25815,7 +25815,7 @@ p.render = function () {
         // onReveresComplete 和 onComplete 统一用 onComplete;
         ratio = item.ease(reverse ? 0 : 1, startData, endData, 1);
         _this6.setRatio(ratio, item, i, item.currentRepeat !== repeatNum);
-        if (!item.reset && !updateAnim) {
+        if ((!item.reset || item.reset && progressTime >= duration) && !updateAnim) {
           // duration 为 0 时的一个回调；
           if (duration < maxPer) {
             if (!duration) {
