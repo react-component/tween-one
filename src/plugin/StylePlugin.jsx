@@ -131,7 +131,7 @@ p.getAnimStart = function (computedStyle, tween, isSvg) {
         style.transform || getTransform(startData));
       const unitReg = /%|vw|vh|em|rem/i;
       if (endUnit && endUnit.match(unitReg)) {
-        transform[key] = transform[key] && transform[key].match(unitReg) ?
+        transform[key] = transform[key] && transform[key].toString().match(unitReg) ?
           parseFloat(transform[key])
           : startConvertToEndUnit(this.target, computedStyle,
             key, transform[key], null, endUnit);
