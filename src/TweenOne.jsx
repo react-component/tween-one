@@ -202,6 +202,8 @@ class TweenOne extends Component {
       this.raf();
       // 开始动画
       this.play();
+    } else {
+      this.tween = null;
     }
   }
 
@@ -250,7 +252,7 @@ class TweenOne extends Component {
         ...e,
         timelineMode: '',
       };
-      
+
       if (
         (this.moment === this.startMoment &&
           (!this.reverse && !e.index && e.mode === 'onStart') ||
