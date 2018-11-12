@@ -2388,6 +2388,8 @@ var _initialiseProps = function _initialiseProps() {
       _this2.raf();
       // 开始动画
       _this2.play();
+    } else {
+      _this2.tween = null;
     }
   };
 
