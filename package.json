@@ -39,6 +39,7 @@
   "licenses": "MIT",
   "main": "./lib/index",
   "module": "./es/index",
+  "sideEffects": false,
   "config": {
     "port": 8100,
     "entry": {
