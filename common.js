@@ -1337,9 +1337,11 @@ function createMatrix(style) {
   if (matrixs.length) {
     return new window[matrixs[0] + 'Matrix'](style);
   }
-  console.warn('Browsers do not support matrix.');
-  return '';
+  //console.warn('Browsers do not support matrix.');
+
+  return;
 }
+
 
 function checkStyleName(p) {
   if (typeof document === 'undefined') {
@@ -1515,6 +1517,10 @@ function getMatrix(t) {
 
 function getTransform(transform) {
   var _transform = !transform || transform === 'none' || transform === '' ? 'matrix(1, 0, 0, 1, 0, 0)' : transform;
+  if (!_transform.match('matrix')) {
+    console.log(transform.trim().match('/(\w+)\([^\)]+\)/ig'))
+    return
+  }
   var m = getMatrix(_transform);
   var m11 = m.m11;
   var m12 = m.m12;
