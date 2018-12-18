@@ -60,25 +60,29 @@
     "karma": "rc-test run karma",
     "saucelabs": "rc-test run saucelabs",
     "test": "rc-test run test",
+    "prettier": "rc-tools run prettier",
     "chrome-test": "rc-test run chrome-test",
-    "coverage": "rc-test run coverage"
+    "coverage": "rc-test run coverage",
+    "validate": "npm ls"
   },
   "devDependencies": {
     "@types/react": "^16.0.0",
     "core-js": "^2.5.7",
     "expect.js": "0.3.x",
-    "pre-commit": "1.x",
-    "precommit-hook": "1.x",
+    "precommit-hook": "^3.0.0",
     "rc-test": "6.x",
     "rc-tools": "8.x",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "rc-queue-anim": "^1.6.1",
     "rc-scroll-anim": "2.x",
+    "tslint-config-prettier": "^1.17.0",
+    "tslint-react": "^3.6.0",
     "typescript": "3.x"
   },
   "pre-commit": [
-    "lint"
+    "lint",
+    "test"
   ],
   "dependencies": {
     "prop-types": "^15.6.1",

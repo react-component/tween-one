@@ -11,7 +11,9 @@ export default () => (
       animation={{
         x: 100,
         ease: 'easeInBounce',
-        onStart: ({ index, target }) => { },
+        onStart: ({ index, target }) => {
+          console.log(index, target);
+        },
       }}
     >
       test
@@ -20,11 +22,15 @@ export default () => (
       animation={[{
         x: 100,
         ease,
-        onStart: ({ index, target }) => { },
+        onStart: ({ index, target }) => {
+          console.log(index, target);
+        },
       }, {
         x: 200,
         ease,
-        onComplete: ({ index, target }) => { },
+        onComplete: ({ index, target }) => {
+          console.log(index, target);
+        },
       }]}
     >
       test
