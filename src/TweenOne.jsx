@@ -45,6 +45,7 @@ class TweenOne extends Component {
     this.paused = props.paused;
     this.reverse = props.reverse;
     this.updateAnim = false;
+    this.repeatNum = 0;
     this.forced = {};
     this.setForcedJudg(props);
   }
@@ -236,7 +237,7 @@ class TweenOne extends Component {
       this.tween.frame(this.tween.totalTime * repeatNum);
     }
     if (moment < this.moment && !this.reverse ||
-      repeat !== 0 && repeatNum && tweenMoment <= perFrame
+      repeat !== 0 && repeatNum && repeatNum !== this.repeatNum
     ) {
       // 在 form 状态下，暂停时拉 moment 时，start 有值，，往返方向播放时，在 delay 的时间没有处理。。
       // 与上面的处理一样，删除 start ，重新走一遍 start。。
@@ -273,6 +274,7 @@ class TweenOne extends Component {
       this.props.onChange(cb);
     };
     this.moment = moment;
+    this.repeatNum = repeatNum;
     this.tween.frame(tweenMoment);
   }
 
