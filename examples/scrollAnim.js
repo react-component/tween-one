@@ -87,7 +87,7 @@ __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_prop_types__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_prop_types__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__EventDispatcher__ = __webpack_require__(69);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__EventDispatcher__ = __webpack_require__(70);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ScrollElement__ = __webpack_require__(182);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__util__ = __webpack_require__(51);
 
@@ -268,7 +268,7 @@ ScrollOverPack.isScrollOverPack = true;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_prop_types__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__Mapped__ = __webpack_require__(183);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__EventDispatcher__ = __webpack_require__(69);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__EventDispatcher__ = __webpack_require__(70);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__util__ = __webpack_require__(51);
 
 
@@ -305,7 +305,7 @@ var ScrollElement = function (_React$Component) {
       var offsetTop = domRect.top + scrollTop - targetTop;
       _this.elementShowHeight = scrollTop - offsetTop + _this.clientHeight;
       var playScale = Object(__WEBPACK_IMPORTED_MODULE_11__util__["e" /* transformArguments */])(_this.props.playScale);
-      var playScaleEnterArray = /([\+\-]?[0-9#\.]+)(px|vh|%)?/.exec(String(playScale[0]));
+      var playScaleEnterArray = /([\+\-]?[0-9#\.]+)(px|vh|%)?/.exec(String(playScale[0])); // eslint-disable-line
       if (!playScaleEnterArray[2]) {
         _this.playHeight = _this.clientHeight * parseFloat(playScale[0]);
       } else if (playScaleEnterArray[2] === 'px') {
@@ -314,7 +314,7 @@ var ScrollElement = function (_React$Component) {
         _this.playHeight = _this.clientHeight * parseFloat(playScaleEnterArray[1]) / 100;
       }
       var leaveHeight = domRect.height;
-      var playScaleLeaveArray = /([\+\-]?[0-9#\.]+)(px|vh|%)?/.exec(String(playScale[1]));
+      var playScaleLeaveArray = /([\+\-]?[0-9#\.]+)(px|vh|%)?/.exec(String(playScale[1])); // eslint-disable-line
       if (!playScaleLeaveArray[2]) {
         _this.leavePlayHeight = leaveHeight * parseFloat(playScale[1]);
       } else if (playScaleLeaveArray[2] === 'px') {
@@ -484,16 +484,13 @@ exports.default = function (obj, keys) {
 /* harmony export (immutable) */ __webpack_exports__["a"] = currentScrollTop;
 /* harmony export (immutable) */ __webpack_exports__["f"] = windowHeight;
 /* harmony export (immutable) */ __webpack_exports__["c"] = noop;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 
 
 function toArrayChildren(children) {
   var ret = [];
-  __WEBPACK_IMPORTED_MODULE_1_react___default.a.Children.forEach(children, function (c) {
+  __WEBPACK_IMPORTED_MODULE_0_react___default.a.Children.forEach(children, function (c) {
     ret.push(c);
   });
   return ret;
@@ -527,30 +524,32 @@ function objectEqual(obj1, obj2) {
     return true;
   }
   var equalBool = true;
+  function forEachData(current, next) {
+    Object.keys(current).forEach(function (p) {
+      if (current[p] !== next[p]) {
+        if (typeof current[p] === 'object' && typeof next[p] === 'object') {
+          equalBool = objectEqual(current[p], next[p]);
+        } else {
+          equalBool = false;
+        }
+      }
+    });
+  }
   if (Array.isArray(obj1) && Array.isArray(obj2)) {
     for (var i = 0; i < obj1.length; i++) {
       var currentObj = obj1[i];
       var nextObj = obj2[i];
-      for (var p in currentObj) {
-        if (currentObj[p] !== nextObj[p]) {
-          if (__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default()(currentObj[p]) === 'object' && __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default()(nextObj[p]) === 'object') {
-            equalBool = objectEqual(currentObj[p], nextObj[p]);
-          } else {
-            equalBool = false;
-            return false;
-          }
-        }
-      }
+      forEachData(currentObj, nextObj);
     }
   }
 
   Object.keys(obj1).forEach(function (key) {
     if (!(key in obj2)) {
       equalBool = false;
-      return false;
+      return;
     }
 
-    if (__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default()(obj1[key]) === 'object' && __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default()(obj2[key]) === 'object') {
+    if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
       equalBool = objectEqual(obj1[key], obj2[key]);
     } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
       if (obj1[key].name !== obj2[key].name) {
@@ -564,9 +563,9 @@ function objectEqual(obj1, obj2) {
   Object.keys(obj2).forEach(function (key) {
     if (!(key in obj1)) {
       equalBool = false;
-      return false;
+      return;
     }
-    if (__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default()(obj2[key]) === 'object' && __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_typeof___default()(obj1[key]) === 'object') {
+    if (typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
       equalBool = objectEqual(obj2[key], obj1[key]);
     } else if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
       if (obj1[key].name !== obj2[key].name) {
@@ -592,11 +591,14 @@ function noop() {}
 
 /***/ }),
 
-/***/ 69:
+/***/ 70:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(51);
+
+
+var scrollId = 'scroll-id';
 
 function EventDispatcher(target) {
   this._listeners = {};
@@ -609,16 +611,19 @@ EventDispatcher.prototype = {
     var types = type.split('.');
     var _type = types[0];
     var namespaces = types[1];
-    var listName = '' + _type + (target ? '_' + target.getAttribute('id') : '');
+    if (target && !target.getAttribute(scrollId)) {
+      target.setAttribute(scrollId, (Date.now() + Math.random()).toString(32).replace('.', ''));
+    }
+    var listName = '' + _type + (target ? '_' + target.getAttribute(scrollId) : '');
     var list = this._listeners[listName];
     var index = 0;
     var listener = void 0;
     var i = void 0;
     if (!list) {
-      this._listeners[listName] = list = [];
+      list = [];
+      this._listeners[listName] = list;
     }
     i = list.length;
-
     while (--i > -1) {
       listener = list[i];
       if (listener.n === namespaces && listener.c === callback) {
@@ -630,7 +635,7 @@ EventDispatcher.prototype = {
     var $target = target || this._eventTarget;
     list.splice(index, 0, { c: callback, n: namespaces, t: _type });
     if (!this._listFun[listName]) {
-      this._listFun[listName] = this._listFun[listName] || this.dispatchEvent.bind(this, _type);
+      this._listFun[listName] = this._listFun[listName] || this.dispatchEvent.bind(this, { type: _type, target: target });
       if ($target.addEventListener) {
         $target.addEventListener(_type, this._listFun[listName], false);
       } else if ($target.attachEvent) {
@@ -642,7 +647,7 @@ EventDispatcher.prototype = {
     var types = type.split('.');
     var _type = types[0];
     var namespaces = types[1];
-    var listName = '' + _type + (target ? '_' + target.getAttribute('id') : '');
+    var listName = '' + _type + (target ? '_' + target.getAttribute(scrollId) : '');
     var list = this._listeners[listName];
     var i = void 0;
     var _force = force;
@@ -672,9 +677,11 @@ EventDispatcher.prototype = {
       }
     }
   },
-  dispatchEvent: function dispatchEvent(type, e) {
-    var target = e.target;
-    var listName = '' + type + (target.getAttribute ? '_' + target.getAttribute('id') : '');
+  dispatchEvent: function dispatchEvent(_ref, e) {
+    var type = _ref.type,
+        target = _ref.target;
+
+    var listName = '' + type + (target ? '_' + target.getAttribute(scrollId) : '');
     var list = this._listeners[listName];
     var i = void 0;
     var t = void 0;
@@ -697,7 +704,7 @@ EventDispatcher.prototype = {
     var types = type.split('.');
     var _type = types[0];
     var namespaces = types[1];
-    var listName = '' + _type + (target ? '_' + target.getAttribute('id') : '');
+    var listName = '' + _type + (target ? '_' + target.getAttribute(scrollId) : '');
     var list = this._listeners[listName];
     this.recoverLists = this.recoverLists.concat(Object(__WEBPACK_IMPORTED_MODULE_0__util__["b" /* dataToArray */])(list).filter(function (item) {
       return item.n && item.n.match(namespaces);
@@ -723,13 +730,7 @@ EventDispatcher.prototype = {
     });
   }
 };
-var event = void 0;
-if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-  event = new EventDispatcher(window);
-} else {
-  event = new EventDispatcher();
-}
-/* harmony default export */ __webpack_exports__["a"] = (event);
+/* harmony default export */ __webpack_exports__["a"] = (new EventDispatcher(typeof window !== 'undefined' && typeof document !== 'undefined' && window));;
 
 /***/ })
 

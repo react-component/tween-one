@@ -227,7 +227,6 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 
 
-
 var noop = function noop() {};
 
 var typeDefault = ['displayName', 'propTypes', 'getDefaultProps', 'defaultProps', 'childContextTypes', 'contextTypes'];
@@ -264,15 +263,12 @@ var QueueAnim = function (_React$Component) {
      */
     _this.saveTweenOneTag = {};
     /**
-     * @param unwantedStart;
+     * @param childrenShow;
      * 记录 animation 里是否需要 startAnim;
-     * 修复进场时, 时间不准的问题；
-     * -> 进: 需要；
-     * -> 进 -> 进: 需要；
-     * -> 进 -> 出: 不需要;
-     * -> 进 -> 出 -> 进: 不需要;
+     * 当前元素是否处在显示状态
+     * enterBegin 到 leaveComplete 之前都处于显示状态
      */
-    _this.unwantedStart = {};
+    _this.childrenShow = {};
     /**
      * @param keysToEnter;
      * 记录进场的 key;
@@ -427,6 +423,8 @@ var QueueAnim = function (_React$Component) {
         var hasNext = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["a" /* findChildInChildrenByKey */])(nextChildren, key);
         if (!hasNext && key) {
           _this2.keysToLeave.push(key);
+          __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this2.placeholderTimeoutIds[key]);
+          delete _this2.placeholderTimeoutIds[key];
         }
       });
       this.keysToEnterToCallback = [].concat(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray___default()(this.keysToEnter));
@@ -450,6 +448,7 @@ var QueueAnim = function (_React$Component) {
       });
       this.keysToEnter = [];
       this.keysToLeave = [];
+      this.childrenShow = {};
     }
   }, {
     key: 'getTweenType',
@@ -540,7 +539,7 @@ var _initialiseProps = function _initialiseProps() {
     var end = type === 'enter' ? 0 : 1;
     var startAnim = _this5.getAnimData(props, key, i, enterOrLeave, start);
     var animate = _this5.getAnimData(props, key, i, enterOrLeave, end);
-    startAnim = type === 'enter' && (props.forcedReplay || !_this5.unwantedStart[key]) ? startAnim : null;
+    startAnim = type === 'enter' && (props.forcedReplay || !_this5.childrenShow[key]) ? startAnim : null;
     var ease = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.ease, key, i)[enterOrLeave];
     var duration = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.duration, key, i)[enterOrLeave];
     if (Array.isArray(ease)) {
@@ -552,7 +551,7 @@ var _initialiseProps = function _initialiseProps() {
     return { startAnim: startAnim, animate: animate, ease: ease, duration: duration, isArray: Array.isArray(animate) };
   };
 
-  this.getTweenSingleData = function (key, startAnim, animate, ease, duration, delay, onStart, onComplete) {
+  this.getTweenSingleData = function (startAnim, animate, ease, duration, delay, onStart, onComplete) {
     var startLength = Object.keys(startAnim || {}).length;
     var animation = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({
       onStart: onStart,
@@ -577,7 +576,7 @@ var _initialiseProps = function _initialiseProps() {
       var startArray = [];
       animate.forEach(function (leave, ii) {
         var start = startAnim && startAnim[ii];
-        var animObj = _this5.getTweenSingleData(key, start, leave, animateData.ease, animateData.duration / length, !ii ? delay : 0, !ii ? onStart : null, ii === length ? onComplete : null);
+        var animObj = _this5.getTweenSingleData(start, leave, animateData.ease, animateData.duration / length, !ii ? delay : 0, !ii ? onStart : null, ii === length ? onComplete : null);
         animation.push(animObj.animation);
         if (animObj.startAnimate) {
           startArray.push(animObj.startAnimate);
@@ -585,7 +584,7 @@ var _initialiseProps = function _initialiseProps() {
       });
       return startArray.concat(animation);
     }
-    animateData = _this5.getTweenSingleData(key, startAnim, animate, animateData.ease, animateData.duration, delay, onStart, onComplete);
+    animateData = _this5.getTweenSingleData(startAnim, animate, animateData.ease, animateData.duration, delay, onStart, onComplete);
     return [animateData.startAnimate, animateData.animation].filter(function (item) {
       return item;
     });
@@ -653,12 +652,23 @@ var _initialiseProps = function _initialiseProps() {
       }
       if (_this5.tweenToEnter[key] && !forcedReplay) {
         // 如果是已进入的，将直接返回标签。。
-        return Object(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(__WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["b" /* default */], { key: key, component: child.type, forcedJudg: forcedJudg, componentProps: child.props });
+        return Object(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(__WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["b" /* default */], {
+          key: key,
+          component: child.type,
+          forcedJudg: forcedJudg,
+          componentProps: child.props
+        });
       }
     }
-    var paused = _this5.keysToEnterPaused[key] && !_this5.keysToLeave.indexOf(key) >= 0;
+    var paused = _this5.keysToEnterPaused[key] && _this5.keysToLeave.indexOf(key) === -1;
     animation = paused ? null : animation;
-    var tag = Object(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(__WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["b" /* default */], { key: key, component: child.type, forcedJudg: forcedJudg, componentProps: child.props, animation: animation });
+    var tag = Object(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(__WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["b" /* default */], {
+      key: key,
+      component: child.type,
+      forcedJudg: forcedJudg,
+      componentProps: child.props,
+      animation: animation
+    });
     _this5.saveTweenOneTag[key] = tag;
     return tag;
   };
@@ -693,6 +703,7 @@ var _initialiseProps = function _initialiseProps() {
     if (elem.className.indexOf(animatingClassName[0]) === -1) {
       elem.className = (elem.className + ' ' + animatingClassName[0]).trim();
     }
+    _this5.childrenShow[key] = true;
   };
 
   this.enterComplete = function (key, e) {
@@ -702,8 +713,7 @@ var _initialiseProps = function _initialiseProps() {
     var elem = e.target;
     elem.className = elem.className.replace(_this5.props.animatingClassName[0], '').trim();
     _this5.tweenToEnter[key] = true;
-    _this5.unwantedStart[key] = true;
-    _this5.props.onEnd({ key: key, type: 'enter' });
+    _this5.props.onEnd({ key: key, type: 'enter', target: elem });
   };
 
   this.leaveBegin = function (key, e) {
@@ -713,7 +723,6 @@ var _initialiseProps = function _initialiseProps() {
     if (elem.className.indexOf(animatingClassName[1]) === -1) {
       elem.className = (elem.className + ' ' + animatingClassName[1]).trim();
     }
-    _this5.unwantedStart[key] = true;
     delete _this5.tweenToEnter[key];
   };
 
@@ -725,7 +734,7 @@ var _initialiseProps = function _initialiseProps() {
     var childrenShow = _this5.state.childrenShow;
     delete childrenShow[key];
     delete _this5.saveTweenOneTag[key];
-    delete _this5.unwantedStart[key];
+    delete _this5.childrenShow[key];
     if (_this5.keysToLeave.indexOf(key) >= 0) {
       _this5.keysToLeave.splice(_this5.keysToLeave.indexOf(key), 1);
     }
@@ -741,7 +750,7 @@ var _initialiseProps = function _initialiseProps() {
     }
     var elem = e.target;
     elem.className = elem.className.replace(_this5.props.animatingClassName[1], '').trim();
-    _this5.props.onEnd({ key: key, type: 'leave' });
+    _this5.props.onEnd({ key: key, type: 'leave', target: elem });
   };
 };
 
@@ -788,7 +797,7 @@ module.exports = { "default": __webpack_require__(158), __esModule: true };
 /***/ 158:
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(61);
+__webpack_require__(62);
 __webpack_require__(159);
 module.exports = __webpack_require__(8).Array.from;
 
