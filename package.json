@@ -71,7 +71,7 @@
     "expect.js": "0.3.x",
     "precommit-hook": "^3.0.0",
     "rc-test": "6.x",
-    "rc-tools": "8.x",
+    "rc-tools": "9.x",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "rc-queue-anim": "^1.6.1",
