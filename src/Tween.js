@@ -399,6 +399,7 @@ p.resetDefaultStyle = function () {
   Object.keys(this.startDefaultData).forEach(key => {
     if (!(key in defaultData({}, 0))) {
       this.target.setAttribute(key, this.startDefaultData[key]);
+      this.computedStyle = null;
     }
   });
 };
