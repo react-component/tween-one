@@ -851,6 +851,10 @@ function objectEqual(obj1, obj2) {
 
   var setEqualBool = function setEqualBool(objA, objB) {
     Object.keys(objA).forEach(function (key) {
+      // 如果前面有参数匹配不相同则直接返回；
+      if (!equalBool) {
+        return;
+      }
       if (!(key in objB)) {
         equalBool = false;
       }
