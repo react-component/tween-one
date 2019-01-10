@@ -499,7 +499,7 @@ process.umask = function() { return 0; };
 /* 8 */
 /***/ (function(module, exports) {
 
-var core = module.exports = { version: '2.6.1' };
+var core = module.exports = { version: '2.6.2' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
@@ -1191,6 +1191,8 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.toCssLowerCase = toCssLowerCase;
+exports.toStyleUpperCase = toStyleUpperCase;
 exports.toFixed = toFixed;
 exports.createMatrix = createMatrix;
 exports.checkStyleName = checkStyleName;
@@ -1305,7 +1307,7 @@ var _hue = function _hue(hh, m1, m2) {
 var DEG2RAD = Math.PI / 180;
 var RAD2DEG = 180 / Math.PI;
 
-var cssList = {
+var $cssList = {
   _lists: {
     transformsBase: ['translate', 'translateX', 'translateY', 'scale', 'scaleX', 'scaleY', 'skewX', 'skewY', 'rotateZ', 'rotate'],
     transforms3D: ['translate3d', 'translateZ', 'scaleZ', 'rotateX', 'rotateY', 'perspective']
@@ -1314,7 +1316,21 @@ var cssList = {
   filter: ['grayScale', 'sepia', 'hueRotate', 'invert', 'brightness', 'contrast', 'blur'],
   filterConvert: { grayScale: 'grayscale', hueRotate: 'hue-rotate' }
 };
-cssList._lists.transformsBase = !IE ? cssList._lists.transformsBase.concat(cssList._lists.transforms3D) : cssList._lists.transformsBase;
+$cssList._lists.transformsBase = !IE ? $cssList._lists.transformsBase.concat($cssList._lists.transforms3D) : $cssList._lists.transformsBase;
+
+var cssList = exports.cssList = $cssList;
+
+function toCssLowerCase(d) {
+  return d.replace(/[A-Z]/, function ($1) {
+    return '-' + $1.toLocaleLowerCase();
+  });
+}
+
+function toStyleUpperCase(d) {
+  return d.replace(/-(.?)/g, function ($1) {
+    return $1.replace('-', '').toLocaleUpperCase();
+  });
+}
 
 function toFixed(num, length) {
   var _rnd = length ? Math.pow(10, length) : rnd;
@@ -1325,8 +1341,8 @@ function toFixed(num, length) {
     var r = (dec * _rnd + (num < 0 ? -0.5 : 0.5) | 0) / _rnd;
     var t = r | 0;
     var str = r.toString();
-    var decStr = str.substring(2, str.length);
-    fixed = n + t + '.' + decStr;
+    var decStr = str.split('.')[1] || '';
+    fixed = '' + (num < 0 && !(n + t) ? '-' : '') + (n + t) + '.' + decStr;
   }
   return parseFloat(fixed);
 }
@@ -1742,8 +1758,6 @@ function mergeStyle(current, change) {
   return _current.join(' ').trim();
 }
 
-exports.default = cssList;
-
 
 /***/ }),
 /* 28 */
@@ -1887,7 +1901,7 @@ var store = global[SHARED] || (global[SHARED] = {});
 })('versions', []).push({
   version: core.version,
   mode: __webpack_require__(29) ? 'pure' : 'global',
-  copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
+  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
 });
 
 
@@ -28174,7 +28188,7 @@ p.render = function () {
     }, e);
     var maxPer = _this6.perFrame - _this6.accuracy;
     var startTime = item.delay && reverse ? -maxPer : 0;
-    if (progressTime >= startTime && !(progressTime > duration && item.mode === 'onComplete') && _this6.start[i]) {
+    if ((progressTime >= startTime && !(progressTime > duration && item.mode === 'onComplete') || progressTime < startTime && item.mode && item.mode !== 'onStart') && _this6.start[i]) {
       var updateAnim = _this6.updateAnim === 'update';
       progressTime = progressTime < maxPer && !reverse && item.duration >= _this6.perFrame ? 0 : progressTime;
       if ((progressTime >= duration - _this6.accuracy && !reverse || reverse && progressTime <= 0) && repeatNum >= item.repeat) {
@@ -28823,7 +28837,7 @@ p.setRatio = function (ratio, tween, computedStyle) {
     } else {
       var styleUnit = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["stylesToCss"])(key, 0);
       styleUnit = typeof styleUnit === 'number' ? '' : styleUnit.replace(/[^a-z|%]/g, '');
-      unit = unit || (__WEBPACK_IMPORTED_MODULE_1_style_utils___default.a.filter.indexOf(key) >= 0 ? '' : styleUnit);
+      unit = unit || (__WEBPACK_IMPORTED_MODULE_1_style_utils__["cssList"].filter.indexOf(key) >= 0 ? '' : styleUnit);
       if (typeof endVars === 'string') {
         tween.style[key] = endVars;
       } else if (count.charAt(1) === '=') {
@@ -28833,7 +28847,7 @@ p.setRatio = function (ratio, tween, computedStyle) {
         tween.style[key] = unit ? '' + value + unit : value;
       }
     }
-    if (__WEBPACK_IMPORTED_MODULE_1_style_utils___default.a.filter.indexOf(key) >= 0) {
+    if (__WEBPACK_IMPORTED_MODULE_1_style_utils__["cssList"].filter.indexOf(key) >= 0) {
       if (!_this3.filterObject) {
         return;
       }
