@@ -8,7 +8,10 @@ import {
   toFixed,
   stylesToCss,
   createMatrix,
+  getGsapType,
+  isTransform,
   checkStyleName,
+  toCssLowerCase,
 } from 'style-utils';
 
 import easingTypes from './easing';
@@ -88,7 +91,7 @@ p.setAttrIsStyle = function () {
         }
       });
       data[i].style = _d;
-      this.startDefaultData.style = this.target.getAttribute('style');
+      this.startDefaultData.style = this.target.getAttribute('style') || '';
     } else if (this.attr === 'attr') {
       Object.keys(_d).forEach(key => {
         if (key === 'style' && Array.isArray(d[key])) {
@@ -97,7 +100,7 @@ p.setAttrIsStyle = function () {
         if (key === 'bezier') {
           _d.style = { ..._d.style, bezier: _d[key] };
           delete _d[key];
-          this.startDefaultData.style = this.target.getAttribute('style');
+          this.startDefaultData.style = this.target.getAttribute('style') || '';
         } else {
           this.startDefaultData[key] = this.target.getAttribute(key);
         }
@@ -389,6 +392,34 @@ p.resetAnimData = function () {
   this.start = {};
 };
 
+p.getDefaultStyle = function (domStyle) {
+  const $data = defaultData({}, 0);
+  const getStyleToArray = (styleString) => (
+    styleString.split(';').filter(c => c).map(str =>
+      str.split(':').map(s => s.trim())
+    )
+  );
+  const styleToArray = getStyleToArray(this.startDefaultData.style);
+  let domStyleToArray = getStyleToArray(domStyle);
+  this.data.forEach(value => {
+    Object.keys(value).forEach(name => {
+      if (!(name in $data)) {
+        const styleName = toCssLowerCase(isTransform(getGsapType(name)));
+        domStyleToArray = domStyleToArray.filter(item => item[0] !== styleName);
+      }
+    })
+  });
+  styleToArray.forEach(item => {
+    domStyleToArray = domStyleToArray.map($item => {
+      if ($item[0] === item[0]) {
+        return item;
+      }
+      return $item;
+    });
+  })
+  return domStyleToArray.map(item => item.join(':')).join(';');
+}
+
 p.resetDefaultStyle = function () {
   this.tween = {};
   this.defaultData = this.defaultData.map(item => {
@@ -396,8 +427,15 @@ p.resetDefaultStyle = function () {
     delete item.mode;
     return item;
   });
+  const data = defaultData({}, 0);
   Object.keys(this.startDefaultData).forEach(key => {
-    if (!(key in defaultData({}, 0))) {
+    if (!(key in data)) {
+      if (key === 'style') {
+        const value = this.getDefaultStyle(this.target.style.cssText);
+        this.target.setAttribute(key, value);
+      } else {
+        this.target.setAttribute(key, this.startDefaultData[key]);
+      }
       this.target.setAttribute(key, this.startDefaultData[key]);
       this.computedStyle = null;
     }
@@ -406,7 +444,7 @@ p.resetDefaultStyle = function () {
 
 p.reStart = function (style) {
   this.start = {};
-  this.target.style.cssText = '';
+  this.target.style.cssText = this.getDefaultStyle(this.target.style.cssText);
   Object.keys(style || {}).forEach(key => {
     this.target.style[key] = stylesToCss(key, style[key]);
   });
