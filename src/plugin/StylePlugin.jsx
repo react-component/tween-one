@@ -1,5 +1,6 @@
 /* eslint-disable func-names, no-console */
-import cssList, {
+import {
+  cssList,
   checkStyleName,
   getGsapType,
   parseShadow,
