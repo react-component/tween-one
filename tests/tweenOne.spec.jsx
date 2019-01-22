@@ -109,6 +109,7 @@ describe('rc-tween-one', () => {
         x: '+=100',
         transformOrign: '30% 10%',
         delay: 100,
+        yoyo: true,
       },
       style: { top: 0, left: '10vw', width: '5vh', height: '10%', marginLeft: '10rem' },
     });
@@ -121,6 +122,25 @@ describe('rc-tween-one', () => {
       expect(getFloat(child.style.top)).to.be(100);
       done();
     }, 600);
+  });
+
+  it('tween-one repeat -1 and yoyo', (done) => {
+    instance = createTweenInstance({
+      animation: {
+        top: 100,
+        repeat: -1,
+        yoyo: true,
+      },
+      style: { top: 0},
+    });
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    console.log('start:', child.style.top);
+    expect(getFloat(child.style.top)).to.be(0);
+    ticker.timeout(() => {
+      console.log('end:', child.style.top);
+      expect(getFloat(child.style.top)).to.above(0);
+      done();
+    }, 200);
   });
 
   it('single tween-one duration is 0', (done) => {

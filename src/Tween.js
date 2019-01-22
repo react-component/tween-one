@@ -392,20 +392,25 @@ p.resetAnimData = function () {
   this.start = {};
 };
 
-p.getDefaultStyle = function (domStyle) {
+const getDefaultStyle = function (domStyle, defaultStyle, tweenData) {
   const $data = defaultData({}, 0);
   const getStyleToArray = (styleString) => (
     styleString.split(';').filter(c => c).map(str =>
       str.split(':').map(s => s.trim())
     )
   );
-  const styleToArray = getStyleToArray(this.startDefaultData.style);
+  const styleToArray = getStyleToArray(defaultStyle);
   let domStyleToArray = getStyleToArray(domStyle);
-  this.data.forEach(value => {
+  tweenData.forEach(value => {
     Object.keys(value).forEach(name => {
       if (!(name in $data)) {
         const styleName = toCssLowerCase(isTransform(getGsapType(name)));
-        domStyleToArray = domStyleToArray.filter(item => item[0] !== styleName);
+        domStyleToArray = domStyleToArray.filter(item => {
+          if (item[0].match(/transform|filter/ig) && styleName.match(/transform|filter/ig)) {
+            return false;
+          }
+          return item[0] !== styleName;
+        });
       }
     })
   });
@@ -431,12 +436,13 @@ p.resetDefaultStyle = function () {
   Object.keys(this.startDefaultData).forEach(key => {
     if (!(key in data)) {
       if (key === 'style') {
-        const value = this.getDefaultStyle(this.target.style.cssText);
+        const value = getDefaultStyle(this.target.style.cssText,
+          this.startDefaultData.style,
+          this.data);
         this.target.setAttribute(key, value);
       } else {
         this.target.setAttribute(key, this.startDefaultData[key]);
       }
-      this.target.setAttribute(key, this.startDefaultData[key]);
       this.computedStyle = null;
     }
   });
@@ -444,7 +450,9 @@ p.resetDefaultStyle = function () {
 
 p.reStart = function (style) {
   this.start = {};
-  this.target.style.cssText = this.getDefaultStyle(this.target.style.cssText);
+  this.target.style.cssText = getDefaultStyle(this.target.style.cssText,
+    this.startDefaultData.style,
+    this.data);
   Object.keys(style || {}).forEach(key => {
     this.target.style[key] = stylesToCss(key, style[key]);
   });
