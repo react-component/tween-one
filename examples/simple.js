@@ -10,9 +10,9 @@ class Demo extends React.Component {
 
   render() {
     return (<Tween
-      animation={{ x: 300}}
-      style={{ opacity: 1, height: 100, display: 'inline-block' }}
+      animation={{ x: 300 }}
       onChange={this.bbb}
+      style={{ opacity: 1, height: 100, display: 'inline-block' }}
     >
       <div>执行动效</div>
     </Tween>);
