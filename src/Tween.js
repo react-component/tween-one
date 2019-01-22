@@ -311,8 +311,10 @@ p.render = function () {
     };
     const maxPer = this.perFrame - this.accuracy;
     const startTime = item.delay && reverse ? -maxPer : 0;
-    if (progressTime >= startTime &&
-      !(progressTime > duration && item.mode === 'onComplete') &&
+    if ((progressTime >= startTime &&
+      !(progressTime > duration && item.mode === 'onComplete')
+      || (progressTime < startTime && item.mode && item.mode !== 'onStart')
+    ) &&
       this.start[i]) {
       const updateAnim = this.updateAnim === 'update';
       progressTime = (progressTime < maxPer) && !reverse
