@@ -79,7 +79,7 @@ class TweenOne extends Component {
     if (typeof nextMoment === 'number' && nextMoment !== this.props.moment) {
       if (this.tween && !this.updateAnim) {
         this.startMoment = nextMoment;
-        this.startFrame = ticker.frame;
+        this.startTime = ticker.time;
         if (nextProps.paused) {
           this.raf();
         }
@@ -176,7 +176,7 @@ class TweenOne extends Component {
   setDefalut = (props) => {
     this.moment = props.moment || 0;
     this.startMoment = props.moment || 0;
-    this.startFrame = ticker.frame;
+    this.startTime = ticker.time;
   }
 
   restart = () => {
@@ -184,7 +184,7 @@ class TweenOne extends Component {
       return;
     }
     this.startMoment = this.moment;
-    this.startFrame = ticker.frame;
+    this.startTime = ticker.time;
     this.tween.reverse = this.reverse;
     this.tween.reverseStartTime = this.startMoment;
     this.raf();
@@ -221,9 +221,9 @@ class TweenOne extends Component {
     let { repeat } = this.props;
     const totalTime = repeat === -1 ? Number.MAX_VALUE : this.tween.totalTime * (repeat + 1);
     repeat = repeat >= 0 ? repeat : Number.MAX_VALUE;
-    let moment = (ticker.frame - this.startFrame) * perFrame + this.startMoment;
+    let moment = ticker.time - this.startTime + this.startMoment;
     if (this.reverse) {
-      moment = (this.startMoment || 0) - (ticker.frame - this.startFrame) * perFrame;
+      moment = (this.startMoment || 0) - (ticker.time - this.startTime);
     }
     moment = moment > totalTime ? totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
