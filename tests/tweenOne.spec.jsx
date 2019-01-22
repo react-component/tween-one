@@ -66,7 +66,7 @@ describe('rc-tween-one', () => {
       }
     }
     const objectOrArray = PropTypes.oneOfType([PropTypes.object,
-      PropTypes.array]);
+    PropTypes.array]);
 
     TweenDemo.propTypes = {
       animation: objectOrArray,
@@ -178,22 +178,22 @@ describe('rc-tween-one', () => {
       style: { position: 'relative' },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(() => {
+    ticker.timeout(() => {
       console.log('top===100,data:', child.style.top, '########',
         'left>0,data:', child.style.left);
       expect(getFloat(child.style.top)).to.be(100);
       expect(getFloat(child.style.left)).to.above(0);
-      setTimeout(() => {
+      ticker.timeout(() => {
         console.log('top<100,data:', child.style.top, '########',
           'left===0,data:', child.style.left);
         expect(getFloat(child.style.left)).to.be(100);
         expect(getFloat(child.style.top)).to.below(100);
-        setTimeout(() => {
+        ticker.timeout(() => {
           console.log('top===0,data:', child.style.top, '########',
             'left<100,data:', child.style.left);
           expect(getFloat(child.style.left)).to.below(100);
           expect(getFloat(child.style.top)).to.be(0);
-          setTimeout(() => {
+          ticker.timeout(() => {
             console.log('top===0,data:', child.style.top,
               '########', 'left===0,data:', child.style.left);
             expect(getFloat(child.style.top)).to.be(0);
@@ -213,14 +213,14 @@ describe('rc-tween-one', () => {
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('start:', child.style.top);
     expect(getFloat(child.style.top)).to.be(0);
-    setTimeout(() => {
+    ticker.timeout(() => {
       expect(getFloat(child.style.top)).to.above(95);
       console.log('20 milliseconds before the first repeat end, top>95, data:', child.style.top);
-      setTimeout(() => {
+      ticker.timeout(() => {
         expect(getFloat(child.style.top)).to.below(10);
         console.log('20 ms after the beginning of the second repeat, top<10, data',
           child.style.top);
-        setTimeout(() => {
+        ticker.timeout(() => {
           expect(getFloat(child.style.top)).to.be(100);
           console.log('repeat end,top:', child.style.top);
           done();
@@ -237,14 +237,14 @@ describe('rc-tween-one', () => {
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('start:', child.style.top);
     expect(getFloat(child.style.top)).to.be(0);
-    setTimeout(() => {
+    ticker.timeout(() => {
       expect(getFloat(child.style.top)).to.above(95);
       console.log('20 milliseconds before the first repeat end, top>95, data:', child.style.top);
-      setTimeout(() => {
+      ticker.timeout(() => {
         expect(getFloat(child.style.top)).to.below(101).above(95);
         console.log('20 ms after the beginning of the second repeat, 95<top<100, data',
           child.style.top);
-        setTimeout(() => {
+        ticker.timeout(() => {
           expect(getFloat(child.style.top)).to.be(0);
           console.log('repeat end,top:', child.style.top);
           done();
@@ -261,10 +261,10 @@ describe('rc-tween-one', () => {
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log(`default:${child.style.top}`);
     expect(getFloat(child.style.top)).to.be(100);
-    setTimeout(() => {
+    ticker.timeout(() => {
       expect(getFloat(child.style.top)).to.above(95);
       console.log(`start:${child.style.top}`);
-      setTimeout(() => {
+      ticker.timeout(() => {
         expect(getFloat(child.style.top)).to.be(0);
         console.log(`end:${child.style.top}`);
         done();
@@ -285,7 +285,7 @@ describe('rc-tween-one', () => {
       style: { position: 'absolute' },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(() => {
+    ticker.timeout(() => {
       let transform = child.style[checkStyleName('transform')];
       let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
       let rotate = xy[1];
@@ -296,7 +296,7 @@ describe('rc-tween-one', () => {
       expect(getFloat(y)).to.above(-0.5).below(5);
       expect(getFloat(rotate)).to.above(44).below(45.1);
 
-      setTimeout(() => {
+      ticker.timeout(() => {
         transform = child.style[checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
         rotate = xy[1];
@@ -306,7 +306,7 @@ describe('rc-tween-one', () => {
         expect(getFloat(y)).to.above(40).below(60);
         expect(getFloat(rotate)).to.above(-15).below(15);
         console.log(`x:${x}, y: ${y}, rotate:${rotate}`);
-        setTimeout(() => {
+        ticker.timeout(() => {
           transform = child.style[checkStyleName('transform')];
           xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
           x = xy[0].split(',')[0];
@@ -333,7 +333,7 @@ describe('rc-tween-one', () => {
     });
     BezierPlugin.cubicToQuadratic(0, 100, 200, 300);
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(() => {
+    ticker.timeout(() => {
       let transform = child.style[checkStyleName('transform')];
       let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
       let x = xy[0].split(',')[0];
@@ -341,7 +341,7 @@ describe('rc-tween-one', () => {
       console.log(`x:${x},y:${y}`);
       expect(getFloat(x)).to.above(99);
       expect(getFloat(y)).to.above(-1);
-      setTimeout(() => {
+      ticker.timeout(() => {
         transform = child.style[checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
         x = xy[0].split(',')[0];
@@ -366,7 +366,7 @@ describe('rc-tween-one', () => {
       style: { position: 'absolute' },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(() => {
+    ticker.timeout(() => {
       let transform = child.style[checkStyleName('transform')];
       let xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
       let x = xy[0].split(',')[0];
@@ -374,7 +374,7 @@ describe('rc-tween-one', () => {
       console.log(`x:${x},y:${y}`);
       expect(getFloat(x)).to.above(-1);
       expect(getFloat(y)).to.above(-1);
-      setTimeout(() => {
+      ticker.timeout(() => {
         transform = child.style[checkStyleName('transform')];
         xy = transform.split(')').filter(item => item).map(item => item.split('(')[1]);
         x = xy[0].split(',')[0];
@@ -393,13 +393,13 @@ describe('rc-tween-one', () => {
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(() => {
+    ticker.timeout(() => {
       expect(getFloat(child.style.top)).to.above(99);
       console.log(`child top:${child.style.top}`);
       instance.setState({
         animation: { left: 100, y: 100 },
       });
-      setTimeout(() => {
+      ticker.timeout(() => {
         expect(getFloat(child.style.left)).to.above(99);
         console.log(`child left:${child.style.left}`);
         done();
@@ -418,7 +418,7 @@ describe('rc-tween-one', () => {
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(() => {
+    ticker.timeout(() => {
       expect(getFloat(child.style.top)).to.above(50);
       instance.setState({
         style: {
@@ -427,10 +427,10 @@ describe('rc-tween-one', () => {
           position: 'relative',
         },
       });
-      setTimeout(() => {
+      ticker.timeout(() => {
         expect(getFloat(child.style.left)).to.be(100);
         console.log('child left:', child.style.left);
-        setTimeout(() => {
+        ticker.timeout(() => {
           done();
         }, 400);
       }, 30);
@@ -445,14 +445,14 @@ describe('rc-tween-one', () => {
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(() => {
+    ticker.timeout(() => {
       expect(getFloat(child.style.top)).to.above(0);
       instance.setState({
         animation: {
           left: 100,
         },
       });
-      setTimeout(() => {
+      ticker.timeout(() => {
         expect(getFloat(child.style.left)).to.be(100);
         console.log('child left:', child.style.left);
         done();
@@ -489,14 +489,14 @@ describe('rc-tween-one', () => {
       },
       style: { position: 'relative', top: 0 },
     });
-    setTimeout(() => {
+    ticker.timeout(() => {
       instance.setState({
         reverse: true,
         animation: {
           top: 100,
         },
       });
-      setTimeout(() => {
+      ticker.timeout(() => {
         const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
         console.log(getFloat(child.style.top));
         expect(getFloat(child.style.top)).to.be(0);
@@ -514,22 +514,22 @@ describe('rc-tween-one', () => {
       reverseDelay: 500,
       style: { position: 'relative', top: 0 },
     });
-    setTimeout(() => {
+    const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+    console.log(getFloat(child.style.top));
+    ticker.timeout(() => {
       instance.setState({
         reverse: true,
       });
-      let child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
       const top = getFloat(child.style.top);
       console.log(top);
-      setTimeout(() => {
-        child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+      ticker.timeout(() => {
         console.log(getFloat(child.style.top));
         expect(getFloat(child.style.top)).to.be(top);
-        setTimeout(() => {
-          child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
+        ticker.timeout(() => {
+          console.log(getFloat(child.style.top))
           expect(getFloat(child.style.top)).to.be(0);
           done();
-        }, 500);
+        }, 700);
       }, 300);
     }, 300);
   });
@@ -540,14 +540,14 @@ describe('rc-tween-one', () => {
       forcedJudg: { isComp: true },
     });
 
-    setTimeout(() => {
+    ticker.timeout(() => {
       let child = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[0];
       const top = getFloat(child.style.top);
       expect(top).to.above(50);
       instance.setState({
         paused: true,
       });
-      setTimeout(() => {
+      ticker.timeout(() => {
         child = TestUtils.scryRenderedDOMComponentsWithTag(instance, 'div')[0];
         console.log('top:', child.style.top);
         expect(getFloat(child.style.top)).to.be(top);
@@ -565,7 +565,7 @@ describe('rc-tween-one', () => {
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(() => {
+    ticker.timeout(() => {
       instance.setState({
         moment: 1000,
       }, () => {
@@ -573,7 +573,7 @@ describe('rc-tween-one', () => {
           moment: null,
         });
       });
-      setTimeout(() => {
+      ticker.timeout(() => {
         console.log(child.style.top);
         expect(getFloat(child.style.top)).to.be(100);
         done();
@@ -590,7 +590,7 @@ describe('rc-tween-one', () => {
       style: { position: 'relative', top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
-    setTimeout(() => {
+    ticker.timeout(() => {
       instance.setState({
         moment: 10,
       }, () => {
@@ -598,7 +598,7 @@ describe('rc-tween-one', () => {
           moment: null,
         });
       });
-      setTimeout(() => {
+      ticker.timeout(() => {
         console.log(child.style.top);
         expect(getFloat(child.style.top)).to.be(100);
         done();
@@ -666,7 +666,7 @@ describe('rc-tween-one', () => {
     });
     let child = TestUtils.scryRenderedDOMComponentsWithTag(instance);
     expect(child.length).to.be(0);
-    setTimeout(() => {
+    ticker.timeout(() => {
       instance.setState({
         showChild: true,
       });

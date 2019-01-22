@@ -13,6 +13,9 @@ Ticker.prototype = {
   perFrame: Math.round(1000 / 60),
   elapsed: 0,
   lastUpdate: getTime(),
+  startTime: getTime(),// 开始时间，不计算 react 渲染时间；
+  nextTime: 0,
+  time: 0,
 };
 const p = Ticker.prototype;
 p.add = function (fn) {
@@ -40,12 +43,18 @@ p.sleep = function () {
 const ticker = new Ticker;
 p.tick = function (a) {
   ticker.elapsed = getTime() - ticker.lastUpdate;
-  ticker.lastUpdate += ticker.elapsed;
-  if (!ticker.frame) {
-    ticker.frame++;
-  } else {
-    ticker.frame += Math.round(ticker.elapsed / ticker.perFrame);
+  // 离开当前时设值 300；大于 300 则为离开。
+  if (ticker.elapsed > 300) {
+    ticker.startTime += ticker.elapsed - ticker.perFrame;
   }
+  ticker.lastUpdate += ticker.elapsed;
+  ticker.time = ticker.lastUpdate - ticker.startTime;
+  const overlap = ticker.time - ticker.nextTime;
+  if(overlap > 0 || !ticker.frame) {
+    ticker.frame++;
+    ticker.nextTime += overlap;
+  }
+  // console.log(ticker.frame, ticker.nextTime, ticker.time)
   ticker.tickFnArray.forEach(func => func(a));
   // 如果 object 里没对象了，自动杀掉；
   if (!ticker.tickFnArray.length) {
@@ -60,9 +69,9 @@ p.timeout = function (fn, time) {
     return console.warn('not function');// eslint-disable-line
   }
   const timeoutID = `timeout${Date.now()}-${timeoutIdNumber}`;
-  const startFrame = this.frame;
+  const startTime = this.time;
   this.wake(timeoutID, () => {
-    const moment = (this.frame - startFrame) * this.perFrame;
+    const moment = this.time - startTime;
     if (moment >= (time || 0)) {
       this.clear(timeoutID);
       fn();
@@ -78,11 +87,11 @@ p.interval = function (fn, time) {
     return null;
   }
   const intervalID = `interval${Date.now()}-${intervalIdNumber}`;
-  let starFrame = this.frame;
+  let starTime = this.time;
   this.wake(intervalID, () => {
-    const moment = (this.frame - starFrame) * this.perFrame;
+    const moment = this.time - starTime;
     if (moment >= (time || 0)) {
-      starFrame = this.frame;
+      starTime = this.time;
       fn();
     }
   });
