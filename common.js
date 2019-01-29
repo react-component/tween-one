@@ -3137,6 +3137,23 @@ __WEBPACK_IMPORTED_MODULE_0_tween_functions___default.a.path = function (_path, 
 var getTime = Date.now || function () {
   return new Date().getTime();
 };
+var sortObj = {
+  interval: 1,
+  timeout: 1,
+  TweenOneTicker: 2
+};
+var tickObjToArray = function tickObjToArray(obj) {
+  return Object.keys(obj).map(function (k) {
+    return {
+      key: k,
+      func: obj[k]
+    };
+  }).sort(function (a, b) {
+    var aa = a.key.split('_')[0];
+    var bb = b.key.split('_')[0];
+    return sortObj[bb] - sortObj[aa];
+  });
+};
 var Ticker = function Ticker() {};
 Ticker.prototype = {
   tickFnArray: [],
@@ -3153,29 +3170,21 @@ Ticker.prototype = {
 };
 var p = Ticker.prototype;
 p.add = function (fn) {
-  var key = 'TweenOneTicker' + this.tweenId;
+  var key = 'TweenOneTicker_' + this.tweenId;
   this.tweenId++;
   this.wake(key, fn);
   return key;
 };
 p.wake = function (key, fn) {
-  var _this = this;
-
   this.tickKeyObject[key] = fn;
-  this.tickFnArray = Object.keys(this.tickKeyObject).map(function (k) {
-    return _this.tickKeyObject[k];
-  });
+  this.tickFnArray = tickObjToArray(this.tickKeyObject);
   if (this.id === -1) {
     this.id = __WEBPACK_IMPORTED_MODULE_0_raf___default()(this.tick);
   }
 };
 p.clear = function (key) {
-  var _this2 = this;
-
   delete this.tickKeyObject[key];
-  this.tickFnArray = Object.keys(this.tickKeyObject).map(function (k) {
-    return _this2.tickKeyObject[k];
-  });
+  this.tickFnArray = tickObjToArray(this.tickKeyObject);
 };
 p.sleep = function () {
   __WEBPACK_IMPORTED_MODULE_0_raf___default.a.cancel(this.id);
@@ -3197,8 +3206,8 @@ p.tick = function (a) {
     ticker.nextTime += overlap;
   }
   // console.log(ticker.frame, ticker.nextTime, ticker.time)
-  ticker.tickFnArray.forEach(function (func) {
-    return func(a);
+  ticker.tickFnArray.forEach(function (item) {
+    return item.func(a);
   });
   // 如果 object 里没对象了，自动杀掉；
   if (!ticker.tickFnArray.length) {
@@ -3209,17 +3218,17 @@ p.tick = function (a) {
 };
 var timeoutIdNumber = 0;
 p.timeout = function (fn, time) {
-  var _this3 = this;
+  var _this = this;
 
   if (!(typeof fn === 'function')) {
     return console.warn('not function'); // eslint-disable-line
   }
-  var timeoutID = 'timeout' + Date.now() + '-' + timeoutIdNumber;
+  var timeoutID = 'timeout_' + Date.now() + '-' + timeoutIdNumber;
   var startTime = this.time;
   this.wake(timeoutID, function () {
-    var moment = _this3.time - startTime;
+    var moment = _this.time - startTime;
     if (moment >= (time || 0)) {
-      _this3.clear(timeoutID);
+      _this.clear(timeoutID);
       fn();
     }
   });
@@ -3228,18 +3237,18 @@ p.timeout = function (fn, time) {
 };
 var intervalIdNumber = 0;
 p.interval = function (fn, time) {
-  var _this4 = this;
+  var _this2 = this;
 
   if (!(typeof fn === 'function')) {
     console.warn('not function'); // eslint-disable-line
     return null;
   }
-  var intervalID = 'interval' + Date.now() + '-' + intervalIdNumber;
+  var intervalID = 'interval_' + Date.now() + '-' + intervalIdNumber;
   var starTime = this.time;
   this.wake(intervalID, function () {
-    var moment = _this4.time - starTime;
+    var moment = _this2.time - starTime;
     if (moment >= (time || 0)) {
-      starTime = _this4.time;
+      starTime = _this2.time;
       fn();
     }
   });
