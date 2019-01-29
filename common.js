@@ -1073,7 +1073,8 @@ module.exports = function (bitmap, value) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return windowIsUndefined; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return windowIsUndefined; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return transformOrFilter; });
 /* harmony export (immutable) */ __webpack_exports__["i"] = toArrayChildren;
 /* harmony export (immutable) */ __webpack_exports__["a"] = dataToArray;
 /* harmony export (immutable) */ __webpack_exports__["f"] = objectEqual;
@@ -1089,6 +1090,16 @@ module.exports = function (bitmap, value) {
 
 
 var windowIsUndefined = !(typeof window !== 'undefined' && window.document && window.document.createElement);
+
+var transformOrFilter = {
+  transform: 1,
+  '-ms-transform': 1,
+  '-moz-transform': 1,
+  '-webkit-transform': 1,
+  '-o-transform': 1,
+  filter: 1,
+  '-webkit-filter': 1
+};
 
 function toArrayChildren(children) {
   var ret = [];
@@ -3088,7 +3099,7 @@ if (process.env.NODE_ENV === 'production') {
 
 __WEBPACK_IMPORTED_MODULE_0_tween_functions___default.a.path = function (_path, _param) {
   var param = _param || {};
-  if (__WEBPACK_IMPORTED_MODULE_1__util__["k" /* windowIsUndefined */]) {
+  if (__WEBPACK_IMPORTED_MODULE_1__util__["l" /* windowIsUndefined */]) {
     return 'linear';
   }
   var pathNode = Object(__WEBPACK_IMPORTED_MODULE_1__util__["g" /* parsePath */])(_path);
@@ -28679,7 +28690,7 @@ var getDefaultStyle = function getDefaultStyle(domStyle, defaultStyle, tweenData
       if (!(name in $data)) {
         var styleName = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["toCssLowerCase"])(Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["isTransform"])(Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getGsapType"])(name)));
         domStyleToArray = domStyleToArray.filter(function (item) {
-          if (item[0].match(/transform|filter/ig) && styleName.match(/transform|filter/ig)) {
+          if (__WEBPACK_IMPORTED_MODULE_5__util_js__["k" /* transformOrFilter */][item[0]] && __WEBPACK_IMPORTED_MODULE_5__util_js__["k" /* transformOrFilter */][styleName]) {
             return false;
           }
           return item[0] !== styleName;
@@ -28688,14 +28699,14 @@ var getDefaultStyle = function getDefaultStyle(domStyle, defaultStyle, tweenData
     });
   });
   styleToArray.forEach(function (item) {
-    domStyleToArray = domStyleToArray.map(function ($item) {
+    domStyleToArray = domStyleToArray.filter(function ($item) {
       if ($item[0] === item[0]) {
-        return item;
+        return false;
       }
-      return $item;
+      return true;
     });
   });
-  return domStyleToArray.map(function (item) {
+  return styleToArray.concat(domStyleToArray).map(function (item) {
     return item.join(':');
   }).join(';');
 };

@@ -87,7 +87,7 @@ function PathPlugin(target, vars) {
   this.target = target;
   var path = typeof vars === 'string' ? vars : vars.x || vars.y || vars.rotate;
   this.vars = vars;
-  this.path = __WEBPACK_IMPORTED_MODULE_2__util__["k" /* windowIsUndefined */] ? null : Object(__WEBPACK_IMPORTED_MODULE_2__util__["g" /* parsePath */])(path);
+  this.path = __WEBPACK_IMPORTED_MODULE_2__util__["l" /* windowIsUndefined */] ? null : Object(__WEBPACK_IMPORTED_MODULE_2__util__["g" /* parsePath */])(path);
   this.start = {};
   this.pathLength = this.path ? this.path.getTotalLength() : 0;
 }
