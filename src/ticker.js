@@ -2,6 +2,21 @@
 import requestAnimationFrame from 'raf';
 
 const getTime = Date.now || (() => new Date().getTime());
+const sortObj = {
+  interval: 1,
+  timeout: 1,
+  TweenOneTicker: 2,
+}
+const tickObjToArray = (obj) => (
+  Object.keys(obj).map(k => ({
+    key: k,
+    func: obj[k],
+  })).sort((a, b) => {
+    const aa = a.key.split('_')[0];
+    const bb = b.key.split('_')[0];
+    return sortObj[bb] - sortObj[aa];
+  })
+);
 const Ticker = function () {
 };
 Ticker.prototype = {
@@ -19,21 +34,21 @@ Ticker.prototype = {
 };
 const p = Ticker.prototype;
 p.add = function (fn) {
-  const key = `TweenOneTicker${this.tweenId}`;
+  const key = `TweenOneTicker_${this.tweenId}`;
   this.tweenId++;
   this.wake(key, fn);
   return key;
 };
 p.wake = function (key, fn) {
   this.tickKeyObject[key] = fn;
-  this.tickFnArray = Object.keys(this.tickKeyObject).map(k => this.tickKeyObject[k]);
+  this.tickFnArray = tickObjToArray(this.tickKeyObject);
   if (this.id === -1) {
     this.id = requestAnimationFrame(this.tick);
   }
 };
 p.clear = function (key) {
   delete this.tickKeyObject[key];
-  this.tickFnArray = Object.keys(this.tickKeyObject).map(k => this.tickKeyObject[k]);
+  this.tickFnArray = tickObjToArray(this.tickKeyObject);
 };
 p.sleep = function () {
   requestAnimationFrame.cancel(this.id);
@@ -50,12 +65,12 @@ p.tick = function (a) {
   ticker.lastUpdate += ticker.elapsed;
   ticker.time = ticker.lastUpdate - ticker.startTime;
   const overlap = ticker.time - ticker.nextTime;
-  if(overlap > 0 || !ticker.frame) {
+  if (overlap > 0 || !ticker.frame) {
     ticker.frame++;
     ticker.nextTime += overlap;
   }
   // console.log(ticker.frame, ticker.nextTime, ticker.time)
-  ticker.tickFnArray.forEach(func => func(a));
+  ticker.tickFnArray.forEach(item => item.func(a));
   // 如果 object 里没对象了，自动杀掉；
   if (!ticker.tickFnArray.length) {
     ticker.sleep();
@@ -68,7 +83,7 @@ p.timeout = function (fn, time) {
   if (!(typeof fn === 'function')) {
     return console.warn('not function');// eslint-disable-line
   }
-  const timeoutID = `timeout${Date.now()}-${timeoutIdNumber}`;
+  const timeoutID = `timeout_${Date.now()}-${timeoutIdNumber}`;
   const startTime = this.time;
   this.wake(timeoutID, () => {
     const moment = this.time - startTime;
@@ -86,7 +101,7 @@ p.interval = function (fn, time) {
     console.warn('not function');// eslint-disable-line
     return null;
   }
-  const intervalID = `interval${Date.now()}-${intervalIdNumber}`;
+  const intervalID = `interval_${Date.now()}-${intervalIdNumber}`;
   let starTime = this.time;
   this.wake(intervalID, () => {
     const moment = this.time - starTime;
