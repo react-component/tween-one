@@ -17,7 +17,7 @@ function Demo() {
           key="1"
           animation={{ y: 30, type: 'from', ease: 'easeOutQuart', opacity: 0 }}
           reverseDelay={200}
-          style={{ background: '#fff000' }}
+          style={{ background: '#fff000',transform: 'translateX(20px)', transformOrigin: 'center' }}
           component={Col}
         >
           执行动画

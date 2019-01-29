@@ -6,6 +6,16 @@ export const windowIsUndefined = !(
   window.document.createElement
 );
 
+export const transformOrFilter = {
+  transform: 1,
+  '-ms-transform': 1,
+  '-moz-transform': 1,
+  '-webkit-transform': 1,
+  '-o-transform': 1,
+  filter: 1,
+  '-webkit-filter': 1
+};
+
 export function toArrayChildren(children) {
   const ret = [];
   React.Children.forEach(children, (c) => {

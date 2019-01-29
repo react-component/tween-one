@@ -17,7 +17,7 @@ import {
 import easingTypes from './easing';
 import _plugin from './plugins';
 import StylePlugin from './plugin/StylePlugin';
-import { startConvertToEndUnit } from './util.js';
+import { startConvertToEndUnit, transformOrFilter } from './util.js';
 
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
@@ -408,7 +408,7 @@ const getDefaultStyle = function (domStyle, defaultStyle, tweenData) {
       if (!(name in $data)) {
         const styleName = toCssLowerCase(isTransform(getGsapType(name)));
         domStyleToArray = domStyleToArray.filter(item => {
-          if (item[0].match(/transform|filter/ig) && styleName.match(/transform|filter/ig)) {
+          if (transformOrFilter[item[0]] && transformOrFilter[styleName]) {
             return false;
           }
           return item[0] !== styleName;
@@ -417,14 +417,14 @@ const getDefaultStyle = function (domStyle, defaultStyle, tweenData) {
     })
   });
   styleToArray.forEach(item => {
-    domStyleToArray = domStyleToArray.map($item => {
+    domStyleToArray = domStyleToArray.filter($item => {
       if ($item[0] === item[0]) {
-        return item;
+        return false;
       }
-      return $item;
+      return true;
     });
   })
-  return domStyleToArray.map(item => item.join(':')).join(';');
+  return styleToArray.concat(domStyleToArray).map(item => item.join(':')).join(';');
 }
 
 p.resetDefaultStyle = function () {
