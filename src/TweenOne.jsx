@@ -117,7 +117,8 @@ class TweenOne extends Component {
     if (!styleEqual) {
       // 在动画时更改了 style, 作为更改开始数值。
       if (this.tween) {
-        this.tween.reStart(nextProps.style);
+        this.tween.reStart(nextProps.style, this.props.style,
+          this.tween.progressTime < this.tween.totalTime);
         if (this.paused) {
           this.raf();
         }

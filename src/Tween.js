@@ -450,16 +450,16 @@ p.resetDefaultStyle = function () {
   });
 };
 
-p.reStart = function (style) {
+p.reStart = function (style, preStyle, isTween) {
   this.start = {};
-  this.target.style.cssText = getDefaultStyle(this.target.style.cssText,
-    this.startDefaultData.style,
-    this.data);
+  this.tween = {};
   Object.keys(style || {}).forEach(key => {
-    this.target.style[key] = stylesToCss(key, style[key]);
+    if (isTween || !preStyle || style[key] !== preStyle[key]) {
+      this.target.style[key] = stylesToCss(key, style[key]);
+    }
   });
   this.setAttrIsStyle();
-  this.resetDefaultStyle();
+  this.computedStyle = null;
 };
 
 p.onChange = noop;
