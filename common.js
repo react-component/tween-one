@@ -2651,7 +2651,7 @@ var TweenOne = function (_Component) {
       if (!styleEqual) {
         // 在动画时更改了 style, 作为更改开始数值。
         if (this.tween) {
-          this.tween.reStart(nextProps.style);
+          this.tween.reStart(nextProps.style, this.props.style, this.tween.progressTime < this.tween.totalTime);
           if (this.paused) {
             this.raf();
           }
@@ -28743,16 +28743,18 @@ p.resetDefaultStyle = function () {
   });
 };
 
-p.reStart = function (style) {
+p.reStart = function (style, preStyle, isTween) {
   var _this9 = this;
 
   this.start = {};
-  this.target.style.cssText = getDefaultStyle(this.target.style.cssText, this.startDefaultData.style, this.data);
+  this.tween = {};
   Object.keys(style || {}).forEach(function (key) {
-    _this9.target.style[key] = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["stylesToCss"])(key, style[key]);
+    if (isTween || !preStyle || style[key] !== preStyle[key]) {
+      _this9.target.style[key] = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["stylesToCss"])(key, style[key]);
+    }
   });
   this.setAttrIsStyle();
-  this.resetDefaultStyle();
+  this.computedStyle = null;
 };
 
 p.onChange = noop;
