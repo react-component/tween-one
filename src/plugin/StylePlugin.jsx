@@ -13,7 +13,7 @@ import {
   stylesToCss,
   createMatrix,
 } from 'style-utils';
-import { startConvertToEndUnit, getTransformValue } from '../util.js';
+import { startConvertToEndUnit, getTransformValue, styleValueToArray } from '../util.js';
 import _plugin from '../plugins';
 
 const StylePlugin = function (target, vars, type) {
@@ -27,7 +27,7 @@ StylePlugin.prototype = {
   name: 'style',
 };
 const p = StylePlugin.prototype;
-p.getTweenData = function (key, vars) {
+p.getTweenData = function (key, $vars) {
   const data = {
     data: {},
     dataType: {},
@@ -35,6 +35,15 @@ p.getTweenData = function (key, vars) {
     dataCount: {},
     dataSplitStr: {},
   };
+  let vars = $vars;
+  if (styleValueToArray[key]) {
+    vars = vars.toString().split(' ');
+    vars = vars.map(c => (typeof $vars === 'number' ? `${c}px` : c));
+    vars[1] = vars[1] || vars[0];
+    vars[2] = vars[2] || vars[0];
+    vars[3] = vars[3] || vars[1] || vars[0];
+    vars = vars.join(' ');
+  }
   if (key.match(/colo|fill|storker/i)) {
     data.data[key] = parseColor(vars);
     data.dataType[key] = 'color';
@@ -46,7 +55,7 @@ p.getTweenData = function (key, vars) {
     data.dataType[key] = 'shadow';
   } else if (typeof vars === 'string' && vars.split(/[\s|,]/).length > 1) {
     data.data[key] = vars.split(/[\s|,]/);
-    data.dataSplitStr[key] = vars.replace(/[^\s|,]/g, '');
+    data.dataSplitStr[key] = vars.replace(/[^\s|,]/g, '').replace(/\s+/g, ' ');
     data.dataType[key] = 'string';
   } else {
     data.data[key] = vars;

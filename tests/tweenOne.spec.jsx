@@ -104,14 +104,14 @@ describe('rc-tween-one', () => {
         width: '10vh',
         height: '100%',
         boxShadow: '0 0 30px rgba(255,125,0,0.5)',
-        marginLeft: '30rem',
+        margin: '30rem',
         scale: 1.5,
         x: '+=100',
         transformOrign: '30% 10%',
         delay: 100,
         yoyo: true,
       },
-      style: { top: 0, left: '10vw', width: '5vh', height: '10%', marginLeft: '10rem' },
+      style: { top: 0, left: '10vw', width: '5vh', height: '10%', margin: '10rem' },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('start:', child.style.top);

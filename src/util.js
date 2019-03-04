@@ -16,6 +16,13 @@ export const transformOrFilter = {
   '-webkit-filter': 1
 };
 
+export const styleValueToArray = {
+  margin: 1,
+  padding: 1,
+  borderWidth: 1,
+  borderRadius: 1
+}
+
 export function toArrayChildren(children) {
   const ret = [];
   React.Children.forEach(children, (c) => {
