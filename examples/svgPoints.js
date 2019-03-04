@@ -1,14 +1,14 @@
 webpackJsonp([3],{
 
-/***/ 1044:
+/***/ 1065:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1045);
+module.exports = __webpack_require__(1066);
 
 
 /***/ }),
 
-/***/ 1045:
+/***/ 1066:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16,9 +16,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__ = __webpack_require__(221);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__ = __webpack_require__(227);
 
 
 
@@ -43,11 +43,11 @@ __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ }),
 
-/***/ 221:
+/***/ 227:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__snapsvglite__ = __webpack_require__(222);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__snapsvglite__ = __webpack_require__(228);
 /* eslint-disable func-names */
 
 
@@ -121,7 +121,7 @@ p.setRatio = function (ratio, tween) {
 
 /***/ }),
 
-/***/ 222:
+/***/ 228:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -587,5 +587,5 @@ function path2curve(path, path2) {
 
 /***/ })
 
-},[1044]);
+},[1065]);
 //# sourceMappingURL=svgPoints.js.map
