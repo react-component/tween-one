@@ -5,6 +5,7 @@
 import * as React from 'react';
 
 import Group from './TweenOneGroup';
+import Tween from './Tween';
 import { IAnimObject, IEaseCallBack } from './AnimObject';
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
@@ -44,4 +45,6 @@ export default class RcTweenOne<T> extends React.Component<IProps<T>> {
     push(plugin: any): void;
   }
   static TweenOneGroup: typeof Group;
+
+  static Tween: typeof Tween;
 }

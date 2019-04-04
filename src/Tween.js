@@ -17,7 +17,7 @@ import {
 import easingTypes from './easing';
 import _plugin from './plugins';
 import StylePlugin from './plugin/StylePlugin';
-import { startConvertToEndUnit, transformOrFilter } from './util.js';
+import { startConvertToEndUnit, transformOrFilter, dataToArray } from './util.js';
 
 const DEFAULT_EASING = 'easeInOutQuad';
 const DEFAULT_DURATION = 450;
@@ -47,9 +47,10 @@ function defaultData(vars, now) {
   };
 }
 
-const Tween = function (target, toData, props) {
+const Tween = function (target, to, attr) {
+  const toData = dataToArray(to);
   this.target = target;
-  this.attr = props.attr || 'style';
+  this.attr = attr || 'style';
   // 时间精度补齐；
   this.accuracy = 0.00001;
   // 记录总时间;
@@ -80,12 +81,13 @@ const Tween = function (target, toData, props) {
 const p = Tween.prototype;
 p.setAttrIsStyle = function () {
   const data = [];
+  const defaultParam = defaultData({}, 0);
   this.data.forEach((d, i) => {
     const _d = { ...d };
     if (this.attr === 'style') {
       data[i] = {};
       Object.keys(_d).forEach(key => {
-        if (key in defaultData({}, 0)) {
+        if (key in defaultParam) {
           data[i][key] = _d[key];
           delete _d[key];
         }
@@ -102,7 +104,10 @@ p.setAttrIsStyle = function () {
           delete _d[key];
           this.startDefaultData.style = this.target.getAttribute('style') || '';
         } else {
-          this.startDefaultData[key] = this.target.getAttribute(key);
+          if (key in defaultParam) {
+            return;
+          }
+          this.startDefaultData[key] = this.getValue(key);
         }
       });
       data[i] = _d;
@@ -128,6 +133,8 @@ p.setDefaultData = function (_vars) {
         const _data = item[_key];
         if (_key in _plugin) {
           tweenData.vars[_key] = new _plugin[_key](this.target, _data, tweenData.type);
+        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugin) {
+          tweenData.vars[_key] = new _plugin.SVGMorph(this.target, _data, _key);
         } else if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
           tweenData.vars[_key] = { type: 'color', vars: parseColor(_data) };
         } else if (typeof _data === 'number' || _data.split(/[,|\s]/g).length <= 1) {
@@ -135,8 +142,6 @@ p.setDefaultData = function (_vars) {
           const unit = _data.toString().replace(/[^a-z|%]/g, '');
           const count = _data.toString().replace(/[^+|=|-]/g, '');
           tweenData.vars[_key] = { unit, vars, count };
-        } else if ((_key === 'd' || _key === 'points') && 'SVGMorph' in _plugin) {
-          tweenData.vars[_key] = new _plugin.SVGMorph(this.target, _data, _key);
         }
       }
     });
@@ -190,13 +195,13 @@ p.getAnimStartData = function (item) {
   const start = {};
   Object.keys(item).forEach(_key => {
     if (_key in _plugin || (this.attr === 'attr' && (_key === 'd' || _key === 'points'))) {
-      this.computedStyle = this.computedStyle || this.getComputedStyle();
+      this.computedStyle = this.computedStyle || (!this.target.getAttribute ? { ...this.target } : this.getComputedStyle());
       start[_key] = item[_key].getAnimStart(this.computedStyle, this.tween, this.isSvg);
       return;
     }
     if (this.attr === 'attr') {
       // 除了d和这points外的标签动画；
-      const attribute = this.target.getAttribute(_key);
+      const attribute = this.getValue(_key);
       let data = attribute === 'null' || !attribute ? 0 : attribute;
       if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
         data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
@@ -236,7 +241,7 @@ p.setRatio = function (ratio, endData, i) {
       if (!endVars.type) {
         data = endVars.unit.charAt(1) === '=' ? startVars + endVars.vars * ratio + endVars.unit :
           (endVars.vars - startVars) * ratio + startVars + endVars.unit;
-        this.target.setAttribute(_key, data);
+        this.setValue(_key, endVars.unit ? data : parseFloat(data));
       } else if (endVars.type === 'color') {
         if (endVars.vars.length === 3 && startVars.length === 4) {
           endVars.vars[3] = 1;
@@ -245,12 +250,22 @@ p.setRatio = function (ratio, endData, i) {
           const startData = startVars[_i] || 0;
           return (_endData - startData) * ratio + startData;
         });
-        this.target.setAttribute(_key, getColor(data));
+        this.setValue(_key, getColor(data));
       }
     }
   });
   this.setAnimData(this.tween);
 };
+p.getValue = function (key) {
+  return this.target.getAttribute ? this.target.getAttribute(key) : this.target[key];
+}
+p.setValue = function (key, value) {
+  if (this.target.setAttribute) {
+    this.target.setAttribute(key, value);
+  } else {
+    this.target[key] = value;
+  }
+}
 p.render = function () {
   const reverse = this.reverse;
   this.defaultData.forEach((item, i) => {
@@ -389,6 +404,9 @@ p.frame = function (moment) {
   });
   this.render();
 };
+
+p.init = p.frame;
+
 p.resetAnimData = function () {
   this.tween = {};
   this.start = {};
@@ -441,9 +459,9 @@ p.resetDefaultStyle = function () {
         const value = getDefaultStyle(this.target.style.cssText,
           this.startDefaultData.style,
           this.data);
-        this.target.setAttribute(key, value);
+        this.setValue(key, value);
       } else {
-        this.target.setAttribute(key, this.startDefaultData[key]);
+        this.setValue(key, this.startDefaultData[key]);
       }
       this.computedStyle = null;
     }

@@ -28,7 +28,7 @@ p.polygonPoints = function (start, end) {
   return [startArray, endArray];
 };
 p.getAnimStart = function () {
-  this.start = this.target.getAttribute(this.key);
+  this.start = this.target.getAttribute ? this.target.getAttribute(this.key) : this.target[this.key];
   if (this.key === 'd') {
     this.pathArray = path2curve(this.start, this.vars);
   } else {
@@ -58,7 +58,11 @@ p.setRatio = function (ratio, tween) {
   let vars = ratio === 1 ? this.vars : tween[this.key].join(' ');
   vars = ratio === 0 ? this.start : vars;
   if (vars) {
-    this.target.setAttribute(this.key, vars);
+    if (this.target.setAttribute) {
+      this.target.setAttribute(this.key, vars);
+    } else {
+      this.target[this.key] = vars;
+    }
   }
 };
 export default SvgPlugin;

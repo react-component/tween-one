@@ -6,7 +6,7 @@ import expect from 'expect.js';
 import TestUtils from 'react-dom/test-utils';
 import { checkStyleName } from 'style-utils';
 
-import Tween, { easing, plugins } from '../src';
+import TweenOne, { easing, plugins } from '../src';
 import ticker from '../src/ticker';
 import BezierPlugin from '../src/plugin/BezierPlugin';
 
@@ -42,7 +42,7 @@ describe('rc-tween-one', () => {
       render() {
         if (this.props.component === 'rect') {
           return (<svg>
-            <Tween
+            <TweenOne
               {...this.props}
               reverse={this.state.reverse}
               animation={this.state.animation} style={this.state.style}
@@ -53,7 +53,7 @@ describe('rc-tween-one', () => {
             />
           </svg>);
         }
-        return (<Tween {...this.props}
+        return (<TweenOne {...this.props}
           reverse={this.state.reverse}
           animation={this.state.animation}
           style={this.state.style}
@@ -62,7 +62,7 @@ describe('rc-tween-one', () => {
           paused={this.state.paused}
         >
           <span>demo</span>
-        </Tween>);
+        </TweenOne>);
       }
     }
     const objectOrArray = PropTypes.oneOfType([PropTypes.object,

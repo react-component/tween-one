@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 
-import { dataToArray, objectEqual } from './util';
+import { objectEqual } from './util';
 import Tween from './Tween';
 import ticker from './ticker';
 
@@ -174,7 +174,7 @@ class TweenOne extends Component {
     }
   }
 
-  setDefalut = (props) => {
+  setDefault = (props) => {
     this.moment = props.moment || 0;
     this.startMoment = props.moment || 0;
     this.startTime = ticker.time;
@@ -196,9 +196,9 @@ class TweenOne extends Component {
     this.updateAnim = false;
     const props = this.props;
     if (props.animation && Object.keys(props.animation).length) {
-      this.setDefalut(props);
-      this.tween = new Tween(this.dom, dataToArray(props.animation),
-        { attr: props.attr });
+      this.setDefault(props);
+      this.tween = new Tween(this.dom, props.animation,
+        props.attr);
       this.tween.reverse = this.reverse;
       // 预先注册 raf, 初始动画数值。
       this.raf();

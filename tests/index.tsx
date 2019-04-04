@@ -5,6 +5,8 @@ import TweenOne from '../typings';
 const path = 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0';
 const ease = TweenOne.easing.path(path, { rect: 100, lengthPixel: 200 });
 const Group = TweenOne.TweenOneGroup;
+const tween = new TweenOne.Tween({}, { x: 100 });
+tween.init();
 export default () => (
   <div>
     <TweenOne
