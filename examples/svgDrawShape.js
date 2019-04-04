@@ -1,14 +1,14 @@
 webpackJsonp([6],{
 
-/***/ 1063:
+/***/ 1079:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1064);
+module.exports = __webpack_require__(1080);
 
 
 /***/ }),
 
-/***/ 1064:
+/***/ 1080:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -243,5 +243,5 @@ SvgDrawPlugin.prototype = {
 
 /***/ })
 
-},[1063]);
+},[1079]);
 //# sourceMappingURL=svgDrawShape.js.map

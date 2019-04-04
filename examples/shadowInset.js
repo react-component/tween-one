@@ -1,14 +1,14 @@
 webpackJsonp([19],{
 
-/***/ 1055:
+/***/ 1071:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1056);
+module.exports = __webpack_require__(1072);
 
 
 /***/ }),
 
-/***/ 1056:
+/***/ 1072:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -40,5 +40,5 @@ __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ })
 
-},[1055]);
+},[1071]);
 //# sourceMappingURL=shadowInset.js.map

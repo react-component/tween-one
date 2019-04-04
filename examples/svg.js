@@ -1,14 +1,14 @@
 webpackJsonp([4],{
 
-/***/ 1059:
+/***/ 1075:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1060);
+module.exports = __webpack_require__(1076);
 
 
 /***/ }),
 
-/***/ 1060:
+/***/ 1076:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85,7 +85,7 @@ p.polygonPoints = function (start, end) {
   return [startArray, endArray];
 };
 p.getAnimStart = function () {
-  this.start = this.target.getAttribute(this.key);
+  this.start = this.target.getAttribute ? this.target.getAttribute(this.key) : this.target[this.key];
   if (this.key === 'd') {
     this.pathArray = Object(__WEBPACK_IMPORTED_MODULE_0__snapsvglite__["a" /* path2curve */])(this.start, this.vars);
   } else {
@@ -117,7 +117,11 @@ p.setRatio = function (ratio, tween) {
   var vars = ratio === 1 ? this.vars : tween[this.key].join(' ');
   vars = ratio === 0 ? this.start : vars;
   if (vars) {
-    this.target.setAttribute(this.key, vars);
+    if (this.target.setAttribute) {
+      this.target.setAttribute(this.key, vars);
+    } else {
+      this.target[this.key] = vars;
+    }
   }
 };
 /* harmony default export */ __webpack_exports__["a"] = (SvgPlugin);
@@ -590,5 +594,5 @@ function path2curve(path, path2) {
 
 /***/ })
 
-},[1059]);
+},[1075]);
 //# sourceMappingURL=svg.js.map
