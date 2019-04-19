@@ -159,10 +159,7 @@ __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_style_utils__ = __webpack_require__(88);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_style_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_style_utils__);
 /* eslint-disable func-names */
-
 
 var ChildrenPlugin = function ChildrenPlugin(target, vars) {
   this.target = target;
@@ -204,7 +201,7 @@ ChildrenPlugin.prototype = {
     var v = (value - this.start.value) * ratio + this.start.value;
     if (typeof floatLength === 'number') {
       if (floatLength) {
-        v = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["toFixed"])(v, floatLength);
+        v = v.toFixed(floatLength);
         var numberArray = v.toString().split('.');
         var decimal = numberArray[1] || '';
         decimal = decimal.length > floatLength ? decimal.substring(0, floatLength) : decimal;
