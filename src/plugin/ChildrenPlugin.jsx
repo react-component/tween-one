@@ -1,7 +1,4 @@
 /* eslint-disable func-names */
-import {
-  toFixed,
-} from 'style-utils';
 
 const ChildrenPlugin = function (target, vars) {
   this.target = target;
@@ -41,7 +38,7 @@ ChildrenPlugin.prototype = {
     let v = (value - this.start.value) * ratio + this.start.value;
     if (typeof floatLength === 'number') {
       if (floatLength) {
-        v = toFixed(v, floatLength);
+        v = v.toFixed(floatLength);
         const numberArray = v.toString().split('.');
         let decimal = numberArray[1] || '';
         decimal = decimal.length > floatLength ? decimal.substring(0, floatLength) : decimal;
