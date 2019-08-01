@@ -47,6 +47,7 @@ class TweenOne extends Component {
     this.updateAnim = false;
     this.repeatNum = 0;
     this.forced = {};
+    this.currentRef = null;
     this.setForcedJudg(props);
   }
 
@@ -337,7 +338,13 @@ class TweenOne extends Component {
       const newClassName = props.className ? `${props.className} ${className}` : className;
       return React.cloneElement(this.props.children, { style: newStyle, className: newClassName });
     }
-    return React.createElement(this.props.component, { ...props, ...this.props.componentProps });
+    return React.createElement(this.props.component, {
+      ref: (c) => {
+        this.currentRef = c;
+      },
+      ...props,
+      ...this.props.componentProps
+    });
   }
 }
 TweenOne.isTweenOne = true;

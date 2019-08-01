@@ -92,6 +92,8 @@ React.render(<TweenOneGroup>
 
 ### props
 
+> 2.5.x add currentRef, `<TweenOne component={Row} ref={(c) => { c.currentRef === <Row /> }} />`
+
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
 | animation  | object / array | null    | animate configure parameters |
