@@ -1377,8 +1377,8 @@ function getTransformValue(t) {
   var rX = rotateX ? 'rotateX(' + rotateX + 'deg)' : '';
   var rY = rotateY ? 'rotateY(' + rotateY + 'deg)' : '';
   var per = perspective ? 'perspective(' + perspective + 'px)' : '';
-  var defautlTranslate = ss || an || rX || rY || sk ? '' : 'translate(0px, 0px)';
-  var translate = t.translateZ ? 'translate3d(' + translateX + ',' + translateY + ',' + translateZ + ')' : (t.translateX || t.translateY) && 'translate(' + translateX + ',' + translateY + ')' || defautlTranslate;
+  var defaultTranslate = ss || an || rX || rY || sk ? '' : 'translate(0px, 0px)';
+  var translate = t.translateZ ? 'translate3d(' + translateX + ',' + translateY + ',' + translateZ + ')' : (t.translateX || t.translateY) && 'translate(' + translateX + ',' + translateY + ')' || defaultTranslate;
   return (per + ' ' + translate + ' ' + ss + ' ' + an + ' ' + rX + ' ' + rY + ' ' + sk).trim();
 }
 
@@ -2613,6 +2613,7 @@ var TweenOne = function (_Component) {
     _this.updateAnim = false;
     _this.repeatNum = 0;
     _this.forced = {};
+    _this.currentRef = null;
     _this.setForcedJudg(props);
     return _this;
   }
@@ -2733,6 +2734,8 @@ var TweenOne = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      var _this2 = this;
+
       var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, this.props);
       ['animation', 'component', 'componentProps', 'reverseDelay', 'attr', 'paused', 'reverse', 'repeat', 'yoyo', 'moment', 'resetStyle', 'forcedJudg'].forEach(function (key) {
         return delete props[key];
@@ -2759,7 +2762,11 @@ var TweenOne = function (_Component) {
         var newClassName = props.className ? props.className + ' ' + className : className;
         return __WEBPACK_IMPORTED_MODULE_5_react___default.a.cloneElement(this.props.children, { style: newStyle, className: newClassName });
       }
-      return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(this.props.component, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, props, this.props.componentProps));
+      return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(this.props.component, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({
+        ref: function ref(c) {
+          _this2.currentRef = c;
+        }
+      }, props, this.props.componentProps));
     }
   }]);
 
@@ -2793,136 +2800,136 @@ TweenOne.defaultProps = {
 };
 
 var _initialiseProps = function _initialiseProps() {
-  var _this2 = this;
+  var _this3 = this;
 
   this.setForcedJudg = function (props) {
-    Object.keys(_this2.forced).forEach(function (key) {
-      delete _this2[key];
-      delete _this2.forced[key];
+    Object.keys(_this3.forced).forEach(function (key) {
+      delete _this3[key];
+      delete _this3.forced[key];
     });
     if (props.forcedJudg) {
       Object.keys(props.forcedJudg).forEach(function (key) {
-        if (!_this2[key]) {
-          _this2[key] = props.forcedJudg[key];
-          _this2.forced[key] = 1;
+        if (!_this3[key]) {
+          _this3[key] = props.forcedJudg[key];
+          _this3.forced[key] = 1;
         }
       });
     }
   };
 
   this.setDefault = function (props) {
-    _this2.moment = props.moment || 0;
-    _this2.startMoment = props.moment || 0;
-    _this2.startTime = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].time;
+    _this3.moment = props.moment || 0;
+    _this3.startMoment = props.moment || 0;
+    _this3.startTime = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].time;
   };
 
   this.restart = function () {
-    if (!_this2.tween) {
+    if (!_this3.tween) {
       return;
     }
-    _this2.startMoment = _this2.moment;
-    _this2.startTime = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].time;
-    _this2.tween.reverse = _this2.reverse;
-    _this2.tween.reverseStartTime = _this2.startMoment;
-    _this2.raf();
-    _this2.play();
+    _this3.startMoment = _this3.moment;
+    _this3.startTime = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].time;
+    _this3.tween.reverse = _this3.reverse;
+    _this3.tween.reverseStartTime = _this3.startMoment;
+    _this3.raf();
+    _this3.play();
   };
 
   this.start = function () {
-    _this2.updateAnim = false;
-    var props = _this2.props;
+    _this3.updateAnim = false;
+    var props = _this3.props;
     if (props.animation && Object.keys(props.animation).length) {
-      _this2.setDefault(props);
-      _this2.tween = new __WEBPACK_IMPORTED_MODULE_9__Tween__["a" /* default */](_this2.dom, props.animation, props.attr);
-      _this2.tween.reverse = _this2.reverse;
+      _this3.setDefault(props);
+      _this3.tween = new __WEBPACK_IMPORTED_MODULE_9__Tween__["a" /* default */](_this3.dom, props.animation, props.attr);
+      _this3.tween.reverse = _this3.reverse;
       // 预先注册 raf, 初始动画数值。
-      _this2.raf();
+      _this3.raf();
       // 开始动画
-      _this2.play();
+      _this3.play();
     } else {
-      _this2.tween = null;
+      _this3.tween = null;
     }
   };
 
   this.play = function () {
-    _this2.cancelRequestAnimationFrame();
-    if (_this2.paused) {
+    _this3.cancelRequestAnimationFrame();
+    if (_this3.paused) {
       return;
     }
-    _this2.rafID = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].add(_this2.raf);
+    _this3.rafID = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].add(_this3.raf);
   };
 
   this.frame = function () {
-    var yoyo = _this2.props.yoyo;
-    var repeat = _this2.props.repeat;
+    var yoyo = _this3.props.yoyo;
+    var repeat = _this3.props.repeat;
 
-    var totalTime = repeat === -1 ? Number.MAX_VALUE : _this2.tween.totalTime * (repeat + 1);
+    var totalTime = repeat === -1 ? Number.MAX_VALUE : _this3.tween.totalTime * (repeat + 1);
     repeat = repeat >= 0 ? repeat : Number.MAX_VALUE;
-    var moment = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].time - _this2.startTime + _this2.startMoment;
-    if (_this2.reverse) {
-      moment = (_this2.startMoment || 0) - (__WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].time - _this2.startTime);
+    var moment = __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].time - _this3.startTime + _this3.startMoment;
+    if (_this3.reverse) {
+      moment = (_this3.startMoment || 0) - (__WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].time - _this3.startTime);
     }
     moment = moment > totalTime ? totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
-    var repeatNum = Math.floor(moment / _this2.tween.totalTime) || 0;
+    var repeatNum = Math.floor(moment / _this3.tween.totalTime) || 0;
     repeatNum = repeatNum > repeat ? repeat : repeatNum;
-    var tweenMoment = moment - _this2.tween.totalTime * repeatNum;
-    tweenMoment = tweenMoment < perFrame && !_this2.reverse && totalTime >= perFrame ? 0 : tweenMoment;
-    if (repeat && moment && moment - _this2.tween.totalTime * repeatNum < perFrame) {
+    var tweenMoment = moment - _this3.tween.totalTime * repeatNum;
+    tweenMoment = tweenMoment < perFrame && !_this3.reverse && totalTime >= perFrame ? 0 : tweenMoment;
+    if (repeat && moment && moment - _this3.tween.totalTime * repeatNum < perFrame) {
       // 在重置样式之前补 complete；
-      _this2.tween.frame(_this2.tween.totalTime * repeatNum);
+      _this3.tween.frame(_this3.tween.totalTime * repeatNum);
     }
-    if (moment < _this2.moment && !_this2.reverse || repeat !== 0 && repeatNum && repeatNum !== _this2.repeatNum) {
+    if (moment < _this3.moment && !_this3.reverse || repeat !== 0 && repeatNum && repeatNum !== _this3.repeatNum) {
       // 在 form 状态下，暂停时拉 moment 时，start 有值，，往返方向播放时，在 delay 的时间没有处理。。
       // 与上面的处理一样，删除 start ，重新走一遍 start。。
-      _this2.tween.resetAnimData();
-      _this2.tween.resetDefaultStyle();
+      _this3.tween.resetAnimData();
+      _this3.tween.resetDefaultStyle();
     }
     var yoyoReverse = yoyo && repeatNum % 2;
     if (yoyoReverse) {
-      tweenMoment = _this2.tween.totalTime - tweenMoment;
+      tweenMoment = _this3.tween.totalTime - tweenMoment;
     }
-    _this2.tween.onChange = function (e) {
+    _this3.tween.onChange = function (e) {
       var cb = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, e, {
         timelineMode: ''
       });
 
-      if (_this2.moment === _this2.startMoment && !_this2.reverse && !e.index && e.mode === 'onStart' || _this2.reverse) {
+      if (_this3.moment === _this3.startMoment && !_this3.reverse && !e.index && e.mode === 'onStart' || _this3.reverse) {
         cb.timelineMode = 'onTimelineStart';
-      } else if (moment >= totalTime && !_this2.reverse || !moment && _this2.reverse) {
+      } else if (moment >= totalTime && !_this3.reverse || !moment && _this3.reverse) {
         cb.timelineMode = 'onTimelineComplete';
-      } else if (repeatNum !== _this2.timelineRepeatNum) {
+      } else if (repeatNum !== _this3.timelineRepeatNum) {
         cb.timelineMode = 'onTimelineRepeat';
       } else {
         cb.timelineMode = 'onTimelineUpdate';
       }
-      _this2.timelineRepeatNum = repeatNum;
-      _this2.props.onChange(cb);
+      _this3.timelineRepeatNum = repeatNum;
+      _this3.props.onChange(cb);
     };
-    _this2.moment = moment;
-    _this2.repeatNum = repeatNum;
-    _this2.tween.frame(tweenMoment);
+    _this3.moment = moment;
+    _this3.repeatNum = repeatNum;
+    _this3.tween.frame(tweenMoment);
   };
 
   this.raf = function () {
-    var tween = _this2.tween;
-    _this2.frame();
-    if (tween !== _this2.tween) {
+    var tween = _this3.tween;
+    _this3.frame();
+    if (tween !== _this3.tween) {
       // 在 onComplete 时更换动画时，raf 没结束，所以需要强制退出，避逸两个时间的冲突。
       return null;
     }
-    var repeat = _this2.props.repeat;
+    var repeat = _this3.props.repeat;
 
-    var totalTime = repeat === -1 ? Number.MAX_VALUE : _this2.tween.totalTime * (repeat + 1);
-    if (_this2.moment >= totalTime && !_this2.reverse || _this2.paused || _this2.reverse && _this2.moment === 0) {
-      return _this2.cancelRequestAnimationFrame();
+    var totalTime = repeat === -1 ? Number.MAX_VALUE : _this3.tween.totalTime * (repeat + 1);
+    if (_this3.moment >= totalTime && !_this3.reverse || _this3.paused || _this3.reverse && _this3.moment === 0) {
+      return _this3.cancelRequestAnimationFrame();
     }
     return null;
   };
 
   this.cancelRequestAnimationFrame = function () {
-    __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].clear(_this2.rafID);
-    _this2.rafID = -1;
+    __WEBPACK_IMPORTED_MODULE_10__ticker__["a" /* default */].clear(_this3.rafID);
+    _this3.rafID = -1;
   };
 };
 
