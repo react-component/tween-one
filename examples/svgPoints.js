@@ -1,14 +1,14 @@
 webpackJsonp([3],{
 
-/***/ 1081:
+/***/ 1109:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1082);
+module.exports = __webpack_require__(1110);
 
 
 /***/ }),
 
-/***/ 1082:
+/***/ 1110:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18,7 +18,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__ = __webpack_require__(227);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__src_plugin_SvgMorphPlugin__ = __webpack_require__(230);
 
 
 
@@ -43,11 +43,11 @@ __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ }),
 
-/***/ 227:
+/***/ 230:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__snapsvglite__ = __webpack_require__(228);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__snapsvglite__ = __webpack_require__(231);
 /* eslint-disable func-names */
 
 
@@ -125,7 +125,7 @@ p.setRatio = function (ratio, tween) {
 
 /***/ }),
 
-/***/ 228:
+/***/ 231:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -591,5 +591,5 @@ function path2curve(path, path2) {
 
 /***/ })
 
-},[1081]);
+},[1109]);
 //# sourceMappingURL=svgPoints.js.map

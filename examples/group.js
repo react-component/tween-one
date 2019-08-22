@@ -1,59 +1,37 @@
 webpackJsonp([1],{
 
-/***/ 111:
+/***/ 109:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(150), __esModule: true };
+module.exports = { "default": __webpack_require__(148), __esModule: true };
 
 /***/ }),
 
-/***/ 14:
+/***/ 148:
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-
-exports.__esModule = true;
-
-exports.default = function (obj, keys) {
-  var target = {};
-
-  for (var i in obj) {
-    if (keys.indexOf(i) >= 0) continue;
-    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
-    target[i] = obj[i];
-  }
-
-  return target;
-};
-
-/***/ }),
-
-/***/ 150:
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(141);
-__webpack_require__(151);
+__webpack_require__(139);
+__webpack_require__(149);
 module.exports = __webpack_require__(27).Array.from;
 
 
 /***/ }),
 
-/***/ 151:
+/***/ 149:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var ctx = __webpack_require__(103);
-var $export = __webpack_require__(47);
-var toObject = __webpack_require__(87);
-var call = __webpack_require__(152);
-var isArrayIter = __webpack_require__(153);
-var toLength = __webpack_require__(135);
-var createProperty = __webpack_require__(154);
-var getIterFn = __webpack_require__(155);
+var ctx = __webpack_require__(101);
+var $export = __webpack_require__(48);
+var toObject = __webpack_require__(79);
+var call = __webpack_require__(150);
+var isArrayIter = __webpack_require__(151);
+var toLength = __webpack_require__(132);
+var createProperty = __webpack_require__(152);
+var getIterFn = __webpack_require__(153);
 
-$export($export.S + $export.F * !__webpack_require__(157)(function (iter) { Array.from(iter); }), 'Array', {
+$export($export.S + $export.F * !__webpack_require__(155)(function (iter) { Array.from(iter); }), 'Array', {
   // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
   from: function from(arrayLike /* , mapfn = undefined, thisArg = undefined */) {
     var O = toObject(arrayLike);
@@ -84,11 +62,33 @@ $export($export.S + $export.F * !__webpack_require__(157)(function (iter) { Arra
 
 /***/ }),
 
-/***/ 152:
+/***/ 15:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+exports.default = function (obj, keys) {
+  var target = {};
+
+  for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;
+    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+    target[i] = obj[i];
+  }
+
+  return target;
+};
+
+/***/ }),
+
+/***/ 150:
 /***/ (function(module, exports, __webpack_require__) {
 
 // call something on iterator step with safe closing on error
-var anObject = __webpack_require__(57);
+var anObject = __webpack_require__(60);
 module.exports = function (iterator, fn, value, entries) {
   try {
     return entries ? fn(anObject(value)[0], value[1]) : fn(value);
@@ -103,12 +103,12 @@ module.exports = function (iterator, fn, value, entries) {
 
 /***/ }),
 
-/***/ 153:
+/***/ 151:
 /***/ (function(module, exports, __webpack_require__) {
 
 // check on default Array iterator
-var Iterators = __webpack_require__(62);
-var ITERATOR = __webpack_require__(28)('iterator');
+var Iterators = __webpack_require__(63);
+var ITERATOR = __webpack_require__(30)('iterator');
 var ArrayProto = Array.prototype;
 
 module.exports = function (it) {
@@ -118,13 +118,13 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 154:
+/***/ 152:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $defineProperty = __webpack_require__(48);
-var createDesc = __webpack_require__(77);
+var $defineProperty = __webpack_require__(49);
+var createDesc = __webpack_require__(78);
 
 module.exports = function (object, index, value) {
   if (index in object) $defineProperty.f(object, index, createDesc(0, value));
@@ -134,12 +134,12 @@ module.exports = function (object, index, value) {
 
 /***/ }),
 
-/***/ 155:
+/***/ 153:
 /***/ (function(module, exports, __webpack_require__) {
 
-var classof = __webpack_require__(156);
-var ITERATOR = __webpack_require__(28)('iterator');
-var Iterators = __webpack_require__(62);
+var classof = __webpack_require__(154);
+var ITERATOR = __webpack_require__(30)('iterator');
+var Iterators = __webpack_require__(63);
 module.exports = __webpack_require__(27).getIteratorMethod = function (it) {
   if (it != undefined) return it[ITERATOR]
     || it['@@iterator']
@@ -149,12 +149,12 @@ module.exports = __webpack_require__(27).getIteratorMethod = function (it) {
 
 /***/ }),
 
-/***/ 156:
+/***/ 154:
 /***/ (function(module, exports, __webpack_require__) {
 
 // getting tag from 19.1.3.6 Object.prototype.toString()
-var cof = __webpack_require__(105);
-var TAG = __webpack_require__(28)('toStringTag');
+var cof = __webpack_require__(103);
+var TAG = __webpack_require__(30)('toStringTag');
 // ES3 wrong here
 var ARG = cof(function () { return arguments; }()) == 'Arguments';
 
@@ -179,10 +179,10 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ 157:
+/***/ 155:
 /***/ (function(module, exports, __webpack_require__) {
 
-var ITERATOR = __webpack_require__(28)('iterator');
+var ITERATOR = __webpack_require__(30)('iterator');
 var SAFE_CLOSING = false;
 
 try {
@@ -208,22 +208,22 @@ module.exports = function (exec, skipClosing) {
 
 /***/ }),
 
-/***/ 483:
+/***/ 494:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(484);
+module.exports = __webpack_require__(495);
 
 
 /***/ }),
 
-/***/ 484:
+/***/ 495:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__);
@@ -234,7 +234,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_queue_anim__ = __webpack_require__(485);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rc_queue_anim__ = __webpack_require__(496);
 
 
 
@@ -385,11 +385,11 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ }),
 
-/***/ 485:
+/***/ 496:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QueueAnim__ = __webpack_require__(486);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__QueueAnim__ = __webpack_require__(497);
 // export this package's api
 
 
@@ -397,19 +397,19 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ }),
 
-/***/ 486:
+/***/ 497:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray__ = __webpack_require__(65);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_possibleConstructorReturn__);
@@ -420,8 +420,8 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_prop_types__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__utils__ = __webpack_require__(487);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__animTypes__ = __webpack_require__(488);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__utils__ = __webpack_require__(498);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__animTypes__ = __webpack_require__(499);
 
 
 
@@ -497,6 +497,16 @@ var QueueAnim = function (_React$Component) {
      * 进场时 deley 的 timeout 记录;
      */
     _this.placeholderTimeoutIds = {};
+    /**
+     * @param childRefs;
+     * 储存 children 的 ref;
+     */
+    _this.childRefs = {};
+    /**
+     * @param currentRef;
+     * 记录 component 是组件时的 ref;
+     */
+    _this.currentRef = null;
     // 第一次进入，默认进场
     var children = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["b" /* getChildrenFromProps */])(props));
     var childrenShow = {};
@@ -679,13 +689,30 @@ var QueueAnim = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var tagProps = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(this.props, []);
+      var _this5 = this;
 
-      ['component', 'componentProps', 'interval', 'duration', 'delay', 'type', 'animConfig', 'ease', 'leaveReverse', 'animatingClassName', 'forcedReplay', 'onEnd', 'appear'].forEach(function (key) {
-        return delete tagProps[key];
-      });
+      var _props = this.props,
+          component = _props.component,
+          componentProps = _props.componentProps,
+          interval = _props.interval,
+          duration = _props.duration,
+          delay = _props.delay,
+          type = _props.type,
+          animConfig = _props.animConfig,
+          ease = _props.ease,
+          leaveReverse = _props.leaveReverse,
+          animatingClassName = _props.animatingClassName,
+          forcedReplay = _props.forcedReplay,
+          onEnd = _props.onEnd,
+          appear = _props.appear,
+          tagProps = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['component', 'componentProps', 'interval', 'duration', 'delay', 'type', 'animConfig', 'ease', 'leaveReverse', 'animatingClassName', 'forcedReplay', 'onEnd', 'appear']);
+
       var childrenToRender = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["d" /* toArrayChildren */])(this.state.children).map(this.getChildrenToRender);
-      var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tagProps, this.props.componentProps);
+      var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tagProps, this.props.componentProps, {
+        ref: function ref(c) {
+          _this5.currentRef = c;
+        }
+      });
       return Object(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(this.props.component, props, childrenToRender);
     }
   }]);
@@ -726,7 +753,7 @@ QueueAnim.defaultProps = {
 };
 
 var _initialiseProps = function _initialiseProps() {
-  var _this5 = this;
+  var _this6 = this;
 
   this.getTweenSingleConfig = function (data, num, enterOrLeave) {
     var obj = {};
@@ -741,12 +768,12 @@ var _initialiseProps = function _initialiseProps() {
   };
 
   this.getTweenData = function (key, i, type) {
-    var props = _this5.props;
+    var props = _this6.props;
     var enterOrLeave = type === 'enter' ? 0 : 1;
     var start = type === 'enter' ? 1 : 0;
     var end = type === 'enter' ? 0 : 1;
-    var animate = _this5.getAnimData(props, key, i, enterOrLeave, end);
-    var startAnim = type === 'enter' && (props.forcedReplay || !_this5.childrenShow[key]) ? _this5.getAnimData(props, key, i, enterOrLeave, start) : null;
+    var animate = _this6.getAnimData(props, key, i, enterOrLeave, end);
+    var startAnim = type === 'enter' && (props.forcedReplay || !_this6.childrenShow[key]) ? _this6.getAnimData(props, key, i, enterOrLeave, start) : null;
     var ease = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.ease, key, i)[enterOrLeave];
     var duration = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.duration, key, i)[enterOrLeave];
     if (Array.isArray(ease)) {
@@ -772,18 +799,18 @@ var _initialiseProps = function _initialiseProps() {
   };
 
   this.getTweenEnterOrLeaveData = function (key, i, delay, type) {
-    var animateData = _this5.getTweenData(key, i, type);
+    var animateData = _this6.getTweenData(key, i, type);
     var startAnim = animateData.startAnim;
     var animate = animateData.animate;
-    var onStart = (type === 'enter' ? _this5.enterBegin : _this5.leaveBegin).bind(_this5, key);
-    var onComplete = (type === 'enter' ? _this5.enterComplete : _this5.leaveComplete).bind(_this5, key);
+    var onStart = (type === 'enter' ? _this6.enterBegin : _this6.leaveBegin).bind(_this6, key);
+    var onComplete = (type === 'enter' ? _this6.enterComplete : _this6.leaveComplete).bind(_this6, key);
     if (animateData.isArray) {
       var length = animate.length - 1;
       var animation = [];
       var startArray = [];
       animate.forEach(function (leave, ii) {
         var start = startAnim && startAnim[ii];
-        var animObj = _this5.getTweenSingleData(start, leave, animateData.ease, animateData.duration / length, !ii ? delay : 0, !ii ? onStart : null, ii === length ? onComplete : null);
+        var animObj = _this6.getTweenSingleData(start, leave, animateData.ease, animateData.duration / length, !ii ? delay : 0, !ii ? onStart : null, ii === length ? onComplete : null);
         animation.push(animObj.animation);
         if (animObj.startAnimate) {
           startArray.push(animObj.startAnimate);
@@ -791,7 +818,7 @@ var _initialiseProps = function _initialiseProps() {
       });
       return startArray.concat(animation);
     }
-    animateData = _this5.getTweenSingleData(startAnim, animate, animateData.ease, animateData.duration, delay, onStart, onComplete);
+    animateData = _this6.getTweenSingleData(startAnim, animate, animateData.ease, animateData.duration, delay, onStart, onComplete);
     return [animateData.startAnimate, animateData.animation].filter(function (item) {
       return item;
     });
@@ -803,24 +830,24 @@ var _initialiseProps = function _initialiseProps() {
      * getTweenAnimConfig or getTweenType 第一个为到达的位置， 第二个为开始的位置。
      * 用 tween-one 的数组来实现老的动画逻辑。。。
      */
-    return props.animConfig ? _this5.getTweenAnimConfig(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.animConfig, key, i)[enterOrLeave], startOrEnd, enterOrLeave) : _this5.getTweenType(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.type, key, i)[enterOrLeave], startOrEnd);
+    return props.animConfig ? _this6.getTweenAnimConfig(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.animConfig, key, i)[enterOrLeave], startOrEnd, enterOrLeave) : _this6.getTweenType(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.type, key, i)[enterOrLeave], startOrEnd);
   };
 
   this.getChildrenToRender = function (child) {
-    var _props = _this5.props,
-        forcedReplay = _props.forcedReplay,
-        leaveReverse = _props.leaveReverse,
-        delay = _props.delay,
-        interval = _props.interval;
+    var _props2 = _this6.props,
+        forcedReplay = _props2.forcedReplay,
+        leaveReverse = _props2.leaveReverse,
+        delay = _props2.delay,
+        interval = _props2.interval;
 
     if (!child || !child.key) {
       return child;
     }
     var key = child.key;
-    if (!_this5.state.childrenShow[key]) {
+    if (!_this6.state.childrenShow[key]) {
       return null;
     }
-    var i = _this5.keysToLeave.indexOf(key);
+    var i = _this6.keysToLeave.indexOf(key);
     var animation = void 0;
     var isFunc = typeof child.type === 'function';
     var forcedJudg = isFunc ? {} : null;
@@ -831,126 +858,134 @@ var _initialiseProps = function _initialiseProps() {
         }
       });
     }
+    var ref = function ref() {
+      delete _this6.childRefs[key];
+    };
     // 处理出场
     if (i >= 0) {
-      if (_this5.leaveUnfinishedChild.indexOf(key) >= 0) {
-        return _this5.saveTweenOneTag[key];
+      if (_this6.leaveUnfinishedChild.indexOf(key) >= 0) {
+        return _this6.saveTweenOneTag[key];
       }
       var $interval = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(interval, key, i)[1];
       var $delay = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(delay, key, i)[1];
       // 减掉 leaveUnfinishedChild 里的个数，因为 leaveUnfinishedChild 是旧的出场，不应该计录在队列里。
-      var order = (leaveReverse ? _this5.keysToLeave.length - i - 1 : i) - _this5.leaveUnfinishedChild.length;
+      var order = (leaveReverse ? _this6.keysToLeave.length - i - 1 : i) - _this6.leaveUnfinishedChild.length;
       $delay = $interval * order + $delay;
-      animation = _this5.getTweenEnterOrLeaveData(key, i, $delay, 'leave');
+      animation = _this6.getTweenEnterOrLeaveData(key, i, $delay, 'leave');
     } else {
       // 处理进场;
-      i = _this5.keysToEnterToCallback.indexOf(key);
+      i = _this6.keysToEnterToCallback.indexOf(key);
+      ref = function ref(c) {
+        _this6.childRefs[key] = c && c.currentRef ? c.currentRef : c;
+      };
       // appear=false 时，设定 childrenShow 和 tweenToEnter 都为 true, 这里不渲染 animation;
-      if (_this5.tweenToEnter[key] && !forcedReplay) {
+      if (_this6.tweenToEnter[key] && !forcedReplay) {
         // 如果是已进入的，将直接返回标签。。
         return Object(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(__WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["b" /* default */], {
           key: key,
           component: child.type,
           forcedJudg: forcedJudg,
-          componentProps: child.props
+          componentProps: child.props,
+          ref: ref
         });
-      } else if (!_this5.tweenToEnter[key]) {
-        animation = _this5.enterAnimation[key] || _this5.getTweenEnterOrLeaveData(key, i, 0, 'enter');
-        _this5.enterAnimation[key] = animation;
+      } else if (!_this6.tweenToEnter[key]) {
+        animation = _this6.enterAnimation[key] || _this6.getTweenEnterOrLeaveData(key, i, 0, 'enter');
+        _this6.enterAnimation[key] = animation;
       }
     }
-    var paused = _this5.keysToEnterPaused[key] && _this5.keysToLeave.indexOf(key) === -1;
+    var paused = _this6.keysToEnterPaused[key] && _this6.keysToLeave.indexOf(key) === -1;
     animation = paused ? null : animation;
     var tag = Object(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(__WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["b" /* default */], {
       key: key,
       component: child.type,
       forcedJudg: forcedJudg,
       componentProps: child.props,
-      animation: animation
+      animation: animation,
+      ref: ref
     });
-    _this5.saveTweenOneTag[key] = tag;
+    _this6.saveTweenOneTag[key] = tag;
     return tag;
   };
 
   this.performEnter = function (key, i) {
-    var interval = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(_this5.props.interval, key, i)[0];
-    var delay = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(_this5.props.delay, key, i)[0];
-    _this5.placeholderTimeoutIds[key] = __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].timeout(_this5.performEnterBegin.bind(_this5, key), interval * i + delay);
-    if (_this5.keysToEnter.indexOf(key) >= 0) {
-      _this5.keysToEnter.splice(_this5.keysToEnter.indexOf(key), 1);
+    var interval = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(_this6.props.interval, key, i)[0];
+    var delay = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(_this6.props.delay, key, i)[0];
+    _this6.placeholderTimeoutIds[key] = __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].timeout(_this6.performEnterBegin.bind(_this6, key), interval * i + delay);
+    if (_this6.keysToEnter.indexOf(key) >= 0) {
+      _this6.keysToEnter.splice(_this6.keysToEnter.indexOf(key), 1);
     }
   };
 
   this.performEnterBegin = function (key) {
-    var childrenShow = _this5.state.childrenShow;
+    var childrenShow = _this6.state.childrenShow;
     childrenShow[key] = true;
-    delete _this5.keysToEnterPaused[key];
-    __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this5.placeholderTimeoutIds[key]);
-    delete _this5.placeholderTimeoutIds[key];
-    _this5.setState({ childrenShow: childrenShow });
+    delete _this6.keysToEnterPaused[key];
+    __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this6.placeholderTimeoutIds[key]);
+    delete _this6.placeholderTimeoutIds[key];
+    _this6.setState({ childrenShow: childrenShow });
   };
 
   this.performLeave = function (key) {
-    __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this5.placeholderTimeoutIds[key]);
-    delete _this5.placeholderTimeoutIds[key];
+    __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this6.placeholderTimeoutIds[key]);
+    delete _this6.placeholderTimeoutIds[key];
   };
 
   this.enterBegin = function (key, e) {
     var elem = e.target;
-    var animatingClassName = _this5.props.animatingClassName;
+    var animatingClassName = _this6.props.animatingClassName;
     elem.className = elem.className.replace(animatingClassName[1], '');
     if (elem.className.indexOf(animatingClassName[0]) === -1) {
       elem.className = (elem.className + ' ' + animatingClassName[0]).trim();
     }
-    _this5.childrenShow[key] = true;
+    _this6.childrenShow[key] = true;
   };
 
   this.enterComplete = function (key, e) {
-    if (_this5.keysToEnterPaused[key] || _this5.keysToLeave.indexOf(key) >= 0) {
+    if (_this6.keysToEnterPaused[key] || _this6.keysToLeave.indexOf(key) >= 0) {
       return;
     }
     var elem = e.target;
-    elem.className = elem.className.replace(_this5.props.animatingClassName[0], '').trim();
-    _this5.tweenToEnter[key] = true;
-    delete _this5.enterAnimation[key];
-    _this5.props.onEnd({ key: key, type: 'enter', target: elem });
+    elem.className = elem.className.replace(_this6.props.animatingClassName[0], '').trim();
+    _this6.tweenToEnter[key] = true;
+    delete _this6.enterAnimation[key];
+    _this6.props.onEnd({ key: key, type: 'enter', target: elem });
   };
 
   this.leaveBegin = function (key, e) {
     var elem = e.target;
-    var animatingClassName = _this5.props.animatingClassName;
+    var animatingClassName = _this6.props.animatingClassName;
     elem.className = elem.className.replace(animatingClassName[0], '');
     if (elem.className.indexOf(animatingClassName[1]) === -1) {
       elem.className = (elem.className + ' ' + animatingClassName[1]).trim();
     }
-    delete _this5.tweenToEnter[key];
+    delete _this6.tweenToEnter[key];
   };
 
   this.leaveComplete = function (key, e) {
     // 切换时同时触发 onComplete。 手动跳出。。。
-    if (_this5.keysToEnterToCallback.indexOf(key) >= 0) {
+    if (_this6.keysToEnterToCallback.indexOf(key) >= 0) {
       return;
     }
-    var childrenShow = _this5.state.childrenShow;
+    var childrenShow = _this6.state.childrenShow;
     delete childrenShow[key];
-    delete _this5.saveTweenOneTag[key];
-    delete _this5.childrenShow[key];
-    if (_this5.keysToLeave.indexOf(key) >= 0) {
-      _this5.keysToLeave.splice(_this5.keysToLeave.indexOf(key), 1);
+    delete _this6.saveTweenOneTag[key];
+    delete _this6.childrenShow[key];
+    if (_this6.keysToLeave.indexOf(key) >= 0) {
+      _this6.keysToLeave.splice(_this6.keysToLeave.indexOf(key), 1);
     }
-    var needLeave = _this5.keysToLeave.some(function (c) {
+    var needLeave = _this6.keysToLeave.some(function (c) {
       return childrenShow[c];
     });
     if (!needLeave) {
-      var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["b" /* getChildrenFromProps */])(_this5.props));
-      _this5.setState({
+      var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["b" /* getChildrenFromProps */])(_this6.props));
+      _this6.setState({
         children: currentChildren,
         childrenShow: childrenShow
       });
     }
     var elem = e.target;
-    elem.className = elem.className.replace(_this5.props.animatingClassName[1], '').trim();
-    _this5.props.onEnd({ key: key, type: 'leave', target: elem });
+    elem.className = elem.className.replace(_this6.props.animatingClassName[1], '').trim();
+    _this6.props.onEnd({ key: key, type: 'leave', target: elem });
   };
 };
 
@@ -959,7 +994,7 @@ QueueAnim.isQueueAnim = true;
 
 /***/ }),
 
-/***/ 487:
+/***/ 498:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1061,7 +1096,7 @@ function getChildrenFromProps(props) {
 
 /***/ }),
 
-/***/ 488:
+/***/ 499:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1105,7 +1140,7 @@ function getChildrenFromProps(props) {
 
 /***/ }),
 
-/***/ 64:
+/***/ 65:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1113,7 +1148,7 @@ function getChildrenFromProps(props) {
 
 exports.__esModule = true;
 
-var _from = __webpack_require__(111);
+var _from = __webpack_require__(109);
 
 var _from2 = _interopRequireDefault(_from);
 
@@ -1133,5 +1168,5 @@ exports.default = function (arr) {
 
 /***/ })
 
-},[483]);
+},[494]);
 //# sourceMappingURL=group.js.map
