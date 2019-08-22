@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
+import { polyfill } from 'react-lifecycles-compat';
 
 import { objectEqual } from './util';
 import Tween from './Tween';
@@ -39,6 +40,83 @@ class TweenOne extends Component {
     attr: 'style',
     onChange: noop,
   };
+
+  static getDerivedStateFromProps(props, { prevProps, $self }) {
+    const nextState = {
+      prevProps: props,
+    };
+    if (prevProps) {
+      if (!$self.tween && !$self.dom) {
+        $self.updateAnim = true;
+        return;
+      }
+
+      // 动画处理
+      const newAnimation = props.animation;
+      const currentAnimation = prevProps.animation;
+      const equal = objectEqual(currentAnimation, newAnimation);
+      if (!equal) {
+        if (props.resetStyle && $self.tween) {
+          $self.tween.resetDefaultStyle();
+        }
+        $self.updateAnim = true;
+      }
+
+      // 跳帧事件 moment;
+      const nextMoment = props.moment;
+      if (typeof nextMoment === 'number' && nextMoment !== prevProps.moment) {
+
+        if ($self.tween && !$self.updateAnim) {
+          $self.startMoment = nextMoment;
+          $self.startTime = ticker.time;
+          if (props.paused) {
+            $self.raf();
+          }
+          if ($self.tween.progressTime >= $self.tween.totalTime) {
+            $self.play();
+          }
+        } else {
+          $self.updateAnim = true;
+        }
+      }
+
+      // 暂停倒放
+      if ($self.paused !== props.paused || $self.reverse !== props.reverse) {
+        $self.paused = props.paused;
+        $self.reverse = props.reverse;
+        if ($self.paused) {
+          $self.cancelRequestAnimationFrame();
+        } else if ($self.reverse && props.reverseDelay) {
+          $self.cancelRequestAnimationFrame();
+          ticker.timeout($self.restart, props.reverseDelay);
+        } else {
+          // 在 form 状态下，暂停时拉 moment 时，start 有值恢复播放，在 delay 的时间没有处理。。
+          if ($self.tween) {
+            $self.tween.resetAnimData();
+            $self.tween.resetDefaultStyle();
+          }
+          if (!$self.updateAnim) {
+            $self.restart();
+          }
+        }
+      }
+
+      const styleEqual = objectEqual(prevProps.style, props.style);
+      if (!styleEqual) {
+        // 在动画时更改了 style, 作为更改开始数值。
+        if ($self.tween) {
+          $self.tween.reStart(props.style, prevProps.style,
+            $self.tween.progressTime < $self.tween.totalTime);
+          if ($self.paused) {
+            $self.raf();
+          }
+        }
+      }
+      $self.setForcedJudg(props);
+    }
+    return nextState;// eslint-disable-line
+  }
+
   constructor(props) {
     super(props);
     this.rafID = -1;
@@ -49,6 +127,9 @@ class TweenOne extends Component {
     this.forced = {};
     this.currentRef = null;
     this.setForcedJudg(props);
+    this.state = {
+      $self: this,
+    };
   }
 
   componentDidMount() {
@@ -56,76 +137,6 @@ class TweenOne extends Component {
     if (this.dom && this.dom.nodeName !== '#text') {
       this.start();
     }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!this.tween && !this.dom) {
-      this.updateAnim = true;
-      return;
-    }
-
-    // 动画处理
-    const newAnimation = nextProps.animation;
-    const currentAnimation = this.props.animation;
-    const equal = objectEqual(currentAnimation, newAnimation);
-    if (!equal) {
-      if (nextProps.resetStyle && this.tween) {
-        this.tween.resetDefaultStyle();
-      }
-      this.updateAnim = true;
-    }
-
-    // 跳帧事件 moment;
-    const nextMoment = nextProps.moment;
-    if (typeof nextMoment === 'number' && nextMoment !== this.props.moment) {
-      if (this.tween && !this.updateAnim) {
-        this.startMoment = nextMoment;
-        this.startTime = ticker.time;
-        if (nextProps.paused) {
-          this.raf();
-        }
-        if (this.tween.progressTime >= this.tween.totalTime) {
-          this.play();
-        }
-      } else {
-
-        this.updateAnim = true;
-      }
-    }
-
-    // 暂停倒放
-    if (this.paused !== nextProps.paused || this.reverse !== nextProps.reverse) {
-      this.paused = nextProps.paused;
-      this.reverse = nextProps.reverse;
-      if (this.paused) {
-        this.cancelRequestAnimationFrame();
-      } else if (this.reverse && nextProps.reverseDelay) {
-        this.cancelRequestAnimationFrame();
-        ticker.timeout(this.restart, nextProps.reverseDelay);
-      } else {
-        // 在 form 状态下，暂停时拉 moment 时，start 有值恢复播放，在 delay 的时间没有处理。。
-        if (this.tween) {
-          this.tween.resetAnimData();
-          this.tween.resetDefaultStyle();
-        }
-        if (!this.updateAnim) {
-          this.restart();
-        }
-      }
-    }
-
-    const styleEqual = objectEqual(this.props.style, nextProps.style);
-    if (!styleEqual) {
-      // 在动画时更改了 style, 作为更改开始数值。
-      if (this.tween) {
-        this.tween.reStart(nextProps.style, this.props.style,
-          this.tween.progressTime < this.tween.totalTime);
-        if (this.paused) {
-          this.raf();
-        }
-      }
-    }
-    this.setForcedJudg(nextProps);
   }
 
   componentDidUpdate() {
@@ -348,4 +359,4 @@ class TweenOne extends Component {
   }
 }
 TweenOne.isTweenOne = true;
-export default TweenOne;
+export default polyfill(TweenOne);

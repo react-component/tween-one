@@ -1,5 +1,7 @@
 import React, { Component, createElement } from 'react';
 import PropTypes from 'prop-types';
+import { polyfill } from 'react-lifecycles-compat';
+
 import TweenOne from './TweenOne';
 import {
   dataToArray,
@@ -14,6 +16,22 @@ function noop() {
 }
 
 class TweenOneGroup extends Component {
+  static getDerivedStateFromProps(props, { prevProps, $self }) {
+    const nextState = {
+      prevProps: props,
+    };
+    if (prevProps) {
+      const nextChildren = toArrayChildren(props.children);
+      if (Object.keys($self.isTween).length && !props.exclusive) {
+        $self.animQueue.push(nextChildren);
+        return;
+      }
+      const currentChildren = toArrayChildren($self.currentChildren);
+      nextState.children = $self.changeChildren(nextChildren, currentChildren);
+    }
+    return nextState; // eslint-disable-line
+  }
+
   constructor(props) {
     super(props);
     this.keysToEnter = [];
@@ -27,21 +45,12 @@ class TweenOneGroup extends Component {
     this.currentChildren = toArrayChildren(getChildrenFromProps(this.props));
     this.state = {
       children,
+      $self: this,
     };
   }
 
   componentDidMount() {
     this.onEnterBool = true;
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const nextChildren = toArrayChildren(nextProps.children);
-    if (Object.keys(this.isTween).length && !nextProps.exclusive) {
-      this.animQueue.push(nextChildren);
-      return;
-    }
-    const currentChildren = toArrayChildren(this.currentChildren);
-    this.changeChildren(nextChildren, currentChildren);
   }
 
   onChange = (animation, key, type, obj) => {
@@ -159,7 +168,10 @@ class TweenOneGroup extends Component {
 
   reAnimQueue = () => {
     if (!Object.keys(this.isTween).length && this.animQueue.length) {
-      this.changeChildren(this.animQueue[this.animQueue.length - 1], this.state.children);
+      const children = this.changeChildren(this.animQueue[this.animQueue.length - 1], this.state.children);
+      this.setState({
+        children,
+      });
       this.animQueue = [];
     }
   }
@@ -195,9 +207,7 @@ class TweenOneGroup extends Component {
       }
     });
     this.currentChildren = newChildren;
-    this.setState({
-      children: newChildren,
-    });
+    return newChildren;
   }
 
   render() {
@@ -250,4 +260,4 @@ TweenOneGroup.defaultProps = {
   exclusive: false,
 };
 TweenOneGroup.isTweenOneGroup = true;
-export default TweenOneGroup;
+export default polyfill(TweenOneGroup);

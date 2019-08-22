@@ -12,15 +12,13 @@ import BezierPlugin from '../src/plugin/BezierPlugin';
 
 plugins.push(BezierPlugin);
 
-const Div = (props) => {
-  return props.show ? <div>text</div> : null;
-};
+const Div = React.forwardRef(({ show }, ref) => {
+  return show ? <div ref={ref}>text</div> : null;
+});
 
 Div.propTypes = {
   show: PropTypes.bool,
-  children: PropTypes.any,
 }
-
 describe('rc-tween-one', () => {
   let div;
   let instance;
@@ -131,7 +129,7 @@ describe('rc-tween-one', () => {
         repeat: -1,
         yoyo: true,
       },
-      style: { top: 0},
+      style: { top: 0 },
     });
     const child = TestUtils.findRenderedDOMComponentWithTag(instance, 'div');
     console.log('start:', child.style.top);
