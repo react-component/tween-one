@@ -108,7 +108,7 @@ module.exports = function (iterator, fn, value, entries) {
 
 // check on default Array iterator
 var Iterators = __webpack_require__(63);
-var ITERATOR = __webpack_require__(30)('iterator');
+var ITERATOR = __webpack_require__(29)('iterator');
 var ArrayProto = Array.prototype;
 
 module.exports = function (it) {
@@ -138,7 +138,7 @@ module.exports = function (object, index, value) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var classof = __webpack_require__(154);
-var ITERATOR = __webpack_require__(30)('iterator');
+var ITERATOR = __webpack_require__(29)('iterator');
 var Iterators = __webpack_require__(63);
 module.exports = __webpack_require__(27).getIteratorMethod = function (it) {
   if (it != undefined) return it[ITERATOR]
@@ -154,7 +154,7 @@ module.exports = __webpack_require__(27).getIteratorMethod = function (it) {
 
 // getting tag from 19.1.3.6 Object.prototype.toString()
 var cof = __webpack_require__(103);
-var TAG = __webpack_require__(30)('toStringTag');
+var TAG = __webpack_require__(29)('toStringTag');
 // ES3 wrong here
 var ARG = cof(function () { return arguments; }()) == 'Arguments';
 
@@ -182,7 +182,7 @@ module.exports = function (it) {
 /***/ 155:
 /***/ (function(module, exports, __webpack_require__) {
 
-var ITERATOR = __webpack_require__(30)('iterator');
+var ITERATOR = __webpack_require__(29)('iterator');
 var SAFE_CLOSING = false;
 
 try {
@@ -409,10 +409,10 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_possibleConstructorReturn__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_createClass__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_createClass__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_babel_runtime_helpers_inherits__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_babel_runtime_helpers_inherits__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_react__ = __webpack_require__(0);
@@ -420,8 +420,11 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_prop_types__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__utils__ = __webpack_require__(498);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__animTypes__ = __webpack_require__(499);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_react_lifecycles_compat__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__utils__ = __webpack_require__(498);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__animTypes__ = __webpack_require__(499);
+
+
 
 
 
@@ -442,6 +445,125 @@ var typeDefault = ['displayName', 'propTypes', 'getDefaultProps', 'defaultProps'
 var QueueAnim = function (_React$Component) {
   __WEBPACK_IMPORTED_MODULE_6_babel_runtime_helpers_inherits___default()(QueueAnim, _React$Component);
 
+  __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_createClass___default()(QueueAnim, null, [{
+    key: 'getDerivedStateFromProps',
+    value: function getDerivedStateFromProps(props, _ref) {
+      var prevProps = _ref.prevProps,
+          children = _ref.children,
+          prevChildShow = _ref.childrenShow,
+          $self = _ref.$self;
+
+      var nextState = {
+        prevProps: props
+      };
+      if (prevProps && !$self.isInsideRender) {
+        var nextChildren = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["d" /* toArrayChildren */])(props.children).filter(function (c) {
+          return c;
+        });
+        var currentChildren = $self.originalChildren.filter(function (item) {
+          return item;
+        });
+        if (children.length) {
+          /**
+           * 多次刷新处理
+           * 如果 state.children 里还有元素，元素还在动画，当前子级加回在出场的子级;
+           */
+          var leaveChild = children.filter(function (item) {
+            return item && $self.keysToLeave.indexOf(item.key) >= 0;
+          });
+          $self.leaveUnfinishedChild = leaveChild.map(function (item) {
+            return item.key;
+          });
+          /**
+           * 获取 leaveChild 在 state.children 里的序列，再将 leaveChild 和 currentChildren 的重新排序。
+           * 避逸 state.children 在 leaveComplete 里没全部完成不触发，
+           * leaveComplete 里如果动画完成了是会删除 keyToLeave，但 state.children 是在全部出场后才触发清除，
+           * 所以这里需要处理出场完成的元素做清除。
+           */
+          var stateChildren = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["c" /* mergeChildren */])(currentChildren, children);
+          var currentChild = [];
+          var childReOrder = function childReOrder(child) {
+            child.forEach(function (item) {
+              var order = stateChildren.indexOf(item);
+              // -1 不应该出现的情况，直接插入数组后面.
+              if (order === -1) {
+                currentChild.push(item);
+              } else {
+                currentChild.splice(order, 0, item);
+              }
+            });
+          };
+          childReOrder(leaveChild);
+          childReOrder(currentChildren);
+          currentChildren = currentChild.filter(function (c) {
+            return c;
+          });
+        }
+        var newChildren = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["c" /* mergeChildren */])(currentChildren, nextChildren);
+
+        var childrenShow = !newChildren.length ? {} : prevChildShow;
+        $self.keysToEnterPaused = {};
+        var emptyBool = !nextChildren.length && !currentChildren.length && children.length;
+        /**
+         * 在出场没结束时，childrenShow 里的值将不会清除。
+         * 再触发进场时， childrenShow 里的值是保留着的, 设置了 forcedReplay 将重新播放进场。
+         */
+        if (!emptyBool) {
+          // 空子级状态下刷新不做处理
+          var nextKeys = nextChildren.map(function (c) {
+            return c.key;
+          });
+          $self.keysToLeave.forEach(function (key) {
+            // 将所有在出场里的停止掉。避免间隔性出现
+            if (nextKeys.indexOf(key) >= 0) {
+              $self.keysToEnterPaused[key] = true;
+              currentChildren = currentChildren.filter(function (item) {
+                return item.key !== key;
+              });
+              if (props.forcedReplay) {
+                // 清掉所有出场的。
+                delete childrenShow[key];
+              }
+            }
+          });
+        }
+
+        $self.keysToEnter = [];
+        $self.keysToLeave = [];
+
+        // need render to avoid update
+        nextState.childrenShow = childrenShow;
+        nextState.children = newChildren;
+
+        nextChildren.forEach(function (c) {
+          if (!c) {
+            return;
+          }
+          var key = c.key;
+          var hasPrev = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["a" /* findChildInChildrenByKey */])(currentChildren, key);
+          if (!hasPrev && key) {
+            $self.keysToEnter.push(key);
+          }
+        });
+
+        currentChildren.forEach(function (c) {
+          if (!c) {
+            return;
+          }
+          var key = c.key;
+          var hasNext = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["a" /* findChildInChildrenByKey */])(nextChildren, key);
+          if (!hasNext && key) {
+            $self.keysToLeave.push(key);
+            __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear($self.placeholderTimeoutIds[key]);
+            delete $self.placeholderTimeoutIds[key];
+          }
+        });
+        $self.keysToEnterToCallback = [].concat(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray___default()($self.keysToEnter));
+      }
+      return nextState;
+    }
+  }]);
+
   function QueueAnim(props) {
     __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_classCallCheck___default()(this, QueueAnim);
 
@@ -450,7 +572,7 @@ var QueueAnim = function (_React$Component) {
      * 记录强制切换时是否需要添加 animation;
      * 如 enter 后, leave -> enter，样式是没有发生变化，就不需要添加 animation 属性。
      */
-    var _this = __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_possibleConstructorReturn___default()(this, (QueueAnim.__proto__ || Object.getPrototypeOf(QueueAnim)).call(this, props));
+    var _this = __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn___default()(this, (QueueAnim.__proto__ || Object.getPrototypeOf(QueueAnim)).call(this, props));
 
     _initialiseProps.call(_this);
 
@@ -508,7 +630,7 @@ var QueueAnim = function (_React$Component) {
      */
     _this.currentRef = null;
     // 第一次进入，默认进场
-    var children = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["b" /* getChildrenFromProps */])(props));
+    var children = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_11__utils__["b" /* getChildrenFromProps */])(props));
     var childrenShow = {};
     children.forEach(function (child) {
       if (!child || !child.key) {
@@ -522,15 +644,16 @@ var QueueAnim = function (_React$Component) {
       }
     });
     _this.keysToEnterToCallback = [].concat(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray___default()(_this.keysToEnter));
-    _this.originalChildren = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["b" /* getChildrenFromProps */])(props));
+    _this.originalChildren = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_11__utils__["b" /* getChildrenFromProps */])(props));
     _this.state = {
       children: children,
-      childrenShow: childrenShow
+      childrenShow: childrenShow,
+      $self: _this
     };
     return _this;
   }
 
-  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(QueueAnim, [{
+  __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_createClass___default()(QueueAnim, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
       if (this.props.appear) {
@@ -538,131 +661,22 @@ var QueueAnim = function (_React$Component) {
       }
     }
   }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      var _this2 = this;
-
-      var nextChildren = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["d" /* toArrayChildren */])(nextProps.children).filter(function (item) {
-        return item;
-      });
-      var currentChildren = this.originalChildren.filter(function (item) {
-        return item;
-      });
-      if (this.state.children.length) {
-        /**
-         * 多次刷新处理
-         * 如果 state.children 里还有元素，元素还在动画，当前子级加回在出场的子级;
-         */
-        var leaveChild = this.state.children.filter(function (item) {
-          return item && _this2.keysToLeave.indexOf(item.key) >= 0;
-        });
-        this.leaveUnfinishedChild = leaveChild.map(function (item) {
-          return item.key;
-        });
-        /**
-         * 获取 leaveChild 在 state.children 里的序列，再将 leaveChild 和 currentChildren 的重新排序。
-         * 避逸 state.children 在 leaveComplete 里没全部完成不触发，
-         * leaveComplete 里如果动画完成了是会删除 keyToLeave，但 state.children 是在全部出场后才触发清除，
-         * 所以这里需要处理出场完成的元素做清除。
-         */
-        var stateChildrens = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["c" /* mergeChildren */])(currentChildren, this.state.children);
-        var currentChild = [];
-        var childReOrder = function childReOrder(child) {
-          child.forEach(function (item) {
-            var order = stateChildrens.indexOf(item);
-            // -1 不应该出现的情况，直接插入数组后面.
-            if (order === -1) {
-              currentChild.push(item);
-            } else {
-              currentChild.splice(order, 0, item);
-            }
-          });
-        };
-        childReOrder(leaveChild);
-        childReOrder(currentChildren);
-        currentChildren = currentChild.filter(function (c) {
-          return c;
-        });
-      }
-      var newChildren = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["c" /* mergeChildren */])(currentChildren, nextChildren);
-
-      var childrenShow = !newChildren.length ? {} : this.state.childrenShow;
-      this.keysToEnterPaused = {};
-      var emptyBool = !nextChildren.length && !currentChildren.length && this.state.children.length;
-      /**
-       * 在出场没结束时，childrenShow 里的值将不会清除。
-       * 再触发进场时， childrenShow 里的值是保留着的, 设置了 forcedReplay 将重新播放进场。
-       */
-      if (!emptyBool) {
-        // 空子级状态下刷新不做处理
-        var nextKeys = nextChildren.map(function (c) {
-          return c.key;
-        });
-        this.keysToLeave.forEach(function (key) {
-          // 将所有在出场里的停止掉。避免间隔性出现
-          if (nextKeys.indexOf(key) >= 0) {
-            _this2.keysToEnterPaused[key] = true;
-            currentChildren = currentChildren.filter(function (item) {
-              return item.key !== key;
-            });
-            if (nextProps.forcedReplay) {
-              // 清掉所有出场的。
-              delete childrenShow[key];
-            }
-          }
-        });
-      }
-
-      this.keysToEnter = [];
-      this.keysToLeave = [];
-
-      // need render to avoid update
-      this.setState({
-        childrenShow: childrenShow,
-        children: newChildren
-      });
-
-      nextChildren.forEach(function (c) {
-        if (!c) {
-          return;
-        }
-        var key = c.key;
-        var hasPrev = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["a" /* findChildInChildrenByKey */])(currentChildren, key);
-        if (!hasPrev && key) {
-          _this2.keysToEnter.push(key);
-        }
-      });
-
-      currentChildren.forEach(function (c) {
-        if (!c) {
-          return;
-        }
-        var key = c.key;
-        var hasNext = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["a" /* findChildInChildrenByKey */])(nextChildren, key);
-        if (!hasNext && key) {
-          _this2.keysToLeave.push(key);
-          __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this2.placeholderTimeoutIds[key]);
-          delete _this2.placeholderTimeoutIds[key];
-        }
-      });
-      this.keysToEnterToCallback = [].concat(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray___default()(this.keysToEnter));
-    }
-  }, {
     key: 'componentDidUpdate',
     value: function componentDidUpdate() {
-      this.originalChildren = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["b" /* getChildrenFromProps */])(this.props));
+      this.originalChildren = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_11__utils__["b" /* getChildrenFromProps */])(this.props));
       var keysToEnter = [].concat(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray___default()(this.keysToEnter));
       var keysToLeave = [].concat(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_toConsumableArray___default()(this.keysToLeave));
       keysToEnter.forEach(this.performEnter);
       keysToLeave.forEach(this.performLeave);
+      this.isInsideRender = false;
     }
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
-      var _this3 = this;
+      var _this2 = this;
 
       Object.keys(this.placeholderTimeoutIds).forEach(function (key) {
-        __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this3.placeholderTimeoutIds[key]);
+        __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this2.placeholderTimeoutIds[key]);
       });
       this.keysToEnter = [];
       this.keysToLeave = [];
@@ -671,17 +685,17 @@ var QueueAnim = function (_React$Component) {
   }, {
     key: 'getTweenType',
     value: function getTweenType(type, num) {
-      var data = __WEBPACK_IMPORTED_MODULE_11__animTypes__["a" /* default */][type];
+      var data = __WEBPACK_IMPORTED_MODULE_12__animTypes__["a" /* default */][type];
       return this.getTweenAnimConfig(data, num);
     }
   }, {
     key: 'getTweenAnimConfig',
     value: function getTweenAnimConfig(data, num, enterOrLeave) {
-      var _this4 = this;
+      var _this3 = this;
 
       if (Array.isArray(data)) {
         return data.map(function (item) {
-          return _this4.getTweenSingleConfig(item, num, enterOrLeave);
+          return _this3.getTweenSingleConfig(item, num, enterOrLeave);
         });
       }
       return this.getTweenSingleConfig(data, num, enterOrLeave);
@@ -689,7 +703,7 @@ var QueueAnim = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this5 = this;
+      var _this4 = this;
 
       var _props = this.props,
           component = _props.component,
@@ -707,10 +721,10 @@ var QueueAnim = function (_React$Component) {
           appear = _props.appear,
           tagProps = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['component', 'componentProps', 'interval', 'duration', 'delay', 'type', 'animConfig', 'ease', 'leaveReverse', 'animatingClassName', 'forcedReplay', 'onEnd', 'appear']);
 
-      var childrenToRender = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["d" /* toArrayChildren */])(this.state.children).map(this.getChildrenToRender);
+      var childrenToRender = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["d" /* toArrayChildren */])(this.state.children).map(this.getChildrenToRender);
       var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, tagProps, this.props.componentProps, {
         ref: function ref(c) {
-          _this5.currentRef = c;
+          _this4.currentRef = c;
         }
       });
       return Object(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(this.props.component, props, childrenToRender);
@@ -753,7 +767,7 @@ QueueAnim.defaultProps = {
 };
 
 var _initialiseProps = function _initialiseProps() {
-  var _this6 = this;
+  var _this5 = this;
 
   this.getTweenSingleConfig = function (data, num, enterOrLeave) {
     var obj = {};
@@ -768,14 +782,14 @@ var _initialiseProps = function _initialiseProps() {
   };
 
   this.getTweenData = function (key, i, type) {
-    var props = _this6.props;
+    var props = _this5.props;
     var enterOrLeave = type === 'enter' ? 0 : 1;
     var start = type === 'enter' ? 1 : 0;
     var end = type === 'enter' ? 0 : 1;
-    var animate = _this6.getAnimData(props, key, i, enterOrLeave, end);
-    var startAnim = type === 'enter' && (props.forcedReplay || !_this6.childrenShow[key]) ? _this6.getAnimData(props, key, i, enterOrLeave, start) : null;
-    var ease = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.ease, key, i)[enterOrLeave];
-    var duration = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.duration, key, i)[enterOrLeave];
+    var animate = _this5.getAnimData(props, key, i, enterOrLeave, end);
+    var startAnim = type === 'enter' && (props.forcedReplay || !_this5.childrenShow[key]) ? _this5.getAnimData(props, key, i, enterOrLeave, start) : null;
+    var ease = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["e" /* transformArguments */])(props.ease, key, i)[enterOrLeave];
+    var duration = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["e" /* transformArguments */])(props.duration, key, i)[enterOrLeave];
     if (Array.isArray(ease)) {
       ease = ease.map(function (num) {
         return num * 100;
@@ -799,18 +813,18 @@ var _initialiseProps = function _initialiseProps() {
   };
 
   this.getTweenEnterOrLeaveData = function (key, i, delay, type) {
-    var animateData = _this6.getTweenData(key, i, type);
+    var animateData = _this5.getTweenData(key, i, type);
     var startAnim = animateData.startAnim;
     var animate = animateData.animate;
-    var onStart = (type === 'enter' ? _this6.enterBegin : _this6.leaveBegin).bind(_this6, key);
-    var onComplete = (type === 'enter' ? _this6.enterComplete : _this6.leaveComplete).bind(_this6, key);
+    var onStart = (type === 'enter' ? _this5.enterBegin : _this5.leaveBegin).bind(_this5, key);
+    var onComplete = (type === 'enter' ? _this5.enterComplete : _this5.leaveComplete).bind(_this5, key);
     if (animateData.isArray) {
       var length = animate.length - 1;
       var animation = [];
       var startArray = [];
       animate.forEach(function (leave, ii) {
         var start = startAnim && startAnim[ii];
-        var animObj = _this6.getTweenSingleData(start, leave, animateData.ease, animateData.duration / length, !ii ? delay : 0, !ii ? onStart : null, ii === length ? onComplete : null);
+        var animObj = _this5.getTweenSingleData(start, leave, animateData.ease, animateData.duration / length, !ii ? delay : 0, !ii ? onStart : null, ii === length ? onComplete : null);
         animation.push(animObj.animation);
         if (animObj.startAnimate) {
           startArray.push(animObj.startAnimate);
@@ -818,7 +832,7 @@ var _initialiseProps = function _initialiseProps() {
       });
       return startArray.concat(animation);
     }
-    animateData = _this6.getTweenSingleData(startAnim, animate, animateData.ease, animateData.duration, delay, onStart, onComplete);
+    animateData = _this5.getTweenSingleData(startAnim, animate, animateData.ease, animateData.duration, delay, onStart, onComplete);
     return [animateData.startAnimate, animateData.animation].filter(function (item) {
       return item;
     });
@@ -830,11 +844,11 @@ var _initialiseProps = function _initialiseProps() {
      * getTweenAnimConfig or getTweenType 第一个为到达的位置， 第二个为开始的位置。
      * 用 tween-one 的数组来实现老的动画逻辑。。。
      */
-    return props.animConfig ? _this6.getTweenAnimConfig(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.animConfig, key, i)[enterOrLeave], startOrEnd, enterOrLeave) : _this6.getTweenType(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(props.type, key, i)[enterOrLeave], startOrEnd);
+    return props.animConfig ? _this5.getTweenAnimConfig(Object(__WEBPACK_IMPORTED_MODULE_11__utils__["e" /* transformArguments */])(props.animConfig, key, i)[enterOrLeave], startOrEnd, enterOrLeave) : _this5.getTweenType(Object(__WEBPACK_IMPORTED_MODULE_11__utils__["e" /* transformArguments */])(props.type, key, i)[enterOrLeave], startOrEnd);
   };
 
   this.getChildrenToRender = function (child) {
-    var _props2 = _this6.props,
+    var _props2 = _this5.props,
         forcedReplay = _props2.forcedReplay,
         leaveReverse = _props2.leaveReverse,
         delay = _props2.delay,
@@ -844,10 +858,10 @@ var _initialiseProps = function _initialiseProps() {
       return child;
     }
     var key = child.key;
-    if (!_this6.state.childrenShow[key]) {
+    if (!_this5.state.childrenShow[key]) {
       return null;
     }
-    var i = _this6.keysToLeave.indexOf(key);
+    var i = _this5.keysToLeave.indexOf(key);
     var animation = void 0;
     var isFunc = typeof child.type === 'function';
     var forcedJudg = isFunc ? {} : null;
@@ -859,27 +873,27 @@ var _initialiseProps = function _initialiseProps() {
       });
     }
     var ref = function ref() {
-      delete _this6.childRefs[key];
+      delete _this5.childRefs[key];
     };
     // 处理出场
     if (i >= 0) {
-      if (_this6.leaveUnfinishedChild.indexOf(key) >= 0) {
-        return _this6.saveTweenOneTag[key];
+      if (_this5.leaveUnfinishedChild.indexOf(key) >= 0) {
+        return _this5.saveTweenOneTag[key];
       }
-      var $interval = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(interval, key, i)[1];
-      var $delay = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(delay, key, i)[1];
+      var $interval = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["e" /* transformArguments */])(interval, key, i)[1];
+      var $delay = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["e" /* transformArguments */])(delay, key, i)[1];
       // 减掉 leaveUnfinishedChild 里的个数，因为 leaveUnfinishedChild 是旧的出场，不应该计录在队列里。
-      var order = (leaveReverse ? _this6.keysToLeave.length - i - 1 : i) - _this6.leaveUnfinishedChild.length;
+      var order = (leaveReverse ? _this5.keysToLeave.length - i - 1 : i) - _this5.leaveUnfinishedChild.length;
       $delay = $interval * order + $delay;
-      animation = _this6.getTweenEnterOrLeaveData(key, i, $delay, 'leave');
+      animation = _this5.getTweenEnterOrLeaveData(key, i, $delay, 'leave');
     } else {
       // 处理进场;
-      i = _this6.keysToEnterToCallback.indexOf(key);
+      i = _this5.keysToEnterToCallback.indexOf(key);
       ref = function ref(c) {
-        _this6.childRefs[key] = c && c.currentRef ? c.currentRef : c;
+        _this5.childRefs[key] = c && c.currentRef ? c.currentRef : c;
       };
       // appear=false 时，设定 childrenShow 和 tweenToEnter 都为 true, 这里不渲染 animation;
-      if (_this6.tweenToEnter[key] && !forcedReplay) {
+      if (_this5.tweenToEnter[key] && !forcedReplay) {
         // 如果是已进入的，将直接返回标签。。
         return Object(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(__WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["b" /* default */], {
           key: key,
@@ -888,12 +902,12 @@ var _initialiseProps = function _initialiseProps() {
           componentProps: child.props,
           ref: ref
         });
-      } else if (!_this6.tweenToEnter[key]) {
-        animation = _this6.enterAnimation[key] || _this6.getTweenEnterOrLeaveData(key, i, 0, 'enter');
-        _this6.enterAnimation[key] = animation;
+      } else if (!_this5.tweenToEnter[key]) {
+        animation = _this5.enterAnimation[key] || _this5.getTweenEnterOrLeaveData(key, i, 0, 'enter');
+        _this5.enterAnimation[key] = animation;
       }
     }
-    var paused = _this6.keysToEnterPaused[key] && _this6.keysToLeave.indexOf(key) === -1;
+    var paused = _this5.keysToEnterPaused[key] && _this5.keysToLeave.indexOf(key) === -1;
     animation = paused ? null : animation;
     var tag = Object(__WEBPACK_IMPORTED_MODULE_7_react__["createElement"])(__WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["b" /* default */], {
       key: key,
@@ -903,94 +917,96 @@ var _initialiseProps = function _initialiseProps() {
       animation: animation,
       ref: ref
     });
-    _this6.saveTweenOneTag[key] = tag;
+    _this5.saveTweenOneTag[key] = tag;
     return tag;
   };
 
   this.performEnter = function (key, i) {
-    var interval = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(_this6.props.interval, key, i)[0];
-    var delay = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["e" /* transformArguments */])(_this6.props.delay, key, i)[0];
-    _this6.placeholderTimeoutIds[key] = __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].timeout(_this6.performEnterBegin.bind(_this6, key), interval * i + delay);
-    if (_this6.keysToEnter.indexOf(key) >= 0) {
-      _this6.keysToEnter.splice(_this6.keysToEnter.indexOf(key), 1);
+    var interval = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["e" /* transformArguments */])(_this5.props.interval, key, i)[0];
+    var delay = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["e" /* transformArguments */])(_this5.props.delay, key, i)[0];
+    _this5.placeholderTimeoutIds[key] = __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].timeout(_this5.performEnterBegin.bind(_this5, key), interval * i + delay);
+    if (_this5.keysToEnter.indexOf(key) >= 0) {
+      _this5.keysToEnter.splice(_this5.keysToEnter.indexOf(key), 1);
     }
   };
 
   this.performEnterBegin = function (key) {
-    var childrenShow = _this6.state.childrenShow;
+    var childrenShow = _this5.state.childrenShow;
     childrenShow[key] = true;
-    delete _this6.keysToEnterPaused[key];
-    __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this6.placeholderTimeoutIds[key]);
-    delete _this6.placeholderTimeoutIds[key];
-    _this6.setState({ childrenShow: childrenShow });
+    delete _this5.keysToEnterPaused[key];
+    __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this5.placeholderTimeoutIds[key]);
+    delete _this5.placeholderTimeoutIds[key];
+    _this5.isInsideRender = true;
+    _this5.setState({ childrenShow: childrenShow });
   };
 
   this.performLeave = function (key) {
-    __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this6.placeholderTimeoutIds[key]);
-    delete _this6.placeholderTimeoutIds[key];
+    __WEBPACK_IMPORTED_MODULE_9_rc_tween_one__["c" /* ticker */].clear(_this5.placeholderTimeoutIds[key]);
+    delete _this5.placeholderTimeoutIds[key];
   };
 
   this.enterBegin = function (key, e) {
     var elem = e.target;
-    var animatingClassName = _this6.props.animatingClassName;
+    var animatingClassName = _this5.props.animatingClassName;
     elem.className = elem.className.replace(animatingClassName[1], '');
     if (elem.className.indexOf(animatingClassName[0]) === -1) {
       elem.className = (elem.className + ' ' + animatingClassName[0]).trim();
     }
-    _this6.childrenShow[key] = true;
+    _this5.childrenShow[key] = true;
   };
 
   this.enterComplete = function (key, e) {
-    if (_this6.keysToEnterPaused[key] || _this6.keysToLeave.indexOf(key) >= 0) {
+    if (_this5.keysToEnterPaused[key] || _this5.keysToLeave.indexOf(key) >= 0) {
       return;
     }
     var elem = e.target;
-    elem.className = elem.className.replace(_this6.props.animatingClassName[0], '').trim();
-    _this6.tweenToEnter[key] = true;
-    delete _this6.enterAnimation[key];
-    _this6.props.onEnd({ key: key, type: 'enter', target: elem });
+    elem.className = elem.className.replace(_this5.props.animatingClassName[0], '').trim();
+    _this5.tweenToEnter[key] = true;
+    delete _this5.enterAnimation[key];
+    _this5.props.onEnd({ key: key, type: 'enter', target: elem });
   };
 
   this.leaveBegin = function (key, e) {
     var elem = e.target;
-    var animatingClassName = _this6.props.animatingClassName;
+    var animatingClassName = _this5.props.animatingClassName;
     elem.className = elem.className.replace(animatingClassName[0], '');
     if (elem.className.indexOf(animatingClassName[1]) === -1) {
       elem.className = (elem.className + ' ' + animatingClassName[1]).trim();
     }
-    delete _this6.tweenToEnter[key];
+    delete _this5.tweenToEnter[key];
   };
 
   this.leaveComplete = function (key, e) {
     // 切换时同时触发 onComplete。 手动跳出。。。
-    if (_this6.keysToEnterToCallback.indexOf(key) >= 0) {
+    if (_this5.keysToEnterToCallback.indexOf(key) >= 0) {
       return;
     }
-    var childrenShow = _this6.state.childrenShow;
+    var childrenShow = _this5.state.childrenShow;
     delete childrenShow[key];
-    delete _this6.saveTweenOneTag[key];
-    delete _this6.childrenShow[key];
-    if (_this6.keysToLeave.indexOf(key) >= 0) {
-      _this6.keysToLeave.splice(_this6.keysToLeave.indexOf(key), 1);
+    delete _this5.saveTweenOneTag[key];
+    delete _this5.childrenShow[key];
+    if (_this5.keysToLeave.indexOf(key) >= 0) {
+      _this5.keysToLeave.splice(_this5.keysToLeave.indexOf(key), 1);
     }
-    var needLeave = _this6.keysToLeave.some(function (c) {
+    var needLeave = _this5.keysToLeave.some(function (c) {
       return childrenShow[c];
     });
     if (!needLeave) {
-      var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_10__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_10__utils__["b" /* getChildrenFromProps */])(_this6.props));
-      _this6.setState({
+      var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["d" /* toArrayChildren */])(Object(__WEBPACK_IMPORTED_MODULE_11__utils__["b" /* getChildrenFromProps */])(_this5.props));
+      _this5.isInsideRender = true;
+      _this5.setState({
         children: currentChildren,
         childrenShow: childrenShow
       });
     }
     var elem = e.target;
-    elem.className = elem.className.replace(_this6.props.animatingClassName[1], '').trim();
-    _this6.props.onEnd({ key: key, type: 'leave', target: elem });
+    elem.className = elem.className.replace(_this5.props.animatingClassName[1], '').trim();
+    _this5.props.onEnd({ key: key, type: 'leave', target: elem });
   };
 };
 
 QueueAnim.isQueueAnim = true;
-/* harmony default export */ __webpack_exports__["a"] = (QueueAnim);
+/* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_10_react_lifecycles_compat__["polyfill"])(QueueAnim));
 
 /***/ }),
 

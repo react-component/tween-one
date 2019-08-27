@@ -871,8 +871,7 @@ if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 /***/ }),
 /* 28 */,
-/* 29 */,
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var store = __webpack_require__(135)('wks');
@@ -889,7 +888,7 @@ $exports.store = store;
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(468)
@@ -971,6 +970,7 @@ module.exports.polyfill = function(object) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(25)))
 
 /***/ }),
+/* 31 */,
 /* 32 */,
 /* 33 */,
 /* 34 */,
@@ -2446,7 +2446,7 @@ module.exports = Object.create || function create(O, Properties) {
 
 var def = __webpack_require__(49).f;
 var has = __webpack_require__(61);
-var TAG = __webpack_require__(30)('toStringTag');
+var TAG = __webpack_require__(29)('toStringTag');
 
 module.exports = function (it, tag, stat) {
   if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
@@ -2457,7 +2457,7 @@ module.exports = function (it, tag, stat) {
 /* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports.f = __webpack_require__(30);
+exports.f = __webpack_require__(29);
 
 
 /***/ }),
@@ -3192,7 +3192,7 @@ var Iterators = __webpack_require__(63);
 var $iterCreate = __webpack_require__(427);
 var setToStringTag = __webpack_require__(141);
 var getPrototypeOf = __webpack_require__(240);
-var ITERATOR = __webpack_require__(30)('iterator');
+var ITERATOR = __webpack_require__(29)('iterator');
 var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
 var FF_ITERATOR = '@@iterator';
 var KEYS = 'keys';
@@ -3853,7 +3853,7 @@ __WEBPACK_IMPORTED_MODULE_0_tween_functions___default.a.path = function (_path, 
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_raf__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_raf__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_raf___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_raf__);
 /* eslint-disable func-names */
 
@@ -4322,7 +4322,7 @@ var setToStringTag = __webpack_require__(141);
 var IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-__webpack_require__(75)(IteratorPrototype, __webpack_require__(30)('iterator'), function () { return this; });
+__webpack_require__(75)(IteratorPrototype, __webpack_require__(29)('iterator'), function () { return this; });
 
 module.exports = function (Constructor, NAME, next) {
   Constructor.prototype = create(IteratorPrototype, { next: descriptor(1, next) });
@@ -4365,7 +4365,7 @@ __webpack_require__(431);
 var global = __webpack_require__(53);
 var hide = __webpack_require__(75);
 var Iterators = __webpack_require__(63);
-var TO_STRING_TAG = __webpack_require__(30)('toStringTag');
+var TO_STRING_TAG = __webpack_require__(29)('toStringTag');
 
 var DOMIterables = ('CSSRuleList,CSSStyleDeclaration,CSSValueList,ClientRectList,DOMRectList,DOMStringList,' +
   'DOMTokenList,DataTransferItemList,FileList,HTMLAllCollection,HTMLCollection,HTMLFormElement,HTMLSelectElement,' +
@@ -4473,7 +4473,7 @@ var $fails = __webpack_require__(77);
 var shared = __webpack_require__(135);
 var setToStringTag = __webpack_require__(141);
 var uid = __webpack_require__(105);
-var wks = __webpack_require__(30);
+var wks = __webpack_require__(29);
 var wksExt = __webpack_require__(142);
 var wksDefine = __webpack_require__(143);
 var enumKeys = __webpack_require__(438);
@@ -35778,7 +35778,7 @@ var TweenOneGroup = function (_Component) {
         var nextChildren = Object(__WEBPACK_IMPORTED_MODULE_9__util__["j" /* toArrayChildren */])(props.children);
         if (Object.keys($self.isTween).length && !props.exclusive) {
           $self.animQueue.push(nextChildren);
-          return;
+          return nextState;
         }
         var currentChildren = Object(__WEBPACK_IMPORTED_MODULE_9__util__["j" /* toArrayChildren */])($self.currentChildren);
         nextState.children = $self.changeChildren(nextChildren, currentChildren);

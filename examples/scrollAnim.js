@@ -32,10 +32,10 @@ exports.default = function (obj, keys) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react__ = __webpack_require__(0);
@@ -60,10 +60,26 @@ exports.default = function (obj, keys) {
 var ScrollOverPack = function (_ScrollElement) {
   __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits___default()(ScrollOverPack, _ScrollElement);
 
+  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(ScrollOverPack, null, [{
+    key: 'getDerivedStateFromProps',
+    value: function getDerivedStateFromProps(props, _ref) {
+      var prevProps = _ref.prevProps,
+          $self = _ref.$self;
+
+      var nextState = {
+        prevProps: props
+      };
+      if (prevProps && !$self.isInsideRender) {
+        nextState.children = Object(__WEBPACK_IMPORTED_MODULE_10__util__["d" /* toArrayChildren */])(props.children);
+      }
+      return nextState;
+    }
+  }]);
+
   function ScrollOverPack(props) {
     __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default()(this, ScrollOverPack);
 
-    var _this = __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn___default()(this, (ScrollOverPack.__proto__ || Object.getPrototypeOf(ScrollOverPack)).call(this, props));
+    var _this = __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default()(this, (ScrollOverPack.__proto__ || Object.getPrototypeOf(ScrollOverPack)).call(this, props));
 
     _this.scrollEventListener = function (e) {
       _this.getParam(e);
@@ -75,6 +91,7 @@ var ScrollOverPack = function (_ScrollElement) {
       var isTop = _this.elementShowHeight > _this.clientHeight + _this.leavePlayHeight;
       if (_this.enter || !replay && isTop) {
         if (!show) {
+          _this.isInsideRender = true;
           _this.setState({
             show: true
           });
@@ -88,6 +105,7 @@ var ScrollOverPack = function (_ScrollElement) {
         var topLeave = replay ? isTop : null;
         if (topLeave || bottomLeave) {
           if (show) {
+            _this.isInsideRender = true;
             _this.setState({
               show: false
             });
@@ -101,45 +119,49 @@ var ScrollOverPack = function (_ScrollElement) {
     _this.enter = false;
     _this.state = {
       show: false,
+      $self: _this,
       children: Object(__WEBPACK_IMPORTED_MODULE_10__util__["d" /* toArrayChildren */])(props.children)
     };
     return _this;
   }
 
-  __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default()(ScrollOverPack, [{
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
+  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(ScrollOverPack, [{
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
       var _this2 = this;
 
-      var show = this.state.show;
-      var always = nextProps.always,
-          children = nextProps.children;
+      if (this.isInsideRender) {
+        var always = this.props.always;
+        var show = this.state.show;
 
-      this.setState({
-        children: Object(__WEBPACK_IMPORTED_MODULE_10__util__["d" /* toArrayChildren */])(children)
-      }, function () {
         var inListener = __WEBPACK_IMPORTED_MODULE_8__EventDispatcher__["a" /* default */]._listeners.scroll && __WEBPACK_IMPORTED_MODULE_8__EventDispatcher__["a" /* default */]._listeners.scroll.some(function (c) {
           return c.n === _this2.eventType.split('.')[1];
         });
         if (always && !inListener) {
-          _this2.addScrollEvent();
+          this.addScrollEvent();
         } else if (!always && !show) {
-          _this2.scrollEventListener();
+          this.scrollEventListener();
         }
-      });
+      }
+      this.isInsideRender = false;
     }
   }, {
     key: 'render',
     value: function render() {
-      var props = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(this.props, []);
+      var _props = this.props,
+          playScale = _props.playScale,
+          replay = _props.replay,
+          component = _props.component,
+          always = _props.always,
+          scrollEvent = _props.scrollEvent,
+          appear = _props.appear,
+          location = _props.location,
+          targetId = _props.targetId,
+          onChange = _props.onChange,
+          onScroll = _props.onScroll,
+          componentProps = _props.componentProps,
+          props = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['playScale', 'replay', 'component', 'always', 'scrollEvent', 'appear', 'location', 'targetId', 'onChange', 'onScroll', 'componentProps']);
 
-      var componentProps = props.componentProps,
-          appear = props.appear,
-          component = props.component;
-
-      ['playScale', 'replay', 'component', 'always', 'scrollEvent', 'appear', 'location', 'targetId', 'onScroll', 'onChange', 'componentProps'].forEach(function (key) {
-        return delete props[key];
-      });
       var childToRender = void 0;
       if (!this.oneEnter) {
         var show = !appear;
@@ -219,10 +241,10 @@ ScrollOverPack.isScrollOverPack = true;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react__ = __webpack_require__(0);
@@ -250,18 +272,28 @@ ScrollOverPack.isScrollOverPack = true;
 var ScrollElement = function (_React$Component) {
   __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits___default()(ScrollElement, _React$Component);
 
-  function ScrollElement() {
-    var _ref;
+  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(ScrollElement, null, [{
+    key: 'getDerivedStateFromProps',
+    value: function getDerivedStateFromProps(props, _ref) {
+      var prevProps = _ref.prevProps,
+          $self = _ref.$self;
 
-    var _temp, _this, _ret;
+      var nextState = {
+        prevProps: props
+      };
+      if (prevProps) {
+        $self.scrollEventListener();
+      }
+      return nextState; // eslint-disable-line
+    }
+  }]);
 
+  function ScrollElement(props) {
     __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default()(this, ScrollElement);
 
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
+    var _this = __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default()(this, (ScrollElement.__proto__ || Object.getPrototypeOf(ScrollElement)).call(this, props));
 
-    return _ret = (_temp = (_this = __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn___default()(this, (_ref = ScrollElement.__proto__ || Object.getPrototypeOf(ScrollElement)).call.apply(_ref, [this].concat(args))), _this), _this.getParam = function (e) {
+    _this.getParam = function (e) {
       _this.clientHeight = _this.target ? _this.target.clientHeight : Object(__WEBPACK_IMPORTED_MODULE_11__util__["f" /* windowHeight */])();
       var scrollTop = _this.target ? _this.target.scrollTop : Object(__WEBPACK_IMPORTED_MODULE_11__util__["a" /* currentScrollTop */])();
       var domRect = _this.dom.getBoundingClientRect();
@@ -300,18 +332,27 @@ var ScrollElement = function (_React$Component) {
         id: _this.props.id
       });
       _this.enter = enter;
-    }, _this.addScrollEvent = function () {
+    };
+
+    _this.addScrollEvent = function () {
       __WEBPACK_IMPORTED_MODULE_10__EventDispatcher__["a" /* default */].addEventListener(_this.eventType, _this.scrollEventListener, _this.target);
       var scrollTop = Object(__WEBPACK_IMPORTED_MODULE_11__util__["a" /* currentScrollTop */])();
       if (!scrollTop) {
         _this.scrollEventListener();
       }
-    }, _this.scrollEventListener = function (e) {
+    };
+
+    _this.scrollEventListener = function (e) {
       _this.getParam(e);
-    }, _temp), __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn___default()(_this, _ret);
+    };
+
+    _this.state = {
+      $self: _this
+    };
+    return _this;
   }
 
-  __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default()(ScrollElement, [{
+  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(ScrollElement, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.dom = __WEBPACK_IMPORTED_MODULE_7_react_dom___default.a.findDOMNode(this);
@@ -329,11 +370,6 @@ var ScrollElement = function (_React$Component) {
       this.addScrollEvent();
     }
   }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps() {
-      this.scrollEventListener();
-    }
-  }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
       __WEBPACK_IMPORTED_MODULE_9__Mapped__["a" /* default */].unRegister(this.props.id);
@@ -342,14 +378,17 @@ var ScrollElement = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var props = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(this.props, []);
+      var _props = this.props,
+          component = _props.component,
+          playScale = _props.playScale,
+          location = _props.location,
+          targetId = _props.targetId,
+          onScroll = _props.onScroll,
+          onChange = _props.onChange,
+          replay = _props.replay,
+          componentProps = _props.componentProps,
+          props = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['component', 'playScale', 'location', 'targetId', 'onScroll', 'onChange', 'replay', 'componentProps']);
 
-      var componentProps = props.componentProps,
-          component = props.component;
-
-      ['component', 'playScale', 'location', 'targetId', 'onScroll', 'onChange', 'replay', 'componentProps'].forEach(function (key) {
-        return delete props[key];
-      });
       return __WEBPACK_IMPORTED_MODULE_6_react___default.a.createElement(component, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, props, componentProps));
     }
   }]);
