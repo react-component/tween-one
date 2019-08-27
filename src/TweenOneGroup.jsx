@@ -24,7 +24,7 @@ class TweenOneGroup extends Component {
       const nextChildren = toArrayChildren(props.children);
       if (Object.keys($self.isTween).length && !props.exclusive) {
         $self.animQueue.push(nextChildren);
-        return;
+        return nextState;
       }
       const currentChildren = toArrayChildren($self.currentChildren);
       nextState.children = $self.changeChildren(nextChildren, currentChildren);
