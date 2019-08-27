@@ -35774,7 +35774,7 @@ var TweenOneGroup = function (_Component) {
       var nextState = {
         prevProps: props
       };
-      if (prevProps) {
+      if (prevProps && props !== prevProps) {
         var nextChildren = Object(__WEBPACK_IMPORTED_MODULE_9__util__["j" /* toArrayChildren */])(props.children);
         if (Object.keys($self.isTween).length && !props.exclusive) {
           $self.animQueue.push(nextChildren);
