@@ -45,7 +45,7 @@ class TweenOne extends Component {
     const nextState = {
       prevProps: props,
     };
-    if (prevProps) {
+    if (prevProps && props !== prevProps) {
       if (!$self.tween && !$self.dom) {
         $self.updateAnim = true;
         return;
