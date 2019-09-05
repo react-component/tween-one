@@ -1,34 +1,12 @@
 webpackJsonp([2],{
 
-/***/ 15:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-exports.default = function (obj, keys) {
-  var target = {};
-
-  for (var i in obj) {
-    if (keys.indexOf(i) >= 0) continue;
-    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
-    target[i] = obj[i];
-  }
-
-  return target;
-};
-
-/***/ }),
-
 /***/ 156:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__);
@@ -63,13 +41,12 @@ var ScrollOverPack = function (_ScrollElement) {
   __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(ScrollOverPack, null, [{
     key: 'getDerivedStateFromProps',
     value: function getDerivedStateFromProps(props, _ref) {
-      var prevProps = _ref.prevProps,
-          $self = _ref.$self;
+      var prevProps = _ref.prevProps;
 
       var nextState = {
         prevProps: props
       };
-      if (prevProps && !$self.isInsideRender) {
+      if (prevProps && props !== prevProps) {
         nextState.children = Object(__WEBPACK_IMPORTED_MODULE_10__util__["d" /* toArrayChildren */])(props.children);
       }
       return nextState;
@@ -91,7 +68,6 @@ var ScrollOverPack = function (_ScrollElement) {
       var isTop = _this.elementShowHeight > _this.clientHeight + _this.leavePlayHeight;
       if (_this.enter || !replay && isTop) {
         if (!show) {
-          _this.isInsideRender = true;
           _this.setState({
             show: true
           });
@@ -105,7 +81,6 @@ var ScrollOverPack = function (_ScrollElement) {
         var topLeave = replay ? isTop : null;
         if (topLeave || bottomLeave) {
           if (show) {
-            _this.isInsideRender = true;
             _this.setState({
               show: false
             });
@@ -119,7 +94,6 @@ var ScrollOverPack = function (_ScrollElement) {
     _this.enter = false;
     _this.state = {
       show: false,
-      $self: _this,
       children: Object(__WEBPACK_IMPORTED_MODULE_10__util__["d" /* toArrayChildren */])(props.children)
     };
     return _this;
@@ -127,10 +101,10 @@ var ScrollOverPack = function (_ScrollElement) {
 
   __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(ScrollOverPack, [{
     key: 'componentDidUpdate',
-    value: function componentDidUpdate() {
+    value: function componentDidUpdate(prevProps) {
       var _this2 = this;
 
-      if (this.isInsideRender) {
+      if (prevProps !== this.props) {
         var always = this.props.always;
         var show = this.state.show;
 
@@ -143,7 +117,6 @@ var ScrollOverPack = function (_ScrollElement) {
           this.scrollEventListener();
         }
       }
-      this.isInsideRender = false;
     }
   }, {
     key: 'render',
@@ -237,7 +210,7 @@ ScrollOverPack.isScrollOverPack = true;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__);
@@ -454,6 +427,28 @@ var __mapped = {
 
 /***/ }),
 
+/***/ 16:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+exports.default = function (obj, keys) {
+  var target = {};
+
+  for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;
+    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+    target[i] = obj[i];
+  }
+
+  return target;
+};
+
+/***/ }),
+
 /***/ 511:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -467,7 +462,7 @@ module.exports = __webpack_require__(512);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(6);
