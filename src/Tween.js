@@ -424,8 +424,10 @@ const getDefaultStyle = function (domStyle, defaultStyle, tweenData) {
   tweenData.forEach(value => {
     Object.keys(value).forEach(name => {
       if (!(name in $data)) {
-        const styleName = toCssLowerCase(isTransform(getGsapType(name)));
+        const $name = name === 'bezier' ? 'transform' : name;
+        const styleName = toCssLowerCase(isTransform(getGsapType($name)));
         domStyleToArray = domStyleToArray.filter(item => {
+          // 去除 plugins 的特殊名称。
           if (transformOrFilter[item[0]] && transformOrFilter[styleName]) {
             return false;
           }
