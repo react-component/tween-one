@@ -2783,7 +2783,7 @@ var TweenOne = function (_Component) {
       if (prevProps && props !== prevProps) {
         if (!$self.tween && !$self.dom) {
           $self.updateAnim = true;
-          return;
+          return nextState;
         }
 
         // 动画处理
