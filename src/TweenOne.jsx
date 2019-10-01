@@ -48,7 +48,7 @@ class TweenOne extends Component {
     if (prevProps && props !== prevProps) {
       if (!$self.tween && !$self.dom) {
         $self.updateAnim = true;
-        return null;
+        return nextState;
       }
 
       // 动画处理
