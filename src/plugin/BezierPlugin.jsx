@@ -6,6 +6,7 @@
 import {
   checkStyleName,
   createMatrix,
+  getTransform,
 } from 'style-utils';
 const _RAD2DEG = 180 / Math.PI;
 const _r1 = [];
@@ -508,7 +509,7 @@ Bezier.prototype = {
     this.init();
   },
   setRatio(r, t, computedStyle) {
-    t.style.transform = this.set(r);
+    t.style.transform = getTransform(this.set(r));
     if (computedStyle) {
       computedStyle.transformSVG = createMatrix(t.style.transform).toString();
     }

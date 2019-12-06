@@ -314,23 +314,23 @@ class TweenOne extends Component {
   }
 
   render() {
-    const props = { ...this.props };
-    [
-      'animation',
-      'component',
-      'componentProps',
-      'reverseDelay',
-      'attr',
-      'paused',
-      'reverse',
-      'repeat',
-      'yoyo',
-      'moment',
-      'resetStyle',
-      'forcedJudg',
-    ].forEach(key => delete props[key]);
-    props.style = { ...this.props.style };
-    Object.keys(props.style).forEach(p => {
+    const {
+      animation,
+      component,
+      componentProps,
+      reverseDelay,
+      attr,
+      paused,
+      reverse,
+      repeat,
+      yoyo,
+      moment,
+      resetStyle,
+      forcedJudg,
+      children,
+      ...props
+    } = this.props;
+    Object.keys(props.style || {}).forEach(p => {
       if (p.match(/filter/i)) {
         ['Webkit', 'Moz', 'Ms', 'ms'].forEach(prefix => {
           props.style[`${prefix}Filter`] = props.style[p];
@@ -338,24 +338,25 @@ class TweenOne extends Component {
       }
     });
     // component 为空时调用子级的。。
-    if (!this.props.component) {
-      if (!this.props.children) {
-        return this.props.children;
+    const { className } = props;
+    if (!component && typeof children !== 'string') {
+      if (!children) {
+        return children;
       }
-      const childrenProps = this.props.children.props;
-      const { style, className } = childrenProps;
+      const childrenProps = children.props;
+      const { style: childStyle, className: childClass } = childrenProps || {};
       // 合并 style 与 className。
-      const newStyle = { ...style, ...props.style };
-      const newClassName = props.className ? `${props.className} ${className}` : className;
-      return React.cloneElement(this.props.children, { style: newStyle, className: newClassName });
+      const newStyle = { ...childStyle, ...props.style };
+      const newClassName = className ? `${className} ${childClass}` : childClass;
+      return React.cloneElement(children, { style: newStyle, className: newClassName });
     }
-    return React.createElement(this.props.component, {
+    return React.createElement(component, {
       ref: (c) => {
         this.currentRef = c;
       },
       ...props,
-      ...this.props.componentProps
-    });
+      ...componentProps
+    }, children);
   }
 }
 TweenOne.isTweenOne = true;
