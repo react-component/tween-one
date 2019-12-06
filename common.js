@@ -731,7 +731,27 @@ var Tween = __WEBPACK_IMPORTED_MODULE_1__Tween__["a" /* default */];
 /* 15 */,
 /* 16 */,
 /* 17 */,
-/* 18 */,
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+exports.default = function (obj, keys) {
+  var target = {};
+
+  for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;
+    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+    target[i] = obj[i];
+  }
+
+  return target;
+};
+
+/***/ }),
 /* 19 */,
 /* 20 */,
 /* 21 */,
@@ -1288,8 +1308,12 @@ function deepEql(a, b) {
       var aa = a[key];
       var bb = b[key];
       if (Array.isArray(aa) && Array.isArray(bb)) {
-        aa = aa.join();
-        bb = bb.join();
+        var aaa = aa.join();
+        var bbb = bb.join();
+        if (aaa === bbb && !aaa.match(/\[object object\]/ig)) {
+          aa = aaa;
+          bb = bbb;
+        }
       }
       return aa !== bb;
     });
@@ -1301,39 +1325,14 @@ function objectEqual(obj1, obj2) {
   if (obj1 === obj2 || deepEql(obj1, obj2)) {
     return true;
   }
-  if (!obj1 || !obj2) {
+  if (!obj1 || !obj2 || Object.keys(obj1).length !== Object.keys(obj2).length) {
     return false;
   }
   // animation 写在标签上的进行判断是否相等， 判断每个参数有没有 function;
   var equalBool = true;
-  if (Array.isArray(obj1) && Array.isArray(obj2)) {
-    if (obj1.length !== obj2.length) {
-      return false;
-    }
-    for (var i = 0; i < obj1.length; i++) {
-      var currentObj = obj1[i];
-      var nextObj = obj2[i];
-      for (var p in currentObj) {
-        // eslint-disable-line no-restricted-syntax
-        if (currentObj[p] !== nextObj[p]) {
-          if (typeof currentObj[p] === 'object' && typeof nextObj[p] === 'object') {
-            equalBool = objectEqual(currentObj[p], nextObj[p]);
-          } else if (typeof currentObj[p] === 'function' && typeof nextObj[p] === 'function') {
-            if (currentObj[p].name !== nextObj[p].name) {
-              equalBool = false;
-            }
-          } else {
-            equalBool = false;
-          }
-          if (!equalBool) {
-            return false;
-          }
-        }
-      }
-    }
-  }
-
-  var setEqualBool = function setEqualBool(objA, objB) {
+  var setEqualBool = function setEqualBool($a, $b) {
+    var objA = Object.keys($a).length > Object.keys($b).length ? $a : $b;
+    var objB = Object.keys($a).length > Object.keys($b).length ? $b : $a;
     Object.keys(objA).forEach(function (key) {
       // 如果前面有参数匹配不相同则直接返回；
       if (!equalBool) {
@@ -1346,7 +1345,7 @@ function objectEqual(obj1, obj2) {
       if (typeof objA[key] === 'object' && typeof objB[key] === 'object') {
         equalBool = objectEqual(objA[key], objB[key]);
       } else if (typeof objA[key] === 'function' && typeof objB[key] === 'function') {
-        if (objA[key].name !== objB[key].name) {
+        if (objA[key].toString().replace(/\s+/g, '') !== objB[key].toString().replace(/\s+/g, '')) {
           equalBool = false;
         }
       } else if (objA[key] !== objB[key]) {
@@ -1355,8 +1354,16 @@ function objectEqual(obj1, obj2) {
     });
   };
 
-  setEqualBool(obj1, obj2);
-  setEqualBool(obj2, obj1);
+  if (Array.isArray(obj1) && Array.isArray(obj2)) {
+    if (obj1.length !== obj2.length) {
+      return false;
+    }
+    obj1.forEach(function (item, i) {
+      setEqualBool(item, obj2[i]);
+    });
+  } else {
+    setEqualBool(obj1, obj2);
+  }
   return equalBool;
 }
 
@@ -2731,24 +2738,27 @@ p.push = function (plugin) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_prop_types__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_prop_types__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_react_dom__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_react_lifecycles_compat__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__util__ = __webpack_require__(80);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Tween__ = __webpack_require__(244);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ticker__ = __webpack_require__(246);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_prop_types__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_prop_types__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_react_dom__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_react_dom__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_react_lifecycles_compat__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__util__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__Tween__ = __webpack_require__(244);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ticker__ = __webpack_require__(246);
+
 
 
 
@@ -2766,12 +2776,12 @@ p.push = function (plugin) {
 function noop() {}
 
 var perFrame = Math.round(1000 / 60);
-var objectOrArray = __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.array]);
+var objectOrArray = __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.oneOfType([__WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.object, __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.array]);
 
 var TweenOne = function (_Component) {
-  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits___default()(TweenOne, _Component);
+  __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits___default()(TweenOne, _Component);
 
-  __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default()(TweenOne, null, [{
+  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(TweenOne, null, [{
     key: 'getDerivedStateFromProps',
     value: function getDerivedStateFromProps(props, _ref) {
       var prevProps = _ref.prevProps,
@@ -2789,7 +2799,7 @@ var TweenOne = function (_Component) {
         // 动画处理
         var newAnimation = props.animation;
         var currentAnimation = prevProps.animation;
-        var equal = Object(__WEBPACK_IMPORTED_MODULE_9__util__["f" /* objectEqual */])(currentAnimation, newAnimation);
+        var equal = Object(__WEBPACK_IMPORTED_MODULE_10__util__["f" /* objectEqual */])(currentAnimation, newAnimation);
         if (!equal) {
           if (props.resetStyle && $self.tween) {
             $self.tween.resetDefaultStyle();
@@ -2803,7 +2813,7 @@ var TweenOne = function (_Component) {
 
           if ($self.tween && !$self.updateAnim) {
             $self.startMoment = nextMoment;
-            $self.startTime = __WEBPACK_IMPORTED_MODULE_11__ticker__["a" /* default */].time;
+            $self.startTime = __WEBPACK_IMPORTED_MODULE_12__ticker__["a" /* default */].time;
             if (props.paused) {
               $self.raf();
             }
@@ -2823,7 +2833,7 @@ var TweenOne = function (_Component) {
             $self.cancelRequestAnimationFrame();
           } else if ($self.reverse && props.reverseDelay) {
             $self.cancelRequestAnimationFrame();
-            __WEBPACK_IMPORTED_MODULE_11__ticker__["a" /* default */].timeout($self.restart, props.reverseDelay);
+            __WEBPACK_IMPORTED_MODULE_12__ticker__["a" /* default */].timeout($self.restart, props.reverseDelay);
           } else {
             // 在 form 状态下，暂停时拉 moment 时，start 有值恢复播放，在 delay 的时间没有处理。。
             if ($self.tween) {
@@ -2836,7 +2846,7 @@ var TweenOne = function (_Component) {
           }
         }
 
-        var styleEqual = Object(__WEBPACK_IMPORTED_MODULE_9__util__["f" /* objectEqual */])(prevProps.style, props.style);
+        var styleEqual = Object(__WEBPACK_IMPORTED_MODULE_10__util__["f" /* objectEqual */])(prevProps.style, props.style);
         if (!styleEqual) {
           // 在动画时更改了 style, 作为更改开始数值。
           if ($self.tween) {
@@ -2853,9 +2863,9 @@ var TweenOne = function (_Component) {
   }]);
 
   function TweenOne(props) {
-    __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_classCallCheck___default()(this, TweenOne);
+    __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default()(this, TweenOne);
 
-    var _this = __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_possibleConstructorReturn___default()(this, (TweenOne.__proto__ || Object.getPrototypeOf(TweenOne)).call(this, props));
+    var _this = __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default()(this, (TweenOne.__proto__ || Object.getPrototypeOf(TweenOne)).call(this, props));
 
     _initialiseProps.call(_this);
 
@@ -2873,10 +2883,10 @@ var TweenOne = function (_Component) {
     return _this;
   }
 
-  __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_createClass___default()(TweenOne, [{
+  __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(TweenOne, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      this.dom = __WEBPACK_IMPORTED_MODULE_7_react_dom___default.a.findDOMNode(this);
+      this.dom = __WEBPACK_IMPORTED_MODULE_8_react_dom___default.a.findDOMNode(this);
       if (this.dom && this.dom.nodeName !== '#text') {
         this.start();
       }
@@ -2885,7 +2895,7 @@ var TweenOne = function (_Component) {
     key: 'componentDidUpdate',
     value: function componentDidUpdate() {
       if (!this.dom) {
-        this.dom = __WEBPACK_IMPORTED_MODULE_7_react_dom___default.a.findDOMNode(this);
+        this.dom = __WEBPACK_IMPORTED_MODULE_8_react_dom___default.a.findDOMNode(this);
       }
       // 样式更新了后再执行动画；
       if (this.updateAnim && this.dom && this.dom.nodeName !== '#text') {
@@ -2921,12 +2931,23 @@ var TweenOne = function (_Component) {
     value: function render() {
       var _this2 = this;
 
-      var props = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, this.props);
-      ['animation', 'component', 'componentProps', 'reverseDelay', 'attr', 'paused', 'reverse', 'repeat', 'yoyo', 'moment', 'resetStyle', 'forcedJudg'].forEach(function (key) {
-        return delete props[key];
-      });
-      props.style = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, this.props.style);
-      Object.keys(props.style).forEach(function (p) {
+      var _props = this.props,
+          animation = _props.animation,
+          component = _props.component,
+          componentProps = _props.componentProps,
+          reverseDelay = _props.reverseDelay,
+          attr = _props.attr,
+          paused = _props.paused,
+          reverse = _props.reverse,
+          repeat = _props.repeat,
+          yoyo = _props.yoyo,
+          moment = _props.moment,
+          resetStyle = _props.resetStyle,
+          forcedJudg = _props.forcedJudg,
+          children = _props.children,
+          props = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['animation', 'component', 'componentProps', 'reverseDelay', 'attr', 'paused', 'reverse', 'repeat', 'yoyo', 'moment', 'resetStyle', 'forcedJudg', 'children']);
+
+      Object.keys(props.style || {}).forEach(function (p) {
         if (p.match(/filter/i)) {
           ['Webkit', 'Moz', 'Ms', 'ms'].forEach(function (prefix) {
             props.style[prefix + 'Filter'] = props.style[p];
@@ -2934,46 +2955,51 @@ var TweenOne = function (_Component) {
         }
       });
       // component 为空时调用子级的。。
-      if (!this.props.component) {
-        if (!this.props.children) {
-          return this.props.children;
+      var className = props.className;
+
+      if (!component && typeof children !== 'string') {
+        if (!children) {
+          return children;
         }
-        var childrenProps = this.props.children.props;
-        var style = childrenProps.style,
-            className = childrenProps.className;
+        var childrenProps = children.props;
+
+        var _ref2 = childrenProps || {},
+            childStyle = _ref2.style,
+            childClass = _ref2.className;
         // 合并 style 与 className。
 
-        var newStyle = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, style, props.style);
-        var newClassName = props.className ? props.className + ' ' + className : className;
-        return __WEBPACK_IMPORTED_MODULE_5_react___default.a.cloneElement(this.props.children, { style: newStyle, className: newClassName });
+
+        var newStyle = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, childStyle, props.style);
+        var newClassName = className ? className + ' ' + childClass : childClass;
+        return __WEBPACK_IMPORTED_MODULE_6_react___default.a.cloneElement(children, { style: newStyle, className: newClassName });
       }
-      return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(this.props.component, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({
+      return __WEBPACK_IMPORTED_MODULE_6_react___default.a.createElement(component, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({
         ref: function ref(c) {
           _this2.currentRef = c;
         }
-      }, props, this.props.componentProps));
+      }, props, componentProps), children);
     }
   }]);
 
   return TweenOne;
-}(__WEBPACK_IMPORTED_MODULE_5_react__["Component"]);
+}(__WEBPACK_IMPORTED_MODULE_6_react__["Component"]);
 
 TweenOne.propTypes = {
-  component: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.any,
-  componentProps: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.any,
+  component: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.any,
+  componentProps: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.any,
   animation: objectOrArray,
-  children: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.any,
-  style: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.object,
-  paused: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.bool,
-  reverse: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.bool,
-  reverseDelay: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.number,
-  yoyo: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.bool,
-  repeat: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.number,
-  moment: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.number,
-  attr: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.string,
-  onChange: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.func,
-  resetStyle: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.bool,
-  forcedJudg: __WEBPACK_IMPORTED_MODULE_6_prop_types___default.a.object
+  children: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.any,
+  style: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.object,
+  paused: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
+  reverse: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
+  reverseDelay: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.number,
+  yoyo: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
+  repeat: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.number,
+  moment: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.number,
+  attr: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.string,
+  onChange: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.func,
+  resetStyle: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.bool,
+  forcedJudg: __WEBPACK_IMPORTED_MODULE_7_prop_types___default.a.object
 };
 TweenOne.defaultProps = {
   component: 'div',
@@ -3005,7 +3031,7 @@ var _initialiseProps = function _initialiseProps() {
   this.setDefault = function (props) {
     _this3.moment = props.moment || 0;
     _this3.startMoment = props.moment || 0;
-    _this3.startTime = __WEBPACK_IMPORTED_MODULE_11__ticker__["a" /* default */].time;
+    _this3.startTime = __WEBPACK_IMPORTED_MODULE_12__ticker__["a" /* default */].time;
   };
 
   this.restart = function () {
@@ -3013,7 +3039,7 @@ var _initialiseProps = function _initialiseProps() {
       return;
     }
     _this3.startMoment = _this3.moment;
-    _this3.startTime = __WEBPACK_IMPORTED_MODULE_11__ticker__["a" /* default */].time;
+    _this3.startTime = __WEBPACK_IMPORTED_MODULE_12__ticker__["a" /* default */].time;
     _this3.tween.reverse = _this3.reverse;
     _this3.tween.reverseStartTime = _this3.startMoment;
     _this3.raf();
@@ -3025,7 +3051,7 @@ var _initialiseProps = function _initialiseProps() {
     var props = _this3.props;
     if (props.animation && Object.keys(props.animation).length) {
       _this3.setDefault(props);
-      _this3.tween = new __WEBPACK_IMPORTED_MODULE_10__Tween__["a" /* default */](_this3.dom, props.animation, props.attr);
+      _this3.tween = new __WEBPACK_IMPORTED_MODULE_11__Tween__["a" /* default */](_this3.dom, props.animation, props.attr);
       _this3.tween.reverse = _this3.reverse;
       // 预先注册 raf, 初始动画数值。
       _this3.raf();
@@ -3041,7 +3067,7 @@ var _initialiseProps = function _initialiseProps() {
     if (_this3.paused) {
       return;
     }
-    _this3.rafID = __WEBPACK_IMPORTED_MODULE_11__ticker__["a" /* default */].add(_this3.raf);
+    _this3.rafID = __WEBPACK_IMPORTED_MODULE_12__ticker__["a" /* default */].add(_this3.raf);
   };
 
   this.frame = function () {
@@ -3050,9 +3076,9 @@ var _initialiseProps = function _initialiseProps() {
 
     var totalTime = repeat === -1 ? Number.MAX_VALUE : _this3.tween.totalTime * (repeat + 1);
     repeat = repeat >= 0 ? repeat : Number.MAX_VALUE;
-    var moment = __WEBPACK_IMPORTED_MODULE_11__ticker__["a" /* default */].time - _this3.startTime + _this3.startMoment;
+    var moment = __WEBPACK_IMPORTED_MODULE_12__ticker__["a" /* default */].time - _this3.startTime + _this3.startMoment;
     if (_this3.reverse) {
-      moment = (_this3.startMoment || 0) - (__WEBPACK_IMPORTED_MODULE_11__ticker__["a" /* default */].time - _this3.startTime);
+      moment = (_this3.startMoment || 0) - (__WEBPACK_IMPORTED_MODULE_12__ticker__["a" /* default */].time - _this3.startTime);
     }
     moment = moment > totalTime ? totalTime : moment;
     moment = moment <= 0 ? 0 : moment;
@@ -3113,13 +3139,13 @@ var _initialiseProps = function _initialiseProps() {
   };
 
   this.cancelRequestAnimationFrame = function () {
-    __WEBPACK_IMPORTED_MODULE_11__ticker__["a" /* default */].clear(_this3.rafID);
+    __WEBPACK_IMPORTED_MODULE_12__ticker__["a" /* default */].clear(_this3.rafID);
     _this3.rafID = -1;
   };
 };
 
 TweenOne.isTweenOne = true;
-/* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_8_react_lifecycles_compat__["polyfill"])(TweenOne));
+/* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_9_react_lifecycles_compat__["polyfill"])(TweenOne));
 
 /***/ }),
 /* 234 */

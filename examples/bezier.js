@@ -588,7 +588,7 @@ Bezier.prototype = {
     this.init();
   },
   setRatio: function setRatio(r, t, computedStyle) {
-    t.style.transform = this.set(r);
+    t.style.transform = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["getTransform"])(this.set(r));
     if (computedStyle) {
       computedStyle.transformSVG = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["createMatrix"])(t.style.transform).toString();
     }
