@@ -509,7 +509,14 @@ Bezier.prototype = {
     this.init();
   },
   setRatio(r, t, computedStyle) {
-    t.style.transform = getTransform(this.set(r));
+    const transform = getTransform(this.set(r));
+    // 只覆盖 3 个属性；
+    t.style.transform = {
+      ...t.style.transform,
+      translateX: transform.translateX,
+      translateY: transform.translateY,
+      rotate: transform.rotate,
+    };
     if (computedStyle) {
       computedStyle.transformSVG = createMatrix(t.style.transform).toString();
     }
