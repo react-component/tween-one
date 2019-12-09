@@ -327,7 +327,6 @@ class TweenOne extends Component {
       moment,
       resetStyle,
       forcedJudg,
-      children,
       ...props
     } = this.props;
     Object.keys(props.style || {}).forEach(p => {
@@ -338,7 +337,7 @@ class TweenOne extends Component {
       }
     });
     // component 为空时调用子级的。。
-    const { className } = props;
+    const { className, children } = props;
     if (!component && typeof children !== 'string') {
       if (!children) {
         return children;
@@ -356,7 +355,7 @@ class TweenOne extends Component {
       },
       ...props,
       ...componentProps
-    }, children);
+    });
   }
 }
 TweenOne.isTweenOne = true;
