@@ -82,8 +82,11 @@ __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_style_utils__ = __webpack_require__(108);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_style_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_style_utils__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_style_utils__ = __webpack_require__(108);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_style_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_style_utils__);
+
 /* eslint-disable */
 /**
  * Created by jljsj on 15/12/22.
@@ -437,7 +440,7 @@ var GsapBezier = {
 var Bezier = function Bezier(target, vars) {
   this.vars = this.getDefaultData(vars);
   this.target = target;
-  this.transform = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["checkStyleName"])('transform');
+  this.transform = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["checkStyleName"])('transform');
 };
 Bezier.prototype = {
   name: 'bezier',
@@ -582,15 +585,21 @@ Bezier.prototype = {
   getAnimStart: function getAnimStart(computedStyle, isSvg) {
     var transform = computedStyle[isSvg ? 'transformSVG' : this.transform];
     transform = transform === 'none' ? '' : transform;
-    var matrix = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["createMatrix"])(transform);
+    var matrix = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["createMatrix"])(transform);
     // this.startRotate = parseFloat((-Math.atan2(matrix.m21, matrix.m11) * _RAD2DEG).toFixed(2));
     this.vars.startPoint = { x: matrix.e, y: matrix.f };
     this.init();
   },
   setRatio: function setRatio(r, t, computedStyle) {
-    t.style.transform = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["getTransform"])(this.set(r));
+    var transform = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["getTransform"])(this.set(r));
+    // 只覆盖 3 个属性；
+    t.style.transform = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, t.style.transform, {
+      translateX: transform.translateX,
+      translateY: transform.translateY,
+      rotate: transform.rotate
+    });
     if (computedStyle) {
-      computedStyle.transformSVG = Object(__WEBPACK_IMPORTED_MODULE_0_style_utils__["createMatrix"])(t.style.transform).toString();
+      computedStyle.transformSVG = Object(__WEBPACK_IMPORTED_MODULE_1_style_utils__["createMatrix"])(t.style.transform).toString();
     }
   }
 };
