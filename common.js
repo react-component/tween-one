@@ -2944,8 +2944,7 @@ var TweenOne = function (_Component) {
           moment = _props.moment,
           resetStyle = _props.resetStyle,
           forcedJudg = _props.forcedJudg,
-          children = _props.children,
-          props = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['animation', 'component', 'componentProps', 'reverseDelay', 'attr', 'paused', 'reverse', 'repeat', 'yoyo', 'moment', 'resetStyle', 'forcedJudg', 'children']);
+          props = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['animation', 'component', 'componentProps', 'reverseDelay', 'attr', 'paused', 'reverse', 'repeat', 'yoyo', 'moment', 'resetStyle', 'forcedJudg']);
 
       Object.keys(props.style || {}).forEach(function (p) {
         if (p.match(/filter/i)) {
@@ -2955,7 +2954,8 @@ var TweenOne = function (_Component) {
         }
       });
       // component 为空时调用子级的。。
-      var className = props.className;
+      var className = props.className,
+          children = props.children;
 
       if (!component && typeof children !== 'string') {
         if (!children) {
@@ -2977,7 +2977,7 @@ var TweenOne = function (_Component) {
         ref: function ref(c) {
           _this2.currentRef = c;
         }
-      }, props, componentProps), children);
+      }, props, componentProps));
     }
   }]);
 
