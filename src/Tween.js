@@ -202,7 +202,8 @@ p.getAnimStartData = function (item) {
     if (this.attr === 'attr') {
       // 除了d和这points外的标签动画；
       const attribute = this.getValue(_key);
-      let data = attribute === 'null' || !attribute ? 0 : attribute;
+      const s = _key.match(/opacity/ig) ? 1 : 0
+      let data = attribute === 'null' || !attribute ? s : attribute;
       if (_key.match(/color/i) || _key === 'stroke' || _key === 'fill') {
         data = !data && _key === 'stroke' ? 'rgba(255, 255, 255, 0)' : data;
         data = parseColor(data);
