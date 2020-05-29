@@ -1,28 +1,28 @@
 webpackJsonp([2],{
 
-/***/ 156:
+/***/ 158:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_prop_types__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_prop_types__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_prop_types__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__EventDispatcher__ = __webpack_require__(87);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ScrollElement__ = __webpack_require__(157);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__util__ = __webpack_require__(66);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__EventDispatcher__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ScrollElement__ = __webpack_require__(159);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__util__ = __webpack_require__(65);
 
 
 
@@ -135,6 +135,9 @@ var ScrollOverPack = function (_ScrollElement) {
           componentProps = _props.componentProps,
           props = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default()(_props, ['playScale', 'replay', 'component', 'always', 'scrollEvent', 'appear', 'location', 'targetId', 'onChange', 'onScroll', 'componentProps']);
 
+      if (__WEBPACK_IMPORTED_MODULE_10__util__["g" /* windowIsUndefined */]) {
+        return Object(__WEBPACK_IMPORTED_MODULE_6_react__["createElement"])(component, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, props, componentProps));
+      }
       var childToRender = void 0;
       if (!this.oneEnter) {
         var show = !appear;
@@ -204,32 +207,30 @@ ScrollOverPack.isScrollOverPack = true;
 
 /***/ }),
 
-/***/ 157:
+/***/ 159:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_objectWithoutProperties__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_classCallCheck__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_babel_runtime_helpers_inherits__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_react_dom__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_react_dom__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_prop_types__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__Mapped__ = __webpack_require__(158);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__EventDispatcher__ = __webpack_require__(87);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__util__ = __webpack_require__(66);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__EventDispatcher__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__util__ = __webpack_require__(65);
 
 
 
@@ -254,7 +255,7 @@ var ScrollElement = function (_React$Component) {
       var nextState = {
         prevProps: props
       };
-      if (prevProps) {
+      if (prevProps && props !== prevProps) {
         $self.scrollEventListener();
       }
       return nextState; // eslint-disable-line
@@ -267,13 +268,13 @@ var ScrollElement = function (_React$Component) {
     var _this = __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_possibleConstructorReturn___default()(this, (ScrollElement.__proto__ || Object.getPrototypeOf(ScrollElement)).call(this, props));
 
     _this.getParam = function (e) {
-      _this.clientHeight = _this.target ? _this.target.clientHeight : Object(__WEBPACK_IMPORTED_MODULE_11__util__["f" /* windowHeight */])();
-      var scrollTop = _this.target ? _this.target.scrollTop : Object(__WEBPACK_IMPORTED_MODULE_11__util__["a" /* currentScrollTop */])();
+      _this.clientHeight = _this.target ? _this.target.clientHeight : Object(__WEBPACK_IMPORTED_MODULE_10__util__["f" /* windowHeight */])();
+      var scrollTop = _this.target ? _this.target.scrollTop : Object(__WEBPACK_IMPORTED_MODULE_10__util__["a" /* currentScrollTop */])();
       var domRect = _this.dom.getBoundingClientRect();
       var targetTop = _this.target ? _this.target.getBoundingClientRect().top : 0;
       var offsetTop = domRect.top + scrollTop - targetTop;
       _this.elementShowHeight = scrollTop - offsetTop + _this.clientHeight;
-      var playScale = Object(__WEBPACK_IMPORTED_MODULE_11__util__["e" /* transformArguments */])(_this.props.playScale);
+      var playScale = Object(__WEBPACK_IMPORTED_MODULE_10__util__["e" /* transformArguments */])(_this.props.playScale);
       var playScaleEnterArray = /([\+\-]?[0-9#\.]+)(px|vh|%)?/.exec(String(playScale[0])); // eslint-disable-line
       if (!playScaleEnterArray[2]) {
         _this.playHeight = _this.clientHeight * parseFloat(playScale[0]);
@@ -308,8 +309,8 @@ var ScrollElement = function (_React$Component) {
     };
 
     _this.addScrollEvent = function () {
-      __WEBPACK_IMPORTED_MODULE_10__EventDispatcher__["a" /* default */].addEventListener(_this.eventType, _this.scrollEventListener, _this.target);
-      var scrollTop = Object(__WEBPACK_IMPORTED_MODULE_11__util__["a" /* currentScrollTop */])();
+      __WEBPACK_IMPORTED_MODULE_9__EventDispatcher__["a" /* default */].addEventListener(_this.eventType, _this.scrollEventListener, _this.target);
+      var scrollTop = Object(__WEBPACK_IMPORTED_MODULE_10__util__["a" /* currentScrollTop */])();
       if (!scrollTop) {
         _this.scrollEventListener();
       }
@@ -328,25 +329,21 @@ var ScrollElement = function (_React$Component) {
   __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(ScrollElement, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      this.dom = __WEBPACK_IMPORTED_MODULE_7_react_dom___default.a.findDOMNode(this);
-      if (this.props.location) {
-        this.dom = document.getElementById(this.props.location);
-        __WEBPACK_IMPORTED_MODULE_9__Mapped__["a" /* default */].register(this.props.location, this.dom);
-      } else if (this.props.id) {
-        __WEBPACK_IMPORTED_MODULE_9__Mapped__["a" /* default */].register(this.props.id, this.dom);
+      if (__WEBPACK_IMPORTED_MODULE_10__util__["g" /* windowIsUndefined */]) {
+        return;
       }
+      this.dom = __WEBPACK_IMPORTED_MODULE_7_react_dom___default.a.findDOMNode(this);
       var date = Date.now();
       this.target = this.props.targetId && document.getElementById(this.props.targetId);
 
-      var length = __WEBPACK_IMPORTED_MODULE_10__EventDispatcher__["a" /* default */]._listeners.scroll ? __WEBPACK_IMPORTED_MODULE_10__EventDispatcher__["a" /* default */]._listeners.scroll.length : 0;
+      var length = __WEBPACK_IMPORTED_MODULE_9__EventDispatcher__["a" /* default */]._listeners.scroll ? __WEBPACK_IMPORTED_MODULE_9__EventDispatcher__["a" /* default */]._listeners.scroll.length : 0;
       this.eventType = 'scroll.scrollEvent' + date + length;
       this.addScrollEvent();
     }
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
-      __WEBPACK_IMPORTED_MODULE_9__Mapped__["a" /* default */].unRegister(this.props.id);
-      __WEBPACK_IMPORTED_MODULE_10__EventDispatcher__["a" /* default */].removeEventListener(this.eventType, this.scrollEventListener, this.target);
+      __WEBPACK_IMPORTED_MODULE_9__EventDispatcher__["a" /* default */].removeEventListener(this.eventType, this.scrollEventListener, this.target);
     }
   }, {
     key: 'render',
@@ -382,8 +379,8 @@ ScrollElement.propTypes = {
 };
 ScrollElement.defaultProps = {
   component: 'div',
-  onChange: __WEBPACK_IMPORTED_MODULE_11__util__["c" /* noop */],
-  onScroll: __WEBPACK_IMPORTED_MODULE_11__util__["c" /* noop */],
+  onChange: __WEBPACK_IMPORTED_MODULE_10__util__["c" /* noop */],
+  onScroll: __WEBPACK_IMPORTED_MODULE_10__util__["c" /* noop */],
   playScale: 0.5,
   replay: false,
   componentProps: {}
@@ -394,58 +391,25 @@ ScrollElement.isScrollElement = true;
 
 /***/ }),
 
-/***/ 158:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var __mapped = {
-  __arr: []
-};
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-  unMount: function unMount() {
-    __mapped = { __arr: [] };
-  },
-  register: function register(name, element) {
-    __mapped[name] = element;
-    __mapped.__arr.push(name);
-  },
-  unRegister: function unRegister(name) {
-    var index = __mapped.__arr.indexOf(name);
-    if (index >= 0) {
-      __mapped.__arr.splice(__mapped.__arr.indexOf(name), 1);
-      delete __mapped[name];
-    }
-  },
-  get: function get(name) {
-    return __mapped[name];
-  },
-  getMapped: function getMapped() {
-    return __mapped;
-  }
-});
-
-/***/ }),
-
-/***/ 511:
+/***/ 518:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(512);
+module.exports = __webpack_require__(519);
 
 
 /***/ }),
 
-/***/ 512:
+/***/ 519:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rc_tween_one__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rc_scroll_anim_es_ScrollOverPack__ = __webpack_require__(156);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rc_scroll_anim_es_ScrollOverPack__ = __webpack_require__(158);
 
 
 
@@ -494,10 +458,11 @@ __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 /***/ }),
 
-/***/ 66:
+/***/ 65:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return windowIsUndefined; });
 /* harmony export (immutable) */ __webpack_exports__["d"] = toArrayChildren;
 /* harmony export (immutable) */ __webpack_exports__["b"] = dataToArray;
 /* harmony export (immutable) */ __webpack_exports__["e"] = transformArguments;
@@ -505,9 +470,12 @@ __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 /* harmony export (immutable) */ __webpack_exports__["a"] = currentScrollTop;
 /* harmony export (immutable) */ __webpack_exports__["f"] = windowHeight;
 /* harmony export (immutable) */ __webpack_exports__["c"] = noop;
+/* unused harmony export getPassive */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 
+
+var windowIsUndefined = !(typeof window !== 'undefined' && window.document && window.document.createElement);
 
 function toArrayChildren(children) {
   var ret = [];
@@ -610,13 +578,27 @@ function windowHeight() {
 
 function noop() {}
 
+var getPassive = function getPassive() {
+  if (windowIsUndefined) {
+    return false;
+  }
+  var passiveSupported = false;
+  window.addEventListener('test', function () {}, Object.defineProperty({}, 'passive', {
+    get: function get() {
+      passiveSupported = true;
+      return null;
+    }
+  }));
+  return passiveSupported ? { passive: false } : false;
+};
+
 /***/ }),
 
-/***/ 87:
+/***/ 88:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(66);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(65);
 
 
 var scrollId = 'scroll-id';
@@ -628,7 +610,7 @@ function EventDispatcher(target) {
   this._listFun = {};
 }
 EventDispatcher.prototype = {
-  addEventListener: function addEventListener(type, callback, target) {
+  addEventListener: function addEventListener(type, callback, target, options) {
     var types = type.split('.');
     var _type = types[0];
     var namespaces = types[1];
@@ -658,7 +640,7 @@ EventDispatcher.prototype = {
     if (!this._listFun[listName]) {
       this._listFun[listName] = this._listFun[listName] || this.dispatchEvent.bind(this, { type: _type, target: target });
       if ($target.addEventListener) {
-        $target.addEventListener(_type, this._listFun[listName], false);
+        $target.addEventListener(_type, this._listFun[listName], options);
       } else if ($target.attachEvent) {
         $target.attachEvent('on' + _type, this._listFun[listName]);
       }
@@ -755,5 +737,5 @@ EventDispatcher.prototype = {
 
 /***/ })
 
-},[511]);
+},[518]);
 //# sourceMappingURL=scrollAnim.js.map
