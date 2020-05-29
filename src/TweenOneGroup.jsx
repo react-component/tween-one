@@ -12,8 +12,7 @@ import {
   findChildInChildrenByKey,
 } from './util';
 
-function noop() {
-}
+function noop() {}
 
 class TweenOneGroup extends Component {
   static getDerivedStateFromProps(props, { prevProps, $self }) {
@@ -68,10 +67,12 @@ class TweenOneGroup extends Component {
       delete this.isTween[key];
       if (classIsSvg) {
         tag.className.baseVal = tag.className.baseVal
-          .replace(this.props.animatingClassName[isEnter ? 0 : 1], '').trim();
+          .replace(this.props.animatingClassName[isEnter ? 0 : 1], '')
+          .trim();
       } else {
         tag.className = tag.className
-          .replace(this.props.animatingClassName[isEnter ? 0 : 1], '').trim();
+          .replace(this.props.animatingClassName[isEnter ? 0 : 1], '')
+          .trim();
       }
       if (type === 'enter') {
         this.keysToEnter.splice(this.keysToEnter.indexOf(key), 1);
@@ -88,15 +89,18 @@ class TweenOneGroup extends Component {
               delete this.saveTweenTag[$key];
             }
           });
-          this.setState({
-            children: this.currentChildren,
-          }, this.reAnimQueue);
+          this.setState(
+            {
+              children: this.currentChildren,
+            },
+            this.reAnimQueue,
+          );
         }
       }
       const _obj = { key, type };
       this.props.onEnd(_obj);
     }
-  }
+  };
 
   setClassName = (name, isEnter) => {
     let className = name.replace(this.props.animatingClassName[isEnter ? 1 : 0], '').trim();
@@ -104,24 +108,28 @@ class TweenOneGroup extends Component {
       className = `${className} ${this.props.animatingClassName[isEnter ? 0 : 1]}`.trim();
     }
     return className;
-  }
+  };
 
   getTweenChild = (child, props = {}) => {
     const key = child.key;
-    this.saveTweenTag[key] = React.createElement(TweenOne, {
-      ...props,
-      key,
-      component: null,
-    }, child);
+    this.saveTweenTag[key] = React.createElement(
+      TweenOne,
+      {
+        ...props,
+        key,
+        component: null,
+      },
+      child,
+    );
     return this.saveTweenTag[key];
-  }
+  };
 
   getCoverAnimation = (child, i, type) => {
     let animation;
     animation = type === 'leave' ? this.props.leave : this.props.enter;
     if (type === 'appear') {
       const appear = transformArguments(this.props.appear, child.key, i);
-      animation = appear && this.props.enter || null;
+      animation = (appear && this.props.enter) || null;
     }
     const animate = transformArguments(animation, child.key, i);
     const onChange = this.onChange.bind(this, animate, child.key, type);
@@ -131,15 +139,17 @@ class TweenOneGroup extends Component {
       onChange,
       resetStyle: this.props.resetStyle,
     };
-    if (this.keysToEnter.concat(this.keysToLeave).indexOf(child.key) >= 0
-      || !this.onEnterBool && animation) {
+    if (
+      this.keysToEnter.concat(this.keysToLeave).indexOf(child.key) >= 0 ||
+      (!this.onEnterBool && animation)
+    ) {
       if (!this.saveTweenTag[child.key]) {
         this.isTween[child.key] = type;
       }
     }
     const children = this.getTweenChild(child, props);
     return children;
-  }
+  };
 
   getChildrenToRender = children => {
     return children.map((child, i) => {
@@ -147,40 +157,44 @@ class TweenOneGroup extends Component {
         return child;
       }
       const key = child.key;
-
       if (this.keysToLeave.indexOf(key) >= 0) {
         return this.getCoverAnimation(child, i, 'leave');
-      } else if (((this.keysToEnter.indexOf(key) >= 0) ||
-        (this.isTween[key] && this.keysToLeave.indexOf(key) === -1)) &&
-        !(this.isTween[key] === 'enter' && this.saveTweenTag[key])) {
+      } else if (
+        (this.keysToEnter.indexOf(key) >= 0 ||
+          (this.isTween[key] && this.keysToLeave.indexOf(key) === -1)) &&
+        !(this.isTween[key] === 'enter' && this.saveTweenTag[key])
+      ) {
         /**
-        * 1. 在 key 在 enter 里。
-        * 2. 出场未结束，触发进场, this.isTween[key] 为 leave, key 在 enter 里。
-        * 3. 状态为 enter 且 tweenTag 里有值时，不执行重载动画属性，直接调用 tweenTag 里的。
-        */
+         * 1. 在 key 在 enter 里。
+         * 2. 出场未结束，触发进场, this.isTween[key] 为 leave, key 在 enter 里。
+         * 3. 状态为 enter 且 tweenTag 里有值时，不执行重载动画属性，直接调用 tweenTag 里的。
+         */
         return this.getCoverAnimation(child, i, 'enter');
       } else if (!this.onEnterBool) {
         return this.getCoverAnimation(child, i, 'appear');
       }
       return this.saveTweenTag[key];
     });
-  }
+  };
 
   reAnimQueue = () => {
     if (!Object.keys(this.isTween).length && this.animQueue.length) {
-      const children = this.changeChildren(this.animQueue[this.animQueue.length - 1], this.state.children);
+      const children = this.changeChildren(
+        this.animQueue[this.animQueue.length - 1],
+        this.state.children,
+      );
       this.setState({
         children,
       });
       this.animQueue = [];
     }
-  }
+  };
 
   changeChildren(nextChildren, currentChildren) {
     const newChildren = mergeChildren(currentChildren, nextChildren);
     this.keysToEnter = [];
     this.keysToLeave = [];
-    nextChildren.forEach((c) => {
+    nextChildren.forEach(c => {
       if (!c) {
         return;
       }
@@ -195,7 +209,7 @@ class TweenOneGroup extends Component {
       }
     });
 
-    currentChildren.forEach((c) => {
+    currentChildren.forEach(c => {
       if (!c) {
         return;
       }
@@ -206,31 +220,30 @@ class TweenOneGroup extends Component {
         delete this.saveTweenTag[key];
       }
     });
-    this.currentChildren = newChildren;
     return newChildren;
   }
 
   render() {
-    const childrenToRender = this.getChildrenToRender(this.state.children);
-    if (!this.props.component) {
+    const { children } = this.state;
+    // fix in strict mode https://github.com/ant-design/ant-motion/issues/323;
+    this.currentChildren = children;
+    const childrenToRender = this.getChildrenToRender(children);
+    const {
+      component,
+      componentProps,
+      appear,
+      enter,
+      leave,
+      animatingClassName,
+      onEnd,
+      exclusive,
+      resetStyle,
+      ...props
+    } = this.props;
+    if (!component) {
       return childrenToRender[0] || null;
     }
-    const componentProps = { ...this.props };
-    [
-      'component',
-      'componentProps',
-      'appear',
-      'enter',
-      'leave',
-      'animatingClassName',
-      'onEnd',
-      'exclusive',
-      'resetStyle',
-    ].forEach(key => delete componentProps[key]);
-    return createElement(this.props.component,
-      { ...componentProps, ...this.props.componentProps },
-      childrenToRender
-    );
+    return createElement(component, { ...props, ...componentProps }, childrenToRender);
   }
 }
 

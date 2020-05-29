@@ -3,19 +3,19 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import '../assets/index.less';
 
-class Demo extends React.Component {
-  bbb = (e) => {
+function Demo() {
+  const bbb = (e) => {
     console.log(e);// eslint-disable-line no-console
   }
 
-  render() {
-    return (<Tween
+  return (
+    <Tween
       animation={{ x: 300 }}
-      onChange={this.bbb}
+      onChange={bbb}
       style={{ opacity: 1, height: 100, display: 'inline-block' }}
     >
       <div>执行动效</div>
-    </Tween>);
-  }
+    </Tween>
+  );
 }
 ReactDom.render(<Demo />, document.getElementById('__react-content'));

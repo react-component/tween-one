@@ -65,6 +65,9 @@ SvgDrawPlugin.prototype = {
     return Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (3 * ry + rx)));
   },
   getAnimStart(computedStyle) {
+    if (Object.keys(this.start).length) {
+      return;
+    }
     const getAttribute = (str) => (this.target.getAttribute(str));
     switch (this.tagName) {
       case 'circle':
