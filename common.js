@@ -2812,7 +2812,6 @@ var TweenOne = function (_Component) {
         // 跳帧事件 moment;
         var nextMoment = props.moment;
         if (typeof nextMoment === 'number' && nextMoment !== prevProps.moment) {
-
           if ($self.tween && !$self.updateAnim) {
             $self.startMoment = nextMoment;
             $self.startTime = __WEBPACK_IMPORTED_MODULE_12__ticker__["a" /* default */].time;
@@ -2887,6 +2886,7 @@ var TweenOne = function (_Component) {
   __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_createClass___default()(TweenOne, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      this.setDom();
       if (this.dom && this.dom.nodeName !== '#text') {
         this.start();
       }
@@ -2894,6 +2894,7 @@ var TweenOne = function (_Component) {
   }, {
     key: 'componentDidUpdate',
     value: function componentDidUpdate() {
+      this.setDom();
       // 样式更新了后再执行动画；
       if (this.updateAnim && this.dom && this.dom.nodeName !== '#text') {
         if (this.tween) {
@@ -2955,7 +2956,7 @@ var TweenOne = function (_Component) {
           children = props.children;
 
       var ref = function ref(c) {
-        _this2.dom = c && c.props ? __WEBPACK_IMPORTED_MODULE_8_react_dom___default.a.findDOMNode(c) : c;
+        _this2.dom = c;
       };
       if (!component && typeof children !== 'string') {
         if (!children) {
@@ -2978,7 +2979,7 @@ var TweenOne = function (_Component) {
         });
       }
       return __WEBPACK_IMPORTED_MODULE_6_react___default.a.createElement(component, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({
-        ref: ref
+        ref: typeof component === 'string' ? ref : undefined
       }, props, componentProps));
     }
   }]);
@@ -3034,6 +3035,10 @@ var _initialiseProps = function _initialiseProps() {
     _this3.moment = props.moment || 0;
     _this3.startMoment = props.moment || 0;
     _this3.startTime = __WEBPACK_IMPORTED_MODULE_12__ticker__["a" /* default */].time;
+  };
+
+  this.setDom = function () {
+    _this3.dom = _this3.dom || __WEBPACK_IMPORTED_MODULE_8_react_dom___default.a.findDOMNode(_this3);
   };
 
   this.restart = function () {
