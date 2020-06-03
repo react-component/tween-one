@@ -133,14 +133,16 @@ class TweenOne extends Component {
   }
 
   componentDidMount() {
-    this.setDom()
+    this.dom = ReactDom.findDOMNode(this);
     if (this.dom && this.dom.nodeName !== '#text') {
       this.start();
     }
   }
 
   componentDidUpdate() {
-    this.setDom();
+    if (!this.dom) {
+      this.dom = ReactDom.findDOMNode(this);
+    }
     // 样式更新了后再执行动画；
     if (this.updateAnim && this.dom && this.dom.nodeName !== '#text') {
       if (this.tween) {
@@ -189,10 +191,6 @@ class TweenOne extends Component {
     this.startMoment = props.moment || 0;
     this.startTime = ticker.time;
   };
-
-  setDom = () => {
-    this.dom = this.dom || ReactDom.findDOMNode(this);
-  }
 
   restart = () => {
     if (!this.tween) {
@@ -338,9 +336,6 @@ class TweenOne extends Component {
     });
     // component 为空时调用子级的。。
     const { className, children } = props;
-    const ref = c => {
-      this.dom = c;
-    };
     if (!component && typeof children !== 'string') {
       if (!children) {
         return children;
@@ -350,14 +345,9 @@ class TweenOne extends Component {
       // 合并 style 与 className。
       const newStyle = { ...childStyle, ...props.style };
       const newClassName = className ? `${className} ${childClass}` : childClass;
-      return React.cloneElement(children, {
-        style: newStyle,
-        ref,
-        className: newClassName,
-      });
+      return React.cloneElement(children, { style: newStyle, className: newClassName });
     }
     return React.createElement(component, {
-      ref: typeof component === 'string' ? ref : undefined,
       ...props,
       ...componentProps,
     });
