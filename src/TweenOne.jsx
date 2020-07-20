@@ -125,6 +125,8 @@ class TweenOne extends Component {
     this.reverse = props.reverse;
     this.updateAnim = false;
     this.repeatNum = 0;
+    // 定义 ref 给外部使用；
+    this.currentRef = null;
     this.forced = {};
     this.setForcedJudg(props);
     this.state = {
@@ -334,6 +336,9 @@ class TweenOne extends Component {
         });
       }
     });
+    const refFunc = (c) => {
+      this.currentRef = c;
+    }
     // component 为空时调用子级的。。
     const { className, children } = props;
     if (!component && typeof children !== 'string') {
@@ -345,9 +350,10 @@ class TweenOne extends Component {
       // 合并 style 与 className。
       const newStyle = { ...childStyle, ...props.style };
       const newClassName = className ? `${className} ${childClass}` : childClass;
-      return React.cloneElement(children, { style: newStyle, className: newClassName });
+      return React.cloneElement(children, { style: newStyle, ref: refFunc, className: newClassName });
     }
     return React.createElement(component, {
+      ref: refFunc,
       ...props,
       ...componentProps,
     });
