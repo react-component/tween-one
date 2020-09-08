@@ -89,7 +89,7 @@
     "babel-runtime": "6.x",
     "raf": "~3.4.0",
     "react-lifecycles-compat": "^3.0.4",
-    "style-utils": "~0.2.0",
+    "style-utils": "~0.3.4",
     "tween-functions": "~1.2.0"
   },
   "types": "typings/index.d.ts"
