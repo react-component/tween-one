@@ -75,7 +75,7 @@
     "rc-test": "6.x",
     "rc-tools": "8.x",
     "react": "^16.4.0",
-    "react-dom": "^16.4.0",
+    "react-dom": "^17.0.0",
     "tslint-config-prettier": "^1.17.0",
     "tslint-react": "^5.0.0",
     "typescript": "3.x"
