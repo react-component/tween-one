@@ -20,10 +20,7 @@ class ChildrenPlugin {
 
   target?: HTMLElement;
 
-  constructor(public vars: IVars, public key: string) {
-    this.vars = vars;
-    this.key = key;
-  }
+  constructor(public vars: IVars, public key: string) {}
 
   getAnimStart = () => {
     const { target, vars, startAt, key } = this;
