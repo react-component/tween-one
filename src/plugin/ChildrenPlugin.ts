@@ -1,3 +1,4 @@
+import { IObject } from '../type';
 interface IFormatMoney {
   thousand?: string;
   decimal?: string;
@@ -69,7 +70,7 @@ class ChildrenPlugin {
         if (l) {
           Array(l)
             .fill(0)
-            .forEach(num => {
+            .forEach((num) => {
               decimal += `${num}`;
             });
         }

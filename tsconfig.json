@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "jsx": "react",
+    "typeRoots": ["./typings"],
     "esModuleInterop": true,
     "sourceMap": true,
     "baseUrl": "./",

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, createElement, ReactElement, ReactText } from 'react';
-import { IGroupProps, IAnimObject, TweenOneGroupRef, ICallBack } from './type';
+import { IGroupProps, IAnimObject, TweenOneGroupRef, ICallBack, IObject } from './type';
 import {
   dataToArray,
   getChildrenFromProps,

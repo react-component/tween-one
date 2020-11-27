@@ -1,5 +1,7 @@
 import React, { ReactElement } from 'react';
 
+import { IObject } from '../type';
+
 export const windowIsUndefined = !(
   typeof window !== 'undefined' &&
   window.document &&

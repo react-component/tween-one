@@ -1,6 +1,10 @@
 import React from 'react';
-import { IAnimObject as AnimObject, IObject, IMode, ITimelineCallBack } from 'tween-one';
+import { IAnimObject as AnimObject, IMode, ITimelineCallBack } from 'tween-one';
 
+
+export interface IObject {
+  [key: string]: any
+}
 export interface ICallBack {
   mode?: IMode;
   moment?: number;
