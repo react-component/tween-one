@@ -81,7 +81,7 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
             .join(';');
           dom.setAttribute('style', styleStr);
           // dom.style.cssText = styleStr;
-          delete dom._tweenOneVars;
+          delete dom._tweenOneVars; // eslint-disable-line no-underscore-dangle
         }
         animRef.current =
           animation &&
@@ -99,6 +99,11 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
           });
         prevAnim.current = animation;
       }
+      return () => {
+        if (animRef.current) {
+          animRef.current.kill();
+        }
+      };
     }, [animation]);
 
     const refFunc = (c: any) => {
@@ -127,7 +132,8 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
         ref: refFunc,
         className: newClassName,
       });
-    } else if (!component) {
+    }
+    if (!component) {
       console.warn('Warning: component is null, children must be ReactElement.');
       return children;
     }

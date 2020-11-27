@@ -9,8 +9,8 @@ export interface ICallBack {
   repeat?: number;
   timelineMoment?: number;
   vars?: IObject | IObject[];
-  targets?: IObject | IObject[]
-};
+  targets?: IObject | IObject[];
+}
 
 export type AnimObjectOrArray = AnimObject | AnimObject[];
 
@@ -44,7 +44,7 @@ export interface IGroupProps extends Omit<React.HTMLAttributes<any>, 'onChange'>
   appear?: boolean;
   enter?: IAnimObject;
   leave?: IAnimObject;
-  animatingClassName?: string[] | [string, string];
+  animatingClassName?: string[];
   exclusive?: boolean;
   resetStyle?: boolean;
   onEnd?: (e: { key?: string | React.ReactText; type?: string }) => void;
@@ -53,7 +53,7 @@ export interface IGroupProps extends Omit<React.HTMLAttributes<any>, 'onChange'>
     | React.ClassType<any, React.Component, React.ComponentClass<{ ref: any }>>
     | null
     | undefined;
-  componentProps?: {};
+  componentProps?: IObject;
 }
 
 export interface TweenOneRef extends React.ForwardRefExoticComponent<any> {

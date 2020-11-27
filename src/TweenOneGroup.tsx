@@ -34,12 +34,12 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
   const currentChildren = useRef(cChild);
   const [children, setChild] = useState(cChild);
 
-  const getTweenChild = (child: ReactElement, props = {}) => {
+  const getTweenChild = (child: ReactElement, p = {}) => {
     const key: string | number = child.key as string;
     saveTweenTag.current[key] = React.createElement(
       TweenOne,
       {
-        ...props,
+        ...p,
         key,
         component: null,
       },
@@ -54,16 +54,16 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
     }
     return className;
   };
-  const changeChildren = (nextChildren: ReactElement[], currentChildren: ReactElement[]) => {
-    const newChildren: ReactElement[] = mergeChildren(currentChildren, nextChildren);
+  const changeChildren = (nextChildren: ReactElement[], currentChild: ReactElement[]) => {
+    const newChildren: ReactElement[] = mergeChildren(currentChild, nextChildren);
     keysToEnter.current = [];
     keysToLeave.current = [];
-    nextChildren.forEach((c) => {
+    nextChildren.forEach(c => {
       if (!c) {
         return;
       }
-      const key = c.key;
-      const hasPrev = findChildInChildrenByKey(currentChildren, key);
+      const { key } = c;
+      const hasPrev = findChildInChildrenByKey(currentChild, key);
       // 如果当前 key 已存在 saveTweenTag 里，，刷新 child;
       if (key && saveTweenTag.current[key]) {
         saveTweenTag.current[key] = React.cloneElement(saveTweenTag.current[key], {}, c);
@@ -73,11 +73,11 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       }
     });
 
-    currentChildren.forEach((c) => {
+    currentChild.forEach(c => {
       if (!c) {
         return;
       }
-      const key = c.key;
+      const { key } = c;
       const hasNext = findChildInChildrenByKey(nextChildren, key);
       if (!hasNext && key) {
         keysToLeave.current.push(key);
@@ -96,8 +96,13 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
     }
   };
 
-  const onChange = (animation: IAnimObject, key: string | number | null, type: string, obj: ICallBack) => {
-    const length = dataToArray(animation).length;
+  const onChange = (
+    animation: IAnimObject,
+    key: string | number | null,
+    type: string,
+    obj: ICallBack,
+  ) => {
+    const { length } = dataToArray(animation);
     const tag = obj.targets as IObject;
     const classIsSvg = typeof tag!.className === 'object' && 'baseVal' in tag!.className;
     const isEnter = type === 'enter' || type === 'appear';
@@ -118,10 +123,10 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
         }
       } else if (type === 'leave') {
         keysToLeave.current.splice(keysToLeave.current.indexOf(key), 1);
-        currentChildren.current = currentChildren.current.filter((child) => key !== child.key);
+        currentChildren.current = currentChildren.current.filter(child => key !== child.key);
         if (!keysToLeave.current.length) {
-          const currentChildrenKeys = currentChildren.current.map((item) => item.key);
-          Object.keys(saveTweenTag.current).forEach(($key) => {
+          const currentChildrenKeys = currentChildren.current.map(item => item.key);
+          Object.keys(saveTweenTag.current).forEach($key => {
             if (currentChildrenKeys.indexOf($key) === -1) {
               delete saveTweenTag.current[$key];
             }
@@ -130,8 +135,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
           setChild(currentChildren.current);
         }
       }
-      const _obj = { key, type };
-      onEnd(_obj);
+      onEnd({ key, type });
     }
   };
   const getCoverAnimation = (child: ReactElement, i: number, type: string) => {
@@ -151,12 +155,11 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       key: child.key,
       animation: animate,
       onChange: onChangeCb,
-      resetStyle: resetStyle,
+      resetStyle,
       className,
     };
     if (
-      child.key &&
-      keysToEnter.current.concat(keysToLeave.current).indexOf(child.key) >= 0 ||
+      (child.key && keysToEnter.current.concat(keysToLeave.current).indexOf(child.key) >= 0) ||
       (!oneEnter.current && animation)
     ) {
       if (child.key && !saveTweenTag.current[child.key]) {
@@ -164,8 +167,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       }
     }
 
-    const children = getTweenChild(child, p);
-    return children;
+    return getTweenChild(child, p);
   };
   useEffect(() => {
     if (oneEnter.current) {
@@ -195,7 +197,8 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
     const { key } = child;
     if (keysToLeave.current.indexOf(key) >= 0) {
       return getCoverAnimation(child, i, 'leave');
-    } else if (
+    }
+    if (
       (keysToEnter.current.indexOf(key) >= 0 ||
         (isTween.current[key] && keysToLeave.current.indexOf(key) === -1)) &&
       !(isTween.current[key] === 'enter' && saveTweenTag.current[key])
@@ -206,7 +209,8 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
        * 3. 状态为 enter 且 tweenTag 里有值时，不执行重载动画属性，直接调用 tweenTag 里的。
        */
       return getCoverAnimation(child, i, 'enter');
-    } else if (!oneEnter.current) {
+    }
+    if (!oneEnter.current) {
       return getCoverAnimation(child, i, 'appear');
     }
     return saveTweenTag.current[key];
@@ -220,4 +224,4 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
 TweenOneGroup.displayName = 'TweenOneGroup';
 TweenOneGroup.isTweenOneGroup = true;
 
-export default TweenOneGroup
+export default TweenOneGroup;
