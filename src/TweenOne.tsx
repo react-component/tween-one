@@ -100,7 +100,7 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
           });
         prevAnim.current = animation;
       }
-      return;
+      return () => {};
     }, [animation]);
     useEffect(
       () => () => {
