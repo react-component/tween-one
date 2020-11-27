@@ -73,6 +73,7 @@
     "father": "^2.22.6",
     "father-build": "^1.18.6",
     "gh-pages": "^3.1.0",
+    "husky": "^4.3.0",
     "np": "^6.0.3",
     "prettier": "^2.1.2",
     "rc-scroll-anim": "^2.7.6",
@@ -89,5 +90,12 @@
     "@babel/runtime": "^7.11.1",
     "style-utils": "^0.3.4",
     "tween-one": "^1.0.9"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": [
+        "npm run lint"
+      ]
+    }
   }
 }
