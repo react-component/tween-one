@@ -1,4 +1,4 @@
-import React, { useRef, createElement, useLayoutEffect } from 'react';
+import React, { useRef, createElement, useLayoutEffect, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
 import TweenOneJS, { Tween } from 'tween-one';
 import { toStyleUpperCase, stylesToCss } from 'style-utils';
@@ -65,6 +65,7 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
       }
       // 动画写在标签上，手动对比；
       if (!objectEqual(animation, prevAnim.current)) {
+        console.log('update animation');
         const dom =
           domRef.current instanceof Element ? domRef.current : findDOMNode(domRef.current);
 
@@ -99,12 +100,16 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
           });
         prevAnim.current = animation;
       }
-      return () => {
+      return;
+    }, [animation]);
+    useEffect(
+      () => () => {
         if (animRef.current) {
           animRef.current.kill();
         }
-      };
-    }, [animation]);
+      },
+      [],
+    );
 
     const refFunc = (c: any) => {
       domRef.current = c;
