@@ -145,7 +145,7 @@ React.render(<TweenOneGroup>
 
 ```js | pure
 import { Plugins } from 'rc-tween-one';
-import SvgDrawPlugin from 'rc-tween-one/src/plugin/SvgDrawPlugin';
+import SvgDrawPlugin from 'rc-tween-one/es/plugin/SvgDrawPlugin';
 Plugins.push(SvgDrawPlugin);
 
 <TweenOne animation={{ SVGDraw: '10%' }} />
@@ -159,7 +159,7 @@ SVGDraw = string or number;
 
 ```js | pure
 import { Plugins } from 'rc-tween-one';
-import SvgMorphPlugin from 'rc-tween-one/src/plugin/SvgMorphPlugin';
+import SvgMorphPlugin from 'rc-tween-one/es/plugin/SvgMorphPlugin';
 Plugins.push(SvgMorphPlugin);
 
 <TweenOne animation={{ SVGMorph: { path: '300,10 500,200 120,230 450,220 0,20' }}} />
@@ -177,7 +177,7 @@ Plugins.push(SvgMorphPlugin);
 
 ```js | pure
 import { Plugins } from 'rc-tween-one';
-import PathMotionPlugin from 'rc-tween-one/src/plugin/PathMotionPlugin';
+import PathMotionPlugin from 'rc-tween-one/es/plugin/PathMotionPlugin';
 Plugins.push(PathMotionPlugin);
 
 <TweenOne animation={{ PathMotion: { path: '300,10 500,200 120,230 450,220 0,20' }}} />

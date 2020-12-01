@@ -1,3 +1,3 @@
-import SvgDrawPlugin from 'tween-one/src/plugins/SvgDrawPlugin';
+import SvgDrawPlugin from 'tween-one/es/plugins/SvgDrawPlugin';
 
 export default SvgDrawPlugin;

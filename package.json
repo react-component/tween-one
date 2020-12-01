@@ -89,7 +89,7 @@
   "dependencies": {
     "@babel/runtime": "^7.11.1",
     "style-utils": "^0.3.4",
-    "tween-one": "^1.0.9"
+    "tween-one": "^1.0.18"
   },
   "husky": {
     "hooks": {

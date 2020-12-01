@@ -1,3 +1,3 @@
-import PathMotionPlugin from 'tween-one/src/plugins/PathMotionPlugin';
+import PathMotionPlugin from 'tween-one/es/plugins/PathMotionPlugin';
 
 export default PathMotionPlugin;

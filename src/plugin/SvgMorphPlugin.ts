@@ -1,3 +1,3 @@
-import SvgMorph from 'tween-one/src/plugins/SvgMorphPlugin';
+import SvgMorph from 'tween-one/es/plugins/SvgMorphPlugin';
 
 export default SvgMorph;

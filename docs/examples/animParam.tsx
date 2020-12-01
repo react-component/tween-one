@@ -5,13 +5,13 @@ import 'antd/dist/antd.css';
 
 const { Option } = Select;
 
-const ValueComp = props => {
+const ValueComp = (props: any) => {
   const { value, onChange } = props;
   const [name, setName] = React.useState(value.name || 'x');
   const [param, setParam] = React.useState(parseFloat(value.value) || 300);
   const [uint, setUint] = React.useState(value.uint || 'px');
 
-  const onNameChange = e => {
+  const onNameChange = (e: any) => {
     setName(e);
     const v: any = {
       name: e,
@@ -40,11 +40,11 @@ const ValueComp = props => {
     }
     onChange(v);
   };
-  const onValueChange = e => {
+  const onValueChange = (e: any) => {
     setParam(e);
     onChange({ ...value, value: e });
   };
-  const onUintChange = e => {
+  const onUintChange = (e: any) => {
     setUint(e);
     onChange({ ...value, uint: e });
   };
@@ -74,7 +74,7 @@ export default () => {
   const [anim, setAnim] = React.useState();
   const [paused, setPaused] = React.useState(true);
 
-  const onFinish = values => {
+  const onFinish = (values: any) => {
     console.log('Received values from form: ', values);
     setPaused(false);
     const { value, ...v } = values;

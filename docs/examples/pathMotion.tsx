@@ -1,6 +1,6 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
-import PathPlugin from 'rc-tween-one/src/plugin/PathMotionPlugin';
+import PathPlugin from 'rc-tween-one/es/plugin/PathMotionPlugin';
 
 Tween.plugins.push(PathPlugin);
 

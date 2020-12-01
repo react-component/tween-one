@@ -1,6 +1,6 @@
 import Tween from 'rc-tween-one';
 import React from 'react';
-import ChildrenPlugin from 'rc-tween-one/src/plugin/ChildrenPlugin';
+import ChildrenPlugin from 'rc-tween-one/es/plugin/ChildrenPlugin';
 
 
 Tween.plugins.push(ChildrenPlugin);

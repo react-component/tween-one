@@ -8,7 +8,7 @@ export default () => {
   return (
     <Tween
       onChange={bbb}
-      animation={[{ top: 100 }, { left: 100 }, { top: 1 }, { left: 1 }]}
+      animation={{x: 300}}
       style={{ position: 'relative' }}
     >
       <div>执行动效</div>

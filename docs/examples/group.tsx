@@ -1,4 +1,4 @@
-import TweenOneGroup from 'rc-tween-one/src/TweenOneGroup';
+import TweenOneGroup from 'rc-tween-one/es/TweenOneGroup';
 import React from 'react';
 import { Button } from 'antd';
 import 'antd/dist/antd.css';

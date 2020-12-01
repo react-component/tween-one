@@ -8,11 +8,11 @@ declare module 'flubber';
 
 
 declare module 'rc-tween-one';
-declare module 'rc-tween-one/src/plugin/ChildrenPlugin';
-declare module 'rc-tween-one/src/plugin/PathMotionPlugin';
-declare module 'rc-tween-one/src/plugin/SvgDrawPlugin';
-declare module 'rc-tween-one/src/plugin/SvgMorphPlugin';
-declare module 'rc-tween-one/src/TweenOneGroup';
+declare module 'rc-tween-one/es/plugin/ChildrenPlugin';
+declare module 'rc-tween-one/es/plugin/PathMotionPlugin';
+declare module 'rc-tween-one/es/plugin/SvgDrawPlugin';
+declare module 'rc-tween-one/es/plugin/SvgMorphPlugin';
+declare module 'rc-tween-one/es/TweenOneGroup';
 
 
 interface Element {

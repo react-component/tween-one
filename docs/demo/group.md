@@ -6,7 +6,7 @@ order: 8
 ### appear = false
 
 ```jsx
-import TweenOneGroup from 'rc-tween-one/src/TweenOneGroup';
+import TweenOneGroup from 'rc-tween-one/es/TweenOneGroup';
 import React from 'react';
 import { Button } from 'antd';
 import 'antd/dist/antd.css';
@@ -48,7 +48,7 @@ export default () => {
 ### exclusive = true
 
 ```jsx
-import TweenOneGroup from 'rc-tween-one/src/TweenOneGroup';
+import TweenOneGroup from 'rc-tween-one/es/TweenOneGroup';
 import React from 'react';
 import { Button } from 'antd';
 import 'antd/dist/antd.css';
@@ -86,7 +86,7 @@ export default () => {
 ### children change
 
 ```jsx
-import TweenOneGroup from 'rc-tween-one/src/TweenOneGroup';
+import TweenOneGroup from 'rc-tween-one/es/TweenOneGroup';
 import React from 'react';
 import { Button } from 'antd';
 import 'antd/dist/antd.css';
