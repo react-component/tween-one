@@ -6,6 +6,7 @@
     "importHelpers": true,
     "jsx": "react",
     "typeRoots": ["./typings"],
+    "declaration": true,
     "esModuleInterop": true,
     "sourceMap": true,
     "baseUrl": "./",
