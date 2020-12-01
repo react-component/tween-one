@@ -1,9 +1,8 @@
 import React from 'react';
-import { IAnimObject as AnimObject, IMode, ITimelineCallBack } from 'tween-one';
-
+import { IAnimObject as Anim, IMode, ITimelineCallBack } from 'tween-one';
 
 export interface IObject {
-  [key: string]: any
+  [key: string]: any;
 }
 export interface ICallBack {
   mode?: IMode;
@@ -14,6 +13,14 @@ export interface ICallBack {
   timelineMoment?: number;
   vars?: IObject | IObject[];
   targets?: IObject | IObject[];
+}
+
+interface AnimObject extends Anim {
+  Children?: {
+    value?: number;
+    floatLength?: number;
+    formatMoney?: true | { thousand?: string; decimal?: string };
+  };
 }
 
 export type AnimObjectOrArray = AnimObject | AnimObject[];
@@ -60,13 +67,13 @@ export interface IGroupProps extends Omit<React.HTMLAttributes<any>, 'onChange'>
   componentProps?: IObject;
 }
 
-export interface TweenOneRef extends React.ForwardRefExoticComponent<any> {
+export interface TweenOneRef extends React.ForwardRefExoticComponent<IAnimProps> {
   isTweenOne?: boolean;
   plugins?: any;
   ticker?: any;
   easing?: any;
 }
 
-export interface TweenOneGroupRef extends React.ForwardRefExoticComponent<any> {
+export interface TweenOneGroupRef extends React.ForwardRefExoticComponent<IGroupProps> {
   isTweenOneGroup?: boolean;
 }
