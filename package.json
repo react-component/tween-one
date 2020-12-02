@@ -54,7 +54,7 @@
     "prepublishOnly": "npm run compile && np --tag=beta --no-cleanup --yolo --no-publish --any-branch",
     "lint": "eslint src/ --fix --ext .tsx,.ts",
     "lint:tsc": "tsc -p tsconfig.json --noEmit",
-    "now-build": "npm run compile && npm run docs:build"
+    "now-build": "npm run docs:build"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.3.0",
@@ -76,7 +76,6 @@
     "husky": "^4.3.0",
     "np": "^6.0.3",
     "prettier": "^2.1.2",
-    "rc-scroll-anim": "^2.7.6",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "regenerator-runtime": "^0.13.7",

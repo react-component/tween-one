@@ -10,7 +10,6 @@ export default defineConfig({
     'https://avatars0.githubusercontent.com/u/9441414?s=200&v=4',
   outputPath: '.doc',
   alias: {
-    'rc-tween-one':path.join(__dirname, 'src'),
     'rc-tween-one/es': path.join(__dirname, 'src'),
     'rc-tween-one/lib': path.join(__dirname, 'src'),
   },
