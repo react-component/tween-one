@@ -7,7 +7,7 @@ declare module 'raf';
 declare module 'flubber';
 
 
-declare module 'rc-tween-one';
+// declare module 'rc-tween-one';
 declare module 'rc-tween-one/es/plugin/ChildrenPlugin';
 declare module 'rc-tween-one/es/plugin/PathMotionPlugin';
 declare module 'rc-tween-one/es/plugin/SvgDrawPlugin';
