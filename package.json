@@ -54,7 +54,7 @@
     "prepublishOnly": "npm run compile && np --tag=beta --no-cleanup --yolo --no-publish --any-branch",
     "lint": "eslint src/ --fix --ext .tsx,.ts",
     "lint:tsc": "tsc -p tsconfig.json --noEmit",
-    "now-build": "npm run docs:build"
+    "now-build": "npm run compile && npm run docs:build"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.3.0",
