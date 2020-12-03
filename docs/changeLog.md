@@ -7,7 +7,7 @@ order: 2
 
 ---
 
-## 3.0.0-beta.0
+## 3.0.0-beta.x
 
 - hooks 重构 rc-tween-one;
 - 拆离动画库与组件, 动画库 https://docs.antfin-inc.com/tween-one-js-update_1/
@@ -20,7 +20,7 @@ order: 2
 - `attr` 改为 `boolean` 类型；
 - 更新 `onChange` 回调，cb: { moment, targets, index, mode, ratio, vars, index, repeat }
 - 新增 `onChangeTimeline`, cb: { mode, targets, vars, moment, totalTime, repeat }
-- 删除 `BezierPlugin`;
+- 删除 `BezierPlugin`，合进 PathMotionPlugin;;
 - `PathMotionPlugin` 更改用法，使用 `PathMotion: { path, center, x, y, rotate }`, 详细参考 pathMotion demo;
 - `SvgMorph` 依赖更改为使用 `flubber`；
 - 滤境使用，改成 `import { Plugins } from 'rc-tween-one'; Plugins.push()`, 保留 `TweenOne.plugins.push()`;

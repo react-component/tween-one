@@ -170,7 +170,7 @@ Plugins.push(SvgMorphPlugin);
 |------------------|--------|---------|----------------|
 | path             | string | null    | svg path, ref: `M0,0L100,0`;|
 | attr             | string | null    | Svg tag attributes, example: `polygon` is ` points`, `path` is `d`. |
-| maxSegmentLength | number | 0.5     | 该值越小，生成的动画将越平滑，但会牺牲性能;|
+| maxSegmentLength | number | 0.5     | The lower the value, the smoother the generated animation will be, but at the expense of performance;|
 
 
 ### PathPlugin
@@ -187,11 +187,18 @@ Plugins.push(PathMotionPlugin);
 | name   | type                | default         | description                   |
 | ------ | ------------------- | --------------- | ----------------------------- |
 | path   | string              | null            | svg path, ref: `M0,0L100,0`; |
+| pathVars | IPathVars | null | Only valid if path is array '[{x, y}, {x, y}]' |
 | center | `number \ string[]` | `['50%','50%']` | center point, ref: `[50px, 50px]`;   |
 | x      | boolean             | true            | x follow the path.               |
 | y      | boolean             | true            | y follow the path.               |
 | rotate | boolean             | true            | rotate follow the path.          |
 
+##### IPathVars
+| name   | type                | default         | description                   |
+| ------ | ------------------- | --------------- | ----------------------------- |
+| type      | `thru \ soft \ cubic` | `thru`  | path type. `thru` same as the path; `soft` with the curve of attraction facing them, but not through the point;  `cubic` allows you to define standard Cubic Bezier, example: `[start, control, control, end]`.  |
+| curviness | 0-2                   | 1       | This determines how "curvy" the resulting path is. `0` is lines, `1` is curved path, `2` would make it much more curvy. It can be `1.5`.  |
+| relative  | boolean               | false   | Increase relative to current value. example: if the target's x starts at 100 and the path is `[{x:5}, {x:10}, {x:-2}]` , it would first move to `105`, then `115`, and finally end at `113`. |
 
 ### ChildrenPlugin
 
