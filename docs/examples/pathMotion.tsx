@@ -4,6 +4,16 @@ import PathPlugin from 'rc-tween-one/es/plugin/PathMotionPlugin';
 
 Tween.plugins.push(PathPlugin);
 
+const array = [
+  { x: 50, y: 50 },
+  { x: 200, y: 250 },
+  { x: 350, y: 50 },
+  { x: 500, y: 250 },
+  { x: 650, y: 50 } /* 
+  { x: 800, y: 250 },
+  { x: 950, y: 50 }, */,
+];
+
 export default function Demo() {
   const p = `M50.952,85.619C31.729,84.841,23.557,73.62,24.095,42.952
     c0.381-21.714,6.667-33.714,30.286-34.476
@@ -52,6 +62,52 @@ export default function Demo() {
           <path fill="none" stroke="#000" d={p} />
           <path fill="none" stroke="#000" d={p2} />
         </svg>
+      </div>
+      <div
+        style={{
+          width: 700,
+          height: 300,
+          margin: '24px auto 0',
+          background: '#fff000',
+          position: 'relative',
+        }}
+      >
+        {array.map((item, i) => {
+          return (
+            <div
+              key={i}
+              style={{
+                background: '#000',
+                margin: 0,
+                width: 8,
+                height: 8,
+                position: 'absolute',
+                left: item.x - 4,
+                top: item.y - 4,
+                borderRadius: '100%',
+              }}
+            />
+          );
+        })}
+        <Tween
+          animation={{
+            duration: 5000,
+            PathMotion: {
+              path: array,
+              pathVars: { type: 'soft', curviness: 1 },
+              center: ['15px', '15px'],
+            },
+          }}
+          repeat={-1}
+          yoyo
+          style={{
+            opacity: 1,
+            position: 'absolute',
+            width: '30px',
+            height: '30px',
+            background: '#1890ff',
+          }}
+        >c</Tween>
       </div>
     </div>
   );
