@@ -1,9 +1,7 @@
-import React from 'react';
-import { IAnimObject as Anim, IMode, ITimelineCallBack } from 'tween-one';
+import type React from 'react';
+import type { IAnimObject as Anim, IMode, ITimelineCallBack } from 'tween-one';
 
-export interface IObject {
-  [key: string]: any;
-}
+export type IObject = Record<string, any>;
 export interface ICallBack {
   mode?: IMode;
   moment?: number;
@@ -49,6 +47,8 @@ export interface IAnimProps extends Omit<React.HTMLAttributes<any>, 'onChange'> 
   componentProps?: IObject;
   forcedJudg?: IObject;
   killPrevAnim?: boolean;
+  regionStartTime?: number;
+  regionEndTime?: number;
 }
 
 export interface IGroupProps extends Omit<React.HTMLAttributes<any>, 'onChange'> {

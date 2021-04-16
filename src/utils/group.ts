@@ -1,6 +1,7 @@
-import React, { ReactElement } from 'react';
+import type { ReactElement } from 'react';
+import React from 'react';
 
-import { IObject } from '../type';
+import type { IObject } from '../type';
 
 export const windowIsUndefined = !(
   typeof window !== 'undefined' &&

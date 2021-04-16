@@ -108,6 +108,8 @@ React.render(<TweenOneGroup>
 | onChange   | func           | null    | when the animation change called, callback({ moment, targets, index, mode, ratio, vars, index, repeat }) |
 | onChangeTimeline   | func           | null    | when the animation change called, callback({ mode, targets, vars, moment, totalTime, repeat }) |
 | moment     | number         | null    | set the current frame    |
+| regionStartTime  | number           | 0       | Set the start time of the animation region  |
+| regionEndTime    | number         | null    | Set the end time of the animation region   |
 | attr       | boolean         | false | attribute animation is `true`, when morph SVG must be `true`.  |
 | resetStyle | boolean    | false   | update animation data, reset init style |
 | component  | string / React.Element  | `div`   | component tag  |
@@ -186,8 +188,8 @@ Plugins.push(PathMotionPlugin);
 
 | name   | type                | default         | description                   |
 | ------ | ------------------- | --------------- | ----------------------------- |
-| path   | string              | null            | svg path, ref: `M0,0L100,0`; |
-| pathVars | IPathVars | null | Only valid if path is array '[{x, y}, {x, y}]' |
+| path   | string / {x,y}[]           | null            | svg path, ref: `M0,0L100,0`; |
+| pathVars | IPathVars | null | Only valid if path is array `[{x, y}, {x, y}]` |
 | center | `number \ string[]` | `['50%','50%']` | center point, ref: `[50px, 50px]`;   |
 | x      | boolean             | true            | x follow the path.               |
 | y      | boolean             | true            | y follow the path.               |

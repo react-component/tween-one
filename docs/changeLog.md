@@ -25,7 +25,7 @@ order: 2
 - `SvgMorph` 依赖更改为使用 `flubber`；
 - 滤境使用，改成 `import { Plugins } from 'rc-tween-one'; Plugins.push()`, 保留 `TweenOne.plugins.push()`;
 - 删除 `TweenOne.easing.path(path)` 使用，直接用 `ease: 'M0,0L100,100'`;
-
+- 增加动画区域播放 `regionStartTime`, `regionEndTime`;
 ---
 
 ## 2.2.0

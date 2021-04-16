@@ -1,5 +1,14 @@
-import React, { useRef, useEffect, useState, createElement, ReactElement, ReactText } from 'react';
-import { IGroupProps, IAnimObject, TweenOneGroupRef, ICallBack, IObject } from './type';
+import type {
+  ReactElement,
+  ReactText} from 'react';
+import React, {
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  createElement
+} from 'react';
+import type { IGroupProps, IAnimObject, TweenOneGroupRef, ICallBack, IObject } from './type';
 import {
   dataToArray,
   getChildrenFromProps,
@@ -58,7 +67,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
     const newChildren: ReactElement[] = mergeChildren(currentChild, nextChildren);
     keysToEnter.current = [];
     keysToLeave.current = [];
-    nextChildren.forEach(c => {
+    nextChildren.forEach((c) => {
       if (!c) {
         return;
       }
@@ -73,7 +82,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       }
     });
 
-    currentChild.forEach(c => {
+    currentChild.forEach((c) => {
       if (!c) {
         return;
       }
@@ -123,10 +132,10 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
         }
       } else if (type === 'leave') {
         keysToLeave.current.splice(keysToLeave.current.indexOf(key), 1);
-        currentChildren.current = currentChildren.current.filter(child => key !== child.key);
+        currentChildren.current = currentChildren.current.filter((child) => key !== child.key);
         if (!keysToLeave.current.length) {
-          const currentChildrenKeys = currentChildren.current.map(item => item.key);
-          Object.keys(saveTweenTag.current).forEach($key => {
+          const currentChildrenKeys = currentChildren.current.map((item) => item.key);
+          Object.keys(saveTweenTag.current).forEach(($key) => {
             if (currentChildrenKeys.indexOf($key) === -1) {
               delete saveTweenTag.current[$key];
             }
@@ -169,7 +178,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
 
     return getTweenChild(child, p);
   };
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (oneEnter.current) {
       const nextChild = toArrayChildren(props.children);
       // 如果还在动画，暂存动画队列里，等前一次动画结束后再启动最后次的更新动画
@@ -181,13 +190,13 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       }
     }
   }, [props.children]);
-
+  useLayoutEffect(() => {
+    reAnimQueue();
+  });
   useEffect(() => {
     oneEnter.current = true;
   }, []);
-  useEffect(() => {
-    reAnimQueue();
-  });
+
   currentChildren.current = children;
 
   const childrenToRender = children.map((child: ReactElement, i: number) => {

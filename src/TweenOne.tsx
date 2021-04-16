@@ -1,9 +1,10 @@
 import React, { useRef, createElement, useLayoutEffect, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
-import TweenOneJS, { Tween } from 'tween-one';
+import type { Tween } from 'tween-one';
+import TweenOneJS from 'tween-one';
 import { toStyleUpperCase, stylesToCss } from 'style-utils';
 
-import { IAnimProps, IAnimObject, TweenOneRef } from './type';
+import type { IAnimProps, IAnimObject, TweenOneRef } from './type';
 import { objectEqual } from './utils';
 
 const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
@@ -65,7 +66,6 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
       }
       // 动画写在标签上，手动对比；
       if (!objectEqual(animation, prevAnim.current)) {
-        console.log('update animation');
         const dom =
           domRef.current instanceof Element ? domRef.current : findDOMNode(domRef.current);
 

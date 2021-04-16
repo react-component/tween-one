@@ -1,6 +1,6 @@
 {
   "name": "rc-tween-one",
-  "version": "3.0.0-beta.6",
+  "version": "3.0.0-beta.7",
   "description": "tween-one anim component for react",
   "typings": "es/index.d.ts",
   "engines": {
@@ -88,7 +88,7 @@
   "dependencies": {
     "@babel/runtime": "^7.11.1",
     "style-utils": "^0.3.4",
-    "tween-one": "^1.0.23"
+    "tween-one": "^1.0.33"
   },
   "husky": {
     "hooks": {

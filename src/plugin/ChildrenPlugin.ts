@@ -1,4 +1,4 @@
-import { IObject } from '../type';
+import type { IObject } from '../type';
 
 interface IFormatMoney {
   thousand?: string;
@@ -21,8 +21,13 @@ class ChildrenPlugin {
 
   target?: HTMLElement;
 
+  vars: IVars;
+  key: string;
   // eslint-disable-next-line no-useless-constructor,no-empty-function
-  constructor(public vars: IVars, public key: string) {}
+  constructor(vars: IVars, key: string) {
+    this.vars = vars;
+    this.key = key;
+  }
 
   getAnimStart = () => {
     const { target, vars, startAt, key } = this;
@@ -69,7 +74,7 @@ class ChildrenPlugin {
         if (l) {
           Array(l)
             .fill(0)
-            .forEach(num => {
+            .forEach((num) => {
               decimal += `${num}`;
             });
         }
