@@ -31,7 +31,7 @@ interface AllHTMLAttributes extends Omit<React.SVGAttributes<any>, 'crossOrigin'
 }
 export interface IAnimProps extends Omit<AllHTMLAttributes, 'onChange'> {
   style?: React.CSSProperties;
-  children?: React.ReactNode;
+  children?: any;
   animation?: AnimObjectOrArray;
   paused?: boolean;
   reverse?: boolean;
