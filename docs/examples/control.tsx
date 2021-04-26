@@ -7,7 +7,7 @@ const animation = [{ translateX: '500px', duration: 1000 }, { y: 100 }];
 export default () => {
   const [paused, setPaused] = React.useState(true);
   const [reverse, setReverse] = React.useState(false);
-  const [moment, setMoment] = React.useState<number | null>(0);
+  const [moment, setMoment] = React.useState<number | undefined>(0);
 
   return (
     <div>
@@ -49,7 +49,7 @@ export default () => {
         </Button>
         <Button
           onClick={() => {
-            setMoment(null);
+            setMoment(undefined);
             setTimeout(() => {
               setMoment(0);
             });

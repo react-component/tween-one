@@ -55,17 +55,20 @@ export default () => {
       <div style={{ width: 300 }}>
         <Tween
           component={Menu}
+          componentProps={{
+            defaultSelectedKeys: ['1'],
+            defaultOpenKeys: ['sub1'],
+            mode: 'inline',
+            theme: 'dark',
+          }}
+          alt-a="ad"
           animation={anim}
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['sub1']}
-          mode="inline"
-          theme="dark"
         >
           <Tween
             animation={{ ...anim, opacity: 0, delay: 100, type: 'from' }}
             component={Item}
+            componentProps={{ icon: <PieChartOutlined /> }}
             key="1"
-            icon={<PieChartOutlined />}
           >
             Option 1
           </Tween>
@@ -79,8 +82,7 @@ export default () => {
             component={SubMenu}
             animation={{ ...anim, opacity: 0, type: 'from', delay: 200 }}
             key="sub1"
-            icon={<MailOutlined />}
-            title="Navigation One"
+            componentProps={{ icon: <MailOutlined />, title: 'Navigation One' }}
           >
             <Menu.Item key="5">Option 5</Menu.Item>
             <Menu.Item key="6">Option 6</Menu.Item>

@@ -3,7 +3,7 @@ import React from 'react';
 
 export default () => {
   const [animation, setAnim] = React.useState<any>();
-  const mouseMove = e => {
+  const mouseMove = (e: any) => {
     const x = e.clientX;
     setAnim({ x, duration: 1000, ease: 'easeOutQuad' });
   };

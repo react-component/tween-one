@@ -25,15 +25,20 @@ export type AnimObjectOrArray = AnimObject | AnimObject[];
 
 export type IAnimObject = AnimObjectOrArray | ((key: string, index: number) => AnimObject);
 
-export interface IAnimProps extends Omit<React.HTMLAttributes<any>, 'onChange'> {
+
+interface AllHTMLAttributes extends Omit<React.SVGAttributes<any>, 'crossOrigin'>, React.AllHTMLAttributes<any> {
+
+}
+export interface IAnimProps extends Omit<AllHTMLAttributes, 'onChange'> {
   style?: React.CSSProperties;
-  children?: any;
+  children?: React.ReactNode;
   animation?: AnimObjectOrArray;
   paused?: boolean;
   reverse?: boolean;
   repeatDelay?: number;
   repeat?: number;
   yoyo?: boolean;
+  ref?: React.Ref<any>;
   onChange?: (v: ICallBack) => void;
   onChangeTimeline?: (v: ITimelineCallBack) => void;
   moment?: number;
@@ -41,7 +46,8 @@ export interface IAnimProps extends Omit<React.HTMLAttributes<any>, 'onChange'> 
   resetStyle?: boolean;
   component?:
     | string
-    | React.ClassType<any, React.Component, React.ComponentClass<{ ref: any }>>
+    | React.ClassType<any, React.Component, React.ComponentClass<any>>
+    | React.ForwardRefExoticComponent<IAnimProps & { ref?: React.Ref<any> }>
     | null
     | undefined;
   componentProps?: IObject;
