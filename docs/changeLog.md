@@ -18,8 +18,9 @@ order: 2
 - 删除 `reverseDelay`;
 - 增加 `repeatDelay`;
 - `attr` 改为 `boolean` 类型；
-- 更新 `onChange` 回调，cb: { moment, targets, index, mode, ratio, vars, index, repeat }
+- 更新 `onChange` 和回调，cb: { moment, targets, index, mode, ratio, vars, index, repeat }
 - 新增 `onChangeTimeline`, cb: { mode, targets, vars, moment, totalTime, repeat }
+- 其它回调如 `onStart`、`onUpdate`、`onComplete` 等的 cb 的 target 全部更新为 targets；
 - 删除 `BezierPlugin`，合进 PathMotionPlugin;;
 - `PathMotionPlugin` 更改用法，使用 `PathMotion: { path, center, x, y, rotate }`, 详细参考 pathMotion demo;
 - `SvgMorph` 依赖更改为使用 `flubber`；

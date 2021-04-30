@@ -132,9 +132,9 @@ React.render(<TweenOneGroup>
 | ease       | string         | `easeInOutQuad` | animate ease [refer](http://easings.net/en) or svg path `M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0`  |
 | bezier     | object         | null    | bezier curve animate |
 | onStart    | func           | null    | A function that should be called when the tween begins, callback(e), e: { index, target }  |
-| onUpdate   | func           | null    | A function that should be called every time the animate updates, callback(e), e: { index, target,  ratio }   |
-| onComplete | func           | null    | A function that should be called when the animate has completed, callback(e), e: { index, target }  |
-| onRepeat   | func           | null    | A function that should be called each time the animate repeats, callback(e), e: { index, target }  |
+| onUpdate   | func           | null    | A function that should be called every time the animate updates, callback(e), e: { index, targets,  ratio }   |
+| onComplete | func           | null    | A function that should be called when the animate has completed, callback(e), e: { index, targets }  |
+| onRepeat   | func           | null    | A function that should be called each time the animate repeats, callback(e), e: { index, targets }  |
 
 > Cannot be used at the same time `reverse` and `repeat: -1`.
 
