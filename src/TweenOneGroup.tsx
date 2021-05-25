@@ -1,13 +1,5 @@
-import type {
-  ReactElement,
-  ReactText} from 'react';
-import React, {
-  useRef,
-  useEffect,
-  useLayoutEffect,
-  useState,
-  createElement
-} from 'react';
+import type { ReactElement, ReactText } from 'react';
+import React, { useRef, useEffect, useLayoutEffect, useState, createElement } from 'react';
 import type { IGroupProps, IAnimObject, TweenOneGroupRef, ICallBack, IObject } from './type';
 import {
   dataToArray,
@@ -99,7 +91,10 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
   const reAnimQueue = () => {
     if (!Object.keys(isTween.current).length && animQueue.current.length) {
       // 取最后一个继续动画；
-      const child = changeChildren(animQueue.current[animQueue.current.length - 1], children);
+      const child = changeChildren(
+        animQueue.current[animQueue.current.length - 1],
+        currentChildren.current,
+      );
       setChild(child);
       animQueue.current = [];
     }
@@ -181,11 +176,19 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
   useLayoutEffect(() => {
     if (oneEnter.current) {
       const nextChild = toArrayChildren(props.children);
+      const currentChild = toArrayChildren(currentChildren.current);
+      // 不计入正在进场的元素又进场；
+      const newNextChild = nextChild.filter(
+        (c) =>
+          !(currentChild.find((d) => d.key === c.key) && keysToEnter.current.indexOf(c.key) >= 0),
+      );
       // 如果还在动画，暂存动画队列里，等前一次动画结束后再启动最后次的更新动画
       if (Object.keys(isTween.current).length && !exclusive) {
-        animQueue.current.push(nextChild);
+        // animQueue.current.push(nextChild);
+        if (nextChild.length && newNextChild.length) {
+          animQueue.current.push(newNextChild);
+        }
       } else {
-        const currentChild = toArrayChildren(currentChildren.current);
         setChild(changeChildren(nextChild, currentChild));
       }
     }

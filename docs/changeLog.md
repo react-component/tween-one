@@ -28,6 +28,7 @@ order: 2
 - 删除 `TweenOne.easing.path(path)` 使用，直接用 `ease: 'M0,0L100,100'`;
 - 增加动画区域播放 `regionStartTime`, `regionEndTime`;
 - 增加对背景渐变的动画支持，`backgroundImage: 'linear-gradient(to left, #000fff 0%, red 20%, #fff000 100%)'`
+- TweenOneGroup 使用改成 `import TweenOneGroup from 'rc-tween-one/lib/TweenOneGroup';`
 ---
 
 ## 2.2.0
