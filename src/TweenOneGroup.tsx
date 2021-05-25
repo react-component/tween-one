@@ -180,7 +180,8 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       // 不计入正在进场的元素又进场；
       const newNextChild = nextChild.filter(
         (c) =>
-          !(currentChild.find((d) => d.key === c.key) && keysToEnter.current.indexOf(c.key) >= 0),
+          c &&
+          !(currentChild.find((d) => d && d.key === c.key) && keysToEnter.current.indexOf(c.key) >= 0),
       );
       // 如果还在动画，暂存动画队列里，等前一次动画结束后再启动最后次的更新动画
       if (Object.keys(isTween.current).length && !exclusive) {
