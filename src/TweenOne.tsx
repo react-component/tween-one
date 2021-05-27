@@ -135,7 +135,7 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
       return React.cloneElement(children, {
         style: newStyle,
         ref: refFunc,
-        className: newClassName,
+        className: [...new Set(newClassName.split(/\s+/))].join(' '),
       });
     }
     if (!component) {

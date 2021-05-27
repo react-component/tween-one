@@ -153,7 +153,9 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       onChange(animate, child.key, type, obj);
     };
     const className =
-      setClassName(child.props.className || '', type === 'enter' || type === 'appear') || '';
+      type === 'appear' && !appearBool
+        ? child.props.className
+        : setClassName(child.props.className || '', type === 'enter' || type === 'appear') || '';
 
     const p = {
       key: child.key,
@@ -181,7 +183,10 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       const newNextChild = nextChild.filter(
         (c) =>
           c &&
-          !(currentChild.find((d) => d && d.key === c.key) && keysToEnter.current.indexOf(c.key) >= 0),
+          !(
+            currentChild.find((d) => d && d.key === c.key) &&
+            keysToEnter.current.indexOf(c.key) >= 0
+          ),
       );
       // 如果还在动画，暂存动画队列里，等前一次动画结束后再启动最后次的更新动画
       if (Object.keys(isTween.current).length && !exclusive) {
