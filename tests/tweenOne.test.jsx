@@ -45,9 +45,6 @@ describe('rc-tween-one', () => {
             yoyo: true,
           }}
           style={{ top: 0, left: '10vw', width: '5vh', height: '10%', margin: '10rem' }}
-          ref={(c) => {
-            console.log(c);
-          }}
         >
           <div>动画</div>
         </TweenOne>
@@ -261,12 +258,7 @@ describe('rc-tween-one', () => {
     }, 1040);
   });
   it('is update Animation2', (done) => {
-    instance = mount(
-      <TweenComp
-        animation={[{ top: 100 }]}
-        style={{ position: 'relative' }}
-      />,
-    );
+    instance = mount(<TweenComp animation={[{ top: 100 }]} style={{ position: 'relative' }} />);
     let child = instance.find('.wrapper').instance().children[0];
     Ticker.timeout(() => {
       expect(parseFloat(child.style.top)).toBeGreaterThan(99);
@@ -299,7 +291,7 @@ describe('rc-tween-one', () => {
         style={{ position: 'relative' }}
       />,
     );
-    let child = instance.find('.wrapper').instance().children[0];
+    const child = instance.find('.wrapper').instance().children[0];
     Ticker.timeout(() => {
       console.log(`child top:${child.style.top}`);
       expect(parseFloat(child.style.top)).toBeGreaterThan(90);
@@ -341,7 +333,7 @@ describe('rc-tween-one', () => {
       done();
     }, 450);
   });
-  it('component is null children i string tween-one', () => {
+  it('component is null children is string warning', () => {
     instance = mount(
       <div>
         <TweenOne component={null} animation={{ top: 100 }} style={{ position: 'relative' }}>
@@ -359,15 +351,19 @@ describe('rc-tween-one', () => {
     instance = mount(
       <TweenComp resetStyle animation={{ top: 100 }} style={{ position: 'relative' }} />,
     );
-
+    let child = instance.find('.wrapper').instance().children[0];
+    // eslint-disable-next-line no-underscore-dangle
+    console.log('top', child._tweenOneVars, child.style, child.id);
     Ticker.timeout(() => {
       instance.setProps({
         animation: [{ left: 100 }, { opacity: 0 }],
       });
       Ticker.timeout(() => {
-        const child = instance.find('.wrapper').instance().children[0];
-        console.log(child.style.top);
-        expect(child.style.top).toEqual('');
+        child = instance.find('.wrapper').instance().children[0];
+        // eslint-disable-next-line no-underscore-dangle
+        console.log('top', child._tweenOneVars, child.style, child.id);
+        // eslint-disable-next-line no-underscore-dangle
+        expect(child._tweenOneVars.style.top).toEqual(undefined);
         done();
       }, 500);
     }, 100);
@@ -449,9 +445,7 @@ describe('rc-tween-one', () => {
   it('plugin: children plugin tween-one', (done) => {
     instance = mount(
       <div>
-        <TweenOne animation={{ Children: { value: 1000, floatLength: 0 } }}>
-          0
-        </TweenOne>
+        <TweenOne animation={{ Children: { value: 1000, floatLength: 0 } }}>0</TweenOne>
       </div>,
     );
     console.log(`default:${instance.text()}`);
@@ -478,7 +472,7 @@ describe('rc-tween-one', () => {
       done();
     }, 450);
   });
-  
+
   it('plugin: pathMotion plugin tween-one', (done) => {
     instance = mount(
       <TweenComp

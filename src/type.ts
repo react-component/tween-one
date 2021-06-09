@@ -34,6 +34,7 @@ export interface IAnimProps extends Omit<AllHTMLAttributes, 'onChange'> {
   children?: any;
   animation?: AnimObjectOrArray;
   paused?: boolean;
+  delay?: number;
   reverse?: boolean;
   repeatDelay?: number;
   repeat?: number;
