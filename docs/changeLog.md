@@ -10,11 +10,12 @@ order: 2
 ## 3.0.0-beta.x
 
 - hooks 重构 rc-tween-one;
-- 拆离动画库与组件, 动画库 https://docs.antfin-inc.com/tween-one-js-update_1/
+- 拆离动画库与组件, 动画库 https://www.npmjs.com/package/tween-one
 
 #### API 变更
 
 - 删除 `currentRef`, hooks 如果 component 是组件，ref 返回为组件的 ref;
+- 增加全局动画播放时的 `delay`;
 - 删除 `reverseDelay`;
 - 增加 `repeatDelay`;
 - `attr` 改为 `boolean` 类型；

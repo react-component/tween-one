@@ -100,10 +100,11 @@ React.render(<TweenOneGroup>
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
 | animation  | object / array | null    | animate configure parameters |
-| paused      | boolean        | false   | animate pause |
-| reverse    | boolean        | false   | animate revers |
+| paused      | boolean       | false   | animate timeline pause |
+| reverse    | boolean        | false   | animate timeline revers |
+| delay       number          | 0       | animate timeline delay |      
 | repeat     |  number        | 0       | `animation` all data repeat, To repeat indefinitely, use  -1 |
-| repeatDelay | number       | 0       | animate repeat delay |
+| repeatDelay | number       | 0       | animate timeline repeat delay |
 | yoyo       | boolean        | false   | `animation` all data alternating backward and forward on each repeat. |
 | onChange   | func           | null    | when the animation change called, callback({ moment, targets, index, mode, ratio, vars, index, repeat }) |
 | onChangeTimeline   | func           | null    | when the animation change called, callback({ mode, targets, vars, moment, totalTime, repeat }) |
@@ -122,6 +123,7 @@ React.render(<TweenOneGroup>
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
+| [key: string] | `string` `number` `array` | null | All variables based on number, such as left, x, color, shadow  |
 | type       | string         | `to`    | play type: `to` `from` `set`|
 | duration   |  number        | 450     | animate duration     |
 | delay      | number         | 0       | animate delay  |
