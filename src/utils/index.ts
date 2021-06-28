@@ -1,3 +1,13 @@
+export function dataToArray(vars: any) {
+  if (!vars && vars !== 0) {
+    return [];
+  }
+  if (Array.isArray(vars)) {
+    return vars;
+  }
+  return [vars];
+}
+
 function deepEql(a: any, b: any) {
   if (!a || !b) {
     return false;
@@ -5,7 +15,7 @@ function deepEql(a: any, b: any) {
   const $a = Object.keys(a);
   const $b = Object.keys(b);
   if ($a.length && $b.length && $a.length === $b.length) {
-    return !$a.some(key => {
+    return !$a.some((key) => {
       let aa = a[key];
       let bb = b[key];
       if (Array.isArray(aa) && Array.isArray(bb)) {
@@ -34,7 +44,7 @@ export function objectEqual(obj1: any, obj2: any) {
   const setEqualBool = ($a: any, $b: any) => {
     const objA = Object.keys($a).length > Object.keys($b).length ? $a : $b;
     const objB = Object.keys($a).length > Object.keys($b).length ? $b : $a;
-    Object.keys(objA).forEach(key => {
+    Object.keys(objA).forEach((key) => {
       // 如果前面有参数匹配不相同则直接返回；
       if (!equalBool) {
         return;
@@ -45,14 +55,8 @@ export function objectEqual(obj1: any, obj2: any) {
 
       if (typeof objA[key] === 'object' && typeof objB[key] === 'object') {
         equalBool = objectEqual(objA[key], objB[key]);
-      } else if (
-        typeof objA[key] === 'function' &&
-        typeof objB[key] === 'function'
-      ) {
-        if (
-          objA[key].toString().replace(/\s+/g, '') !==
-          objB[key].toString().replace(/\s+/g, '')
-        ) {
+      } else if (typeof objA[key] === 'function' && typeof objB[key] === 'function') {
+        if (objA[key].toString().replace(/\s+/g, '') !== objB[key].toString().replace(/\s+/g, '')) {
           equalBool = false;
         }
       } else if (objA[key] !== objB[key]) {

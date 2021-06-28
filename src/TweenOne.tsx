@@ -5,7 +5,7 @@ import TweenOneJS from 'tween-one';
 import { toStyleUpperCase, stylesToCss } from 'style-utils';
 
 import type { IAnimProps, IAnimObject, TweenOneRef } from './type';
-import { objectEqual } from './utils';
+import { objectEqual, dataToArray } from './utils';
 
 const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
   (
@@ -66,13 +66,20 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
       }
       // 动画写在标签上，手动对比；
       if (!objectEqual(animation, prevAnim.current)) {
-        const dom =
-          domRef.current instanceof Element ? domRef.current : findDOMNode(domRef.current);
+        const doms: any[] = dataToArray(domRef.current)
+          .map((item) =>
+            item instanceof Element || !(item instanceof React.Component)
+              ? item
+              : findDOMNode(item),
+          )
+          .filter((item, i) => {
+            if (!(item instanceof Element)) {
+              console.warn(`Warning: TweenOne tag[${i}] is not dom.`);
+              return false;
+            }
+            return item;
+          });
 
-        if (!(dom instanceof Element)) {
-          // dom instanceof Text || !dom.tagName ||
-          return console.error('Error: TweenOne tag is not dom.');
-        }
         if (animRef.current && killPrevAnim) {
           animRef.current.kill();
         }
@@ -80,13 +87,15 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
           const styleStr = Object.keys(style)
             .map((key: string) => `${toStyleUpperCase(key)}:${stylesToCss(key, style[key])}`)
             .join(';');
-          dom.setAttribute('style', styleStr);
-          // dom.style.cssText = styleStr;
-          delete dom._tweenOneVars; // eslint-disable-line no-underscore-dangle
+          doms.forEach((item: Element) => {
+            item.setAttribute('style', styleStr);
+            // dom.style.cssText = styleStr;
+            delete item._tweenOneVars; // eslint-disable-line no-underscore-dangle
+          });
         }
         animRef.current =
           animation &&
-          TweenOneJS(dom, {
+          TweenOneJS(doms, {
             animation,
             attr,
             yoyo,

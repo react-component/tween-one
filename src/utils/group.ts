@@ -3,6 +3,8 @@ import React from 'react';
 
 import type { IObject } from '../type';
 
+export { dataToArray } from './';
+
 export const windowIsUndefined = !(
   typeof window !== 'undefined' &&
   window.document &&
@@ -11,26 +13,16 @@ export const windowIsUndefined = !(
 
 export function toArrayChildren(children: any) {
   const ret: any[] = [];
-  React.Children.forEach(children, c => {
+  React.Children.forEach(children, (c) => {
     ret.push(c);
   });
   return ret;
 }
 
-export function dataToArray(vars: any) {
-  if (!vars && vars !== 0) {
-    return [];
-  }
-  if (Array.isArray(vars)) {
-    return vars;
-  }
-  return [vars];
-}
-
 export function findChildInChildrenByKey(children: ReactElement[], key: string | number | null) {
   let ret: any = null;
   if (children) {
-    children.forEach(c => {
+    children.forEach((c) => {
       if (ret || !c) {
         return;
       }
@@ -49,7 +41,7 @@ export function mergeChildren(prev: ReactElement[], next: ReactElement[]) {
   const nextChildrenPending: any = {};
   let pendingChildren: any[] = [];
   let followChildrenKey: string | number | null = null;
-  prev.forEach(c => {
+  prev.forEach((c) => {
     if (!c) {
       return;
     }
@@ -67,7 +59,7 @@ export function mergeChildren(prev: ReactElement[], next: ReactElement[]) {
     ret = ret.concat(pendingChildren);
   }
 
-  next.forEach(c => {
+  next.forEach((c) => {
     if (!c) {
       return;
     }
