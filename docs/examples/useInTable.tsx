@@ -33,11 +33,10 @@ const data: { key: string; name: string; age: number; address: string; tags?: st
 
 // 动画标签，页面切换时改用 context 传递参数；
 const animTag = ($props: any) => {
-  console.log($props);
   return (
     <TableContext.Consumer key="1">
       {({ enter, leave }) => {
-        console.log($props);
+        console.log(enter);
         const children = React.Children.toArray($props.children);
 
         return (
@@ -65,10 +64,16 @@ export default ({ className = 'table-enter-leave-demo' }) => {
   const [isPageTween, setPageTween] = useState(false);
   const [tableData, setTableData] = useState(data);
 
-  const onEnd = (e: any) => {
+  const onEnd = () => {
+    setPageTween(false);
+  };
+
+  const rmStyle = (e: any) => {
     const { targets } = e;
-    console.log(targets);
-    targets.style.height = 'auto';
+    // callback in render before
+    setTimeout(() => {
+      targets.style = '';
+    });
   };
 
   const onAdd = () => {
@@ -118,7 +123,7 @@ export default ({ className = 'table-enter-leave-demo' }) => {
     {
       opacity: 0,
       x: 30,
-      backgroundColor: '#fffeee',
+      // backgroundColor: '#fffeee', // tbody no backgroundColor
       duration: 0,
     },
     {
@@ -134,8 +139,9 @@ export default ({ className = 'table-enter-leave-demo' }) => {
       x: 0,
       duration: 250,
       ease: 'easeOutQuad',
+      onComplete: rmStyle,
     },
-    { delay: 1000, backgroundColor: '#fff' },
+    // { delay: 1000, backgroundColor: '#fff', onComplete: rmStyle },
   ];
   const pageEnterAnim = [
     {
@@ -154,6 +160,7 @@ export default ({ className = 'table-enter-leave-demo' }) => {
       opacity: 1,
       duration: 150,
       ease: 'easeOutQuad',
+      onComplete: rmStyle,
     },
   ];
   const leaveAnim = [
