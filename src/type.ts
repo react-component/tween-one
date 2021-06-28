@@ -49,6 +49,7 @@ export interface IAnimProps extends Omit<AllHTMLAttributes, 'onChange'> {
     | string
     | React.ClassType<any, React.Component, React.ComponentClass<any>>
     | React.ForwardRefExoticComponent<IAnimProps & { ref?: React.Ref<any> }>
+    | React.FunctionComponent
     | null
     | undefined;
   componentProps?: IObject;
@@ -69,6 +70,8 @@ export interface IGroupProps extends Omit<React.HTMLAttributes<any>, 'onChange'>
   component?:
     | string
     | React.ClassType<any, React.Component, React.ComponentClass<{ ref: any }>>
+    | React.ForwardRefExoticComponent<IGroupProps & { ref?: React.Ref<any> }>
+    | React.FunctionComponent
     | null
     | undefined;
   componentProps?: IObject;

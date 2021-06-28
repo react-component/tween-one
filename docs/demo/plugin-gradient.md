@@ -47,7 +47,7 @@ export default () => {
 
 > 注意：渐变的类型(type)、渐变的范围(extent-keyword)、颜色位置的单位请保持一致，否则以 animation 里的优先；
 
-> 渐变色上面尽量加位置署位，示例 `linear-gradient(to left, #000fff 0%, red 20%, #fff000 100%)`
+> 渐变色上面尽量加位置单位，示例 `linear-gradient(to left, #000fff 0%, red 20%, #fff000 100%)`
 
 <style>
 .gradient {
