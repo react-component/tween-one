@@ -1,4 +1,5 @@
-import { cloneElement, ReactElement, ReactText } from 'react';
+import type { ReactElement, ReactText } from 'react';
+import { cloneElement } from 'react';
 import React, { useRef, useEffect, useLayoutEffect, useState, createElement } from 'react';
 import type { IGroupProps, IAnimObject, TweenOneGroupRef, ICallBack, IObject } from './type';
 import {
