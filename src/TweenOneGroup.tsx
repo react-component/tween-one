@@ -9,6 +9,7 @@ import {
   transformArguments,
   mergeChildren,
   findChildInChildrenByKey,
+  windowIsUndefined,
 } from './utils/group';
 
 import TweenOne from './TweenOne';
@@ -234,6 +235,12 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
     }
     return saveTweenTag.current[key];
   });
+  if (windowIsUndefined) {
+    if (!component) {
+      return <>{props.children}</>;
+    }
+    return createElement(component, { ...tagProps, ...componentProps, ref }, props.children);
+  }
   if (!component) {
     return childrenToRender[0] ? cloneElement(childrenToRender[0], { ref }) : null;
   }

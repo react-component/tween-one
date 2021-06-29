@@ -15,6 +15,7 @@ order: 2
 #### API 变更
 
 - 删除 `currentRef`, hooks 如果 component 是组件，ref 返回为组件的 ref;
+- 增加对 hooks 下的 React.fragment 的支持。
 - 增加全局动画播放时的 `delay`;
 - 删除 `reverseDelay`;
 - 增加 `repeatDelay`;
