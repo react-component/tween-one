@@ -237,7 +237,7 @@ describe('rc-tween-one', () => {
   it('is update Animation', (done) => {
     instance = mount(
       <TweenComp
-        animation={{ top: 100, x: 100, color: '#fff', sepia: '100%', blur: '2px', duration: 1000 }}
+        animation={{ top: 100, x: 100, color: '#fff', sepia: 1, blur: '2px', duration: 1000 }}
         style={{ position: 'relative' }}
       />,
     );
