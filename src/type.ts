@@ -23,12 +23,11 @@ interface AnimObject extends Anim {
 
 export type AnimObjectOrArray = AnimObject | AnimObject[];
 
-export type IAnimObject = AnimObjectOrArray | ((key: string, index: number) => AnimObject);
+export type IAnimObject = AnimObjectOrArray | ((e: { key: string; index: number }) => AnimObject);
 
-
-interface AllHTMLAttributes extends Omit<React.SVGAttributes<any>, 'crossOrigin'>, React.AllHTMLAttributes<any> {
-
-}
+interface AllHTMLAttributes
+  extends Omit<React.SVGAttributes<any>, 'crossOrigin'>,
+    React.AllHTMLAttributes<any> {}
 export interface IAnimProps extends Omit<AllHTMLAttributes, 'onChange'> {
   style?: React.CSSProperties;
   children?: any;
@@ -59,7 +58,8 @@ export interface IAnimProps extends Omit<AllHTMLAttributes, 'onChange'> {
   regionEndTime?: number;
 }
 
-export interface IGroupProps extends Omit<React.HTMLAttributes<any>, 'onChange'> {
+export interface IGroupProps extends Omit<AllHTMLAttributes, 'onChange'> {
+  ref?: React.Ref<any>;
   appear?: boolean;
   enter?: IAnimObject;
   leave?: IAnimObject;

@@ -216,7 +216,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
     }
     const { key } = child;
     if (keysToLeave.current.indexOf(key) >= 0) {
-      return getCoverAnimation(child, i, 'leave');
+      return getCoverAnimation(child, keysToLeave.current.indexOf(key), 'leave');
     }
     if (
       (keysToEnter.current.indexOf(key) >= 0 ||
@@ -228,7 +228,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
        * 2. 出场未结束，触发进场, this.isTween[key] 为 leave, key 在 enter 里。
        * 3. 状态为 enter 且 tweenTag 里有值时，不执行重载动画属性，直接调用 tweenTag 里的。
        */
-      return getCoverAnimation(child, i, 'enter');
+      return getCoverAnimation(child, keysToEnter.current.indexOf(key), 'enter');
     }
     if (!oneEnter.current) {
       return getCoverAnimation(child, i, 'appear');
