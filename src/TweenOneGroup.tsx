@@ -202,7 +202,11 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
         setChild(changeChildren(nextChild, currentChild));
       }
     }
-  }, [props.children]);
+  }, [
+    toArrayChildren(props.children)
+      .map((item) => item && item.key)
+      .join(''),
+  ]);
   useLayoutEffect(() => {
     reAnimQueue();
   });
