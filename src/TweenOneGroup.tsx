@@ -192,7 +192,9 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       );
       // 如果还在动画，暂存动画队列里，等前一次动画结束后再启动最后次的更新动画
       if (Object.keys(isTween.current).length && !exclusive) {
-        animQueue.current = [...animQueue.current, newNextChild];
+        if ((nextChild.length && newNextChild.length) || !nextChild.length) {
+          animQueue.current.push(newNextChild);
+        }
       } else {
         setChild(changeChildren(nextChild, currentChild));
       }
