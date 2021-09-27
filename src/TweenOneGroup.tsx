@@ -121,7 +121,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       } else {
         tag.className = tag.className.replace(animatingClassName[isEnter ? 0 : 1], '').trim();
       }
-      if (type === 'enter') {
+      if (isEnter) {
         keysToEnter.current.splice(keysToEnter.current.indexOf(key), 1);
         if (!keysToEnter.current.length) {
           // enter 不会触发 did update, 手动触发一次；
@@ -191,22 +191,13 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
           ),
       );
       // 如果还在动画，暂存动画队列里，等前一次动画结束后再启动最后次的更新动画
-      if (
-        Object.keys(isTween.current).length &&
-        !exclusive &&
-        nextChild.length &&
-        newNextChild.length
-      ) {
-        animQueue.current.push(newNextChild);
+      if (Object.keys(isTween.current).length && !exclusive) {
+        animQueue.current = [...animQueue.current, newNextChild];
       } else {
         setChild(changeChildren(nextChild, currentChild));
       }
     }
-  }, [
-    toArrayChildren(props.children)
-      .map((item) => item && item.key)
-      .join(''),
-  ]);
+  }, [props.children]);
   useLayoutEffect(() => {
     reAnimQueue();
   });
