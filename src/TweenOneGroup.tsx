@@ -181,20 +181,9 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
     if (oneEnter.current) {
       const nextChild = toArrayChildren(props.children).filter((c) => c);
       const currentChild = toArrayChildren(currentChildren.current);
-      // 不计入正在进场的元素又进场；
-      const newNextChild = nextChild.filter(
-        (c) =>
-          c &&
-          !(
-            currentChild.find((d) => d && d.key === c.key) &&
-            keysToEnter.current.indexOf(c.key) >= 0
-          ),
-      );
       // 如果还在动画，暂存动画队列里，等前一次动画结束后再启动最后次的更新动画
       if (Object.keys(isTween.current).length && !exclusive) {
-        if ((nextChild.length && newNextChild.length) || !nextChild.length) {
-          animQueue.current.push(newNextChild);
-        }
+        animQueue.current.push(nextChild);
       } else {
         setChild(changeChildren(nextChild, currentChild));
       }
