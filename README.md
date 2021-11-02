@@ -40,8 +40,8 @@ npm start
 
 http://localhost:8100/examples/
 
-http://react-component.github.io/tween-one/
-
+2.x: http://react-component.github.io/tween-one/
+3.x: https://tween-one.vercel.app/
 
 ## install
 
