@@ -48,7 +48,6 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
         tween[key] = !!value;
       }
     };
-
     useLayoutEffect(() => {
       commonFunc('paused', paused);
     }, [paused]);
@@ -109,11 +108,10 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
           });
         prevAnim.current = animation;
       }
-      return () => {};
     }, [animation]);
     useEffect(
       () => () => {
-        if (animRef.current) {
+        if (animRef.current && animRef.current.kill) {
           animRef.current.kill();
         }
       },
