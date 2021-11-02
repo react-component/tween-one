@@ -42,6 +42,7 @@
   "licenses": "MIT",
   "main": "./lib/index",
   "module": "./es/index",
+  "sideEffects": false,
   "scripts": {
     "start": "dumi dev",
     "docs:build": "dumi build",
