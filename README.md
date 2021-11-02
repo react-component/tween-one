@@ -1,3 +1,4 @@
+
 # rc-tween-one
 ---
 
@@ -5,17 +6,17 @@ React TweenOne Component
 
 
 [![NPM version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
-[![Test coverage][coveralls-image]][coveralls-url]
+[![build status][github-actions-image]][github-actions-url]
+[![Codecov][codecov-image]][codecov-url]
 [![node version][node-image]][node-url]
 [![npm download][download-image]][download-url]
 
 [npm-image]: http://img.shields.io/npm/v/rc-tween-one.svg?style=flat-square
 [npm-url]: http://npmjs.org/package/rc-tween-one
-[travis-image]: https://img.shields.io/travis/react-component/tween-one.svg?style=flat-square
-[travis-url]: https://travis-ci.org/react-component/tween-one
-[coveralls-image]: https://img.shields.io/coveralls/react-component/tween-one.svg?style=flat-square
-[coveralls-url]: https://coveralls.io/r/react-component/tween-one?branch=master
+[github-actions-image]: https://github.com/react-component/tween-one/workflows/CI/badge.svg
+[github-actions-url]: https://github.com/react-component/tween-one/actions
+[codecov-image]: https://img.shields.io/codecov/c/github/react-component/tween-one/master.svg?style=flat-square
+[codecov-url]: https://codecov.io/gh/react-component/tween-one/branch/master
 [node-image]: https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square
 [node-url]: http://nodejs.org/download/
 [download-image]: https://img.shields.io/npm/dm/rc-tween-one.svg?style=flat-square
@@ -50,7 +51,7 @@ http://react-component.github.io/tween-one/
 
 ## Usage
 
-```jsx
+```js | pure
 var TweenOne = require('rc-tween-one');
 var React = require('react');
 React.render(<TweenOne animation={{x:100}}>
@@ -60,7 +61,7 @@ React.render(<TweenOne animation={{x:100}}>
 
 ### Plugin
 
-```jsx
+```js | pure
 var TweenOne = require('rc-tween-one');
 var React = require('react');
 var SvgDrawPlugin = require('rc-tween-one/lib/plugin/SvgDrawPlugin');
@@ -76,7 +77,7 @@ React.render(<svg width="600" height="600">
 ```
 
 ### TweenOneGroup
-```jsx
+```js | pure
 var TweenOne = require('rc-tween-one');
 var React = require('react');
 var TweenOneGroup = TweenOne.TweenOneGroup;
@@ -92,19 +93,21 @@ React.render(<TweenOneGroup>
 
 ### props
 
-> 2.5.x add currentRef, `<TweenOne component={Row} ref={(c) => { c.currentRef === <Row /> }} />`
-
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
 | animation  | object / array | null    | animate configure parameters |
-| paused      | boolean        | false   | animate pause |
-| reverse    | boolean        | false   | animate revers |
-| reverseDelay | number       | 0       | animate revers start delay |
+| paused      | boolean       | false   | animate timeline pause |
+| reverse    | boolean        | false   | animate timeline revers |
+| delay       number          | 0       | animate timeline delay |      
 | repeat     |  number        | 0       | `animation` all data repeat, To repeat indefinitely, use  -1 |
+| repeatDelay | number       | 0       | animate timeline repeat delay |
 | yoyo       | boolean        | false   | `animation` all data alternating backward and forward on each repeat. |
-| onChange   | func           | null    | when the animation change called, callback({ moment, target, index, mode, timelineMode }) |
+| onChange   | func           | null    | when the animation change called, callback({ moment, targets, index, mode, ratio, vars, index, repeat }) |
+| onChangeTimeline   | func           | null    | when the animation change called, callback({ mode, targets, vars, moment, totalTime, repeat }) |
 | moment     | number         | null    | set the current frame    |
-| attr       | string         | `style` | `style` or `attr`, `attr` is tag attribute. when morph SVG must be `attr`.  |
+| regionStartTime  | number           | 0       | Set the start time of the animation region  |
+| regionEndTime    | number         | null    | Set the end time of the animation region   |
+| attr       | boolean         | false | attribute animation is `true`, when morph SVG must be `true`.  |
 | resetStyle | boolean    | false   | update animation data, reset init style |
 | component  | string / React.Element  | `div`   | component tag  |
 | componentProps | object     | null   | component is React.Element, component tag props, not add `style` |
@@ -116,54 +119,37 @@ React.render(<TweenOneGroup>
 
 | name      | type           | default | description    |
 |------------|----------------|---------|----------------|
-| type       | string         | `to`    | play type: `to` `from`|
+| [key: string] | `string` `number` `array` | null | All variables based on number, such as left, x, color, shadow  |
+| type       | string         | `to`    | play type: `to` `from` `set`|
 | duration   |  number        | 450     | animate duration     |
 | delay      | number         | 0       | animate delay  |
 | repeat     | number         | 0       | animate repeat, To repeat indefinitely, use  -1 |
 | repeatDelay| number         | 0       | repeat start delay |
 | appearTo   | number         | null    | Add to the specified time |
 | yoyo       | boolean        | false   | `true`: alternating backward and forward on each repeat. |
-| ease       | string / func         | `easeInOutQuad` | animate ease. [refer](http://easings.net/en)  |
+| ease       | string         | `easeInOutQuad` | animate ease [refer](http://easings.net/en) or svg path `M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0`  |
 | bezier     | object         | null    | bezier curve animate |
 | onStart    | func           | null    | A function that should be called when the tween begins, callback(e), e: { index, target }  |
-| onUpdate   | func           | null    | A function that should be called every time the animate updates, callback(e), e: { index, target,  ratio }   |
-| onComplete | func           | null    | A function that should be called when the animate has completed, callback(e), e: { index, target }  |
-| onRepeat   | func           | null    | A function that should be called each time the animate repeats, callback(e), e: { index, target }  |
+| onUpdate   | func           | null    | A function that should be called every time the animate updates, callback(e), e: { index, targets,  ratio }   |
+| onComplete | func           | null    | A function that should be called when the animate has completed, callback(e), e: { index, targets }  |
+| onRepeat   | func           | null    | A function that should be called each time the animate repeats, callback(e), e: { index, targets }  |
 
 > Cannot be used at the same time `reverse` and `repeat: -1`.
 
 ### animation =[ ] is timeline
-
-### ease: function
-
-path easing;
-
-| name      | type           | default | description    |
-|------------|----------------|---------|----------------|
-| path      | string         | null     | svg path       |
-| param     | object         | `{ rect: 100, lengthPixel: 200 }` | rect is block size, default: 100 * 100; lengthPixel default: curve is divided into 200 sections |
-
-```js
-const path = 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0';
-const ease = Tween.easing.path(path, param = { rect: 100, lengthPixel: 200 });
-React.render(<TweenOne animation={{ x: 100, ease }}>
-  demo
-</TweenOne>, container);
+```js | pure
+<TweenOne animation={[{ x: 100 }, { y: 100 }]} />
 ```
-
-### BezierPlugin
-
-bezier = { }
-
-| name      | type           | default | description    |
-|------------|----------------|---------|----------------|
-| type       | string         | `soft`  | `thru`, `soft`, `quadratic`, `cubic` |
-| autoRotate | boolean        | false   | to automatically rotate the target according to its position on the Bezier path  |
-| vars       | array          | null    | bezier point data，as: `{x:100,y:100}` |
-
-> bezier API refer to [gsap BezierPlugin](http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/)
-
+## Plugins
 ### SvgDrawPlugin
+
+```js | pure
+import { Plugins } from 'rc-tween-one';
+import SvgDrawPlugin from 'rc-tween-one/es/plugin/SvgDrawPlugin';
+Plugins.push(SvgDrawPlugin);
+
+<TweenOne animation={{ SVGDraw: '10%' }} />
+```
 
 SVGDraw = string or number;
 
@@ -171,15 +157,48 @@ SVGDraw = string or number;
 
 ### SvgMorphPlugin
 
-svg polygon or path values: polygon is points, path is d; [demo](http://react-component.github.io/tween-one/examples/svg.html)
+```js | pure
+import { Plugins } from 'rc-tween-one';
+import SvgMorphPlugin from 'rc-tween-one/es/plugin/SvgMorphPlugin';
+Plugins.push(SvgMorphPlugin);
+
+<TweenOne animation={{ SVGMorph: { path: '300,10 500,200 120,230 450,220 0,20' }}} />
+```
+#### SvgMorphPlugin API
+
+| name             | type   | default | description    |
+|------------------|--------|---------|----------------|
+| path             | string | null    | svg path, ref: `M0,0L100,0`;|
+| attr             | string | null    | Svg tag attributes, example: `polygon` is ` points`, `path` is `d`. |
+| maxSegmentLength | number | 0.5     | The lower the value, the smoother the generated animation will be, but at the expense of performance;|
+
 
 ### PathPlugin
 
-path = string or object;
+```js | pure
+import { Plugins } from 'rc-tween-one';
+import PathMotionPlugin from 'rc-tween-one/es/plugin/PathMotionPlugin';
+Plugins.push(PathMotionPlugin);
 
-string: `animation={{ path: 'M0,100 C30,60 0,20 50,50 C70,70 60,0 100,0' }}`,  default:  x, y, rotate;
+<TweenOne animation={{ PathMotion: { path: '300,10 500,200 120,230 450,220 0,20' }}} />
+```
+#### PathMotion API
 
-object: `animation={{ path: { x: path, y: path, rotate: path } }}`, can be controlled from their own needs.
+| name   | type                | default         | description                   |
+| ------ | ------------------- | --------------- | ----------------------------- |
+| path   | string / {x,y}[]           | null            | svg path, ref: `M0,0L100,0`; |
+| pathVars | IPathVars | null | Only valid if path is array `[{x, y}, {x, y}]` |
+| center | `number \ string[]` | `['50%','50%']` | center point, ref: `[50px, 50px]`;   |
+| x      | boolean             | true            | x follow the path.               |
+| y      | boolean             | true            | y follow the path.               |
+| rotate | boolean             | true            | rotate follow the path.          |
+
+##### IPathVars
+| name   | type                | default         | description                   |
+| ------ | ------------------- | --------------- | ----------------------------- |
+| type      | `thru \ soft \ cubic` | `thru`  | path type. `thru` same as the path; `soft` with the curve of attraction facing them, but not through the point;  `cubic` allows you to define standard Cubic Bezier, example: `[start, control, control, end]`.  |
+| curviness | 0-2                   | 1       | This determines how "curvy" the resulting path is. `0` is lines, `1` is curved path, `2` would make it much more curvy. It can be `1.5`.  |
+| relative  | boolean               | false   | Increase relative to current value. example: if the target's x starts at 100 and the path is `[{x:5}, {x:10}, {x:-2}]` , it would first move to `105`, then `115`, and finally end at `113`. |
 
 ### ChildrenPlugin
 
@@ -189,7 +208,7 @@ object: `animation={{ path: { x: path, y: path, rotate: path } }}`, can be contr
 |---|---|---|---|
 | value | number | null | children number to value. |
 | floatLength | number | null | float precision length |
-| formatMoney | boolean or { thousand, decimal } | false | format number to money. |
+| formatMoney | `true` \ { thousand, decimal } | null | format number to money. |
 
 #### formatMoney = { thousand, decimal }
 
