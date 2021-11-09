@@ -1,9 +1,8 @@
 import type { ReactElement, ReactText } from 'react';
 import { cloneElement } from 'react';
 import React, { useRef, useEffect, useLayoutEffect, useState, createElement } from 'react';
-import type { IGroupProps, IAnimObject, TweenOneGroupRef, ICallBack, IObject } from './type';
+import type { IGroupProps, IAnimObject, TweenOneGroupRef, ITimelineCallBack, IObject } from './type';
 import {
-  dataToArray,
   getChildrenFromProps,
   toArrayChildren,
   transformArguments,
@@ -103,16 +102,14 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
   };
 
   const onChange = (
-    animation: IAnimObject,
     key: string | number | null,
     type: string,
-    obj: ICallBack,
+    obj: ITimelineCallBack,
   ) => {
-    const { length } = dataToArray(animation);
     const tag = obj.targets as IObject;
     const classIsSvg = typeof tag!.className === 'object' && 'baseVal' in tag!.className;
     const isEnter = type === 'enter' || type === 'appear';
-    if (key && obj.index === length - 1 && obj.mode === 'onComplete') {
+    if (key && obj.mode === 'onTimelineComplete') {
       delete isTween.current[key];
       if (classIsSvg) {
         tag.className.baseVal = tag.className.baseVal
@@ -141,7 +138,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
           setChild(currentChildren.current);
         }
       }
-      onEnd({ key, type });
+      onEnd({ key, type, target: obj.targets as any });
     }
   };
   const getCoverAnimation = (child: ReactElement, i: number, type: string) => {
@@ -151,18 +148,17 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       animation = (appear && enterAnim) || null;
     }
     const animate = transformArguments(animation, child.key, i);
-    const onChangeCb = (obj: ICallBack) => {
-      onChange(animate, child.key, type, obj);
+    const onChangeCb = (obj: ITimelineCallBack) => {
+      onChange(child.key, type, obj);
     };
     const className =
       type === 'appear' && !appearBool
         ? child.props.className
-        : setClassName(child.props.className || '', type === 'enter' || type === 'appear') || '';
-
+        : setClassName(child.props.className || '', type === 'enter' || type === 'appear') || undefined;
     const p = {
       key: child.key,
       animation: animate,
-      onChange: onChangeCb,
+      onChangeTimeline: onChangeCb,
       resetStyle,
       className,
     };

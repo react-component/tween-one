@@ -1,7 +1,9 @@
 import type React from 'react';
-import type { IAnimObject as Anim, IMode, ITimelineCallBack } from 'tween-one';
+import type { IAnimObject as Anim, IMode, ITimelineCallBack as TimelineCallBack } from 'tween-one';
 
 export type IObject = Record<string, any>;
+
+export type ITimelineCallBack = TimelineCallBack;
 export interface ICallBack {
   mode?: IMode;
   moment?: number;
@@ -58,6 +60,12 @@ export interface IAnimProps extends Omit<AllHTMLAttributes, 'onChange'> {
   regionEndTime?: number;
 }
 
+export interface IEndCallback {
+  key?: string | React.ReactText;
+  type?: string;
+  target?: HTMLElement | HTMLElement[];
+}
+
 export interface IGroupProps extends Omit<AllHTMLAttributes, 'onChange'> {
   ref?: React.Ref<any>;
   appear?: boolean;
@@ -66,7 +74,7 @@ export interface IGroupProps extends Omit<AllHTMLAttributes, 'onChange'> {
   animatingClassName?: string[];
   exclusive?: boolean;
   resetStyle?: boolean;
-  onEnd?: (e: { key?: string | React.ReactText; type?: string }) => void;
+  onEnd?: (e: IEndCallback) => void;
   component?:
     | string
     | React.ClassType<any, React.Component, React.ComponentClass<{ ref: any }>>
