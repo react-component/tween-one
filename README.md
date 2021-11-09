@@ -99,7 +99,7 @@ React.render(<TweenOneGroup>
 | animation  | object / array | null    | animate configure parameters |
 | paused      | boolean       | false   | animate timeline pause |
 | reverse    | boolean        | false   | animate timeline revers |
-| delay       number          | 0       | animate timeline delay |      
+| delay      | number          | 0       | animate timeline delay |      
 | repeat     |  number        | 0       | `animation` all data repeat, To repeat indefinitely, use  -1 |
 | repeatDelay | number       | 0       | animate timeline repeat delay |
 | yoyo       | boolean        | false   | `animation` all data alternating backward and forward on each repeat. |
