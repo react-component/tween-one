@@ -1,4 +1,4 @@
-import React, { useRef, createElement, useLayoutEffect, useEffect } from 'react';
+import React, { useRef, createElement, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
 import type { Tween } from 'tween-one';
 import TweenOneJS from 'tween-one';
