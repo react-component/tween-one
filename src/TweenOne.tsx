@@ -6,13 +6,7 @@ import { toStyleUpperCase, stylesToCss } from 'style-utils';
 
 import type { IAnimProps, IAnimObject, TweenOneRef } from './type';
 import { objectEqual, dataToArray } from './utils';
-
-const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' &&
-  typeof window.document !== 'undefined' &&
-  typeof window.document.createElement !== 'undefined'
-    ? React.useLayoutEffect
-    : React.useEffect;
+import { useIsomorphicLayoutEffect } from './utils/hooks';
 
 const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
   (
