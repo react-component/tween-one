@@ -1,4 +1,4 @@
-import React, { useRef, createElement, useLayoutEffect, useEffect } from 'react';
+import React, { useRef, createElement, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
 import type { Tween } from 'tween-one';
 import TweenOneJS from 'tween-one';
@@ -6,6 +6,7 @@ import { toStyleUpperCase, stylesToCss } from 'style-utils';
 
 import type { IAnimProps, IAnimObject, TweenOneRef } from './type';
 import { objectEqual, dataToArray } from './utils';
+import { useIsomorphicLayoutEffect } from './utils/hooks';
 
 const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
   (
@@ -48,18 +49,18 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
         tween[key] = !!value;
       }
     };
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       commonFunc('paused', paused);
     }, [paused]);
     //  yoyo, moment, reverse, repeat, repeatDelay
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       commonFunc('moment', moment);
     }, [moment]);
 
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       commonFunc('reverse', reverse);
     }, [reverse]);
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       if (!domRef.current) {
         return console.warn('Warning: TweenOne domRef is error.');
       }

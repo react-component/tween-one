@@ -1,6 +1,6 @@
 import type { ReactElement, ReactText } from 'react';
 import { cloneElement } from 'react';
-import React, { useRef, useEffect, useLayoutEffect, useState, createElement } from 'react';
+import React, { useRef, useEffect, useState, createElement } from 'react';
 import type { IGroupProps, IAnimObject, TweenOneGroupRef, ITimelineCallBack, IObject } from './type';
 import {
   getChildrenFromProps,
@@ -10,6 +10,7 @@ import {
   findChildInChildrenByKey,
   windowIsUndefined,
 } from './utils/group';
+import { useIsomorphicLayoutEffect } from './utils/hooks';
 
 import TweenOne from './TweenOne';
 
@@ -173,7 +174,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
 
     return getTweenChild(child, p);
   };
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (oneEnter.current) {
       const nextChild = toArrayChildren(props.children).filter((c) => c);
       const currentChild = toArrayChildren(currentChildren.current);
@@ -185,7 +186,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       }
     }
   }, [props.children]);
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     reAnimQueue();
   });
   useEffect(() => {
