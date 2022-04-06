@@ -1,16 +1,21 @@
 import type { ReactElement, ReactText } from 'react';
 import { cloneElement } from 'react';
 import React, { useRef, useEffect, useState, createElement } from 'react';
-import type { IGroupProps, IAnimObject, TweenOneGroupRef, ITimelineCallBack, IObject } from './type';
+import type {
+  IGroupProps,
+  IAnimObject,
+  TweenOneGroupRef,
+  ITimelineCallBack,
+  IObject,
+} from './type';
 import {
   getChildrenFromProps,
   toArrayChildren,
   transformArguments,
   mergeChildren,
   findChildInChildrenByKey,
-  windowIsUndefined,
 } from './utils/group';
-import { useIsomorphicLayoutEffect } from './utils/hooks';
+import { useIsomorphicLayoutEffect, windowIsUndefined } from './utils/common';
 
 import TweenOne from './TweenOne';
 
@@ -102,11 +107,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
     }
   };
 
-  const onChange = (
-    key: string | number | null,
-    type: string,
-    obj: ITimelineCallBack,
-  ) => {
+  const onChange = (key: string | number | null, type: string, obj: ITimelineCallBack) => {
     const tag = obj.targets as IObject;
     const classIsSvg = typeof tag!.className === 'object' && 'baseVal' in tag!.className;
     const isEnter = type === 'enter' || type === 'appear';
@@ -155,7 +156,8 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
     const className =
       type === 'appear' && !appearBool
         ? child.props.className
-        : setClassName(child.props.className || '', type === 'enter' || type === 'appear') || undefined;
+        : setClassName(child.props.className || '', type === 'enter' || type === 'appear') ||
+          undefined;
     const p = {
       key: child.key,
       animation: animate,

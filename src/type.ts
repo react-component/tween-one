@@ -46,13 +46,7 @@ export interface IAnimProps extends Omit<AllHTMLAttributes, 'onChange'> {
   moment?: number;
   attr?: boolean;
   resetStyle?: boolean;
-  component?:
-    | string
-    | React.ClassType<any, React.Component, React.ComponentClass<any>>
-    | React.ForwardRefExoticComponent<IAnimProps & { ref?: React.Ref<any> }>
-    | React.FunctionComponent
-    | null
-    | undefined;
+  component?: string | null | React.FC<any> | React.ComponentClass<any>;
   componentProps?: IObject;
   forcedJudg?: IObject;
   killPrevAnim?: boolean;
@@ -75,13 +69,7 @@ export interface IGroupProps extends Omit<AllHTMLAttributes, 'onChange'> {
   exclusive?: boolean;
   resetStyle?: boolean;
   onEnd?: (e: IEndCallback) => void;
-  component?:
-    | string
-    | React.ClassType<any, React.Component, React.ComponentClass<{ ref: any }>>
-    | React.ForwardRefExoticComponent<IGroupProps & { ref?: React.Ref<any> }>
-    | React.FunctionComponent
-    | null
-    | undefined;
+  component?: string | null | React.FC<any> | React.ComponentClass<any>;
   componentProps?: IObject;
 }
 

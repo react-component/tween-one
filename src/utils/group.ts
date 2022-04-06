@@ -3,13 +3,6 @@ import React from 'react';
 
 import type { IObject } from '../type';
 
-export { dataToArray } from './';
-
-export const windowIsUndefined = !(
-  typeof window !== 'undefined' &&
-  window.document &&
-  window.document.createElement
-);
 
 export function toArrayChildren(children: any) {
   const ret: any[] = [];
