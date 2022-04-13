@@ -164,6 +164,7 @@ const TweenOneGroup: TweenOneGroupRef = React.forwardRef<any, IGroupProps>((prop
       onChangeTimeline: onChangeCb,
       resetStyle,
       className,
+      style: child.props.style
     };
     if (
       (child.key && keysToEnter.current.concat(keysToLeave.current).indexOf(child.key) >= 0) ||
