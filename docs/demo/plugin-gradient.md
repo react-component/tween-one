@@ -7,7 +7,7 @@ order: 6
 
 ```jsx
 import React from 'react';
-import TweenOne from 'rc-tween-one';
+import TweenOne from '@rc-component/tween-one';
 
 export default () => {
   return (

@@ -1,4 +1,4 @@
-import Tween from 'rc-tween-one';
+import Tween from '@rc-component/tween-one';
 import React, { useEffect } from 'react';
 import 'antd/dist/antd.css';
 

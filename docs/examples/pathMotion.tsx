@@ -1,6 +1,6 @@
-import Tween from 'rc-tween-one';
+import Tween from '@rc-component/tween-one';
 import React from 'react';
-import PathPlugin from 'rc-tween-one/es/plugin/PathMotionPlugin';
+import PathPlugin from '@rc-component/tween-one/es/plugin/PathMotionPlugin';
 
 Tween.plugins.push(PathPlugin);
 
@@ -107,7 +107,9 @@ export default function Demo() {
             height: '30px',
             background: '#1890ff',
           }}
-        >c</Tween>
+        >
+          c
+        </Tween>
       </div>
     </div>
   );

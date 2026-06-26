@@ -1,4 +1,4 @@
-import Tween from 'rc-tween-one';
+import Tween from '@rc-component/tween-one';
 import React from 'react';
 import { Form, InputNumber, Input, Button, Checkbox, Select, AutoComplete } from 'antd';
 import 'antd/dist/antd.css';

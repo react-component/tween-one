@@ -1,4 +1,4 @@
-import Tween from 'rc-tween-one';
+import Tween from '@rc-component/tween-one';
 import React from 'react';
 
 export default () => {

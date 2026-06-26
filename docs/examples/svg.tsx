@@ -1,6 +1,6 @@
-import Tween, { Plugins } from 'rc-tween-one';
+import Tween, { Plugins } from '@rc-component/tween-one';
 import React from 'react';
-import SvgMorphPlugin from 'rc-tween-one/es/plugin/SvgMorphPlugin';
+import SvgMorphPlugin from '@rc-component/tween-one/es/plugin/SvgMorphPlugin';
 
 // Tween.plugins.push(SvgMorphPlugin);
 Plugins.push(SvgMorphPlugin);
@@ -26,8 +26,7 @@ export default function Demo() {
           animation={{
             SVGMorph: {
               maxSegmentLength: 0.15,
-              path:
-                'M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z',
+              path: 'M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z',
             },
             duration: 1000,
           }}

@@ -84,7 +84,7 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
           animRef.current.kill();
         }
         if (resetStyle && animRef.current) {
-          const s = !component ? { ...style, ...children.props.style } : style
+          const s = !component ? { ...style, ...children.props.style } : style;
           const styleStr = Object.keys(s)
             .map((key: string) => `${toStyleUpperCase(key)}:${stylesToCss(key, s[key])}`)
             .join(';');
@@ -94,20 +94,20 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
             delete item._tweenOneVars; // eslint-disable-line no-underscore-dangle
           });
         }
-        animRef.current =
-          animation &&
-          TweenOneJS(doms, {
-            animation,
-            attr,
-            yoyo,
-            moment,
-            repeat,
-            reverse,
-            paused,
-            repeatDelay,
-            onChange,
-            onChangeTimeline,
-          });
+        animRef.current = animation
+          ? (TweenOneJS(doms, {
+              animation,
+              attr,
+              yoyo,
+              moment,
+              repeat,
+              reverse,
+              paused,
+              repeatDelay,
+              onChange,
+              onChangeTimeline,
+            }) as Tween)
+          : undefined;
         prevAnim.current = animation;
       }
     }, [animation]);

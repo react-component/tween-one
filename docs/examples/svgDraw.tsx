@@ -1,6 +1,6 @@
-import Tween, { Plugins } from 'rc-tween-one';
+import Tween, { Plugins } from '@rc-component/tween-one';
 import React from 'react';
-import SvgDrawPlugin from 'rc-tween-one/es/plugin/SvgDrawPlugin';
+import SvgDrawPlugin from '@rc-component/tween-one/es/plugin/SvgDrawPlugin';
 
 Plugins.push(SvgDrawPlugin);
 

@@ -1,4 +1,4 @@
-import Tween from 'rc-tween-one';
+import Tween from '@rc-component/tween-one';
 import React from 'react';
 
 export default () => {
@@ -9,7 +9,7 @@ export default () => {
   };
   React.useEffect(() => {
     window.addEventListener('mousemove', mouseMove);
-  }, [])
+  }, []);
   return (
     <Tween animation={animation} moment={17} style={{ height: 100 }}>
       执行动效

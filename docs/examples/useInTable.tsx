@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Table from 'antd/lib/table';
 import Button from 'antd/lib/button';
-import TweenOneGroup from 'rc-tween-one/es/TweenOneGroup';
+import TweenOneGroup from '@rc-component/tween-one/es/TweenOneGroup';
 import 'antd/dist/antd.css';
 import './useInTable.less';
 

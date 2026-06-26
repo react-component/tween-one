@@ -1,7 +1,6 @@
-import Tween from 'rc-tween-one';
+import Tween from '@rc-component/tween-one';
 import React from 'react';
-import ChildrenPlugin from 'rc-tween-one/es/plugin/ChildrenPlugin';
-
+import ChildrenPlugin from '@rc-component/tween-one/es/plugin/ChildrenPlugin';
 
 Tween.plugins.push(ChildrenPlugin);
 export default function Demo() {

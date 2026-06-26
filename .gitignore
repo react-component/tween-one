@@ -30,7 +30,7 @@ coverage
 yarn.lock
 package-lock.json
 .vscode
-.doc
+.vercel
 # production
 /dist
 /docs-dist
@@ -43,3 +43,4 @@ package-lock.json
 .umi-test
 .env.local
 src/.umi
+src/.umi-production
