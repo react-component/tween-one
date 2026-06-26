@@ -2,9 +2,14 @@
   <h1>@rc-component/tween-one</h1>
   <img alt="Ant Design" height="32" src="https://gw.alipayobjects.com/zos/bmw-prod/ae669a89-0c24-40ff-a91d-2b83497170f6.svg" />
   <p>Tween animation primitives for React, maintained in the Ant Design ecosystem.</p>
+  <p>Part of the <a href="https://ant.design">Ant Design</a> ecosystem.</p>
 </div>
 
+<div align="center">
+
 [![NPM version][npm-image]][npm-url] [![npm download][download-image]][download-url] [![build status][github-actions-image]][github-actions-url] [![Codecov][codecov-image]][codecov-url] [![bundle size][bundlephobia-image]][bundlephobia-url] [![dumi][dumi-image]][dumi-url]
+
+</div>
 
 ## Highlights
 
@@ -87,8 +92,7 @@ npm run compile
 npm run prepublishOnly
 ```
 
-The release script builds the package and hands publishing to `rc-np`.
-
+The release flow is handled by `@rc-component/np` through the `rc-np` command after the package build.
 ## API
 
 <a href='https://motion.ant.design/api/tween-one' target='_blank'>中文文档</a>
@@ -236,6 +240,10 @@ Plugins.push(PathMotionPlugin);
 | exclusive          | boolean               | false                                         | Whether to allow a new animate to execute immediately when switching. `enter => leave`: execute immediately leave |
 | component          | React.Element/String  | div                                           | component tag                                                                                                     |
 | componentProps     | object                | -                                             | component tag props                                                                                               |
+
+## License
+
+@rc-component/tween-one is released under the [MIT](./LICENSE) license.
 
 [npm-image]: https://img.shields.io/npm/v/@rc-component/tween-one.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/@rc-component/tween-one

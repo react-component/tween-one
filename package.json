@@ -63,6 +63,7 @@
   "devDependencies": {
     "@ant-design/icons": "^4.3.0",
     "@babel/core": "^7.29.7",
+    "@rc-component/np": "^1.0.4",
     "@types/enzyme": "^3.10.5",
     "@types/jest": "^25.2.1",
     "@types/lodash": "^4.14.135",
