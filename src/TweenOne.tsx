@@ -84,7 +84,7 @@ const TweenOne: TweenOneRef = React.forwardRef<any, IAnimProps>(
           animRef.current.kill();
         }
         if (resetStyle && animRef.current) {
-          const s = !component ? { ...style, ...children.props.style } : style;
+          const s = !component ? { ...style, ...children?.props?.style } : style;
           const styleStr = Object.keys(s)
             .map((key: string) => `${toStyleUpperCase(key)}:${stylesToCss(key, s[key])}`)
             .join(';');

@@ -9,6 +9,9 @@ export default () => {
   };
   React.useEffect(() => {
     window.addEventListener('mousemove', mouseMove);
+    return () => {
+      window.removeEventListener('mousemove', mouseMove);
+    };
   }, []);
   return (
     <Tween animation={animation} moment={17} style={{ height: 100 }}>

@@ -32,7 +32,7 @@ export default () => (
 );
 ```
 
-## Plugins
+## Plugin APIs
 
 ```tsx
 import TweenOne, { Plugins } from '@rc-component/tween-one';
