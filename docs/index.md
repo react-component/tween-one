@@ -1,5 +1,5 @@
 ---
-title: @rc-component/tween-one
+title: "@rc-component/tween-one"
 order: 0
 ---
 
