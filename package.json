@@ -96,7 +96,8 @@
     "tween-one": "^1.0.50"
   },
   "overrides": {
-    "cheerio": "1.0.0-rc.12"
+    "cheerio": "1.0.0-rc.12",
+    "@babel/core": "^7.29.7"
   },
   "husky": {
     "hooks": {
