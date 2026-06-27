@@ -1,11 +1,11 @@
 <div align="center">
   <h1>@rc-component/tween-one</h1>
-  <p><sub>Part of the Ant Design ecosystem.</sub></p>
+  <p><sub>Ant Design 生态的一部分。</sub></p>
   <img alt="Ant Design" height="32" src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
-  <p>Tween animation primitives for React, maintained in the Ant Design ecosystem.</p>
+  <p>🎬 React 补间动画基础组件。</p>
 </div>
 
-<p align="center">English | <a href="./README.zh-CN.md">简体中文</a></p>
+<p align="center"><a href="./README.md">English</a> | 简体中文</p>
 
 
 <div align="center">
@@ -14,13 +14,13 @@
 
 </div>
 
-## Highlights
+## 特性
 
 - Declarative tween animation component for React elements and SVG.
 - Timeline, repeat, yoyo, path motion, SVG draw/morph, number animation, and group transition support.
-- Used by Ant Design motion examples and legacy animation demos.
+- 被 Ant Design 使用 motion examples and legacy animation demos.
 
-## Install
+## 安装
 
 ```bash
 npm install @rc-component/tween-one
@@ -28,7 +28,7 @@ npm install @rc-component/tween-one
 
 `rc-tween-one` is the legacy package name. New releases should use the scoped `@rc-component/tween-one` package.
 
-## Usage
+## 使用
 
 ```tsx
 import TweenOne from '@rc-component/tween-one';
@@ -60,19 +60,19 @@ export default () => (
 );
 ```
 
-## Examples
+## 示例
 
-- Local docs: run `npm start` and open the printed dumi URL.
-- Pull request previews are published by Vercel and Surge.
+- 本地文档：运行 `npm start`，并打开终端输出的 dumi 地址。
+- Pull Request 预览由 Vercel 和 Surge 发布。
 - Motion API docs: https://motion.ant.design/api/tween-one
 
-## Browser Support
+## 浏览器支持
 
 | Edge   | Chrome     | Firefox     | Opera     | Safari    |
 | ------ | ---------- | ----------- | --------- | --------- |
 | IE 10+ | Chrome 31+ | Firefox 31+ | Opera 30+ | Safari 7+ |
 
-## Development
+## 本地开发
 
 ```bash
 npm install --legacy-peer-deps
@@ -89,7 +89,7 @@ npm run build
 npm run compile
 ```
 
-## Release
+## 发布
 
 ```bash
 npm run prepublishOnly
@@ -244,7 +244,7 @@ Plugins.push(PathMotionPlugin);
 | component          | React.Element/String  | div                                           | component tag                                                                                                     |
 | componentProps     | object                | -                                             | component tag props                                                                                               |
 
-## License
+## 许可证
 
 @rc-component/tween-one is released under the [MIT](./LICENSE) license.
 
