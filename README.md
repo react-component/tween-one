@@ -182,7 +182,7 @@ Plugins.push(SvgMorphPlugin);
 | attr             | string | null    | Svg tag attributes, example: `polygon` is ` points`, `path` is `d`.                                   |
 | maxSegmentLength | number | 0.5     | The lower the value, the smoother the generated animation will be, but at the expense of performance; |
 
-### PathPlugin
+### PathMotionPlugin
 
 ```js | pure
 import { Plugins } from '@rc-component/tween-one';
